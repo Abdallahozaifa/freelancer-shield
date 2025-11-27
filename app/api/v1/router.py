@@ -9,7 +9,8 @@ from app.api.v1.endpoints import scope_analyzer
 from app.api.v1.endpoints import users
 from app.api.v1.endpoints import clients
 from app.api.v1.endpoints import projects
-from app.api.v1.endpoints import scope_items  # Add this import
+from app.api.v1.endpoints import scope_items
+from app.api.v1.endpoints import client_requests  # Add this import
 
 
 api_router = APIRouter()
@@ -21,4 +22,5 @@ api_router.include_router(scope_analyzer.router, prefix="/scope-analyzer", tags=
 api_router.include_router(users.router, prefix="/users", tags=["users"])
 api_router.include_router(clients.router, prefix="/clients", tags=["clients"])
 api_router.include_router(projects.router, prefix="/projects", tags=["projects"])
-api_router.include_router(scope_items.router, prefix="/projects", tags=["scope"])  # Add this line
+api_router.include_router(scope_items.router, prefix="/projects", tags=["scope"])
+api_router.include_router(client_requests.router, prefix="/projects", tags=["requests"])  # Add this line
