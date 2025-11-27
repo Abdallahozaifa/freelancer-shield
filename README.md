@@ -34,7 +34,8 @@ freelancer-shield/
 │   │       │   ├── __init__.py
 │   │       │   ├── auth.py
 │   │       │   ├── health.py
-│   │       │   └── scope_analyzer.py
+│   │       │   ├── scope_analyzer.py
+│   │       │   └── users.py
 │   │       └── router.py
 │   ├── core/
 │   │   ├── __init__.py
@@ -57,7 +58,8 @@ freelancer-shield/
 │   ├── schemas/
 │   │   ├── __init__.py
 │   │   ├── auth.py
-│   │   └── scope_analyzer.py
+│   │   ├── scope_analyzer.py
+│   │   └── user.py
 │   └── services/
 │       ├── __init__.py
 │       └── scope_analyzer/
@@ -153,7 +155,8 @@ freelancer-shield/
 │       ├── __init__.py
 │       ├── test_auth.py
 │       ├── test_health.py
-│       └── test_scope_analyzer.py
+│       ├── test_scope_analyzer.py
+│       └── test_users.py
 └── tsconfig.json
 ```
 
