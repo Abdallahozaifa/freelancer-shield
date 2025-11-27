@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "lib": ["ES2022"],
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "baseUrl": ".",
+    "paths": {
+      "@freelancer-shield/database": ["packages/database/src"],
+      "@freelancer-shield/shared": ["packages/shared/src"],
+      "@freelancer-shield/auth": ["packages/auth/src"],
+      "@freelancer-shield/scope-analyzer": ["packages/scope-analyzer/src"]
+    }
+  },
+  "exclude": ["node_modules", "dist", "coverage"]
+}

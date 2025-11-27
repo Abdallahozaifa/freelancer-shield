@@ -1,0 +1,210 @@
+// ===========================================
+// FREELANCER SHIELD - DATABASE SCHEMA
+// ===========================================
+// This is the source of truth for all data models
+// Run `npm run db:push` to sync with database
+// ===========================================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ===========================================
+// USER & AUTHENTICATION
+// ===========================================
+
+model User {
+  id            String    @id @default(uuid())
+  email         String    @unique
+  passwordHash  String
+  name          String
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relations
+  clients       Client[]
+  projects      Project[]
+
+  @@index([email])
+}
+
+// ===========================================
+// CLIENT MANAGEMENT
+// ===========================================
+
+model Client {
+  id            String    @id @default(uuid())
+  userId        String
+  name          String
+  email         String?
+  company       String?
+  notes         String?   @db.Text
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relations
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  projects      Project[]
+
+  @@index([userId])
+}
+
+// ===========================================
+// PROJECT MANAGEMENT
+// ===========================================
+
+model Project {
+  id            String        @id @default(uuid())
+  userId        String
+  clientId      String
+  name          String
+  description   String?       @db.Text
+  status        ProjectStatus @default(DRAFT)
+  budget        Decimal?      @db.Decimal(10, 2)
+  startDate     DateTime?
+  endDate       DateTime?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  // Relations
+  user          User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  client        Client        @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  scopeItems    ScopeItem[]
+  clientRequests ClientRequest[]
+  proposals     Proposal[]
+
+  @@index([userId])
+  @@index([clientId])
+  @@index([status])
+}
+
+enum ProjectStatus {
+  DRAFT
+  ACTIVE
+  COMPLETED
+  ARCHIVED
+}
+
+// ===========================================
+// SCOPE ITEMS - The agreed project scope
+// ===========================================
+
+model ScopeItem {
+  id              String    @id @default(uuid())
+  projectId       String
+  title           String
+  description     String?   @db.Text
+  category        String?   // e.g., "design", "development", "content"
+  estimatedHours  Decimal?  @db.Decimal(5, 1)
+  isCompleted     Boolean   @default(false)
+  order           Int       @default(0)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  // Relations
+  project         Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  linkedRequests  ClientRequest[]
+
+  @@index([projectId])
+  @@index([projectId, order])
+}
+
+// ===========================================
+// CLIENT REQUESTS - Incoming requests to analyze
+// ===========================================
+
+model ClientRequest {
+  id              String              @id @default(uuid())
+  projectId       String
+  linkedScopeId   String?
+  
+  // Request content
+  content         String              @db.Text
+  source          RequestSource       @default(MANUAL)
+  
+  // Scope analysis results
+  classification  ScopeClassification @default(PENDING)
+  confidence      Decimal?            @db.Decimal(3, 2)  // 0.00 to 1.00
+  reasoning       String?             @db.Text
+  
+  // Status tracking
+  status          RequestStatus       @default(NEW)
+  estimatedHours  Decimal?            @db.Decimal(5, 1)
+  
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
+
+  // Relations
+  project         Project             @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  linkedScope     ScopeItem?          @relation(fields: [linkedScopeId], references: [id], onDelete: SetNull)
+  proposal        Proposal?
+
+  @@index([projectId])
+  @@index([projectId, classification])
+  @@index([projectId, status])
+}
+
+enum RequestSource {
+  MANUAL
+  EMAIL
+  SLACK
+  FORM
+}
+
+enum ScopeClassification {
+  PENDING
+  IN_SCOPE
+  OUT_OF_SCOPE
+  CLARIFICATION_NEEDED
+  REVISION
+}
+
+enum RequestStatus {
+  NEW
+  REVIEWED
+  ACCEPTED
+  CONVERTED_TO_PROPOSAL
+  DECLINED
+}
+
+// ===========================================
+// PROPOSALS - Upsell opportunities
+// ===========================================
+
+model Proposal {
+  id              String          @id @default(uuid())
+  projectId       String
+  requestId       String?         @unique  // One proposal per request
+  
+  title           String
+  description     String          @db.Text
+  price           Decimal         @db.Decimal(10, 2)
+  estimatedHours  Decimal?        @db.Decimal(5, 1)
+  
+  status          ProposalStatus  @default(DRAFT)
+  sentAt          DateTime?
+  respondedAt     DateTime?
+  
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  // Relations
+  project         Project         @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  request         ClientRequest?  @relation(fields: [requestId], references: [id], onDelete: SetNull)
+
+  @@index([projectId])
+  @@index([projectId, status])
+}
+
+enum ProposalStatus {
+  DRAFT
+  SENT
+  ACCEPTED
+  DECLINED
+  EXPIRED
+}
