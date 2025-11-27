@@ -99,6 +99,21 @@ async def test_user(db_session: AsyncSession) -> User:
 
 
 @pytest_asyncio.fixture
+async def other_user(db_session: AsyncSession) -> User:
+    """Create another user for cross-user authorization tests."""
+    user = User(
+        email="other@example.com",
+        hashed_password=hash_password("otherpassword123"),
+        full_name="Other User",
+        business_name="Other Business",
+    )
+    db_session.add(user)
+    await db_session.commit()
+    await db_session.refresh(user)
+    return user
+
+
+@pytest_asyncio.fixture
 async def auth_headers(client: AsyncClient, test_user: User) -> dict[str, str]:
     """Get authentication headers for test user."""
     response = await client.post(

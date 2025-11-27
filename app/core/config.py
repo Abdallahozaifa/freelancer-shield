@@ -41,6 +41,7 @@ class Settings(BaseSettings):
     # AI / Scope Analyzer
     openai_api_key: str = ""
     use_ai_analyzer: bool = False  # Set True when OpenAI key is configured
+    openai_model: str = "gpt-4"
     
     # CORS
     cors_origins: list[str] = ["http://localhost:3000", "http://localhost:5173"]
