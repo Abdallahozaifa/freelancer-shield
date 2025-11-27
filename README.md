@@ -33,6 +33,7 @@ freelancer-shield/
 │   │       ├── endpoints/
 │   │       │   ├── __init__.py
 │   │       │   ├── auth.py
+│   │       │   ├── clients.py
 │   │       │   ├── health.py
 │   │       │   ├── scope_analyzer.py
 │   │       │   └── users.py
@@ -58,6 +59,7 @@ freelancer-shield/
 │   ├── schemas/
 │   │   ├── __init__.py
 │   │   ├── auth.py
+│   │   ├── client.py
 │   │   ├── scope_analyzer.py
 │   │   └── user.py
 │   └── services/
@@ -154,6 +156,7 @@ freelancer-shield/
 │   └── unit/
 │       ├── __init__.py
 │       ├── test_auth.py
+│       ├── test_clients.py
 │       ├── test_health.py
 │       ├── test_scope_analyzer.py
 │       └── test_users.py
