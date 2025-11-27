@@ -19,43 +19,142 @@ A micro-SaaS tool that detects scope creep and protects freelancer earnings.
 
 ```
 freelancer-shield/
-├── app/
-│   ├── api/
-│   │   ├── deps.py              # Shared dependencies (auth, etc.)
-│   │   └── v1/
-│   │       ├── router.py        # API router aggregator
-│   │       └── endpoints/       # Endpoint modules
-│   │           ├── auth.py      # Authentication endpoints
-│   │           └── health.py    # Health check endpoint
-│   ├── core/
-│   │   ├── config.py            # Application settings
-│   │   └── security.py          # Password hashing, JWT utilities
-│   ├── db/
-│   │   └── session.py           # Database connection & session
-│   ├── models/                  # SQLAlchemy models
-│   │   ├── base.py              # Base model with UUID & timestamps
-│   │   ├── enums.py             # Shared enums
-│   │   ├── user.py
-│   │   ├── client.py
-│   │   ├── project.py
-│   │   ├── scope_item.py
-│   │   ├── client_request.py
-│   │   └── proposal.py
-│   ├── schemas/                 # Pydantic schemas
-│   │   └── auth.py
-│   ├── services/                # Business logic (to be added)
-│   └── main.py                  # FastAPI application
-├── tests/
-│   ├── conftest.py              # Test fixtures
-│   ├── unit/
-│   │   ├── test_auth.py
-│   │   └── test_health.py
-│   └── integration/
-├── alembic.ini                  # Alembic migrations config
-├── requirements.txt
-├── pytest.ini
+├── .env
 ├── .env.example
-└── README.md
+├── .gitignore
+├── alembic.ini
+├── app/
+│   ├── __init__.py
+│   ├── api/
+│   │   ├── __init__.py
+│   │   ├── deps.py
+│   │   └── v1/
+│   │       ├── __init__.py
+│   │       ├── endpoints/
+│   │       │   ├── __init__.py
+│   │       │   ├── auth.py
+│   │       │   ├── health.py
+│   │       │   └── scope_analyzer.py
+│   │       └── router.py
+│   ├── core/
+│   │   ├── __init__.py
+│   │   ├── config.py
+│   │   └── security.py
+│   ├── db/
+│   │   ├── __init__.py
+│   │   └── session.py
+│   ├── main.py
+│   ├── models/
+│   │   ├── __init__.py
+│   │   ├── base.py
+│   │   ├── client.py
+│   │   ├── client_request.py
+│   │   ├── enums.py
+│   │   ├── project.py
+│   │   ├── proposal.py
+│   │   ├── scope_item.py
+│   │   └── user.py
+│   ├── schemas/
+│   │   ├── __init__.py
+│   │   ├── auth.py
+│   │   └── scope_analyzer.py
+│   └── services/
+│       ├── __init__.py
+│       └── scope_analyzer/
+│           ├── __init__.py
+│           ├── ai_analyzer.py
+│           ├── analyzer.py
+│           ├── indicators.py
+│           ├── models.py
+│           ├── rules_analyzer.py
+│           └── service.py
+├── apps/
+│   └── web/
+│       └── src/
+│           ├── api/
+│           ├── components/
+│           ├── hooks/
+│           ├── pages/
+│           └── store/
+├── docs/
+│   ├── Build_Prompts.md
+│   └── MVP_Specification.md
+├── jest.config.js
+├── jest.setup.js
+├── package.json
+├── packages/
+│   ├── api/
+│   │   ├── package.json
+│   │   └── src/
+│   │       ├── app.ts
+│   │       ├── index.ts
+│   │       ├── middleware/
+│   │       ├── routes/
+│   │       └── server.ts
+│   ├── auth/
+│   │   ├── src/
+│   │   └── tests/
+│   ├── client-requests/
+│   │   ├── src/
+│   │   └── tests/
+│   ├── clients/
+│   │   ├── src/
+│   │   └── tests/
+│   ├── dashboard/
+│   │   ├── src/
+│   │   └── tests/
+│   ├── database/
+│   │   ├── package.json
+│   │   ├── prisma/
+│   │   │   └── schema.prisma
+│   │   ├── src/
+│   │   │   ├── client.ts
+│   │   │   ├── index.ts
+│   │   │   └── seed.ts
+│   │   └── tests/
+│   ├── projects/
+│   │   ├── src/
+│   │   └── tests/
+│   ├── proposals/
+│   │   ├── src/
+│   │   └── tests/
+│   ├── scope-analyzer/
+│   │   ├── src/
+│   │   └── tests/
+│   │       └── fixtures/
+│   ├── scope-items/
+│   │   ├── src/
+│   │   └── tests/
+│   ├── shared/
+│   │   ├── package.json
+│   │   └── src/
+│   │       ├── errors/
+│   │       │   └── index.ts
+│   │       ├── index.ts
+│   │       ├── types/
+│   │       │   └── index.ts
+│   │       ├── utils/
+│   │       │   └── index.ts
+│   │       └── validation/
+│   │           └── index.ts
+│   └── users/
+│       ├── src/
+│       └── tests/
+├── pytest.ini
+├── README.md
+├── requirements.txt
+├── scripts/
+├── tests/
+│   ├── __init__.py
+│   ├── conftest.py
+│   ├── integration/
+│   │   └── __init__.py
+│   └── unit/
+│       ├── __init__.py
+│       ├── test_auth.py
+│       ├── test_health.py
+│       └── test_scope_analyzer.py
+└── tsconfig.json
 ```
 
 ## Setup
