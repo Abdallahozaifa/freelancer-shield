@@ -4,6 +4,7 @@ Pytest configuration and fixtures for testing.
 
 import asyncio
 from collections.abc import AsyncGenerator, Generator
+from decimal import Decimal
 from typing import Any
 
 import pytest
@@ -15,7 +16,7 @@ from sqlalchemy.pool import StaticPool
 from app.db.session import Base, get_db
 from app.main import app
 from app.core.security import hash_password
-from app.models import User
+from app.models import User, Project, ScopeItem, Client
 
 
 # Use in-memory SQLite for tests
@@ -122,3 +123,237 @@ async def auth_headers(client: AsyncClient, test_user: User) -> dict[str, str]:
     )
     token = response.json()["access_token"]
     return {"Authorization": f"Bearer {token}"}
+
+
+# ============================================================================
+# Scope Items Fixtures
+# ============================================================================
+
+
+@pytest_asyncio.fixture
+async def other_auth_headers(client: AsyncClient, other_user: User) -> dict[str, str]:
+    """Get authentication headers for the other user."""
+    response = await client.post(
+        "/api/v1/auth/login",
+        json={"email": "other@example.com", "password": "otherpassword123"},
+    )
+    token = response.json()["access_token"]
+    return {"Authorization": f"Bearer {token}"}
+
+
+@pytest_asyncio.fixture
+async def test_client(db_session: AsyncSession, test_user: User) -> Client:
+    """Create a test client owned by the test user."""
+    client_obj = Client(
+        user_id=test_user.id,
+        name="Test Client",
+        email="client@example.com",
+    )
+    db_session.add(client_obj)
+    await db_session.commit()
+    await db_session.refresh(client_obj)
+    return client_obj
+
+
+@pytest_asyncio.fixture
+async def other_user_client(db_session: AsyncSession, other_user: User) -> Client:
+    """Create a client owned by the other user."""
+    client_obj = Client(
+        user_id=other_user.id,
+        name="Other Client",
+        email="otherclient@example.com",
+    )
+    db_session.add(client_obj)
+    await db_session.commit()
+    await db_session.refresh(client_obj)
+    return client_obj
+
+
+@pytest_asyncio.fixture
+async def test_project(db_session: AsyncSession, test_user: User, test_client: Client) -> Project:
+    """Create a test project owned by the test user."""
+    project = Project(
+        user_id=test_user.id,
+        client_id=test_client.id,
+        name="Test Project",
+        description="A test project for scope items",
+    )
+    db_session.add(project)
+    await db_session.commit()
+    await db_session.refresh(project)
+    return project
+
+
+@pytest_asyncio.fixture
+async def other_user_project(db_session: AsyncSession, other_user: User, other_user_client: Client) -> Project:
+    """Create a project owned by a different user (for authorization tests)."""
+    project = Project(
+        user_id=other_user.id,
+        client_id=other_user_client.id,
+        name="Other User's Project",
+        description="Project owned by another user",
+    )
+    db_session.add(project)
+    await db_session.commit()
+    await db_session.refresh(project)
+    return project
+
+
+@pytest_asyncio.fixture
+async def test_scope_item(db_session: AsyncSession, test_project: Project) -> ScopeItem:
+    """Create a single test scope item."""
+    scope_item = ScopeItem(
+        project_id=test_project.id,
+        title="Test Task",
+        description="Test description",
+        order=0,
+        is_completed=False,
+        estimated_hours=Decimal("5.0"),
+    )
+    db_session.add(scope_item)
+    await db_session.commit()
+    await db_session.refresh(scope_item)
+    return scope_item
+
+
+@pytest_asyncio.fixture
+async def scope_items_ordered(
+    db_session: AsyncSession, test_project: Project
+) -> list[ScopeItem]:
+    """Create multiple scope items in order."""
+    items = []
+    for i, title in enumerate(["Task 1", "Task 2", "Task 3"]):
+        item = ScopeItem(
+            project_id=test_project.id,
+            title=title,
+            order=i,
+            is_completed=False,
+        )
+        db_session.add(item)
+        items.append(item)
+    
+    await db_session.commit()
+    for item in items:
+        await db_session.refresh(item)
+    return items
+
+
+@pytest_asyncio.fixture
+async def scope_items_abc(
+    db_session: AsyncSession, test_project: Project
+) -> tuple[ScopeItem, ScopeItem, ScopeItem]:
+    """Create three scope items A, B, C for reorder testing."""
+    item_a = ScopeItem(project_id=test_project.id, title="Item A", order=0)
+    item_b = ScopeItem(project_id=test_project.id, title="Item B", order=1)
+    item_c = ScopeItem(project_id=test_project.id, title="Item C", order=2)
+    
+    db_session.add_all([item_a, item_b, item_c])
+    await db_session.commit()
+    
+    await db_session.refresh(item_a)
+    await db_session.refresh(item_b)
+    await db_session.refresh(item_c)
+    
+    return item_a, item_b, item_c
+
+
+@pytest_asyncio.fixture
+async def scope_items_with_progress(
+    db_session: AsyncSession, test_project: Project
+) -> list[ScopeItem]:
+    """Create scope items with 1 of 3 completed (33.33% completion)."""
+    items = [
+        ScopeItem(
+            project_id=test_project.id,
+            title="Task 1",
+            order=0,
+            is_completed=True,
+        ),
+        ScopeItem(
+            project_id=test_project.id,
+            title="Task 2",
+            order=1,
+            is_completed=False,
+        ),
+        ScopeItem(
+            project_id=test_project.id,
+            title="Task 3",
+            order=2,
+            is_completed=False,
+        ),
+    ]
+    
+    db_session.add_all(items)
+    await db_session.commit()
+    for item in items:
+        await db_session.refresh(item)
+    return items
+
+
+@pytest_asyncio.fixture
+async def scope_items_with_hours(
+    db_session: AsyncSession, test_project: Project
+) -> list[ScopeItem]:
+    """Create scope items with estimated hours (some completed)."""
+    items = [
+        ScopeItem(
+            project_id=test_project.id,
+            title="Task 1",
+            order=0,
+            is_completed=True,
+            estimated_hours=Decimal("5.0"),
+        ),
+        ScopeItem(
+            project_id=test_project.id,
+            title="Task 2",
+            order=1,
+            is_completed=False,
+            estimated_hours=Decimal("10.0"),
+        ),
+        ScopeItem(
+            project_id=test_project.id,
+            title="Task 3",
+            order=2,
+            is_completed=True,
+            estimated_hours=Decimal("3.0"),
+        ),
+    ]
+    
+    db_session.add_all(items)
+    await db_session.commit()
+    for item in items:
+        await db_session.refresh(item)
+    return items
+
+
+@pytest_asyncio.fixture
+async def scope_items_all_completed(
+    db_session: AsyncSession, test_project: Project
+) -> list[ScopeItem]:
+    """Create scope items that are all completed (100% completion)."""
+    items = [
+        ScopeItem(
+            project_id=test_project.id,
+            title="Task 1",
+            order=0,
+            is_completed=True,
+        ),
+        ScopeItem(
+            project_id=test_project.id,
+            title="Task 2",
+            order=1,
+            is_completed=True,
+        ),
+        ScopeItem(
+            project_id=test_project.id,
+            title="Task 3",
+            order=2,
+            is_completed=True,
+        ),
+    ]
+    
+    db_session.add_all(items)
+    await db_session.commit()
+    for item in items:
+        await db_session.refresh(item)
+    return items

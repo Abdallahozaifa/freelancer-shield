@@ -11,6 +11,13 @@ from app.schemas.project import (
     ProjectDetail,
     ProjectList,
 )
+from app.schemas.scope_item import (
+    ScopeItemCreate,
+    ScopeItemUpdate,
+    ScopeItemResponse,
+    ScopeItemReorder,
+    ScopeProgress,
+)
 
 __all__ = [
     "Token",
@@ -26,4 +33,9 @@ __all__ = [
     "ProjectResponse",
     "ProjectDetail",
     "ProjectList",
+    "ScopeItemCreate",
+    "ScopeItemUpdate",
+    "ScopeItemResponse",
+    "ScopeItemReorder",
+    "ScopeProgress",
 ]
