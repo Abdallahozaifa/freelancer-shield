@@ -20,8 +20,8 @@ A micro-SaaS tool that detects scope creep and protects freelancer earnings.
 ```
 freelancer-shield/
 ├── .env
-├── .env.example
 ├── .gitignore
+├── README.md
 ├── alembic.ini
 ├── app/
 │   ├── __init__.py
@@ -65,7 +65,7 @@ freelancer-shield/
 │   │   ├── __init__.py
 │   │   ├── auth.py
 │   │   ├── client.py
-│   │   ├── client_request.py
+│   │   ├   client_request.py
 │   │   ├── dashboard.py
 │   │   ├── project.py
 │   │   ├── proposal.py
@@ -73,7 +73,6 @@ freelancer-shield/
 │   │   ├── scope_item.py
 │   │   └── user.py
 │   └── services/
-│       ├── __init__.py
 │       └── scope_analyzer/
 │           ├── __init__.py
 │           ├── ai_analyzer.py
@@ -84,12 +83,52 @@ freelancer-shield/
 │           └── service.py
 ├── apps/
 │   └── web/
-│       └── src/
-│           ├── api/
-│           ├── components/
-│           ├── hooks/
-│           ├── pages/
-│           └── store/
+│       ├── index.html
+│       ├── package-lock.json
+│       ├── package.json
+│       ├── postcss.config.js
+│       ├── public/shield.svg
+│       ├── src/
+│       │   ├── App.tsx
+│       │   ├── api/
+│       │   │   ├── auth.ts
+│       │   │   ├── client.ts
+│       │   │   ├── clients.ts
+│       │   │   ├── dashboard.ts
+│       │   │   ├── index.ts
+│       │   │   ├── projects.ts
+│       │   │   ├── proposals.ts
+│       │   │   ├── requests.ts
+│       │   │   └── scope.ts
+│       │   ├── components/ui/
+│       │   │   ├── Badge.tsx
+│       │   │   ├── Button.tsx
+│       │   │   ├── Card.tsx
+│       │   │   ├── EmptyState.tsx
+│       │   │   ├── Input.tsx
+│       │   │   ├── Spinner.tsx
+│       │   │   └── index.ts
+│       │   ├── hooks/
+│       │   │   ├── index.ts
+│       │   │   ├── useApi.ts
+│       │   │   └── useAuth.ts
+│       │   ├── index.css
+│       │   ├── layouts/index.ts
+│       │   ├── main.tsx
+│       │   ├── pages/index.ts
+│       │   ├── stores/
+│       │   │   ├── authStore.ts
+│       │   │   ├── index.ts
+│       │   │   └── uiStore.ts
+│       │   ├── types/index.ts
+│       │   └── utils/
+│       │       ├── cn.ts
+│       │       ├── format.ts
+│       │       └── index.ts
+│       ├── tailwind.config.js
+│       ├── tsconfig.json
+│       ├── tsconfig.node.json
+│       └── vite.config.ts
 ├── docs/
 │   ├── Build_Prompts.md
 │   └── MVP_Specification.md
@@ -99,70 +138,30 @@ freelancer-shield/
 ├── packages/
 │   ├── api/
 │   │   ├── package.json
-│   │   └── src/
-│   │       ├── app.ts
-│   │       ├── index.ts
-│   │       ├── middleware/
-│   │       ├── routes/
-│   │       └── server.ts
-│   ├── auth/
-│   │   ├── src/
-│   │   └── tests/
-│   ├── client-requests/
-│   │   ├── src/
-│   │   └── tests/
-│   ├── clients/
-│   │   ├── src/
-│   │   └── tests/
-│   ├── dashboard/
-│   │   ├── src/
-│   │   └── tests/
+│   │   └── src/{app.ts,index.ts,server.ts}
+│   ├── auth/ (src/, tests/)
+│   ├── client-requests/ (src/, tests/)
+│   ├── clients/ (src/, tests/)
+│   ├── dashboard/ (src/, tests/)
 │   ├── database/
 │   │   ├── package.json
-│   │   ├── prisma/
-│   │   │   └── schema.prisma
-│   │   ├── src/
-│   │   │   ├── client.ts
-│   │   │   ├── index.ts
-│   │   │   └── seed.ts
-│   │   └── tests/
-│   ├── projects/
-│   │   ├── src/
-│   │   └── tests/
-│   ├── proposals/
-│   │   ├── src/
-│   │   └── tests/
-│   ├── scope-analyzer/
-│   │   ├── src/
-│   │   └── tests/
-│   │       └── fixtures/
-│   ├── scope-items/
-│   │   ├── src/
-│   │   └── tests/
+│   │   ├── prisma/schema.prisma
+│   │   └── src/{client.ts,index.ts,seed.ts}
+│   ├── projects/ (src/, tests/)
+│   ├── proposals/ (src/, tests/)
+│   ├── scope-analyzer/ (src/, tests/, fixtures/)
+│   ├── scope-items/ (src/, tests/)
 │   ├── shared/
 │   │   ├── package.json
-│   │   └── src/
-│   │       ├── errors/
-│   │       │   └── index.ts
-│   │       ├── index.ts
-│   │       ├── types/
-│   │       │   └── index.ts
-│   │       ├── utils/
-│   │       │   └── index.ts
-│   │       └── validation/
-│   │           └── index.ts
-│   └── users/
-│       ├── src/
-│       └── tests/
+│   │   └── src/{errors,index,types,utils,validation}
+│   └── users/ (src/, tests/)
 ├── pytest.ini
-├── README.md
 ├── requirements.txt
 ├── scripts/
 ├── tests/
 │   ├── __init__.py
 │   ├── conftest.py
-│   ├── integration/
-│   │   └── __init__.py
+│   ├── integration/__init__.py
 │   └── unit/
 │       ├── __init__.py
 │       ├── test_auth.py
