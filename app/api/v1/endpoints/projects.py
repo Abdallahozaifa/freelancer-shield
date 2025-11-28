@@ -10,8 +10,10 @@ from sqlalchemy.orm import selectinload
 
 from app.api.deps import get_current_user, get_db
 from app.models.client import Client
-from app.models.enums import ProjectStatus
+from app.models.enums import ProjectStatus, ScopeClassification
 from app.models.project import Project
+from app.models.scope_item import ScopeItem
+from app.models.client_request import ClientRequest
 from app.models.user import User
 from app.schemas.project import (
     ProjectCreate,
@@ -52,6 +54,45 @@ async def get_project_or_404(
         )
     
     return project
+
+
+async def get_project_stats(project_id: UUID, db: AsyncSession) -> dict:
+    """Calculate project statistics from scope items and client requests."""
+    # Count scope items
+    scope_count_result = await db.execute(
+        select(func.count()).select_from(ScopeItem).where(ScopeItem.project_id == project_id)
+    )
+    scope_item_count = scope_count_result.scalar() or 0
+    
+    # Count completed scope items
+    completed_count_result = await db.execute(
+        select(func.count())
+        .select_from(ScopeItem)
+        .where(ScopeItem.project_id == project_id, ScopeItem.is_completed == True)
+    )
+    completed_scope_count = completed_count_result.scalar() or 0
+    
+    # Count out-of-scope requests
+    out_of_scope_count = 0
+    try:
+        out_of_scope_result = await db.execute(
+            select(func.count())
+            .select_from(ClientRequest)
+            .where(
+                ClientRequest.project_id == project_id,
+                ClientRequest.classification == ScopeClassification.OUT_OF_SCOPE,
+            )
+        )
+        out_of_scope_count = out_of_scope_result.scalar() or 0
+    except Exception:
+        # ClientRequest table might not exist yet or have different structure
+        pass
+    
+    return {
+        "scope_item_count": scope_item_count,
+        "completed_scope_count": completed_scope_count,
+        "out_of_scope_request_count": out_of_scope_count,
+    }
 
 
 def project_to_response(project: Project, stats: dict | None = None) -> ProjectResponse:
@@ -119,8 +160,14 @@ async def list_projects(
     result = await db.execute(query)
     projects = result.scalars().all()
     
+    # Get stats for each project
+    projects_with_stats = []
+    for project in projects:
+        stats = await get_project_stats(project.id, db)
+        projects_with_stats.append(project_to_response(project, stats))
+    
     return ProjectList(
-        projects=[project_to_response(p) for p in projects],
+        projects=projects_with_stats,
         total=total,
     )
 
@@ -190,12 +237,8 @@ async def get_project(
     """Get a specific project with stats."""
     project = await get_project_or_404(project_id, current_user, db)
     
-    # TODO: Calculate actual stats when ScopeItem and ClientRequest models are available
-    stats = {
-        "scope_item_count": 0,
-        "completed_scope_count": 0,
-        "out_of_scope_request_count": 0,
-    }
+    # Calculate actual stats from database
+    stats = await get_project_stats(project.id, db)
     
     return project_to_response(project, stats)
 
@@ -209,12 +252,8 @@ async def get_project_detail(
     """Get a project with scope items and recent requests."""
     project = await get_project_or_404(project_id, current_user, db)
     
-    # TODO: Load scope_items and recent_requests when those models are available
-    stats = {
-        "scope_item_count": 0,
-        "completed_scope_count": 0,
-        "out_of_scope_request_count": 0,
-    }
+    # Calculate actual stats from database
+    stats = await get_project_stats(project.id, db)
     
     response = project_to_response(project, stats)
     
@@ -243,7 +282,10 @@ async def update_project(
     await db.commit()
     await db.refresh(project)
     
-    return project_to_response(project)
+    # Get updated stats
+    stats = await get_project_stats(project.id, db)
+    
+    return project_to_response(project, stats)
 
 
 @router.delete("/{project_id}", status_code=status.HTTP_204_NO_CONTENT)

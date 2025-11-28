@@ -6,19 +6,21 @@ import {
   MoreHorizontal,
   Trash2,
   Clock,
-  DollarSign,
   CheckCircle,
   AlertCircle,
-  FileText,
   ListChecks,
   MessageSquare,
   FileSignature,
+  Target,
 } from 'lucide-react';
+import { useQueryClient } from '@tanstack/react-query';
 import { Card, Button, Tabs, Dropdown, Skeleton } from '../../components/ui';
-import { useProject, useDeleteProject } from '../../hooks/useProjects';
+import { useProject, useDeleteProject, projectKeys } from '../../hooks/useProjects';
+import { useScopeProgress } from '../../hooks/useScope';
 import { ProjectStatusBadge } from './ProjectStatusBadge';
 import { ProjectHealthGauge } from './ProjectHealthGauge';
 import { ProjectFormModal } from './ProjectFormModal';
+import { ScopeTab } from './scope';
 import { cn } from '../../utils/cn';
 import { formatCurrency, formatRelative } from '../../utils/format';
 import type { Project } from '../../types';
@@ -35,12 +37,21 @@ const tabs = [
 export const ProjectDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState<TabId>('overview');
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
   const { data: project, isLoading, error } = useProject(id!);
   const deleteProject = useDeleteProject();
+
+  const handleTabChange = (tabId: string) => {
+    setActiveTab(tabId as TabId);
+    // Refetch project data when switching to overview to get updated counts
+    if (tabId === 'overview' && id) {
+      queryClient.invalidateQueries({ queryKey: projectKeys.detail(id) });
+    }
+  };
 
   const handleDelete = async () => {
     if (!project || !window.confirm('Are you sure you want to delete this project?')) {
@@ -128,12 +139,12 @@ export const ProjectDetailPage: React.FC = () => {
       <Tabs
         tabs={tabs}
         activeTab={activeTab}
-        onChange={(id) => setActiveTab(id as TabId)}
+        onChange={handleTabChange}
       />
 
       {/* Tab Content */}
       {activeTab === 'overview' && <OverviewTab project={project} />}
-      {activeTab === 'scope' && <ScopeTabPlaceholder projectId={project.id} />}
+      {activeTab === 'scope' && <ScopeTab projectId={project.id} />}
       {activeTab === 'requests' && <RequestsTabPlaceholder projectId={project.id} />}
       {activeTab === 'proposals' && <ProposalsTabPlaceholder projectId={project.id} />}
 
@@ -146,13 +157,24 @@ export const ProjectDetailPage: React.FC = () => {
   );
 };
 
+// Helper to format hours nicely
+const formatHours = (hours: number | null | undefined): string => {
+  if (hours === null || hours === undefined) return '0';
+  const num = Number(hours);
+  if (isNaN(num)) return '0';
+  return num % 1 === 0 ? num.toFixed(0) : num.toFixed(1);
+};
+
 // Overview Tab
 interface OverviewTabProps {
   project: Project;
 }
 
 const OverviewTab: React.FC<OverviewTabProps> = ({ project }) => {
-  const scopeProgress = project.scope_item_count > 0
+  // Get scope progress for hours comparison
+  const { data: scopeProgress } = useScopeProgress(project.id);
+
+  const scopeProgressPercent = project.scope_item_count > 0
     ? Math.round((project.completed_scope_count / project.scope_item_count) * 100)
     : 0;
 
@@ -161,8 +183,18 @@ const OverviewTab: React.FC<OverviewTabProps> = ({ project }) => {
     ? project.out_of_scope_request_count / project.scope_item_count 
     : 0;
   const healthScore = Math.max(0, Math.min(100, Math.round(
-    (scopeProgress * 0.6) + ((1 - outOfScopeRatio) * 40)
+    (scopeProgressPercent * 0.6) + ((1 - outOfScopeRatio) * 40)
   )));
+
+  // Hours comparison
+  const projectEstimatedHours = project.estimated_hours;
+  const scopedHours = scopeProgress?.total_estimated_hours ?? 0;
+  const completedHours = scopeProgress?.completed_estimated_hours ?? 0;
+
+  // Calculate coverage percentage (how much of project estimate is covered by scope items)
+  const coveragePercent = projectEstimatedHours && projectEstimatedHours > 0
+    ? Math.round((scopedHours / projectEstimatedHours) * 100)
+    : null;
 
   return (
     <div className="space-y-6">
@@ -183,7 +215,6 @@ const OverviewTab: React.FC<OverviewTabProps> = ({ project }) => {
           {project.hourly_rate && (
             <p className="text-sm text-gray-500 mt-1">
               {formatCurrency(project.hourly_rate)}/hr
-              {project.estimated_hours && ` • ${project.estimated_hours}h estimated`}
             </p>
           )}
         </Card>
@@ -204,18 +235,79 @@ const OverviewTab: React.FC<OverviewTabProps> = ({ project }) => {
         </Card>
       </div>
 
+      {/* Hours Comparison Card */}
+      <Card className="p-6">
+        <div className="flex items-center gap-2 mb-4">
+          <Clock className="w-5 h-5 text-gray-400" />
+          <h3 className="font-medium text-gray-900">Hours Overview</h3>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {/* Project Estimate */}
+          <div className="text-center p-4 bg-gray-50 rounded-lg">
+            <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">Project Estimate</p>
+            <p className="text-2xl font-bold text-gray-900">
+              {projectEstimatedHours ? `${formatHours(projectEstimatedHours)}h` : '—'}
+            </p>
+            <p className="text-xs text-gray-400 mt-1">Initial quote</p>
+          </div>
+
+          {/* Scoped Hours */}
+          <div className="text-center p-4 bg-blue-50 rounded-lg">
+            <p className="text-xs text-blue-600 uppercase tracking-wide mb-1">Scoped Hours</p>
+            <p className="text-2xl font-bold text-blue-700">
+              {formatHours(scopedHours)}h
+            </p>
+            <p className="text-xs text-blue-500 mt-1">
+              {coveragePercent !== null ? (
+                <span className={coveragePercent < 80 ? 'text-amber-600' : 'text-green-600'}>
+                  {coveragePercent}% of estimate covered
+                </span>
+              ) : (
+                'From scope items'
+              )}
+            </p>
+          </div>
+
+          {/* Completed Hours */}
+          <div className="text-center p-4 bg-green-50 rounded-lg">
+            <p className="text-xs text-green-600 uppercase tracking-wide mb-1">Completed Hours</p>
+            <p className="text-2xl font-bold text-green-700">
+              {formatHours(completedHours)}h
+            </p>
+            <p className="text-xs text-green-500 mt-1">
+              {scopedHours > 0 
+                ? `${Math.round((completedHours / scopedHours) * 100)}% of scoped`
+                : 'No hours scoped'
+              }
+            </p>
+          </div>
+        </div>
+
+        {/* Warning if scope doesn't cover estimate */}
+        {coveragePercent !== null && coveragePercent < 100 && scopedHours > 0 && (
+          <div className="mt-4 flex items-center gap-2 text-sm text-amber-600 bg-amber-50 p-3 rounded-lg">
+            <Target className="w-4 h-4 flex-shrink-0" />
+            <span>
+              Scope items account for {coveragePercent}% of the project estimate. 
+              Consider adding more scope items or adjusting the estimate.
+            </span>
+          </div>
+        )}
+      </Card>
+
       {/* Scope Progress */}
       <Card className="p-6">
         <div className="flex items-center justify-between mb-4">
           <h3 className="font-medium text-gray-900">Scope Progress</h3>
           <span className="text-sm font-medium text-gray-600">
-            {scopeProgress}% ({project.completed_scope_count}/{project.scope_item_count} items)
+            {scopeProgressPercent}% ({project.completed_scope_count}/{project.scope_item_count} items)
           </span>
         </div>
         <div className="h-3 bg-gray-100 rounded-full overflow-hidden">
           <div
             className="h-full bg-indigo-500 rounded-full transition-all duration-500"
-            style={{ width: `${scopeProgress}%` }}
+            style={{ width: `${scopeProgressPercent}%` }}
           />
         </div>
         <div className="flex items-center gap-6 mt-4 text-sm">
@@ -266,12 +358,6 @@ const OverviewTab: React.FC<OverviewTabProps> = ({ project }) => {
             <dt className="text-gray-500">Last Updated</dt>
             <dd className="font-medium text-gray-900">{formatRelative(project.updated_at)}</dd>
           </div>
-          {project.estimated_hours && (
-            <div>
-              <dt className="text-gray-500">Estimated Hours</dt>
-              <dd className="font-medium text-gray-900">{project.estimated_hours}h</dd>
-            </div>
-          )}
           {project.hourly_rate && (
             <div>
               <dt className="text-gray-500">Hourly Rate</dt>
@@ -303,21 +389,6 @@ const StatBlock: React.FC<StatBlockProps> = ({ label, value, icon, color }) => (
 );
 
 // Placeholder Tabs (to be implemented in future modules)
-const ScopeTabPlaceholder: React.FC<{ projectId: string }> = () => (
-  <Card className="p-8 text-center">
-    <div className="flex items-center justify-center w-12 h-12 mb-4 mx-auto rounded-full bg-gray-100 text-gray-300">
-      <ListChecks className="w-6 h-6" />
-    </div>
-    <h3 className="text-lg font-medium text-gray-900 mb-2">Scope Items</h3>
-    <p className="text-gray-500 mb-4">
-      Manage your project scope items here. This will be implemented in Module F06.
-    </p>
-    <Button variant="outline" disabled>
-      Coming Soon
-    </Button>
-  </Card>
-);
-
 const RequestsTabPlaceholder: React.FC<{ projectId: string }> = () => (
   <Card className="p-8 text-center">
     <div className="flex items-center justify-center w-12 h-12 mb-4 mx-auto rounded-full bg-gray-100 text-gray-300">
