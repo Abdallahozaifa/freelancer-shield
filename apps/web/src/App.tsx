@@ -2,7 +2,8 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { useAuthStore } from './stores/authStore';
-import { Loading } from './components/ui';
+import { Loading, ToastContainer } from './components/ui';
+import { LoginPage, RegisterPage, ProfilePage } from './pages';
 
 // Create query client
 const queryClient = new QueryClient({
@@ -16,28 +17,6 @@ const queryClient = new QueryClient({
 });
 
 // Placeholder pages - will be replaced by modules
-function LoginPage() {
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="text-center">
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">Login Page</h1>
-        <p className="text-gray-500">Module F02 - Coming Soon</p>
-      </div>
-    </div>
-  );
-}
-
-function RegisterPage() {
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="text-center">
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">Register Page</h1>
-        <p className="text-gray-500">Module F02 - Coming Soon</p>
-      </div>
-    </div>
-  );
-}
-
 function DashboardPage() {
   return (
     <div className="min-h-screen bg-gray-50 p-8">
@@ -136,6 +115,18 @@ export default function App() {
             }
           />
           <Route
+            path="/dashboard"
+            element={<Navigate to="/" replace />}
+          />
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute>
+                <ProfilePage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
             path="/clients"
             element={
               <ProtectedRoute>
@@ -155,6 +146,7 @@ export default function App() {
           {/* Catch all - redirect to dashboard */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
+        <ToastContainer />
       </BrowserRouter>
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>

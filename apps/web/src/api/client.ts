@@ -23,9 +23,24 @@ apiClient.interceptors.request.use((config) => {
 apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
+    console.log('=== API Error Interceptor ===');
+    console.log('Status:', error.response?.status);
+    console.log('URL:', error.config?.url);
+    
     if (error.response?.status === 401) {
-      useAuthStore.getState().logout();
-      window.location.href = '/login';
+      const requestUrl = error.config?.url || '';
+      const isAuthApiRequest = requestUrl.includes('/auth/login') || 
+                               requestUrl.includes('/auth/register');
+      
+      console.log('Is auth request:', isAuthApiRequest);
+      
+      if (!isAuthApiRequest) {
+        console.log('Redirecting to /login...');
+        useAuthStore.getState().logout();
+        window.location.href = '/login';
+      } else {
+        console.log('Skipping redirect, letting error bubble up');
+      }
     }
     return Promise.reject(error);
   }

@@ -6,17 +6,15 @@ import {
   mergeProps,
   render,
   setupStyleSheet
-} from "./chunk-UV2IVRSK.js";
+} from "./chunk-XUYCH2BJ.js";
 import {
   onlineManager,
+  require_jsx_runtime,
   useQueryClient
-} from "./chunk-EIF7W5ET.js";
-import {
-  require_jsx_runtime
-} from "./chunk-KBTYAULA.js";
+} from "./chunk-KD7QPMEG.js";
 import {
   require_react
-} from "./chunk-QCHXOAYK.js";
+} from "./chunk-2CLD7BNN.js";
 import {
   __privateAdd,
   __privateGet,
@@ -108,7 +106,7 @@ var TanstackQueryDevtools = (_a = class {
       if (__privateGet(this, _Component)) {
         Devtools = __privateGet(this, _Component);
       } else {
-        Devtools = lazy(() => import("./7HGFFDPC-H56I3267.js"));
+        Devtools = lazy(() => import("./7HGFFDPC-3VM4QM64.js"));
         __privateSet(this, _Component, Devtools);
       }
       setupStyleSheet(__privateGet(this, _styleNonce), __privateGet(this, _shadowDOMTarget));
@@ -248,7 +246,7 @@ var TanstackQueryDevtoolsPanel = (_a2 = class {
       if (__privateGet(this, _Component2)) {
         Devtools = __privateGet(this, _Component2);
       } else {
-        Devtools = lazy(() => import("./ONXD5SSW-2TKPCJDX.js"));
+        Devtools = lazy(() => import("./ONXD5SSW-VHSFN24Q.js"));
         __privateSet(this, _Component2, Devtools);
       }
       setupStyleSheet(__privateGet(this, _styleNonce2), __privateGet(this, _shadowDOMTarget2));

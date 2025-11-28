@@ -1,25 +1,24 @@
-import React, { useEffect } from 'react';
-import { createPortal } from 'react-dom';
+import { useEffect } from 'react';
 import { create } from 'zustand';
-import { X, CheckCircle, XCircle, AlertTriangle, Info } from 'lucide-react';
+import { X, CheckCircle, AlertCircle, AlertTriangle, Info } from 'lucide-react';
 import { cn } from '../../utils/cn';
 
-// Types
+// Toast interface (exported as type)
 export interface Toast {
   id: string;
-  type: 'success' | 'error' | 'info' | 'warning';
-  title: string;
-  message?: string;
+  variant: 'success' | 'error' | 'warning' | 'info';
+  message: string;
   duration?: number;
 }
 
 interface ToastState {
   toasts: Toast[];
-  addToast: (toast: Omit<Toast, 'id'>) => string;
+  addToast: (toast: Omit<Toast, 'id'>) => void;
   removeToast: (id: string) => void;
+  clearToasts: () => void;
 }
 
-// Zustand Store
+// Toast store
 export const useToastStore = create<ToastState>((set) => ({
   toasts: [],
   addToast: (toast) => {
@@ -27,148 +26,117 @@ export const useToastStore = create<ToastState>((set) => ({
     set((state) => ({
       toasts: [...state.toasts, { ...toast, id }],
     }));
-    return id;
   },
   removeToast: (id) => {
     set((state) => ({
       toasts: state.toasts.filter((t) => t.id !== id),
     }));
   },
+  clearToasts: () => {
+    set({ toasts: [] });
+  },
 }));
 
-// Hook
+// Hook for easy toast usage
 export function useToast() {
-  const { addToast, removeToast } = useToastStore();
+  const { addToast, removeToast, clearToasts } = useToastStore();
 
   return {
-    toast: (options: Omit<Toast, 'id'>) => addToast(options),
-    success: (title: string, message?: string) =>
-      addToast({ type: 'success', title, message }),
-    error: (title: string, message?: string) =>
-      addToast({ type: 'error', title, message }),
-    warning: (title: string, message?: string) =>
-      addToast({ type: 'warning', title, message }),
-    info: (title: string, message?: string) =>
-      addToast({ type: 'info', title, message }),
-    dismiss: (id: string) => removeToast(id),
+    toast: (message: string, variant: Toast['variant'] = 'info', duration = 5000) => {
+      addToast({ message, variant, duration });
+    },
+    success: (message: string, duration = 5000) => {
+      addToast({ message, variant: 'success', duration });
+    },
+    error: (message: string, duration = 5000) => {
+      addToast({ message, variant: 'error', duration });
+    },
+    warning: (message: string, duration = 5000) => {
+      addToast({ message, variant: 'warning', duration });
+    },
+    info: (message: string, duration = 5000) => {
+      addToast({ message, variant: 'info', duration });
+    },
+    dismiss: removeToast,
+    clearAll: clearToasts,
   };
 }
 
-// Toast Item Component
-const typeStyles = {
+// Variant styles
+const variantStyles = {
   success: {
-    container: 'bg-green-50 border-green-200',
-    icon: 'text-green-500',
-    title: 'text-green-800',
-    message: 'text-green-700',
+    container: 'bg-green-50 border-green-200 text-green-800',
+    icon: CheckCircle,
+    iconClass: 'text-green-500',
   },
   error: {
-    container: 'bg-red-50 border-red-200',
-    icon: 'text-red-500',
-    title: 'text-red-800',
-    message: 'text-red-700',
+    container: 'bg-red-50 border-red-200 text-red-800',
+    icon: AlertCircle,
+    iconClass: 'text-red-500',
   },
   warning: {
-    container: 'bg-yellow-50 border-yellow-200',
-    icon: 'text-yellow-500',
-    title: 'text-yellow-800',
-    message: 'text-yellow-700',
+    container: 'bg-yellow-50 border-yellow-200 text-yellow-800',
+    icon: AlertTriangle,
+    iconClass: 'text-yellow-500',
   },
   info: {
-    container: 'bg-blue-50 border-blue-200',
-    icon: 'text-blue-500',
-    title: 'text-blue-800',
-    message: 'text-blue-700',
+    container: 'bg-blue-50 border-blue-200 text-blue-800',
+    icon: Info,
+    iconClass: 'text-blue-500',
   },
 };
 
-const icons = {
-  success: CheckCircle,
-  error: XCircle,
-  warning: AlertTriangle,
-  info: Info,
-};
-
-interface ToastItemProps {
-  toast: Toast;
-  onDismiss: () => void;
-}
-
-const ToastItem: React.FC<ToastItemProps> = ({ toast, onDismiss }) => {
-  const styles = typeStyles[toast.type];
-  const Icon = icons[toast.type];
+// Individual toast item
+function ToastItem({ toast }: { toast: Toast }) {
+  const { removeToast } = useToastStore();
+  const styles = variantStyles[toast.variant];
+  const Icon = styles.icon;
 
   useEffect(() => {
-    const duration = toast.duration ?? 5000;
-    if (duration > 0) {
-      const timer = setTimeout(onDismiss, duration);
+    if (toast.duration && toast.duration > 0) {
+      const timer = setTimeout(() => {
+        removeToast(toast.id);
+      }, toast.duration);
+
       return () => clearTimeout(timer);
     }
-  }, [toast.duration, onDismiss]);
+  }, [toast.id, toast.duration, removeToast]);
 
   return (
     <div
       className={cn(
-        'w-full max-w-sm rounded-lg border shadow-lg pointer-events-auto',
-        'animate-in slide-in-from-right-full duration-300',
+        'flex items-center gap-3 px-4 py-3 rounded-lg border shadow-lg min-w-[300px] max-w-md',
+        'animate-in slide-in-from-right-full fade-in duration-200',
         styles.container
       )}
       role="alert"
     >
-      <div className="p-4">
-        <div className="flex items-start">
-          <div className={cn('flex-shrink-0', styles.icon)}>
-            <Icon className="h-5 w-5" aria-hidden="true" />
-          </div>
-          <div className="ml-3 flex-1">
-            <p className={cn('text-sm font-medium', styles.title)}>
-              {toast.title}
-            </p>
-            {toast.message && (
-              <p className={cn('mt-1 text-sm', styles.message)}>
-                {toast.message}
-              </p>
-            )}
-          </div>
-          <button
-            type="button"
-            onClick={onDismiss}
-            className={cn(
-              'ml-4 inline-flex rounded-md p-1.5',
-              'text-gray-400 hover:text-gray-600',
-              'focus:outline-none focus:ring-2 focus:ring-blue-500',
-              'transition-colors duration-200'
-            )}
-            aria-label="Dismiss"
-          >
-            <X className="h-4 w-4" />
-          </button>
-        </div>
-      </div>
+      <Icon className={cn('w-5 h-5 shrink-0', styles.iconClass)} />
+      <p className="flex-1 text-sm font-medium">{toast.message}</p>
+      <button
+        onClick={() => removeToast(toast.id)}
+        className="shrink-0 p-1 rounded hover:bg-black/5 transition-colors"
+        aria-label="Close"
+      >
+        <X className="w-4 h-4" />
+      </button>
     </div>
   );
-};
+}
 
-// Toast Container Component
-export const ToastContainer: React.FC = () => {
-  const { toasts, removeToast } = useToastStore();
+// Toast container - renders all toasts
+export function ToastContainer() {
+  const { toasts } = useToastStore();
 
   if (toasts.length === 0) return null;
 
-  return createPortal(
-    <div
-      className="fixed top-4 right-4 z-50 flex flex-col gap-3 pointer-events-none"
-      aria-live="polite"
-      aria-label="Notifications"
-    >
+  return (
+    <div className="fixed bottom-4 right-4 z-50 flex flex-col gap-2">
       {toasts.map((toast) => (
-        <ToastItem
-          key={toast.id}
-          toast={toast}
-          onDismiss={() => removeToast(toast.id)}
-        />
+        <ToastItem key={toast.id} toast={toast} />
       ))}
-    </div>,
-    document.body
+    </div>
   );
-};
+}
+
+export default ToastContainer;
