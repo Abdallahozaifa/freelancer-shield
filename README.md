@@ -107,38 +107,52 @@ freelancer-shield/
 │           │   ├── requests.ts
 │           │   └── scope.ts
 │           ├── components
-│           │   └── ui
-│           │       ├── Alert.tsx
-│           │       ├── Avatar.tsx
-│           │       ├── Badge.tsx
-│           │       ├── Button.tsx
-│           │       ├── Card.tsx
-│           │       ├── Dropdown.tsx
-│           │       ├── EmptyState.tsx
-│           │       ├── Input.tsx
-│           │       ├── Loading.tsx
-│           │       ├── Modal.tsx
-│           │       ├── ProgressBar.tsx
-│           │       ├── Select.tsx
-│           │       ├── Skeleton.tsx
-│           │       ├── Spinner.tsx
-│           │       ├── Table.tsx
-│           │       ├── Tabs.tsx
-│           │       ├── Textarea.tsx
-│           │       ├── Toast.tsx
-│           │       └── index.ts
+│           │   ├── ui
+│           │   │   ├── Alert.tsx
+│           │   │   ├── Avatar.tsx
+│           │   │   ├── Badge.tsx
+│           │   │   ├── Button.tsx
+│           │   │   ├── Card.tsx
+│           │   │   ├── Dropdown.tsx
+│           │   │   ├── EmptyState.tsx
+│           │   │   ├── Input.tsx
+│           │   │   ├── Loading.tsx
+│           │   │   ├── Modal.tsx
+│           │   │   ├── ProfilePage.tsx
+│           │   │   ├── ProgressBar.tsx
+│           │   │   ├── Select.tsx
+│           │   │   ├── Skeleton.tsx
+│           │   │   ├── Spinner.tsx
+│           │   │   ├── Table.tsx
+│           │   │   ├── Tabs.tsx
+│           │   │   ├── Textarea.tsx
+│           │   │   ├── Toast.tsx
+│           │   │   └── index.ts
+│           │   └── Breadcrumb.tsx
 │           ├── hooks
 │           │   ├── index.ts
 │           │   ├── useApi.ts
-│           │   └── useAuth.ts
+│           │   ├── useAuth.ts
+│           │   └── useClients.ts
 │           ├── layouts
+│           │   ├── AppLayout.tsx
+│           │   ├── Header.tsx
+│           │   ├── MobileNav.tsx
+│           │   ├── PageHeader.tsx
+│           │   ├── Sidebar.tsx
 │           │   └── index.ts
 │           ├── pages
 │           │   ├── index.ts
-│           │   └── auth
-│           │       ├── LoginPage.tsx
-│           │       ├── ProfilePage.tsx
-│           │       ├── RegisterPage.tsx
+│           │   ├── auth
+│           │   │   ├── LoginPage.tsx
+│           │   │   ├── ProfilePage.tsx
+│           │   │   ├── RegisterPage.tsx
+│           │   │   └── index.ts
+│           │   └── clients
+│           │       ├── ClientDetailPage.tsx
+│           │       ├── ClientFormModal.tsx
+│           │       ├── ClientsPage.tsx
+│           │       ├── DeleteClientModal.tsx
 │           │       └── index.ts
 │           ├── stores
 │           │   ├── authStore.ts
