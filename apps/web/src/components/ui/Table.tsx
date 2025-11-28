@@ -52,7 +52,7 @@ export function Table<T extends Record<string, unknown>>({
 
   if (isLoading) {
     return (
-      <div className="w-full overflow-hidden rounded-lg border border-gray-200">
+      <div className="w-full rounded-lg border border-gray-200">
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
@@ -85,7 +85,7 @@ export function Table<T extends Record<string, unknown>>({
 
   if (data.length === 0) {
     return (
-      <div className="w-full overflow-hidden rounded-lg border border-gray-200">
+      <div className="w-full rounded-lg border border-gray-200">
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
@@ -109,7 +109,7 @@ export function Table<T extends Record<string, unknown>>({
   }
 
   return (
-    <div className="w-full overflow-hidden rounded-lg border border-gray-200">
+    <div className="w-full rounded-lg border border-gray-200">
       <div className="overflow-x-auto">
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
@@ -151,7 +151,11 @@ export function Table<T extends Record<string, unknown>>({
                 {columns.map((column, colIndex) => (
                   <td
                     key={colIndex}
-                    className="px-6 py-4 whitespace-nowrap text-sm text-gray-900"
+                    className={cn(
+                      'px-6 py-4 whitespace-nowrap text-sm text-gray-900',
+                      // Allow overflow for the last column (typically actions)
+                      colIndex === columns.length - 1 && 'overflow-visible'
+                    )}
                   >
                     {column.render
                       ? column.render(item)

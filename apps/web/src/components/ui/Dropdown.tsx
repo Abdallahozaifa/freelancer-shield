@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
+import { createPortal } from 'react-dom';
 import { cn } from '../../utils/cn';
 
 export interface DropdownItem {
@@ -18,11 +19,12 @@ export interface DropdownProps {
 export const Dropdown: React.FC<DropdownProps> = ({
   trigger,
   items,
-  align = 'left',
+  align = 'right',
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [focusedIndex, setFocusedIndex] = useState(-1);
-  const dropdownRef = useRef<HTMLDivElement>(null);
+  const [menuPosition, setMenuPosition] = useState({ top: 0, left: 0 });
+  const triggerRef = useRef<HTMLDivElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
 
   const enabledItems = items.filter((item) => !item.disabled);
@@ -32,7 +34,32 @@ export const Dropdown: React.FC<DropdownProps> = ({
     setFocusedIndex(-1);
   }, []);
 
+  const updateMenuPosition = useCallback(() => {
+    if (triggerRef.current) {
+      const rect = triggerRef.current.getBoundingClientRect();
+      const menuWidth = 180; // min-w-[180px]
+      
+      let left = align === 'right' 
+        ? rect.right - menuWidth 
+        : rect.left;
+      
+      // Ensure menu doesn't go off-screen
+      if (left < 8) left = 8;
+      if (left + menuWidth > window.innerWidth - 8) {
+        left = window.innerWidth - menuWidth - 8;
+      }
+      
+      setMenuPosition({
+        top: rect.bottom + 8,
+        left: left,
+      });
+    }
+  }, [align]);
+
   const handleToggle = () => {
+    if (!isOpen) {
+      updateMenuPosition();
+    }
     setIsOpen((prev) => !prev);
     if (!isOpen) {
       setFocusedIndex(-1);
@@ -49,8 +76,10 @@ export const Dropdown: React.FC<DropdownProps> = ({
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(event.target as Node)
+        triggerRef.current &&
+        !triggerRef.current.contains(event.target as Node) &&
+        menuRef.current &&
+        !menuRef.current.contains(event.target as Node)
       ) {
         handleClose();
       }
@@ -58,10 +87,14 @@ export const Dropdown: React.FC<DropdownProps> = ({
 
     if (isOpen) {
       document.addEventListener('mousedown', handleClickOutside);
+      window.addEventListener('scroll', handleClose, true);
+      window.addEventListener('resize', handleClose);
     }
 
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
+      window.removeEventListener('scroll', handleClose, true);
+      window.removeEventListener('resize', handleClose);
     };
   }, [isOpen, handleClose]);
 
@@ -107,56 +140,62 @@ export const Dropdown: React.FC<DropdownProps> = ({
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [isOpen, focusedIndex, enabledItems, items, handleClose]);
 
-  return (
-    <div className="relative inline-block" ref={dropdownRef}>
-      <div onClick={handleToggle} className="cursor-pointer">
-        {trigger}
-      </div>
-
-      {isOpen && (
-        <div
-          ref={menuRef}
-          className={cn(
-            'absolute z-50 mt-2 min-w-[180px] rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5',
-            'animate-in fade-in zoom-in-95 duration-150',
-            align === 'left' ? 'left-0' : 'right-0'
-          )}
-          role="menu"
-          aria-orientation="vertical"
-        >
-          {items.map((item, index) => {
-            const enabledIndex = enabledItems.indexOf(item);
-            const isFocused = enabledIndex === focusedIndex;
-
-            return (
-              <button
-                key={index}
-                type="button"
-                role="menuitem"
-                disabled={item.disabled}
-                onClick={() => handleItemClick(item)}
-                className={cn(
-                  'flex w-full items-center gap-2 px-4 py-2 text-sm text-left',
-                  'transition-colors duration-150',
-                  item.disabled
-                    ? 'text-gray-400 cursor-not-allowed'
-                    : item.danger
-                    ? 'text-red-600 hover:bg-red-50'
-                    : 'text-gray-700 hover:bg-gray-100',
-                  isFocused && !item.disabled && (item.danger ? 'bg-red-50' : 'bg-gray-100')
-                )}
-              >
-                {item.icon && (
-                  <span className="flex-shrink-0 w-4 h-4" aria-hidden="true">
-                    {item.icon}
-                  </span>
-                )}
-                {item.label}
-              </button>
-            );
-          })}
-        </div>
+  const menu = isOpen ? (
+    <div
+      ref={menuRef}
+      className={cn(
+        'fixed z-[9999] min-w-[180px] rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5',
+        'animate-in fade-in zoom-in-95 duration-150'
       )}
+      style={{
+        top: menuPosition.top,
+        left: menuPosition.left,
+      }}
+      role="menu"
+      aria-orientation="vertical"
+    >
+      {items.map((item, index) => {
+        const enabledIndex = enabledItems.indexOf(item);
+        const isFocused = enabledIndex === focusedIndex;
+
+        return (
+          <button
+            key={index}
+            type="button"
+            role="menuitem"
+            disabled={item.disabled}
+            onClick={() => handleItemClick(item)}
+            className={cn(
+              'flex w-full items-center gap-2 px-4 py-2 text-sm text-left',
+              'transition-colors duration-150',
+              item.disabled
+                ? 'text-gray-400 cursor-not-allowed'
+                : item.danger
+                ? 'text-red-600 hover:bg-red-50'
+                : 'text-gray-700 hover:bg-gray-100',
+              isFocused && !item.disabled && (item.danger ? 'bg-red-50' : 'bg-gray-100')
+            )}
+          >
+            {item.icon && (
+              <span className="flex-shrink-0 w-4 h-4" aria-hidden="true">
+                {item.icon}
+              </span>
+            )}
+            {item.label}
+          </button>
+        );
+      })}
     </div>
+  ) : null;
+
+  return (
+    <>
+      <div ref={triggerRef} className="inline-block">
+        <div onClick={handleToggle} className="cursor-pointer">
+          {trigger}
+        </div>
+      </div>
+      {menu && createPortal(menu, document.body)}
+    </>
   );
 };
