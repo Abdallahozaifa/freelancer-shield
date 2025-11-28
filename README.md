@@ -19,6 +19,7 @@ A micro-SaaS tool that detects scope creep and protects freelancer earnings.
 
 ```
 freelancer-shield/
+.
 ├── app
 │   ├── __init__.py
 │   ├── main.py
@@ -80,6 +81,7 @@ freelancer-shield/
 │           └── service.py
 ├── apps
 │   └── web
+│       ├── .env
 │       ├── index.html
 │       ├── package-lock.json
 │       ├── package.json
@@ -132,7 +134,12 @@ freelancer-shield/
 │           ├── layouts
 │           │   └── index.ts
 │           ├── pages
-│           │   └── index.ts
+│           │   ├── index.ts
+│           │   └── auth
+│           │       ├── LoginPage.tsx
+│           │       ├── ProfilePage.tsx
+│           │       ├── RegisterPage.tsx
+│           │       └── index.ts
 │           ├── stores
 │           │   ├── authStore.ts
 │           │   ├── index.ts
@@ -152,9 +159,9 @@ freelancer-shield/
 │   │   └── src
 │   │       ├── app.ts
 │   │       ├── index.ts
-│   │       ├── server.ts
 │   │       ├── middleware
-│   │       └── routes
+│   │       ├── routes
+│   │       └── server.ts
 │   ├── auth
 │   │   ├── src
 │   │   └── tests
