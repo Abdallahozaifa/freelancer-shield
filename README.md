@@ -138,7 +138,8 @@ freelancer-shield/
 │           │   ├── index.ts
 │           │   ├── useApi.ts
 │           │   ├── useAuth.ts
-│           │   └── useClients.ts
+│           │   ├── useClients.ts
+│           │   └── useProjects.ts
 │           ├── layouts
 │           │   ├── AppLayout.tsx
 │           │   ├── Header.tsx
@@ -153,11 +154,22 @@ freelancer-shield/
 │           │   │   ├── ProfilePage.tsx
 │           │   │   ├── RegisterPage.tsx
 │           │   │   └── index.ts
-│           │   └── clients
-│           │       ├── ClientDetailPage.tsx
-│           │       ├── ClientFormModal.tsx
-│           │       ├── ClientsPage.tsx
-│           │       ├── DeleteClientModal.tsx
+│           │   ├── clients
+│           │   │   ├── ClientDetailPage.tsx
+│           │   │   ├── ClientFormModal.tsx
+│           │   │   ├── ClientsPage.tsx
+│           │   │   ├── DeleteClientModal.tsx
+│           │   │   └── index.ts
+│           │   └── projects
+│           │       ├── __tests__
+│           │       │   ├── ProjectDetailPage.test.tsx
+│           │       │   └── ProjectsPage.test.tsx
+│           │       ├── ProjectDetailPage.tsx
+│           │       ├── ProjectFormModal.tsx
+│           │       ├── ProjectHealthGauge.tsx
+│           │       ├── ProjectNewPage.tsx
+│           │       ├── ProjectStatusBadge.tsx
+│           │       ├── ProjectsPage.tsx
 │           │       └── index.ts
 │           ├── stores
 │           │   ├── authStore.ts
