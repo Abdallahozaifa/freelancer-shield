@@ -35,6 +35,7 @@ freelancer-shield/
 │   │       │   ├── auth.py
 │   │       │   ├── client_requests.py
 │   │       │   ├── clients.py
+│   │       │   ├── dashboard.py
 │   │       │   ├── health.py
 │   │       │   ├── projects.py
 │   │       │   ├── proposals.py
@@ -65,6 +66,7 @@ freelancer-shield/
 │   │   ├── auth.py
 │   │   ├── client.py
 │   │   ├── client_request.py
+│   │   ├── dashboard.py
 │   │   ├── project.py
 │   │   ├── proposal.py
 │   │   ├── scope_analyzer.py
@@ -166,6 +168,7 @@ freelancer-shield/
 │       ├── test_auth.py
 │       ├── test_client_requests.py
 │       ├── test_clients.py
+│       ├── test_dashboard.py
 │       ├── test_health.py
 │       ├── test_projects.py
 │       ├── test_proposals.py
