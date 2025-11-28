@@ -1,23 +1,31 @@
+import React from 'react';
 import { cn } from '../../utils/cn';
 
 export interface SpinnerProps {
   size?: 'sm' | 'md' | 'lg';
+  color?: string;
   className?: string;
 }
 
-export function Spinner({ size = 'md', className }: SpinnerProps) {
-  const sizes = {
-    sm: 'w-4 h-4',
-    md: 'w-6 h-6',
-    lg: 'w-8 h-8',
-  };
+const sizeClasses = {
+  sm: 'w-4 h-4',
+  md: 'w-6 h-6',
+  lg: 'w-8 h-8',
+};
 
+export const Spinner: React.FC<SpinnerProps> = ({
+  size = 'md',
+  color = 'text-blue-600',
+  className,
+}) => {
   return (
     <svg
-      className={cn('animate-spin text-primary-600', sizes[size], className)}
+      className={cn('animate-spin', sizeClasses[size], color, className)}
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
       viewBox="0 0 24 24"
+      role="status"
+      aria-label="Loading"
     >
       <circle
         className="opacity-25"
@@ -34,21 +42,4 @@ export function Spinner({ size = 'md', className }: SpinnerProps) {
       />
     </svg>
   );
-}
-
-export interface LoadingProps {
-  text?: string;
-  size?: 'sm' | 'md' | 'lg';
-  className?: string;
-}
-
-export function Loading({ text = 'Loading...', size = 'md', className }: LoadingProps) {
-  return (
-    <div className={cn('flex flex-col items-center justify-center py-8', className)}>
-      <Spinner size={size} />
-      {text && <p className="mt-2 text-sm text-gray-500">{text}</p>}
-    </div>
-  );
-}
-
-export default Spinner;
+};
