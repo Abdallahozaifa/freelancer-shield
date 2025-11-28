@@ -37,6 +37,7 @@ freelancer-shield/
 │   │       │   ├── clients.py
 │   │       │   ├── health.py
 │   │       │   ├── projects.py
+│   │       │   ├── proposals.py
 │   │       │   ├── scope_analyzer.py
 │   │       │   ├── scope_items.py
 │   │       │   └── users.py
@@ -65,6 +66,7 @@ freelancer-shield/
 │   │   ├── client.py
 │   │   ├── client_request.py
 │   │   ├── project.py
+│   │   ├── proposal.py
 │   │   ├── scope_analyzer.py
 │   │   ├── scope_item.py
 │   │   └── user.py
@@ -166,6 +168,7 @@ freelancer-shield/
 │       ├── test_clients.py
 │       ├── test_health.py
 │       ├── test_projects.py
+│       ├── test_proposals.py
 │       ├── test_scope_analyzer.py
 │       ├── test_scope_items.py
 │       └── test_users.py
