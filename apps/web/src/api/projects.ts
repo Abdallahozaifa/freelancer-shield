@@ -1,14 +1,20 @@
 import { apiClient } from './client';
-import type { Project, ProjectCreate, ProjectUpdate, PaginatedResponse } from '../types';
+import type { Project, ProjectCreate, ProjectUpdate, ProjectStatus, PaginatedResponse } from '../types';
 
 export const projectsApi = {
-  getAll: async (skip = 0, limit = 100, clientId?: string): Promise<PaginatedResponse<Project>> => {
-    const response = await apiClient.get<Project[]>('/projects', {
-      params: { skip, limit, client_id: clientId },
+  getAll: async (
+    skip = 0,
+    limit = 100,
+    status?: ProjectStatus,
+    clientId?: string
+  ): Promise<PaginatedResponse<Project>> => {
+    const response = await apiClient.get<{ projects: Project[]; total: number }>('/projects', {
+      params: { skip, limit, status, client_id: clientId },
     });
+    // API returns { projects: [...], total } but we need { items: [...], total }
     return {
-      items: response.data,
-      total: response.data.length,
+      items: response.data.projects,
+      total: response.data.total,
     };
   },
 

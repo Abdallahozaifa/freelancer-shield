@@ -3,12 +3,13 @@ import type { Client, ClientCreate, ClientUpdate, PaginatedResponse } from '../t
 
 export const clientsApi = {
   getAll: async (skip = 0, limit = 100): Promise<PaginatedResponse<Client>> => {
-    const response = await apiClient.get<Client[]>('/clients', {
+    const response = await apiClient.get<{ clients: Client[]; total: number }>('/clients', {
       params: { skip, limit },
     });
+    // API returns { clients: [...], total } but we need { items: [...], total }
     return {
-      items: response.data,
-      total: response.data.length,
+      items: response.data.clients,
+      total: response.data.total,
     };
   },
 

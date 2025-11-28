@@ -4,6 +4,7 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { useAuthStore } from './stores/authStore';
 import { Loading, ToastContainer } from './components/ui';
 import { LoginPage, RegisterPage, ProfilePage, ClientsPage, ClientDetailPage } from './pages';
+import { ProjectsPage, ProjectDetailPage, ProjectNewPage } from './pages/projects';
 import { AppLayout } from './layouts';
 
 // Create query client
@@ -23,15 +24,6 @@ function DashboardPage() {
     <div>
       <h1 className="text-2xl font-bold text-gray-900 mb-2">Dashboard</h1>
       <p className="text-gray-500">Module F09 - Coming Soon</p>
-    </div>
-  );
-}
-
-function ProjectsPage() {
-  return (
-    <div>
-      <h1 className="text-2xl font-bold text-gray-900 mb-2">Projects</h1>
-      <p className="text-gray-500">Module F05 - Coming Soon</p>
     </div>
   );
 }
@@ -142,6 +134,8 @@ export default function App() {
               <Route path="/clients" element={<ClientsPage />} />
               <Route path="/clients/:id" element={<ClientDetailPage />} />
               <Route path="/projects" element={<ProjectsPage />} />
+              <Route path="/projects/new" element={<ProjectNewPage />} />
+              <Route path="/projects/:id" element={<ProjectDetailPage />} />
               <Route path="/scope-items" element={<ScopeItemsPage />} />
               <Route path="/requests" element={<RequestsPage />} />
               <Route path="/proposals" element={<ProposalsPage />} />

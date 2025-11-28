@@ -97,6 +97,8 @@ freelancer-shield/
 │           ├── index.css
 │           ├── main.tsx
 │           ├── api
+│           │   ├── __tests__
+│           │   │   └── api.test.ts
 │           │   ├── auth.ts
 │           │   ├── client.ts
 │           │   ├── clients.ts
@@ -130,6 +132,9 @@ freelancer-shield/
 │           │   │   └── index.ts
 │           │   └── Breadcrumb.tsx
 │           ├── hooks
+│           │   ├── __tests__
+│           │   │   ├── useClients.test.tsx
+│           │   │   └── useProjects.test.tsx
 │           │   ├── index.ts
 │           │   ├── useApi.ts
 │           │   ├── useAuth.ts
@@ -158,6 +163,8 @@ freelancer-shield/
 │           │   ├── authStore.ts
 │           │   ├── index.ts
 │           │   └── uiStore.ts
+│           ├── test
+│           │   └── setup.ts
 │           ├── types
 │           │   └── index.ts
 │           └── utils
