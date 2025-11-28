@@ -25,6 +25,13 @@ from app.schemas.proposal import (
     ProposalResponse,
     ProposalStats,
 )
+from app.schemas.dashboard import (
+    Alert,
+    DashboardResponse,
+    DashboardSummary,
+    ProjectHealth,
+    RecentActivity,
+)
 
 __all__ = [
     "Token",
@@ -50,4 +57,9 @@ __all__ = [
     "ProposalUpdate",
     "ProposalResponse",
     "ProposalStats",
+    "Alert",
+    "DashboardResponse",
+    "DashboardSummary",
+    "ProjectHealth",
+    "RecentActivity",
 ]
