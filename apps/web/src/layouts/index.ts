@@ -1,5 +1,9 @@
-// Layout components will be added in Module F03
-// - MainLayout (with sidebar navigation)
-// - AuthLayout (for login/register pages)
+export { AppLayout } from './AppLayout';
+export { Sidebar } from './Sidebar';
+export { Header } from './Header';
+export { MobileNav } from './MobileNav';
+export { PageHeader } from './PageHeader';
+export { Breadcrumb } from '../components/Breadcrumb';
 
-export {};
+// Re-export types
+export type { BreadcrumbItem } from '../components/Breadcrumb';

@@ -112,12 +112,12 @@ export function LoginPage() {
             <p className="text-sm text-gray-600 mt-1">Sign in to your account</p>
           </div>
 
-          {/* Reserved space for error - prevents layout shift */}
-          <div className="min-h-[60px] mb-2">
-            {error && (
+          {/* Error alert - only renders when there's an error */}
+          {error && (
+            <div className="mb-4">
               <Alert type="error">{error}</Alert>
-            )}
-          </div>
+            </div>
+          )}
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
             <div>
