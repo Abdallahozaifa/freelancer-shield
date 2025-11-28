@@ -19,39 +19,35 @@ A micro-SaaS tool that detects scope creep and protects freelancer earnings.
 
 ```
 freelancer-shield/
-├── .env
-├── .gitignore
-├── README.md
-├── alembic.ini
-├── app/
+├── app
 │   ├── __init__.py
-│   ├── api/
+│   ├── main.py
+│   ├── api
 │   │   ├── __init__.py
 │   │   ├── deps.py
-│   │   └── v1/
+│   │   └── v1
 │   │       ├── __init__.py
-│   │       ├── endpoints/
-│   │       │   ├── __init__.py
-│   │       │   ├── auth.py
-│   │       │   ├── client_requests.py
-│   │       │   ├── clients.py
-│   │       │   ├── dashboard.py
-│   │       │   ├── health.py
-│   │       │   ├── projects.py
-│   │       │   ├── proposals.py
-│   │       │   ├── scope_analyzer.py
-│   │       │   ├── scope_items.py
-│   │       │   └── users.py
-│   │       └── router.py
-│   ├── core/
+│   │       ├── router.py
+│   │       └── endpoints
+│   │           ├── __init__.py
+│   │           ├── auth.py
+│   │           ├── client_requests.py
+│   │           ├── clients.py
+│   │           ├── dashboard.py
+│   │           ├── health.py
+│   │           ├── projects.py
+│   │           ├── proposals.py
+│   │           ├── scope_analyzer.py
+│   │           ├── scope_items.py
+│   │           └── users.py
+│   ├── core
 │   │   ├── __init__.py
 │   │   ├── config.py
 │   │   └── security.py
-│   ├── db/
+│   ├── db
 │   │   ├── __init__.py
 │   │   └── session.py
-│   ├── main.py
-│   ├── models/
+│   ├── models
 │   │   ├── __init__.py
 │   │   ├── base.py
 │   │   ├── client.py
@@ -61,19 +57,20 @@ freelancer-shield/
 │   │   ├── proposal.py
 │   │   ├── scope_item.py
 │   │   └── user.py
-│   ├── schemas/
+│   ├── schemas
 │   │   ├── __init__.py
 │   │   ├── auth.py
 │   │   ├── client.py
-│   │   ├   client_request.py
+│   │   ├── client_request.py
 │   │   ├── dashboard.py
 │   │   ├── project.py
 │   │   ├── proposal.py
 │   │   ├── scope_analyzer.py
 │   │   ├── scope_item.py
 │   │   └── user.py
-│   └── services/
-│       └── scope_analyzer/
+│   └── services
+│       ├── __init__.py
+│       └── scope_analyzer
 │           ├── __init__.py
 │           ├── ai_analyzer.py
 │           ├── analyzer.py
@@ -81,88 +78,139 @@ freelancer-shield/
 │           ├── models.py
 │           ├── rules_analyzer.py
 │           └── service.py
-├── apps/
-│   └── web/
+├── apps
+│   └── web
 │       ├── index.html
 │       ├── package-lock.json
 │       ├── package.json
 │       ├── postcss.config.js
-│       ├── public/shield.svg
-│       ├── src/
-│       │   ├── App.tsx
-│       │   ├── api/
-│       │   │   ├── auth.ts
-│       │   │   ├── client.ts
-│       │   │   ├── clients.ts
-│       │   │   ├── dashboard.ts
-│       │   │   ├── index.ts
-│       │   │   ├── projects.ts
-│       │   │   ├── proposals.ts
-│       │   │   ├── requests.ts
-│       │   │   └── scope.ts
-│       │   ├── components/ui/
-│       │   │   ├── Badge.tsx
-│       │   │   ├── Button.tsx
-│       │   │   ├── Card.tsx
-│       │   │   ├── EmptyState.tsx
-│       │   │   ├── Input.tsx
-│       │   │   ├── Spinner.tsx
-│       │   │   └── index.ts
-│       │   ├── hooks/
-│       │   │   ├── index.ts
-│       │   │   ├── useApi.ts
-│       │   │   └── useAuth.ts
-│       │   ├── index.css
-│       │   ├── layouts/index.ts
-│       │   ├── main.tsx
-│       │   ├── pages/index.ts
-│       │   ├── stores/
-│       │   │   ├── authStore.ts
-│       │   │   ├── index.ts
-│       │   │   └── uiStore.ts
-│       │   ├── types/index.ts
-│       │   └── utils/
-│       │       ├── cn.ts
-│       │       ├── format.ts
-│       │       └── index.ts
 │       ├── tailwind.config.js
 │       ├── tsconfig.json
 │       ├── tsconfig.node.json
-│       └── vite.config.ts
-├── docs/
+│       ├── vite.config.ts
+│       ├── public
+│       │   └── shield.svg
+│       └── src
+│           ├── App.tsx
+│           ├── index.css
+│           ├── main.tsx
+│           ├── api
+│           │   ├── auth.ts
+│           │   ├── client.ts
+│           │   ├── clients.ts
+│           │   ├── dashboard.ts
+│           │   ├── index.ts
+│           │   ├── projects.ts
+│           │   ├── proposals.ts
+│           │   ├── requests.ts
+│           │   └── scope.ts
+│           ├── components
+│           │   └── ui
+│           │       ├── Alert.tsx
+│           │       ├── Avatar.tsx
+│           │       ├── Badge.tsx
+│           │       ├── Button.tsx
+│           │       ├── Card.tsx
+│           │       ├── Dropdown.tsx
+│           │       ├── EmptyState.tsx
+│           │       ├── Input.tsx
+│           │       ├── Loading.tsx
+│           │       ├── Modal.tsx
+│           │       ├── ProgressBar.tsx
+│           │       ├── Select.tsx
+│           │       ├── Skeleton.tsx
+│           │       ├── Spinner.tsx
+│           │       ├── Table.tsx
+│           │       ├── Tabs.tsx
+│           │       ├── Textarea.tsx
+│           │       ├── Toast.tsx
+│           │       └── index.ts
+│           ├── hooks
+│           │   ├── index.ts
+│           │   ├── useApi.ts
+│           │   └── useAuth.ts
+│           ├── layouts
+│           │   └── index.ts
+│           ├── pages
+│           │   └── index.ts
+│           ├── stores
+│           │   ├── authStore.ts
+│           │   ├── index.ts
+│           │   └── uiStore.ts
+│           ├── types
+│           │   └── index.ts
+│           └── utils
+│               ├── cn.ts
+│               ├── format.ts
+│               └── index.ts
+├── docs
 │   ├── Build_Prompts.md
 │   └── MVP_Specification.md
-├── jest.config.js
-├── jest.setup.js
-├── package.json
-├── packages/
-│   ├── api/
+├── packages
+│   ├── api
 │   │   ├── package.json
-│   │   └── src/{app.ts,index.ts,server.ts}
-│   ├── auth/ (src/, tests/)
-│   ├── client-requests/ (src/, tests/)
-│   ├── clients/ (src/, tests/)
-│   ├── dashboard/ (src/, tests/)
-│   ├── database/
+│   │   └── src
+│   │       ├── app.ts
+│   │       ├── index.ts
+│   │       ├── server.ts
+│   │       ├── middleware
+│   │       └── routes
+│   ├── auth
+│   │   ├── src
+│   │   └── tests
+│   ├── client-requests
+│   │   ├── src
+│   │   └── tests
+│   ├── clients
+│   │   ├── src
+│   │   └── tests
+│   ├── dashboard
+│   │   ├── src
+│   │   └── tests
+│   ├── database
 │   │   ├── package.json
-│   │   ├── prisma/schema.prisma
-│   │   └── src/{client.ts,index.ts,seed.ts}
-│   ├── projects/ (src/, tests/)
-│   ├── proposals/ (src/, tests/)
-│   ├── scope-analyzer/ (src/, tests/, fixtures/)
-│   ├── scope-items/ (src/, tests/)
-│   ├── shared/
+│   │   ├── prisma
+│   │   │   └── schema.prisma
+│   │   ├── src
+│   │   │   ├── client.ts
+│   │   │   ├── index.ts
+│   │   │   └── seed.ts
+│   │   └── tests
+│   ├── projects
+│   │   ├── src
+│   │   └── tests
+│   ├── proposals
+│   │   ├── src
+│   │   └── tests
+│   ├── scope-analyzer
+│   │   ├── src
+│   │   └── tests
+│   │       └── fixtures
+│   ├── scope-items
+│   │   ├── src
+│   │   └── tests
+│   ├── shared
 │   │   ├── package.json
-│   │   └── src/{errors,index,types,utils,validation}
-│   └── users/ (src/, tests/)
-├── pytest.ini
-├── requirements.txt
-├── scripts/
-├── tests/
+│   │   └── src
+│   │       ├── errors
+│   │       │   └── index.ts
+│   │       ├── index.ts
+│   │       ├── types
+│   │       │   └── index.ts
+│   │       ├── utils
+│   │       │   └── index.ts
+│   │       └── validation
+│   │           └── index.ts
+│   └── users
+│       ├── src
+│       └── tests
+├── scripts
+├── tests
 │   ├── __init__.py
 │   ├── conftest.py
-│   ├── integration/__init__.py
-│   └── unit/
+│   ├── integration
+│   │   └── __init__.py
+│   └── unit
 │       ├── __init__.py
 │       ├── test_auth.py
 │       ├── test_client_requests.py
@@ -174,6 +222,15 @@ freelancer-shield/
 │       ├── test_scope_analyzer.py
 │       ├── test_scope_items.py
 │       └── test_users.py
+├── .env
+├── .gitignore
+├── README.md
+├── alembic.ini
+├── jest.config.js
+├── jest.setup.js
+├── package.json
+├── pytest.ini
+├── requirements.txt
 └── tsconfig.json
 ```
 
