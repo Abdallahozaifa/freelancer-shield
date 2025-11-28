@@ -17,6 +17,8 @@ from app.db.session import Base, get_db
 from app.main import app
 from app.core.security import hash_password
 from app.models import User, Project, ScopeItem, Client
+from app.models.client_request import ClientRequest
+from app.models.enums import ScopeClassification, RequestStatus
 
 
 # Use in-memory SQLite for tests
@@ -357,3 +359,64 @@ async def scope_items_all_completed(
     for item in items:
         await db_session.refresh(item)
     return items
+
+
+# ============================================================================
+# Client Request Fixtures (for Proposals)
+# ============================================================================
+
+
+@pytest_asyncio.fixture
+async def test_client_request(
+    db_session: AsyncSession, test_project: Project
+) -> ClientRequest:
+    """Create a test client request (out of scope)."""
+    request = ClientRequest(
+        project_id=test_project.id,
+        title="Add new feature",
+        content="Please add a new feature to the system that was not in the original scope.",
+        classification=ScopeClassification.OUT_OF_SCOPE,
+        status=RequestStatus.ANALYZED,
+        analysis_reasoning="This request is out of scope because it involves new functionality not covered in the original project agreement.",
+    )
+    db_session.add(request)
+    await db_session.commit()
+    await db_session.refresh(request)
+    return request
+
+
+@pytest_asyncio.fixture
+async def test_client_request_in_scope(
+    db_session: AsyncSession, test_project: Project
+) -> ClientRequest:
+    """Create a test client request (in scope)."""
+    request = ClientRequest(
+        project_id=test_project.id,
+        title="Fix login bug",
+        content="The login button is not working correctly on mobile devices.",
+        classification=ScopeClassification.IN_SCOPE,
+        status=RequestStatus.ANALYZED,
+        analysis_reasoning="This is a bug fix which falls within the original project scope.",
+    )
+    db_session.add(request)
+    await db_session.commit()
+    await db_session.refresh(request)
+    return request
+
+
+@pytest_asyncio.fixture
+async def test_client_request_pending(
+    db_session: AsyncSession, test_project: Project
+) -> ClientRequest:
+    """Create a test client request (pending analysis)."""
+    request = ClientRequest(
+        project_id=test_project.id,
+        title="New request pending review",
+        content="I would like to discuss some changes to the dashboard.",
+        classification=ScopeClassification.PENDING,
+        status=RequestStatus.NEW,
+    )
+    db_session.add(request)
+    await db_session.commit()
+    await db_session.refresh(request)
+    return request

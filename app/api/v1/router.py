@@ -10,7 +10,9 @@ from app.api.v1.endpoints import users
 from app.api.v1.endpoints import clients
 from app.api.v1.endpoints import projects
 from app.api.v1.endpoints import scope_items
-from app.api.v1.endpoints import client_requests  # Add this import
+from app.api.v1.endpoints import client_requests
+from app.api.v1.endpoints import proposals
+
 
 
 api_router = APIRouter()
@@ -23,4 +25,5 @@ api_router.include_router(users.router, prefix="/users", tags=["users"])
 api_router.include_router(clients.router, prefix="/clients", tags=["clients"])
 api_router.include_router(projects.router, prefix="/projects", tags=["projects"])
 api_router.include_router(scope_items.router, prefix="/projects", tags=["scope"])
-api_router.include_router(client_requests.router, prefix="/projects", tags=["requests"])  # Add this line
+api_router.include_router(client_requests.router, prefix="/projects", tags=["requests"])
+api_router.include_router(proposals.router, prefix="/projects", tags=["proposals"])

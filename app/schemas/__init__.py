@@ -18,6 +18,13 @@ from app.schemas.scope_item import (
     ScopeItemReorder,
     ScopeProgress,
 )
+from app.schemas.proposal import (
+    ProposalCreate,
+    ProposalFromRequest,
+    ProposalUpdate,
+    ProposalResponse,
+    ProposalStats,
+)
 
 __all__ = [
     "Token",
@@ -38,4 +45,9 @@ __all__ = [
     "ScopeItemResponse",
     "ScopeItemReorder",
     "ScopeProgress",
+    "ProposalCreate",
+    "ProposalFromRequest",
+    "ProposalUpdate",
+    "ProposalResponse",
+    "ProposalStats",
 ]
