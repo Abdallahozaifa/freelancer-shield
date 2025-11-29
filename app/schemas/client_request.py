@@ -28,6 +28,10 @@ class ClientRequestUpdate(BaseModel):
     content: Optional[str] = Field(default=None, min_length=1)
     source: Optional[RequestSource] = None
     status: Optional[RequestStatus] = None
+    classification: Optional[ScopeClassification] = Field(
+        default=None,
+        description="Manually override the AI classification"
+    )
     linked_scope_item_id: Optional[UUID] = Field(
         default=None,
         description="Manually link to a scope item"
