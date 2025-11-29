@@ -5,7 +5,7 @@ import {
   Users,
   FolderKanban,
   Settings,
-  Shield,
+  ShieldCheck,
   BarChart3,
 } from 'lucide-react';
 
@@ -62,12 +62,12 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed }) => {
       <div className={`flex items-center h-16 px-4 ${collapsed ? 'justify-center' : ''}`}>
         <div className="flex items-center gap-3">
           <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 shadow-lg shadow-indigo-500/30">
-            <Shield className="w-5 h-5 text-white" />
+            <ShieldCheck className="w-5 h-5 text-white" />
           </div>
           {!collapsed && (
             <div className="flex flex-col">
               <span className="font-bold text-white text-lg leading-tight">
-                Project Shield
+                ScopeGuard
               </span>
               <span className="text-[10px] text-indigo-300 font-medium uppercase tracking-wider">
                 Freelancer

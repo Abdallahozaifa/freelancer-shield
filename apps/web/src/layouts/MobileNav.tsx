@@ -6,7 +6,7 @@ import {
   Users,
   FolderKanban,
   Settings,
-  Shield,
+  ShieldCheck,
   BarChart3,
   LogOut,
 } from 'lucide-react';
@@ -152,10 +152,10 @@ export const MobileNav: React.FC<MobileNavProps> = ({ isOpen, onClose }) => {
         <div className="flex items-center justify-between h-16 px-4 border-b border-white/10">
           <div className="flex items-center gap-3">
             <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 shadow-lg shadow-indigo-500/30">
-              <Shield className="w-5 h-5 text-white" />
+              <ShieldCheck className="w-5 h-5 text-white" />
             </div>
             <div className="flex flex-col">
-              <span className="font-bold text-white text-lg leading-tight">Project Shield</span>
+              <span className="font-bold text-white text-lg leading-tight">ScopeGuard</span>
               <span className="text-[10px] text-indigo-300 font-medium uppercase tracking-wider">Freelancer</span>
             </div>
           </div>
