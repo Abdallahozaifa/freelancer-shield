@@ -3,7 +3,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { useAuthStore } from './stores/authStore';
 import { Loading, ToastContainer } from './components/ui';
-import { LoginPage, RegisterPage, ProfilePage, ClientsPage, ClientDetailPage } from './pages';
+import { LoginPage, RegisterPage, ProfilePage, ClientsPage, ClientDetailPage, DashboardPage } from './pages';
 import { ProjectsPage, ProjectDetailPage, ProjectNewPage } from './pages/projects';
 import { RequestsPage } from './pages/projects/requests';
 import { ScopeItemsPage } from './pages/projects/scope';
@@ -20,16 +20,6 @@ const queryClient = new QueryClient({
     },
   },
 });
-
-// Placeholder pages - will be replaced by modules
-function DashboardPage() {
-  return (
-    <div>
-      <h1 className="text-2xl font-bold text-gray-900 mb-2">Dashboard</h1>
-      <p className="text-gray-500">Module F09 - Coming Soon</p>
-    </div>
-  );
-}
 
 function SettingsPage() {
   return (

@@ -209,6 +209,14 @@ export interface ProjectHealth {
   health_score: number;
 }
 
+export interface RecentActivity {
+  type: 'request_created' | 'request_analyzed' | 'proposal_sent' | 'proposal_accepted' | 'scope_completed';
+  message: string;
+  project_id: string;
+  project_name: string;
+  timestamp: string;
+}
+
 // Scope Analysis types
 export interface ScopeAnalysisRequest {
   content: string;

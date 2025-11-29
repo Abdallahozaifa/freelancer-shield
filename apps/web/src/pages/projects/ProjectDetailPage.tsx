@@ -16,7 +16,6 @@ import { Card, Button, Tabs, Dropdown, Skeleton } from '../../components/ui';
 import { useProject, useDeleteProject, projectKeys } from '../../hooks/useProjects';
 import { useScopeProgress } from '../../hooks/useScope';
 import { ProjectStatusBadge } from './ProjectStatusBadge';
-import { ProjectHealthGauge } from './ProjectHealthGauge';
 import { ProjectFormModal } from './ProjectFormModal';
 import { ScopeTab } from './scope';
 import { RequestsTab } from './requests';
@@ -206,14 +205,6 @@ const OverviewTab: React.FC<OverviewTabProps> = ({ project }) => {
     ? Math.round((project.completed_scope_count / project.scope_item_count) * 100)
     : 0;
 
-  // Calculate a simple health score based on scope completion and out-of-scope requests
-  const outOfScopeRatio = project.scope_item_count > 0 
-    ? project.out_of_scope_request_count / project.scope_item_count 
-    : 0;
-  const healthScore = Math.max(0, Math.min(100, Math.round(
-    (scopeProgressPercent * 0.6) + ((1 - outOfScopeRatio) * 40)
-  )));
-
   // Hours comparison
   const projectEstimatedHours = project.estimated_hours;
   const scopedHours = scopeProgress?.total_estimated_hours ?? 0;
@@ -226,14 +217,8 @@ const OverviewTab: React.FC<OverviewTabProps> = ({ project }) => {
 
   return (
     <div className="space-y-6">
-      {/* Top Stats Row */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {/* Health Score */}
-        <Card className="p-6">
-          <h3 className="text-sm font-medium text-gray-500 mb-4">Health Score</h3>
-          <ProjectHealthGauge score={healthScore} size="md" />
-        </Card>
-
+      {/* Top Stats Row - 2 cards instead of 3 */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Budget */}
         <Card className="p-6">
           <h3 className="text-sm font-medium text-gray-500 mb-2">Budget</h3>
@@ -256,7 +241,12 @@ const OverviewTab: React.FC<OverviewTabProps> = ({ project }) => {
               <p className="text-xs text-gray-500">Scope Items</p>
             </div>
             <div>
-              <p className="text-2xl font-bold text-gray-900">{project.out_of_scope_request_count}</p>
+              <p className={cn(
+                'text-2xl font-bold',
+                project.out_of_scope_request_count > 0 ? 'text-red-600' : 'text-gray-900'
+              )}>
+                {project.out_of_scope_request_count}
+              </p>
               <p className="text-xs text-gray-500">Out of Scope</p>
             </div>
           </div>
@@ -433,10 +423,9 @@ const ProjectDetailSkeleton: React.FC = () => (
       </div>
     </div>
     <Skeleton className="h-10 w-96" />
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-      <Skeleton className="h-48" />
-      <Skeleton className="h-48" />
-      <Skeleton className="h-48" />
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <Skeleton className="h-32" />
+      <Skeleton className="h-32" />
     </div>
   </div>
 );
