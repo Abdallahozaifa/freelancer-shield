@@ -8,6 +8,7 @@ import { ProjectsPage, ProjectDetailPage, ProjectNewPage } from './pages/project
 import { RequestsPage } from './pages/projects/requests';
 import { ScopeItemsPage } from './pages/projects/scope';
 import { ProposalsPage } from './pages/projects/proposals';
+import { LandingPage } from './pages/landing';
 import { AppLayout } from './layouts';
 
 // Create query client
@@ -53,7 +54,7 @@ function PublicRoute({ children }: { children: React.ReactNode }) {
   }
 
   if (isAuthenticated) {
-    return <Navigate to="/" replace />;
+    return <Navigate to="/dashboard" replace />;
   }
 
   return <>{children}</>;
@@ -64,7 +65,17 @@ export default function App() {
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
         <Routes>
-          {/* Public routes */}
+          {/* Landing page - public, but redirects to dashboard if authenticated */}
+          <Route
+            path="/"
+            element={
+              <PublicRoute>
+                <LandingPage />
+              </PublicRoute>
+            }
+          />
+
+          {/* Auth routes */}
           <Route
             path="/login"
             element={
@@ -85,8 +96,7 @@ export default function App() {
           {/* Protected routes with AppLayout */}
           <Route element={<ProtectedRoute />}>
             <Route element={<AppLayout />}>
-              <Route path="/" element={<DashboardPage />} />
-              <Route path="/dashboard" element={<Navigate to="/" replace />} />
+              <Route path="/dashboard" element={<DashboardPage />} />
               <Route path="/profile" element={<ProfilePage />} />
               <Route path="/clients" element={<ClientsPage />} />
               <Route path="/clients/:id" element={<ClientDetailPage />} />
@@ -100,7 +110,7 @@ export default function App() {
             </Route>
           </Route>
 
-          {/* Catch all - redirect to dashboard */}
+          {/* Catch all - redirect to landing */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
         <ToastContainer />

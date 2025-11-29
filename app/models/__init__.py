@@ -16,6 +16,7 @@ from app.models.project import Project
 from app.models.scope_item import ScopeItem
 from app.models.client_request import ClientRequest
 from app.models.proposal import Proposal
+from app.models.subscription import Subscription, PlanType, SubscriptionStatus  # ADD THIS
 
 __all__ = [
     # Base
@@ -27,6 +28,8 @@ __all__ = [
     "RequestSource",
     "RequestStatus",
     "ScopeClassification",
+    "PlanType",           # ADD THIS
+    "SubscriptionStatus", # ADD THIS
     # Models
     "User",
     "Client",
@@ -34,4 +37,5 @@ __all__ = [
     "ScopeItem",
     "ClientRequest",
     "Proposal",
+    "Subscription",       # ADD THIS
 ]

@@ -53,6 +53,11 @@ class User(BaseModel):
         back_populates="user",
         cascade="all, delete-orphan",
     )
+    subscription: Mapped["Subscription | None"] = relationship(
+        "Subscription",
+        back_populates="user",
+        uselist=False,
+    )
     
     def __repr__(self) -> str:
         return f"<User {self.email}>"
@@ -61,3 +66,4 @@ class User(BaseModel):
 # Import here to avoid circular imports
 from app.models.client import Client
 from app.models.project import Project
+from app.models.subscription import Subscription

@@ -12,9 +12,8 @@ from app.api.v1.endpoints import projects
 from app.api.v1.endpoints import scope_items
 from app.api.v1.endpoints import client_requests
 from app.api.v1.endpoints import proposals
+from app.api.v1.endpoints import billing
 from app.api.v1.endpoints.dashboard import router as dashboard_router
-
-
 
 
 api_router = APIRouter()
@@ -30,3 +29,4 @@ api_router.include_router(scope_items.router, prefix="/projects", tags=["scope"]
 api_router.include_router(client_requests.router, prefix="/projects", tags=["requests"])
 api_router.include_router(proposals.router, prefix="/projects", tags=["proposals"])
 api_router.include_router(dashboard_router, prefix="/dashboard", tags=["dashboard"])
+api_router.include_router(billing.router, prefix="/billing", tags=["billing"])
