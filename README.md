@@ -97,8 +97,7 @@ freelancer-shield/
 │           ├── index.css
 │           ├── main.tsx
 │           ├── api
-│           │   ├── __tests__
-│           │   │   └── api.test.ts
+│           │   ├── __tests__/api.test.ts
 │           │   ├── auth.ts
 │           │   ├── client.ts
 │           │   ├── clients.ts
@@ -134,12 +133,16 @@ freelancer-shield/
 │           ├── hooks
 │           │   ├── __tests__
 │           │   │   ├── useClients.test.tsx
-│           │   │   └── useProjects.test.tsx
+│           │   │   ├── useProjects.test.tsx
+│           │   │   ├── useRequests.test.tsx
+│           │   │   └── useScope.test.tsx
 │           │   ├── index.ts
 │           │   ├── useApi.ts
 │           │   ├── useAuth.ts
 │           │   ├── useClients.ts
-│           │   └── useProjects.ts
+│           │   ├── useProjects.ts
+│           │   ├── useRequests.ts
+│           │   └── useScope.ts
 │           ├── layouts
 │           │   ├── AppLayout.tsx
 │           │   ├── Header.tsx
@@ -164,6 +167,39 @@ freelancer-shield/
 │           │       ├── __tests__
 │           │       │   ├── ProjectDetailPage.test.tsx
 │           │       │   └── ProjectsPage.test.tsx
+│           │       ├── requests
+│           │       │   ├── __tests__
+│           │       │   │   ├── RequestCard.test.tsx
+│           │       │   │   ├── RequestClassificationBadge.test.tsx
+│           │       │   │   ├── RequestFormModal.test.tsx
+│           │       │   │   ├── RequestStats.test.tsx
+│           │       │   │   └── RequestsTab.test.tsx
+│           │       │   ├── AnalysisPanel.tsx
+│           │       │   ├── CreateProposalFromRequest.tsx
+│           │       │   ├── RequestCard.tsx
+│           │       │   ├── RequestClassificationBadge.tsx
+│           │       │   ├── RequestFormModal.tsx
+│           │       │   ├── RequestStats.tsx
+│           │       │   ├── RequestsPage.tsx
+│           │       │   ├── RequestsTab.tsx
+│           │       │   ├── ScopeCreepAlert.tsx
+│           │       │   └── index.ts
+│           │       ├── scope
+│           │       │   ├── __tests__
+│           │       │   │   ├── DeleteScopeItemModal.test.tsx
+│           │       │   │   ├── ScopeDragDrop.test.tsx
+│           │       │   │   ├── ScopeItemCard.test.tsx
+│           │       │   │   ├── ScopeItemForm.test.tsx
+│           │       │   │   ├── ScopeProgressCard.test.tsx
+│           │       │   │   └── ScopeTab.test.tsx
+│           │       │   ├── DeleteScopeItemModal.tsx
+│           │       │   ├── ScopeDragDrop.tsx
+│           │       │   ├── ScopeItemCard.tsx
+│           │       │   ├── ScopeItemForm.tsx
+│           │       │   ├── ScopeItemsPage.tsx
+│           │       │   ├── ScopeProgressCard.tsx
+│           │       │   ├── ScopeTab.tsx
+│           │       │   └── index.ts
 │           │       ├── ProjectDetailPage.tsx
 │           │       ├── ProjectFormModal.tsx
 │           │       ├── ProjectHealthGauge.tsx
@@ -175,10 +211,8 @@ freelancer-shield/
 │           │   ├── authStore.ts
 │           │   ├── index.ts
 │           │   └── uiStore.ts
-│           ├── test
-│           │   └── setup.ts
-│           ├── types
-│           │   └── index.ts
+│           ├── test/setup.ts
+│           ├── types/index.ts
 │           └── utils
 │               ├── cn.ts
 │               ├── format.ts
@@ -187,69 +221,23 @@ freelancer-shield/
 │   ├── Build_Prompts.md
 │   └── MVP_Specification.md
 ├── packages
-│   ├── api
-│   │   ├── package.json
-│   │   └── src
-│   │       ├── app.ts
-│   │       ├── index.ts
-│   │       ├── middleware
-│   │       ├── routes
-│   │       └── server.ts
-│   ├── auth
-│   │   ├── src
-│   │   └── tests
-│   ├── client-requests
-│   │   ├── src
-│   │   └── tests
-│   ├── clients
-│   │   ├── src
-│   │   └── tests
-│   ├── dashboard
-│   │   ├── src
-│   │   └── tests
-│   ├── database
-│   │   ├── package.json
-│   │   ├── prisma
-│   │   │   └── schema.prisma
-│   │   ├── src
-│   │   │   ├── client.ts
-│   │   │   ├── index.ts
-│   │   │   └── seed.ts
-│   │   └── tests
-│   ├── projects
-│   │   ├── src
-│   │   └── tests
-│   ├── proposals
-│   │   ├── src
-│   │   └── tests
-│   ├── scope-analyzer
-│   │   ├── src
-│   │   └── tests
-│   │       └── fixtures
-│   ├── scope-items
-│   │   ├── src
-│   │   └── tests
-│   ├── shared
-│   │   ├── package.json
-│   │   └── src
-│   │       ├── errors
-│   │       │   └── index.ts
-│   │       ├── index.ts
-│   │       ├── types
-│   │       │   └── index.ts
-│   │       ├── utils
-│   │       │   └── index.ts
-│   │       └── validation
-│   │           └── index.ts
-│   └── users
-│       ├── src
-│       └── tests
+│   ├── api (package.json, src/app.ts, index.ts, server.ts, middleware/, routes/)
+│   ├── auth (src/, tests/)
+│   ├── client-requests (src/, tests/)
+│   ├── clients (src/, tests/)
+│   ├── dashboard (src/, tests/)
+│   ├── database (package.json, prisma/schema.prisma, src/client.ts, index.ts, seed.ts, tests/)
+│   ├── projects (src/, tests/)
+│   ├── proposals (src/, tests/)
+│   ├── scope-analyzer (src/, tests/, fixtures/)
+│   ├── scope-items (src/, tests/)
+│   ├── shared (package.json, src/errors/index.ts, src/index.ts, src/types/index.ts, src/utils/index.ts, src/validation/index.ts)
+│   └── users (src/, tests/)
 ├── scripts
 ├── tests
 │   ├── __init__.py
 │   ├── conftest.py
-│   ├── integration
-│   │   └── __init__.py
+│   ├── integration/__init__.py
 │   └── unit
 │       ├── __init__.py
 │       ├── test_auth.py
