@@ -7,14 +7,18 @@ import {
   Trash2,
   Clock,
   CheckCircle,
-  AlertCircle,
-  ListChecks,
+  AlertTriangle,
+  DollarSign,
   Target,
+  FileText,
+  ChevronRight,
+  Plus,
 } from 'lucide-react';
 import { useQueryClient } from '@tanstack/react-query';
 import { Card, Button, Tabs, Dropdown, Skeleton } from '../../components/ui';
 import { useProject, useDeleteProject, projectKeys } from '../../hooks/useProjects';
 import { useScopeProgress } from '../../hooks/useScope';
+import { useRequestStats } from '../../hooks/useRequests';
 import { ProjectStatusBadge } from './ProjectStatusBadge';
 import { ProjectFormModal } from './ProjectFormModal';
 import { ScopeTab } from './scope';
@@ -43,18 +47,15 @@ export const ProjectDetailPage: React.FC = () => {
   const queryClient = useQueryClient();
   const [searchParams, setSearchParams] = useSearchParams();
   
-  // Get initial tab from URL query param or default to 'overview'
   const tabParam = searchParams.get('tab');
   const initialTab = isValidTab(tabParam) ? tabParam : 'overview';
   
   const [activeTab, setActiveTab] = useState<TabId>(initialTab);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
 
   const { data: project, isLoading, error } = useProject(id!);
   const deleteProject = useDeleteProject();
 
-  // Sync tab state with URL query param on mount and when param changes
   useEffect(() => {
     const tabParam = searchParams.get('tab');
     if (isValidTab(tabParam) && tabParam !== activeTab) {
@@ -66,7 +67,6 @@ export const ProjectDetailPage: React.FC = () => {
     const newTab = tabId as TabId;
     setActiveTab(newTab);
     
-    // Update URL query param
     if (newTab === 'overview') {
       searchParams.delete('tab');
     } else {
@@ -74,7 +74,6 @@ export const ProjectDetailPage: React.FC = () => {
     }
     setSearchParams(searchParams, { replace: true });
     
-    // Refetch project data when switching to overview to get updated counts
     if (tabId === 'overview' && id) {
       queryClient.invalidateQueries({ queryKey: projectKeys.detail(id) });
     }
@@ -84,15 +83,11 @@ export const ProjectDetailPage: React.FC = () => {
     if (!project || !window.confirm('Are you sure you want to delete this project?')) {
       return;
     }
-
-    setIsDeleting(true);
     try {
       await deleteProject.mutateAsync(project.id);
       navigate('/projects');
     } catch (error) {
       console.error('Failed to delete project:', error);
-    } finally {
-      setIsDeleting(false);
     }
   };
 
@@ -112,12 +107,12 @@ export const ProjectDetailPage: React.FC = () => {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-fade-in">
       {/* Header */}
       <div className="flex flex-col gap-4">
         <Link
           to="/projects"
-          className="inline-flex items-center text-sm text-gray-500 hover:text-gray-700"
+          className="inline-flex items-center text-sm text-slate-500 hover:text-slate-700 transition-colors"
         >
           <ArrowLeft className="w-4 h-4 mr-1" />
           Back to Projects
@@ -126,10 +121,10 @@ export const ProjectDetailPage: React.FC = () => {
         <div className="flex items-start justify-between">
           <div>
             <div className="flex items-center gap-3 mb-1">
-              <h1 className="text-2xl font-bold text-gray-900">{project.name}</h1>
+              <h1 className="text-2xl font-bold text-slate-900">{project.name}</h1>
               <ProjectStatusBadge status={project.status} />
             </div>
-            <p className="text-gray-500">
+            <p className="text-slate-500">
               {project.client_name}
               {project.description && ` • ${project.description}`}
             </p>
@@ -139,13 +134,13 @@ export const ProjectDetailPage: React.FC = () => {
             <Button
               variant="outline"
               onClick={() => setIsEditModalOpen(true)}
+              leftIcon={<Edit className="w-4 h-4" />}
             >
-              <Edit className="w-4 h-4 mr-2" />
               Edit
             </Button>
             <Dropdown
               trigger={
-                <Button variant="ghost" size="icon">
+                <Button variant="ghost">
                   <MoreHorizontal className="w-4 h-4" />
                 </Button>
               }
@@ -184,7 +179,7 @@ export const ProjectDetailPage: React.FC = () => {
   );
 };
 
-// Helper to format hours nicely
+// Helper to format hours
 const formatHours = (hours: number | null | undefined): string => {
   if (hours === null || hours === undefined) return '0';
   const num = Number(hours);
@@ -192,219 +187,231 @@ const formatHours = (hours: number | null | undefined): string => {
   return num % 1 === 0 ? num.toFixed(0) : num.toFixed(1);
 };
 
-// Overview Tab
+// Simplified Overview Tab
 interface OverviewTabProps {
   project: Project;
 }
 
 const OverviewTab: React.FC<OverviewTabProps> = ({ project }) => {
-  // Get scope progress for hours comparison
   const { data: scopeProgress } = useScopeProgress(project.id);
+  const { stats: requestStats } = useRequestStats(project.id);
+  const navigate = useNavigate();
 
   const scopeProgressPercent = project.scope_item_count > 0
     ? Math.round((project.completed_scope_count / project.scope_item_count) * 100)
     : 0;
 
-  // Hours comparison
-  const projectEstimatedHours = project.estimated_hours;
   const scopedHours = scopeProgress?.total_estimated_hours ?? 0;
   const completedHours = scopeProgress?.completed_estimated_hours ?? 0;
+  const hoursPercent = scopedHours > 0 ? Math.round((completedHours / scopedHours) * 100) : 0;
 
-  // Calculate coverage percentage (how much of project estimate is covered by scope items)
-  const coveragePercent = projectEstimatedHours && projectEstimatedHours > 0
-    ? Math.round((scopedHours / projectEstimatedHours) * 100)
-    : null;
+  // Use actual count from requests, not stale project field
+  const outOfScopeCount = requestStats.outOfScope;
+  const hasOutOfScope = outOfScopeCount > 0;
 
   return (
     <div className="space-y-6">
-      {/* Top Stats Row - 2 cards instead of 3 */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {/* Budget */}
-        <Card className="p-6">
-          <h3 className="text-sm font-medium text-gray-500 mb-2">Budget</h3>
-          <p className="text-3xl font-bold text-gray-900">
-            {project.budget ? formatCurrency(project.budget) : '—'}
-          </p>
-          {project.hourly_rate && (
-            <p className="text-sm text-gray-500 mt-1">
-              {formatCurrency(project.hourly_rate)}/hr
+      {/* Alert Banner - Only show if scope creep exists */}
+      {hasOutOfScope && (
+        <div className="flex items-center gap-4 p-4 bg-red-50 border border-red-200 rounded-2xl">
+          <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-red-100 flex-shrink-0">
+            <AlertTriangle className="w-5 h-5 text-red-600" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="font-semibold text-red-900">
+              {outOfScopeCount} out-of-scope request{outOfScopeCount !== 1 ? 's' : ''} detected
             </p>
+            <p className="text-sm text-red-600">
+              Review and create proposals to protect your revenue
+            </p>
+          </div>
+          <Button
+            size="sm"
+            onClick={() => navigate(`/projects/${project.id}?tab=requests`)}
+          >
+            Review Requests
+          </Button>
+        </div>
+      )}
+
+      {/* Two Main Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* Budget & Hours Card */}
+        <Card className="p-6">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-emerald-100">
+              <DollarSign className="w-5 h-5 text-emerald-600" />
+            </div>
+            <div>
+              <h3 className="font-semibold text-slate-900">Budget</h3>
+              <p className="text-2xl font-bold text-slate-900">
+                {project.budget ? formatCurrency(project.budget) : '—'}
+                {project.hourly_rate && (
+                  <span className="text-sm font-normal text-slate-400 ml-2">
+                    ({formatCurrency(project.hourly_rate)}/hr)
+                  </span>
+                )}
+              </p>
+            </div>
+          </div>
+
+          {/* Hours Progress */}
+          {scopedHours > 0 && (
+            <div className="pt-4 border-t border-slate-100">
+              <div className="flex justify-between text-sm mb-2">
+                <span className="text-slate-600">Hours</span>
+                <span className="font-medium text-slate-900">
+                  {formatHours(completedHours)}h / {formatHours(scopedHours)}h
+                </span>
+              </div>
+              <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-emerald-500 rounded-full transition-all"
+                  style={{ width: `${hoursPercent}%` }}
+                />
+              </div>
+              <p className="text-xs text-slate-400 mt-1 text-right">{hoursPercent}% complete</p>
+            </div>
           )}
         </Card>
 
-        {/* Quick Stats */}
+        {/* Progress Card */}
         <Card className="p-6">
-          <h3 className="text-sm font-medium text-gray-500 mb-4">Quick Stats</h3>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <p className="text-2xl font-bold text-gray-900">{project.scope_item_count}</p>
-              <p className="text-xs text-gray-500">Scope Items</p>
+          <div className="flex items-center gap-3 mb-4">
+            <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-indigo-100">
+              <Target className="w-5 h-5 text-indigo-600" />
             </div>
             <div>
-              <p className={cn(
-                'text-2xl font-bold',
-                project.out_of_scope_request_count > 0 ? 'text-red-600' : 'text-gray-900'
-              )}>
-                {project.out_of_scope_request_count}
+              <h3 className="font-semibold text-slate-900">Progress</h3>
+              <p className="text-2xl font-bold text-slate-900">
+                {scopeProgressPercent}%
+                <span className="text-sm font-normal text-slate-400 ml-2">
+                  ({project.completed_scope_count}/{project.scope_item_count} items)
+                </span>
               </p>
-              <p className="text-xs text-gray-500">Out of Scope</p>
+            </div>
+          </div>
+
+          {/* Scope Progress Bar */}
+          <div className="pt-4 border-t border-slate-100">
+            <div className="flex justify-between text-sm mb-2">
+              <span className="text-slate-600">Scope Items</span>
+              <span className="font-medium text-slate-900">
+                {project.completed_scope_count} of {project.scope_item_count}
+              </span>
+            </div>
+            <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
+              <div
+                className="h-full bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full transition-all"
+                style={{ width: `${scopeProgressPercent}%` }}
+              />
+            </div>
+            <div className="flex justify-between text-xs text-slate-400 mt-2">
+              <span className="flex items-center gap-1">
+                <CheckCircle className="w-3 h-3 text-emerald-500" />
+                {project.completed_scope_count} done
+              </span>
+              <span className="flex items-center gap-1">
+                <Clock className="w-3 h-3 text-slate-400" />
+                {project.scope_item_count - project.completed_scope_count} remaining
+              </span>
             </div>
           </div>
         </Card>
       </div>
 
-      {/* Hours Comparison Card */}
+      {/* Quick Actions */}
       <Card className="p-6">
-        <div className="flex items-center gap-2 mb-4">
-          <Clock className="w-5 h-5 text-gray-400" />
-          <h3 className="font-medium text-gray-900">Hours Overview</h3>
-        </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* Project Estimate */}
-          <div className="text-center p-4 bg-gray-50 rounded-lg">
-            <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">Project Estimate</p>
-            <p className="text-2xl font-bold text-gray-900">
-              {projectEstimatedHours ? `${formatHours(projectEstimatedHours)}h` : '—'}
-            </p>
-            <p className="text-xs text-gray-400 mt-1">Initial quote</p>
-          </div>
-
-          {/* Scoped Hours */}
-          <div className="text-center p-4 bg-blue-50 rounded-lg">
-            <p className="text-xs text-blue-600 uppercase tracking-wide mb-1">Scoped Hours</p>
-            <p className="text-2xl font-bold text-blue-700">
-              {formatHours(scopedHours)}h
-            </p>
-            <p className="text-xs text-blue-500 mt-1">
-              {coveragePercent !== null ? (
-                <span className={coveragePercent < 80 ? 'text-amber-600' : 'text-green-600'}>
-                  {coveragePercent}% of estimate covered
-                </span>
-              ) : (
-                'From scope items'
-              )}
-            </p>
-          </div>
-
-          {/* Completed Hours */}
-          <div className="text-center p-4 bg-green-50 rounded-lg">
-            <p className="text-xs text-green-600 uppercase tracking-wide mb-1">Completed Hours</p>
-            <p className="text-2xl font-bold text-green-700">
-              {formatHours(completedHours)}h
-            </p>
-            <p className="text-xs text-green-500 mt-1">
-              {scopedHours > 0 
-                ? `${Math.round((completedHours / scopedHours) * 100)}% of scoped`
-                : 'No hours scoped'
-              }
-            </p>
-          </div>
-        </div>
-
-        {/* Warning if scope doesn't cover estimate */}
-        {coveragePercent !== null && coveragePercent < 100 && scopedHours > 0 && (
-          <div className="mt-4 flex items-center gap-2 text-sm text-amber-600 bg-amber-50 p-3 rounded-lg">
-            <Target className="w-4 h-4 flex-shrink-0" />
-            <span>
-              Scope items account for {coveragePercent}% of the project estimate. 
-              Consider adding more scope items or adjusting the estimate.
-            </span>
-          </div>
-        )}
-      </Card>
-
-      {/* Scope Progress */}
-      <Card className="p-6">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="font-medium text-gray-900">Scope Progress</h3>
-          <span className="text-sm font-medium text-gray-600">
-            {scopeProgressPercent}% ({project.completed_scope_count}/{project.scope_item_count} items)
-          </span>
-        </div>
-        <div className="h-3 bg-gray-100 rounded-full overflow-hidden">
-          <div
-            className="h-full bg-indigo-500 rounded-full transition-all duration-500"
-            style={{ width: `${scopeProgressPercent}%` }}
-          />
-        </div>
-        <div className="flex items-center gap-6 mt-4 text-sm">
-          <div className="flex items-center gap-2">
-            <CheckCircle className="w-4 h-4 text-green-500" />
-            <span className="text-gray-600">{project.completed_scope_count} Completed</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <Clock className="w-4 h-4 text-blue-500" />
-            <span className="text-gray-600">{project.scope_item_count - project.completed_scope_count} Remaining</span>
-          </div>
-        </div>
-      </Card>
-
-      {/* Request Breakdown */}
-      <Card className="p-6">
-        <h3 className="font-medium text-gray-900 mb-4">Request Summary</h3>
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-          <StatBlock
-            label="Scope Items"
-            value={project.scope_item_count}
-            icon={<ListChecks className="w-5 h-5 text-gray-400" />}
-          />
-          <StatBlock
-            label="Completed"
-            value={project.completed_scope_count}
-            icon={<CheckCircle className="w-5 h-5 text-green-500" />}
-            color="text-green-600"
-          />
-          <StatBlock
-            label="Out of Scope"
-            value={project.out_of_scope_request_count}
-            icon={<AlertCircle className="w-5 h-5 text-amber-500" />}
-            color="text-amber-600"
-          />
-        </div>
-      </Card>
-
-      {/* Project Info */}
-      <Card className="p-6">
-        <h3 className="font-medium text-gray-900 mb-4">Project Details</h3>
-        <dl className="grid grid-cols-2 gap-4 text-sm">
-          <div>
-            <dt className="text-gray-500">Created</dt>
-            <dd className="font-medium text-gray-900">{formatRelative(project.created_at)}</dd>
-          </div>
-          <div>
-            <dt className="text-gray-500">Last Updated</dt>
-            <dd className="font-medium text-gray-900">{formatRelative(project.updated_at)}</dd>
-          </div>
-          {project.hourly_rate && (
-            <div>
-              <dt className="text-gray-500">Hourly Rate</dt>
-              <dd className="font-medium text-gray-900">{formatCurrency(project.hourly_rate)}</dd>
+        <h3 className="font-semibold text-slate-900 mb-4">Quick Actions</h3>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <button
+            onClick={() => navigate(`/projects/${project.id}?tab=scope`)}
+            className="flex items-center gap-3 px-4 py-3 rounded-xl bg-slate-50 hover:bg-slate-100 transition-colors text-left group"
+          >
+            <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-indigo-100 group-hover:bg-indigo-200 transition-colors">
+              <Plus className="w-5 h-5 text-indigo-600" />
             </div>
-          )}
-        </dl>
+            <div className="flex-1 min-w-0">
+              <p className="font-medium text-slate-900">Add Scope Item</p>
+              <p className="text-xs text-slate-400">Define project deliverables</p>
+            </div>
+            <ChevronRight className="w-4 h-4 text-slate-400" />
+          </button>
+
+          <button
+            onClick={() => navigate(`/projects/${project.id}?tab=requests`)}
+            className={cn(
+              "flex items-center gap-3 px-4 py-3 rounded-xl transition-colors text-left group",
+              hasOutOfScope 
+                ? "bg-red-50 hover:bg-red-100" 
+                : "bg-slate-50 hover:bg-slate-100"
+            )}
+          >
+            <div className={cn(
+              "flex items-center justify-center w-10 h-10 rounded-xl transition-colors",
+              hasOutOfScope 
+                ? "bg-red-100 group-hover:bg-red-200" 
+                : "bg-amber-100 group-hover:bg-amber-200"
+            )}>
+              <AlertTriangle className={cn(
+                "w-5 h-5",
+                hasOutOfScope ? "text-red-600" : "text-amber-600"
+              )} />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="font-medium text-slate-900">Review Requests</p>
+              {hasOutOfScope ? (
+                <p className="text-xs text-red-600 font-medium">
+                  {outOfScopeCount} need attention
+                </p>
+              ) : (
+                <p className="text-xs text-slate-400">Analyze client requests</p>
+              )}
+            </div>
+            <ChevronRight className="w-4 h-4 text-slate-400" />
+          </button>
+
+          <button
+            onClick={() => navigate(`/projects/${project.id}?tab=proposals`)}
+            className="flex items-center gap-3 px-4 py-3 rounded-xl bg-slate-50 hover:bg-slate-100 transition-colors text-left group"
+          >
+            <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-emerald-100 group-hover:bg-emerald-200 transition-colors">
+              <FileText className="w-5 h-5 text-emerald-600" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="font-medium text-slate-900">Create Proposal</p>
+              <p className="text-xs text-slate-400">Bill for extra work</p>
+            </div>
+            <ChevronRight className="w-4 h-4 text-slate-400" />
+          </button>
+        </div>
+      </Card>
+
+      {/* Project Details - Compact */}
+      <Card className="p-6">
+        <h3 className="font-semibold text-slate-900 mb-4">Project Details</h3>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+          <div>
+            <p className="text-slate-500 mb-1">Client</p>
+            <p className="font-medium text-slate-900">{project.client_name}</p>
+          </div>
+          <div>
+            <p className="text-slate-500 mb-1">Status</p>
+            <ProjectStatusBadge status={project.status} />
+          </div>
+          <div>
+            <p className="text-slate-500 mb-1">Created</p>
+            <p className="font-medium text-slate-900">{formatRelative(project.created_at)}</p>
+          </div>
+          <div>
+            <p className="text-slate-500 mb-1">Updated</p>
+            <p className="font-medium text-slate-900">{formatRelative(project.updated_at)}</p>
+          </div>
+        </div>
       </Card>
     </div>
   );
 };
-
-// Stat Block Component
-interface StatBlockProps {
-  label: string;
-  value: number;
-  icon: React.ReactNode;
-  color?: string;
-}
-
-const StatBlock: React.FC<StatBlockProps> = ({ label, value, icon, color }) => (
-  <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-    {icon}
-    <div>
-      <p className={cn('text-xl font-bold', color || 'text-gray-900')}>{value}</p>
-      <p className="text-xs text-gray-500">{label}</p>
-    </div>
-  </div>
-);
 
 // Loading Skeleton
 const ProjectDetailSkeleton: React.FC = () => (
@@ -424,8 +431,10 @@ const ProjectDetailSkeleton: React.FC = () => (
     </div>
     <Skeleton className="h-10 w-96" />
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <Skeleton className="h-32" />
-      <Skeleton className="h-32" />
+      <Skeleton className="h-40" />
+      <Skeleton className="h-40" />
     </div>
   </div>
 );
+
+export default ProjectDetailPage;

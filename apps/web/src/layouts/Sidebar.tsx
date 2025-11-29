@@ -5,8 +5,6 @@ import {
   Users,
   FolderKanban,
   Settings,
-  ChevronLeft,
-  ChevronRight,
   Shield,
   BarChart3,
 } from 'lucide-react';
@@ -40,10 +38,9 @@ const navItems: NavItemOrDivider[] = [
 
 interface SidebarProps {
   collapsed: boolean;
-  onToggle: () => void;
 }
 
-export const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggle }) => {
+export const Sidebar: React.FC<SidebarProps> = ({ collapsed }) => {
   const location = useLocation();
 
   const isActive = (path: string) => {
@@ -55,47 +52,39 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggle }) => {
 
   return (
     <aside
-      className={`fixed left-0 top-0 h-full bg-gray-900 transition-all duration-300 z-40 ${
-        collapsed ? 'w-16' : 'w-60'
+      className={`sidebar transition-all duration-300 ${
+        collapsed ? 'w-[72px]' : 'w-64'
       }`}
       role="navigation"
       aria-label="Main navigation"
     >
       {/* Logo */}
-      <div className="flex items-center justify-between h-16 px-4 border-b border-gray-800">
+      <div className={`flex items-center h-16 px-4 ${collapsed ? 'justify-center' : ''}`}>
         <div className="flex items-center gap-3">
-          <div className="flex items-center justify-center w-8 h-8 bg-indigo-500 rounded-lg">
+          <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 shadow-lg shadow-indigo-500/30">
             <Shield className="w-5 h-5 text-white" />
           </div>
           {!collapsed && (
-            <span className="font-semibold text-white whitespace-nowrap">
-              Project Shield
-            </span>
+            <div className="flex flex-col">
+              <span className="font-bold text-white text-lg leading-tight">
+                Project Shield
+              </span>
+              <span className="text-[10px] text-indigo-300 font-medium uppercase tracking-wider">
+                Freelancer
+              </span>
+            </div>
           )}
         </div>
-        
-        {/* Collapse button in header */}
-        <button
-          onClick={onToggle}
-          className="p-1.5 text-gray-400 hover:text-white hover:bg-gray-800 rounded-lg transition-colors"
-          aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-        >
-          {collapsed ? (
-            <ChevronRight className="w-4 h-4" />
-          ) : (
-            <ChevronLeft className="w-4 h-4" />
-          )}
-        </button>
       </div>
 
       {/* Navigation */}
-      <nav className="py-4">
-        <ul className="space-y-1 px-3" role="list">
+      <nav className="mt-6 px-3">
+        <ul className="space-y-1" role="list">
           {navItems.map((item, index) => {
             if (item.divider) {
               return (
-                <li key={`divider-${index}`} className="my-4">
-                  <hr className="border-gray-800" />
+                <li key={`divider-${index}`} className="my-4 mx-2">
+                  <hr className="border-white/10" />
                 </li>
               );
             }
@@ -103,27 +92,30 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggle }) => {
             const Icon = item.icon;
             const active = isActive(item.path);
 
-            // Coming soon items - not clickable
+            // Coming soon items
             if (item.comingSoon) {
               return (
                 <li key={item.path}>
                   <div
-                    className="group relative flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-500 cursor-not-allowed"
+                    className={`group relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-500 cursor-not-allowed ${
+                      collapsed ? 'justify-center' : ''
+                    }`}
                   >
                     <Icon className="w-5 h-5 flex-shrink-0" />
                     {!collapsed && (
-                      <div className="flex items-center gap-2">
-                        <span className="font-medium whitespace-nowrap">{item.label}</span>
-                        <span className="text-xs bg-gray-800 text-gray-400 px-1.5 py-0.5 rounded">
+                      <div className="flex items-center gap-2 flex-1">
+                        <span className="font-medium">{item.label}</span>
+                        <span className="ml-auto text-[10px] bg-white/10 text-slate-400 px-2 py-0.5 rounded-full font-medium">
                           Soon
                         </span>
                       </div>
                     )}
                     
-                    {/* Tooltip for collapsed state */}
+                    {/* Tooltip */}
                     {collapsed && (
-                      <div className="absolute left-full ml-2 px-2 py-1 bg-gray-800 text-white text-sm rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all whitespace-nowrap z-50">
-                        {item.label} (Coming Soon)
+                      <div className="absolute left-full ml-3 px-3 py-2 bg-slate-800 text-white text-sm rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all whitespace-nowrap z-50 shadow-xl">
+                        {item.label}
+                        <span className="text-slate-400 ml-1">(Coming Soon)</span>
                       </div>
                     )}
                   </div>
@@ -135,32 +127,34 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggle }) => {
               <li key={item.path}>
                 <NavLink
                   to={item.path}
-                  className={`group relative flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${
+                  className={`group relative flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-150 ${
+                    collapsed ? 'justify-center' : ''
+                  } ${
                     active
-                      ? 'bg-indigo-500/20 text-white'
-                      : 'text-gray-400 hover:bg-gray-800 hover:text-white'
+                      ? 'bg-white/15 text-white shadow-lg shadow-black/10'
+                      : 'text-slate-400 hover:bg-white/5 hover:text-white'
                   }`}
                   aria-current={active ? 'page' : undefined}
                 >
                   <Icon
-                    className={`w-5 h-5 flex-shrink-0 ${
-                      active ? 'text-indigo-400' : ''
+                    className={`w-5 h-5 flex-shrink-0 transition-colors ${
+                      active ? 'text-indigo-400' : 'group-hover:text-indigo-400'
                     }`}
                   />
                   {!collapsed && (
-                    <span className="font-medium whitespace-nowrap">{item.label}</span>
+                    <span className="font-medium">{item.label}</span>
                   )}
                   
-                  {/* Tooltip for collapsed state */}
+                  {/* Tooltip */}
                   {collapsed && (
-                    <div className="absolute left-full ml-2 px-2 py-1 bg-gray-800 text-white text-sm rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all whitespace-nowrap z-50">
+                    <div className="absolute left-full ml-3 px-3 py-2 bg-slate-800 text-white text-sm rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all whitespace-nowrap z-50 shadow-xl font-medium">
                       {item.label}
                     </div>
                   )}
 
                   {/* Active indicator */}
                   {active && (
-                    <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-indigo-400 rounded-r" />
+                    <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-indigo-400 rounded-r-full" />
                   )}
                 </NavLink>
               </li>
@@ -168,6 +162,15 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggle }) => {
           })}
         </ul>
       </nav>
+
+      {/* Bottom section - version info */}
+      {!collapsed && (
+        <div className="absolute bottom-6 left-0 right-0 px-6">
+          <div className="text-xs text-slate-500">
+            <p>Version 1.0.0</p>
+          </div>
+        </div>
+      )}
     </aside>
   );
 };

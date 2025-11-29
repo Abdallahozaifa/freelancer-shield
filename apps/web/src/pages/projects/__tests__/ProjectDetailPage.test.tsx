@@ -9,6 +9,8 @@ const mockUseProject = vi.fn();
 const mockUseClients = vi.fn();
 const mockDeleteProject = vi.fn();
 const mockUpdateProject = vi.fn();
+const mockUseScopeProgress = vi.fn();
+const mockUseRequestStats = vi.fn();
 
 vi.mock('../../../hooks/useProjects', () => ({
   useProjects: vi.fn(),
@@ -58,6 +60,23 @@ vi.mock('../../../hooks/useClients', () => ({
   },
 }));
 
+vi.mock('../../../hooks/useScope', () => ({
+  useScopeProgress: () => mockUseScopeProgress(),
+  useScopeItems: vi.fn(() => ({ data: { items: [] }, isLoading: false })),
+  useCreateScopeItem: () => ({ mutateAsync: vi.fn(), isPending: false }),
+  useUpdateScopeItem: () => ({ mutateAsync: vi.fn(), isPending: false }),
+  useDeleteScopeItem: () => ({ mutateAsync: vi.fn(), isPending: false }),
+}));
+
+vi.mock('../../../hooks/useRequests', () => ({
+  useRequestStats: () => mockUseRequestStats(),
+  useRequests: vi.fn(() => ({ data: { items: [] }, isLoading: false })),
+  useCreateRequest: () => ({ mutateAsync: vi.fn(), isPending: false }),
+  useUpdateRequest: () => ({ mutateAsync: vi.fn(), isPending: false }),
+  useDeleteRequest: () => ({ mutateAsync: vi.fn(), isPending: false }),
+  useAnalyzeRequest: () => ({ mutateAsync: vi.fn(), isPending: false }),
+}));
+
 import { ProjectDetailPage } from '../ProjectDetailPage';
 
 // Test wrapper with route params
@@ -101,6 +120,25 @@ const mockClients = [
   { id: 'client-1', name: 'Acme Corp', email: 'contact@acme.com', project_count: 1 },
 ];
 
+const mockScopeProgress = {
+  total_estimated_hours: 40,
+  completed_estimated_hours: 16,
+};
+
+const mockRequestStats = {
+  stats: {
+    total: 3,
+    inScope: 2,
+    outOfScope: 1,
+    clarificationNeeded: 0,
+    addressed: 0,
+    declined: 0,
+    proposalSent: 0,
+    active: 3,
+  },
+  isLoading: false,
+};
+
 describe('ProjectDetailPage', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -110,6 +148,13 @@ describe('ProjectDetailPage', () => {
       isLoading: false,
       error: null,
     });
+
+    mockUseScopeProgress.mockReturnValue({
+      data: mockScopeProgress,
+      isLoading: false,
+    });
+
+    mockUseRequestStats.mockReturnValue(mockRequestStats);
   });
 
   describe('Loading State', () => {
@@ -156,16 +201,20 @@ describe('ProjectDetailPage', () => {
       expect(screen.getByText('Website Redesign')).toBeInTheDocument();
     });
 
-    it('should render client name', () => {
+    it('should render client name in header', () => {
       renderWithRouter();
 
-      expect(screen.getByText(/Acme Corp/)).toBeInTheDocument();
+      // Client name appears in header subtitle and project details
+      const clientElements = screen.getAllByText(/Acme Corp/);
+      expect(clientElements.length).toBeGreaterThanOrEqual(1);
     });
 
     it('should render status badge', () => {
       renderWithRouter();
 
-      expect(screen.getByText('Active')).toBeInTheDocument();
+      // Use getAllByText since status appears in header and details section
+      const statusBadges = screen.getAllByText('Active');
+      expect(statusBadges.length).toBeGreaterThanOrEqual(1);
     });
 
     it('should render back link', () => {
@@ -199,48 +248,92 @@ describe('ProjectDetailPage', () => {
       });
     });
 
-    it('should show health score section', () => {
-      renderWithRouter();
-
-      expect(screen.getByText('Health Score')).toBeInTheDocument();
-    });
-
-    it('should show budget', () => {
+    it('should show budget section', () => {
       renderWithRouter();
 
       expect(screen.getByText('Budget')).toBeInTheDocument();
+      expect(screen.getByText('$5,000')).toBeInTheDocument();
+    });
+
+    it('should show progress section', () => {
+      renderWithRouter();
+
+      expect(screen.getByText('Progress')).toBeInTheDocument();
+      expect(screen.getByText('40%')).toBeInTheDocument(); // 2/5 = 40%
+    });
+
+    it('should show quick actions', () => {
+      renderWithRouter();
+
+      expect(screen.getByText('Quick Actions')).toBeInTheDocument();
+      expect(screen.getByText('Add Scope Item')).toBeInTheDocument();
+      // Review Requests may appear multiple times (alert + quick actions)
+      const reviewRequestsElements = screen.getAllByText('Review Requests');
+      expect(reviewRequestsElements.length).toBeGreaterThanOrEqual(1);
+      expect(screen.getByText('Create Proposal')).toBeInTheDocument();
+    });
+
+    it('should show project details section', () => {
+      renderWithRouter();
+
+      expect(screen.getByText('Project Details')).toBeInTheDocument();
+      expect(screen.getByText('Client')).toBeInTheDocument();
+      expect(screen.getByText('Status')).toBeInTheDocument();
+      expect(screen.getByText('Created')).toBeInTheDocument();
+      expect(screen.getByText('Updated')).toBeInTheDocument();
+    });
+
+    it('should show out-of-scope alert when requests exist', () => {
+      mockUseRequestStats.mockReturnValue({
+        stats: { ...mockRequestStats.stats, outOfScope: 3 },
+        isLoading: false,
+      });
+
+      renderWithRouter();
+
+      expect(screen.getByText(/out-of-scope request/)).toBeInTheDocument();
+      // Review Requests button appears in both alert and quick actions
+      const reviewButtons = screen.getAllByRole('button', { name: /Review Requests/i });
+      expect(reviewButtons.length).toBeGreaterThanOrEqual(1);
+    });
+
+    it('should not show out-of-scope alert when no requests', () => {
+      mockUseRequestStats.mockReturnValue({
+        stats: { ...mockRequestStats.stats, outOfScope: 0 },
+        isLoading: false,
+      });
+
+      renderWithRouter();
+
+      expect(screen.queryByText(/out-of-scope requests detected/)).not.toBeInTheDocument();
     });
   });
 });
 
-describe('Health Score Calculation', () => {
-  it('should calculate health score based on scope and out-of-scope ratio', () => {
+describe('Progress Calculations', () => {
+  it('should calculate scope progress correctly', () => {
     const project = mockProject;
     const scopeProgress = project.scope_item_count > 0
       ? Math.round((project.completed_scope_count / project.scope_item_count) * 100)
       : 0;
     
-    const outOfScopeRatio = project.scope_item_count > 0
-      ? project.out_of_scope_request_count / project.scope_item_count
-      : 0;
-    
-    const healthScore = Math.max(0, Math.min(100, Math.round(
-      (scopeProgress * 0.6) + ((1 - outOfScopeRatio) * 40)
-    )));
-
-    expect(healthScore).toBeGreaterThanOrEqual(0);
-    expect(healthScore).toBeLessThanOrEqual(100);
+    expect(scopeProgress).toBe(40); // 2/5 = 40%
   });
 
-  it('should return correct color for health score ranges', () => {
-    const getHealthColor = (score: number) => {
-      if (score >= 80) return 'green';
-      if (score >= 50) return 'yellow';
-      return 'red';
-    };
+  it('should return 0 progress when no scope items', () => {
+    const project = { ...mockProject, scope_item_count: 0, completed_scope_count: 0 };
+    const scopeProgress = project.scope_item_count > 0
+      ? Math.round((project.completed_scope_count / project.scope_item_count) * 100)
+      : 0;
+    
+    expect(scopeProgress).toBe(0);
+  });
 
-    expect(getHealthColor(85)).toBe('green');
-    expect(getHealthColor(65)).toBe('yellow');
-    expect(getHealthColor(30)).toBe('red');
+  it('should calculate hours progress correctly', () => {
+    const hoursPercent = mockScopeProgress.total_estimated_hours > 0
+      ? Math.round((mockScopeProgress.completed_estimated_hours / mockScopeProgress.total_estimated_hours) * 100)
+      : 0;
+    
+    expect(hoursPercent).toBe(40); // 16/40 = 40%
   });
 });

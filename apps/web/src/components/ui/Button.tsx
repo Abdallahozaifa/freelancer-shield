@@ -12,41 +12,49 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
 
 const variantClasses = {
   primary: [
-    'bg-blue-600 text-white',
-    'hover:bg-blue-700',
-    'focus-visible:ring-blue-500',
-    'disabled:bg-blue-300',
+    'bg-indigo-600 text-white',
+    'shadow-sm shadow-indigo-600/20',
+    'hover:bg-indigo-700 hover:shadow-md hover:shadow-indigo-600/25',
+    'active:scale-[0.98]',
+    'focus-visible:ring-indigo-500',
+    'disabled:bg-indigo-300 disabled:shadow-none',
   ],
   secondary: [
-    'bg-gray-100 text-gray-900',
-    'hover:bg-gray-200',
-    'focus-visible:ring-gray-500',
-    'disabled:bg-gray-50 disabled:text-gray-400',
+    'bg-slate-100 text-slate-700',
+    'hover:bg-slate-200',
+    'active:scale-[0.98]',
+    'focus-visible:ring-slate-500',
+    'disabled:bg-slate-50 disabled:text-slate-400',
   ],
   outline: [
-    'border border-gray-300 bg-transparent text-gray-700',
-    'hover:bg-gray-50',
-    'focus-visible:ring-gray-500',
-    'disabled:text-gray-300 disabled:border-gray-200',
+    'border border-slate-300 bg-white text-slate-700',
+    'shadow-sm',
+    'hover:bg-slate-50 hover:border-slate-400',
+    'active:scale-[0.98]',
+    'focus-visible:ring-slate-500',
+    'disabled:text-slate-300 disabled:border-slate-200 disabled:bg-white',
   ],
   ghost: [
-    'bg-transparent text-gray-700',
-    'hover:bg-gray-100',
-    'focus-visible:ring-gray-500',
-    'disabled:text-gray-300',
+    'bg-transparent text-slate-700',
+    'hover:bg-slate-100',
+    'active:scale-[0.98]',
+    'focus-visible:ring-slate-500',
+    'disabled:text-slate-300',
   ],
   danger: [
     'bg-red-600 text-white',
-    'hover:bg-red-700',
+    'shadow-sm shadow-red-600/20',
+    'hover:bg-red-700 hover:shadow-md hover:shadow-red-600/25',
+    'active:scale-[0.98]',
     'focus-visible:ring-red-500',
-    'disabled:bg-red-300',
+    'disabled:bg-red-300 disabled:shadow-none',
   ],
 };
 
 const sizeClasses = {
-  sm: 'px-3 py-1.5 text-sm gap-1.5',
-  md: 'px-4 py-2 text-sm gap-2',
-  lg: 'px-6 py-3 text-base gap-2',
+  sm: 'px-3 py-1.5 text-sm gap-1.5 rounded-lg',
+  md: 'px-4 py-2 text-sm gap-2 rounded-xl',
+  lg: 'px-6 py-2.5 text-base gap-2 rounded-xl',
 };
 
 const iconSizeClasses = {
@@ -77,10 +85,10 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         ref={ref}
         disabled={isDisabled}
         className={cn(
-          'inline-flex items-center justify-center font-medium rounded-md',
-          'transition-all duration-200',
+          'inline-flex items-center justify-center font-medium',
+          'transition-all duration-150',
           'focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
-          'disabled:cursor-not-allowed',
+          'disabled:cursor-not-allowed disabled:transform-none',
           variantClasses[variant],
           sizeClasses[size],
           className

@@ -7,8 +7,6 @@ import {
   FolderKanban,
   Settings,
   Shield,
-  FileText,
-  MessageSquare,
   BarChart3,
   LogOut,
 } from 'lucide-react';
@@ -18,6 +16,7 @@ interface NavItem {
   icon: React.ElementType;
   label: string;
   path: string;
+  comingSoon?: boolean;
   divider?: never;
 }
 
@@ -26,6 +25,7 @@ interface NavDivider {
   icon?: never;
   label?: never;
   path?: never;
+  comingSoon?: never;
 }
 
 type NavItemOrDivider = NavItem | NavDivider;
@@ -34,9 +34,7 @@ const navItems: NavItemOrDivider[] = [
   { icon: LayoutDashboard, label: 'Dashboard', path: '/' },
   { icon: Users, label: 'Clients', path: '/clients' },
   { icon: FolderKanban, label: 'Projects', path: '/projects' },
-  { icon: FileText, label: 'Scope Items', path: '/scope-items' },
-  { icon: MessageSquare, label: 'Requests', path: '/requests' },
-  { icon: BarChart3, label: 'Proposals', path: '/proposals' },
+  { icon: BarChart3, label: 'Reports', path: '/reports', comingSoon: true },
   { divider: true },
   { icon: Settings, label: 'Settings', path: '/settings' },
 ];
@@ -121,11 +119,16 @@ export const MobileNav: React.FC<MobileNavProps> = ({ isOpen, onClose }) => {
     onClose();
   };
 
+  const getInitials = (name: string | undefined) => {
+    if (!name) return 'U';
+    return name.split(' ').map((n) => n[0]).join('').toUpperCase().slice(0, 2);
+  };
+
   return (
     <>
       {/* Backdrop */}
       <div
-        className={`fixed inset-0 bg-gray-900/50 z-40 transition-opacity duration-300 md:hidden ${
+        className={`fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-40 transition-opacity duration-300 md:hidden ${
           isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
         }`}
         onClick={onClose}
@@ -135,25 +138,31 @@ export const MobileNav: React.FC<MobileNavProps> = ({ isOpen, onClose }) => {
       {/* Drawer */}
       <div
         ref={navRef}
-        className={`fixed left-0 top-0 h-full w-72 bg-white z-50 transform transition-transform duration-300 ease-in-out md:hidden ${
+        className={`fixed left-0 top-0 h-full w-72 z-50 transform transition-transform duration-300 ease-out md:hidden ${
           isOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
+        style={{
+          background: 'linear-gradient(180deg, #1e1b4b 0%, #0f172a 100%)',
+        }}
         role="dialog"
         aria-modal="true"
         aria-label="Mobile navigation"
       >
         {/* Header */}
-        <div className="flex items-center justify-between h-16 px-4 border-b border-gray-200">
+        <div className="flex items-center justify-between h-16 px-4 border-b border-white/10">
           <div className="flex items-center gap-3">
-            <div className="flex items-center justify-center w-8 h-8 bg-indigo-600 rounded-lg">
+            <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 shadow-lg shadow-indigo-500/30">
               <Shield className="w-5 h-5 text-white" />
             </div>
-            <span className="font-semibold text-gray-900">Project Shield</span>
+            <div className="flex flex-col">
+              <span className="font-bold text-white text-lg leading-tight">Project Shield</span>
+              <span className="text-[10px] text-indigo-300 font-medium uppercase tracking-wider">Freelancer</span>
+            </div>
           </div>
           <button
             ref={closeButtonRef}
             onClick={onClose}
-            className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+            className="p-2 text-slate-400 hover:text-white hover:bg-white/10 rounded-xl transition-colors"
             aria-label="Close navigation menu"
           >
             <X className="w-5 h-5" />
@@ -161,18 +170,16 @@ export const MobileNav: React.FC<MobileNavProps> = ({ isOpen, onClose }) => {
         </div>
 
         {/* User Info */}
-        <div className="px-4 py-4 border-b border-gray-200">
+        <div className="px-4 py-4 border-b border-white/10">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-indigo-100 rounded-full flex items-center justify-center">
-              <span className="text-indigo-600 font-semibold">
-                {user?.full_name?.[0] || user?.email?.[0] || 'U'}
-              </span>
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-semibold text-sm shadow-sm">
+              {getInitials(user?.full_name)}
             </div>
             <div className="flex-1 min-w-0">
-              <p className="font-medium text-gray-900 truncate">
+              <p className="font-medium text-white truncate">
                 {user?.full_name || 'User'}
               </p>
-              <p className="text-sm text-gray-500 truncate">
+              <p className="text-sm text-slate-400 truncate">
                 {user?.email || ''}
               </p>
             </div>
@@ -185,8 +192,8 @@ export const MobileNav: React.FC<MobileNavProps> = ({ isOpen, onClose }) => {
             {navItems.map((item, index) => {
               if (item.divider) {
                 return (
-                  <li key={`divider-${index}`} className="my-4">
-                    <hr className="border-gray-200" />
+                  <li key={`divider-${index}`} className="my-4 mx-2">
+                    <hr className="border-white/10" />
                   </li>
                 );
               }
@@ -194,23 +201,40 @@ export const MobileNav: React.FC<MobileNavProps> = ({ isOpen, onClose }) => {
               const Icon = item.icon;
               const active = isActive(item.path);
 
+              if (item.comingSoon) {
+                return (
+                  <li key={item.path}>
+                    <div className="flex items-center gap-3 px-3 py-3 rounded-xl text-slate-500 cursor-not-allowed">
+                      <Icon className="w-5 h-5" />
+                      <span className="font-medium">{item.label}</span>
+                      <span className="ml-auto text-[10px] bg-white/10 text-slate-400 px-2 py-0.5 rounded-full font-medium">
+                        Soon
+                      </span>
+                    </div>
+                  </li>
+                );
+              }
+
               return (
                 <li key={item.path}>
                   <NavLink
                     to={item.path}
-                    className={`flex items-center gap-3 px-3 py-3 rounded-lg transition-colors ${
+                    className={`relative flex items-center gap-3 px-3 py-3 rounded-xl transition-all duration-150 ${
                       active
-                        ? 'bg-indigo-50 text-indigo-600'
-                        : 'text-gray-700 hover:bg-gray-100'
+                        ? 'bg-white/15 text-white shadow-lg shadow-black/10'
+                        : 'text-slate-400 hover:bg-white/5 hover:text-white'
                     }`}
                     aria-current={active ? 'page' : undefined}
                   >
                     <Icon
                       className={`w-5 h-5 ${
-                        active ? 'text-indigo-600' : 'text-gray-500'
+                        active ? 'text-indigo-400' : ''
                       }`}
                     />
                     <span className="font-medium">{item.label}</span>
+                    {active && (
+                      <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-indigo-400 rounded-r-full" />
+                    )}
                   </NavLink>
                 </li>
               );
@@ -219,12 +243,12 @@ export const MobileNav: React.FC<MobileNavProps> = ({ isOpen, onClose }) => {
         </nav>
 
         {/* Logout Button */}
-        <div className="px-3 py-4 border-t border-gray-200">
+        <div className="px-3 py-4 border-t border-white/10">
           <button
             onClick={handleLogout}
-            className="flex items-center gap-3 w-full px-3 py-3 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+            className="flex items-center gap-3 w-full px-3 py-3 text-slate-400 hover:bg-white/5 hover:text-white rounded-xl transition-colors"
           >
-            <LogOut className="w-5 h-5 text-gray-500" />
+            <LogOut className="w-5 h-5" />
             <span className="font-medium">Sign out</span>
           </button>
         </div>

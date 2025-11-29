@@ -8,16 +8,16 @@ import {
   Settings,
   LogOut,
   HelpCircle,
+  Search,
 } from 'lucide-react';
 import { useAuthStore } from '../stores/authStore';
-import { Avatar } from '../components/ui';
 
 interface HeaderProps {
   onMenuClick: () => void;
   sidebarCollapsed: boolean;
 }
 
-export const Header: React.FC<HeaderProps> = ({ onMenuClick, sidebarCollapsed }) => {
+export const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
   const navigate = useNavigate();
   const { user, logout } = useAuthStore();
   const [userMenuOpen, setUserMenuOpen] = useState(false);
@@ -58,133 +58,144 @@ export const Header: React.FC<HeaderProps> = ({ onMenuClick, sidebarCollapsed })
     navigate('/login');
   };
 
+  const getInitials = (name: string | undefined) => {
+    if (!name) return 'U';
+    return name.split(' ').map((n) => n[0]).join('').toUpperCase().slice(0, 2);
+  };
+
   const userMenuItems = [
     { icon: User, label: 'Profile', onClick: () => navigate('/profile') },
     { icon: Settings, label: 'Settings', onClick: () => navigate('/settings') },
-    { icon: HelpCircle, label: 'Help & Support', onClick: () => navigate('/help') },
+    { icon: HelpCircle, label: 'Help & Support', onClick: () => {} },
     { divider: true },
-    { icon: LogOut, label: 'Sign out', onClick: handleLogout },
+    { icon: LogOut, label: 'Sign out', onClick: handleLogout, danger: true },
   ];
 
-  // Mock notifications - replace with real data
+  // Mock notifications
   const notifications = [
     {
       id: '1',
-      title: 'New scope request',
-      message: 'Client requested additional features for Project Alpha',
+      title: 'Scope creep detected',
+      message: '15 out-of-scope requests on Project 454545',
       time: '5 min ago',
       unread: true,
+      type: 'warning',
     },
     {
       id: '2',
       title: 'Proposal accepted',
-      message: 'Your proposal for Website Redesign was accepted',
+      message: 'Website Redesign proposal was approved',
       time: '1 hour ago',
       unread: true,
+      type: 'success',
     },
     {
       id: '3',
-      title: 'Project milestone',
-      message: 'Mobile App project reached 50% completion',
+      title: 'New client added',
+      message: 'Acme Inc. was added to your clients',
       time: '3 hours ago',
       unread: false,
+      type: 'info',
     },
   ];
 
   const unreadCount = notifications.filter((n) => n.unread).length;
 
   return (
-    <header className="sticky top-0 z-30 h-16 bg-white border-b border-gray-200">
+    <header className="sticky top-0 z-30 h-16 bg-white/80 backdrop-blur-md border-b border-slate-200/60">
       <div className="flex items-center justify-between h-full px-4 md:px-6">
         {/* Left side */}
         <div className="flex items-center gap-4">
-          {/* Mobile menu button */}
+          {/* Menu toggle */}
           <button
             onClick={onMenuClick}
-            className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors md:hidden"
-            aria-label="Toggle navigation menu"
+            className="p-2 text-slate-500 hover:text-slate-700 hover:bg-slate-100 rounded-xl transition-all duration-150"
+            aria-label="Toggle sidebar"
           >
             <Menu className="w-5 h-5" />
           </button>
 
-          {/* Desktop collapse toggle */}
-          <button
-            onClick={onMenuClick}
-            className="hidden md:flex p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
-            aria-label={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-          >
-            <Menu className="w-5 h-5" />
-          </button>
+          {/* Search - Desktop only */}
+          <div className="hidden lg:flex items-center">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+              <input
+                type="text"
+                placeholder="Search projects, clients..."
+                className="w-72 pl-10 pr-4 py-2 bg-slate-100 border-0 rounded-xl text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:bg-white transition-all"
+              />
+              <kbd className="absolute right-3 top-1/2 -translate-y-1/2 hidden xl:inline-flex items-center px-2 py-0.5 text-[10px] font-medium text-slate-400 bg-white rounded border border-slate-200">
+                ⌘K
+              </kbd>
+            </div>
+          </div>
         </div>
 
         {/* Right side */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1">
           {/* Notifications */}
           <div className="relative" ref={notificationsRef}>
             <button
               onClick={() => setNotificationsOpen(!notificationsOpen)}
-              className="relative p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+              className="relative p-2.5 text-slate-500 hover:text-slate-700 hover:bg-slate-100 rounded-xl transition-all duration-150"
               aria-label={`Notifications${unreadCount > 0 ? `, ${unreadCount} unread` : ''}`}
-              aria-expanded={notificationsOpen}
-              aria-haspopup="true"
             >
               <Bell className="w-5 h-5" />
               {unreadCount > 0 && (
-                <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full" />
+                <span className="absolute top-1.5 right-1.5 flex items-center justify-center min-w-[18px] h-[18px] text-[10px] font-bold text-white bg-red-500 rounded-full px-1">
+                  {unreadCount}
+                </span>
               )}
             </button>
 
             {/* Notifications Dropdown */}
             {notificationsOpen && (
-              <div
-                className="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50"
-                role="menu"
-              >
-                <div className="px-4 py-2 border-b border-gray-100">
-                  <h3 className="font-semibold text-gray-900">Notifications</h3>
+              <div className="absolute right-0 mt-2 w-96 bg-white rounded-2xl shadow-xl border border-slate-200/60 overflow-hidden z-50 animate-fade-in">
+                <div className="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
+                  <h3 className="font-semibold text-slate-900">Notifications</h3>
+                  {unreadCount > 0 && (
+                    <button className="text-xs font-medium text-indigo-600 hover:text-indigo-700">
+                      Mark all as read
+                    </button>
+                  )}
                 </div>
-                <div className="max-h-96 overflow-y-auto">
+                <div className="max-h-[400px] overflow-y-auto">
                   {notifications.length === 0 ? (
-                    <div className="px-4 py-8 text-center text-gray-500">
-                      No notifications
+                    <div className="px-5 py-12 text-center">
+                      <Bell className="w-10 h-10 text-slate-300 mx-auto mb-3" />
+                      <p className="text-slate-500">No notifications yet</p>
                     </div>
                   ) : (
                     notifications.map((notification) => (
                       <button
                         key={notification.id}
-                        className={`w-full px-4 py-3 text-left hover:bg-gray-50 transition-colors ${
+                        className={`w-full px-5 py-4 text-left hover:bg-slate-50 transition-colors flex gap-3 ${
                           notification.unread ? 'bg-indigo-50/50' : ''
                         }`}
-                        onClick={() => {
-                          // Handle notification click
-                          setNotificationsOpen(false);
-                        }}
+                        onClick={() => setNotificationsOpen(false)}
                       >
-                        <div className="flex items-start gap-3">
-                          {notification.unread && (
-                            <span className="mt-2 w-2 h-2 bg-indigo-600 rounded-full flex-shrink-0" />
-                          )}
-                          <div className={notification.unread ? '' : 'ml-5'}>
-                            <p className="font-medium text-gray-900 text-sm">
-                              {notification.title}
-                            </p>
-                            <p className="text-gray-600 text-sm mt-0.5">
-                              {notification.message}
-                            </p>
-                            <p className="text-gray-400 text-xs mt-1">
-                              {notification.time}
-                            </p>
-                          </div>
+                        <div className={`mt-0.5 w-2 h-2 rounded-full flex-shrink-0 ${
+                          notification.unread ? 'bg-indigo-500' : 'bg-transparent'
+                        }`} />
+                        <div className="flex-1 min-w-0">
+                          <p className="font-medium text-slate-900 text-sm">
+                            {notification.title}
+                          </p>
+                          <p className="text-slate-600 text-sm mt-0.5 truncate">
+                            {notification.message}
+                          </p>
+                          <p className="text-slate-400 text-xs mt-1">
+                            {notification.time}
+                          </p>
                         </div>
                       </button>
                     ))
                   )}
                 </div>
-                <div className="px-4 py-2 border-t border-gray-100">
+                <div className="px-5 py-3 border-t border-slate-100 bg-slate-50">
                   <button
-                    className="text-sm text-indigo-600 hover:text-indigo-700 font-medium"
+                    className="text-sm font-medium text-indigo-600 hover:text-indigo-700 w-full text-center"
                     onClick={() => {
-                      navigate('/notifications');
                       setNotificationsOpen(false);
                     }}
                   >
@@ -195,63 +206,70 @@ export const Header: React.FC<HeaderProps> = ({ onMenuClick, sidebarCollapsed })
             )}
           </div>
 
+          {/* Divider */}
+          <div className="w-px h-8 bg-slate-200 mx-2" />
+
           {/* User Menu */}
           <div className="relative" ref={userMenuRef}>
             <button
               onClick={() => setUserMenuOpen(!userMenuOpen)}
-              className="flex items-center gap-2 p-1.5 hover:bg-gray-100 rounded-lg transition-colors"
+              className="flex items-center gap-3 p-1.5 hover:bg-slate-100 rounded-xl transition-all duration-150"
               aria-label="User menu"
-              aria-expanded={userMenuOpen}
-              aria-haspopup="true"
             >
-              <Avatar
-                name={user?.full_name || user?.email || 'User'}
-                size="sm"
-              />
-              <span className="hidden md:block text-sm font-medium text-gray-700 max-w-[120px] truncate">
-                {user?.full_name || user?.email || 'User'}
-              </span>
-              <ChevronDown className="w-4 h-4 text-gray-500 hidden md:block" />
+              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-semibold text-sm shadow-sm">
+                {getInitials(user?.full_name)}
+              </div>
+              <div className="hidden md:block text-left">
+                <p className="text-sm font-medium text-slate-700 leading-tight">
+                  {user?.full_name || 'User'}
+                </p>
+                <p className="text-xs text-slate-400">
+                  {user?.business_name || 'Freelancer'}
+                </p>
+              </div>
+              <ChevronDown className="w-4 h-4 text-slate-400 hidden md:block" />
             </button>
 
             {/* User Dropdown */}
             {userMenuOpen && (
-              <div
-                className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50"
-                role="menu"
-              >
+              <div className="absolute right-0 mt-2 w-64 bg-white rounded-2xl shadow-xl border border-slate-200/60 overflow-hidden z-50 animate-fade-in">
                 {/* User Info */}
-                <div className="px-4 py-3 border-b border-gray-100">
-                  <p className="font-medium text-gray-900 truncate">
+                <div className="px-5 py-4 border-b border-slate-100 bg-gradient-to-br from-slate-50 to-white">
+                  <p className="font-semibold text-slate-900">
                     {user?.full_name || 'User'}
                   </p>
-                  <p className="text-sm text-gray-500 truncate">
+                  <p className="text-sm text-slate-500 truncate">
                     {user?.email || ''}
                   </p>
                 </div>
 
                 {/* Menu Items */}
-                {userMenuItems.map((item, index) => {
-                  if ('divider' in item && item.divider) {
-                    return <hr key={`divider-${index}`} className="my-2 border-gray-100" />;
-                  }
+                <div className="py-2">
+                  {userMenuItems.map((item, index) => {
+                    if ('divider' in item && item.divider) {
+                      return <hr key={`divider-${index}`} className="my-2 border-slate-100" />;
+                    }
 
-                  const Icon = item.icon;
-                  return (
-                    <button
-                      key={item.label}
-                      onClick={() => {
-                        item.onClick?.();
-                        setUserMenuOpen(false);
-                      }}
-                      className="flex items-center gap-3 w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
-                      role="menuitem"
-                    >
-                      {Icon && <Icon className="w-4 h-4 text-gray-500" />}
-                      <span>{item.label}</span>
-                    </button>
-                  );
-                })}
+                    const Icon = item.icon;
+                    return (
+                      <button
+                        key={item.label}
+                        onClick={() => {
+                          item.onClick?.();
+                          setUserMenuOpen(false);
+                        }}
+                        className={`flex items-center gap-3 w-full px-5 py-2.5 text-sm transition-colors ${
+                          item.danger
+                            ? 'text-red-600 hover:bg-red-50'
+                            : 'text-slate-700 hover:bg-slate-50'
+                        }`}
+                      >
+                        {Icon && <Icon className="w-4 h-4" />}
+                        <span>{item.label}</span>
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
             )}
           </div>

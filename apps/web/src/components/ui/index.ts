@@ -12,8 +12,8 @@ export { Select } from './Select';
 export type { SelectProps, SelectOption } from './Select';
 
 // Layout Components
-export { Card, CardHeader, CardContent, CardFooter, CardTitle, CardDescription } from './Card';
-export type { CardProps, CardHeaderProps, CardContentProps, CardFooterProps, CardTitleProps, CardDescriptionProps } from './Card';
+export { Card, CardHeader, CardContent, CardFooter, CardTitle, CardDescription, StatCard } from './Card';
+export type { CardProps, CardHeaderProps, CardContentProps, CardFooterProps, CardTitleProps, CardDescriptionProps, StatCardProps } from './Card';
 
 // Data Display
 export { Badge } from './Badge';

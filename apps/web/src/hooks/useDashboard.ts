@@ -1,4 +1,4 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { dashboardApi, type RecentActivity, type DashboardResponse } from '../api/dashboard';
 import type { DashboardSummary, Alert, ProjectHealth } from '../types';
 
@@ -15,16 +15,40 @@ export const dashboardKeys = {
   projectHealth: (projectId: string) => [...dashboardKeys.all, 'project-health', projectId] as const,
 };
 
-// Use the FULL dashboard endpoint - single API call for all data
-export function useFullDashboard(options?: { refetchInterval?: number }) {
-  const { refetchInterval = 5 * 60 * 1000 } = options || {};
+// Combined hook for dashboard - uses SINGLE API call for efficiency
+export function useDashboard(options?: { 
+  refetchInterval?: number;
+}) {
+  const { 
+    refetchInterval = 5 * 60 * 1000, // 5 minutes default
+  } = options || {};
+
+  const queryClient = useQueryClient();
   
-  return useQuery({
+  const query = useQuery({
     queryKey: dashboardKeys.full(),
     queryFn: dashboardApi.getFull,
-    staleTime: 2 * 60 * 1000, // 2 minutes
+    staleTime: 2 * 60 * 1000,
     refetchInterval,
   });
+
+  const refresh = () => {
+    queryClient.invalidateQueries({ queryKey: dashboardKeys.all });
+  };
+
+  // Return data with consistent naming
+  return {
+    data: query.data,
+    summary: query.data?.summary,
+    alerts: query.data?.alerts ?? [],
+    project_health: query.data?.project_health ?? [],
+    activity: query.data?.recent_activity ?? [],
+    isLoading: query.isLoading,
+    isError: query.isError,
+    isFetching: query.isFetching,
+    error: query.error,
+    refresh,
+  };
 }
 
 // Individual hooks (for cases where you only need specific data)
@@ -61,36 +85,5 @@ export function useProjectHealth(projectId: string) {
   });
 }
 
-// Combined hook for dashboard - uses SINGLE API call for efficiency
-export function useDashboard(options?: { 
-  refetchInterval?: number;
-}) {
-  const { 
-    refetchInterval = 5 * 60 * 1000, // 5 minutes default
-  } = options || {};
-
-  const queryClient = useQueryClient();
-  
-  const query = useQuery({
-    queryKey: dashboardKeys.full(),
-    queryFn: dashboardApi.getFull,
-    staleTime: 2 * 60 * 1000,
-    refetchInterval,
-  });
-
-  const refresh = () => {
-    queryClient.invalidateQueries({ queryKey: dashboardKeys.all });
-  };
-
-  return {
-    summary: query.data?.summary,
-    alerts: query.data?.alerts ?? [],
-    projectHealth: query.data?.project_health ?? [],
-    activity: query.data?.recent_activity ?? [],
-    isLoading: query.isLoading,
-    isError: query.isError,
-    isFetching: query.isFetching,
-    error: query.error,
-    refresh,
-  };
-}
+// Alias for backward compatibility
+export const useFullDashboard = useDashboard;

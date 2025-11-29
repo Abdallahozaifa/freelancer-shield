@@ -19,9 +19,9 @@ const filterTabs: { id: FilterTab; label: string }[] = [
 ];
 
 const statusColors: Record<ProjectStatus, { bg: string; text: string }> = {
-  active: { bg: 'bg-green-100', text: 'text-green-700' },
-  completed: { bg: 'bg-gray-100', text: 'text-gray-700' },
-  on_hold: { bg: 'bg-yellow-100', text: 'text-yellow-700' },
+  active: { bg: 'bg-emerald-100', text: 'text-emerald-700' },
+  completed: { bg: 'bg-slate-100', text: 'text-slate-700' },
+  on_hold: { bg: 'bg-amber-100', text: 'text-amber-700' },
   cancelled: { bg: 'bg-red-100', text: 'text-red-700' },
 };
 
@@ -47,38 +47,33 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onClick, onEdit, onD
     ? Math.round((project.completed_scope_count / project.scope_item_count) * 100)
     : 0;
 
-  // Calculate scope creep percentage (out of scope vs total scope items)
-  const creepPercent = project.scope_item_count > 0
-    ? Math.round((project.out_of_scope_request_count / project.scope_item_count) * 100)
-    : 0;
-
   return (
     <div 
-      className="bg-white rounded-xl border border-gray-200 p-5 hover:shadow-md hover:border-gray-300 transition-all cursor-pointer group"
+      className="bg-white rounded-2xl border border-slate-200/60 p-5 hover:shadow-lg hover:border-slate-300/60 hover:-translate-y-0.5 transition-all cursor-pointer group"
       onClick={onClick}
     >
       {/* Header */}
-      <div className="flex items-start justify-between mb-3">
+      <div className="flex items-start justify-between mb-4">
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1">
-            <h3 className="font-semibold text-gray-900 truncate">{project.name}</h3>
+            <h3 className="font-semibold text-slate-900 truncate">{project.name}</h3>
             <span className={cn(
-              'px-2 py-0.5 text-xs font-medium rounded-full',
+              'px-2 py-0.5 text-xs font-medium rounded-full whitespace-nowrap',
               statusStyle.bg,
               statusStyle.text
             )}>
               {statusLabels[project.status]}
             </span>
           </div>
-          <p className="text-sm text-gray-500">Client: {project.client_name || '—'}</p>
+          <p className="text-sm text-slate-500 truncate">{project.client_name || '—'}</p>
         </div>
         
         {/* More menu */}
         <div onClick={(e) => e.stopPropagation()}>
           <Dropdown
             trigger={
-              <button className="p-1 text-gray-400 hover:text-gray-600 opacity-0 group-hover:opacity-100 transition-opacity">
-                <MoreHorizontal className="w-5 h-5" />
+              <button className="p-1.5 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg opacity-0 group-hover:opacity-100 transition-all">
+                <MoreHorizontal className="w-4 h-4" />
               </button>
             }
             items={[
@@ -98,46 +93,39 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onClick, onEdit, onD
         </div>
       </div>
 
-      {/* Scope Progress */}
-      <div className="mb-3">
-        <div className="flex justify-between text-sm mb-1">
-          <span className="text-gray-500">Scope: {scopePercent}%</span>
-          <span className="text-gray-400">{creepPercent}%</span>
+      {/* Progress Bar - Simple single color */}
+      <div className="mb-4">
+        <div className="flex justify-between text-sm mb-2">
+          <span className="text-slate-600">Progress</span>
+          <span className="font-medium text-slate-900">{scopePercent}%</span>
         </div>
-        <div className="h-2 bg-gray-100 rounded-full overflow-hidden flex">
+        <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
           <div 
-            className="h-full bg-green-500 transition-all"
+            className="h-full bg-indigo-500 rounded-full transition-all"
             style={{ width: `${scopePercent}%` }}
           />
-          {creepPercent > 0 && (
-            <div 
-              className="h-full bg-red-400 transition-all"
-              style={{ width: `${Math.min(creepPercent, 100 - scopePercent)}%` }}
-            />
-          )}
         </div>
       </div>
 
-      {/* Stats */}
-      <div className="text-sm text-gray-600 mb-3">
-        <span>{project.scope_item_count} scope items</span>
-        {project.out_of_scope_request_count > 0 && (
-          <span className="text-red-500 ml-1">
-            • {project.out_of_scope_request_count} out-of-scope
-          </span>
+      {/* Stats - Just scope items, no unreliable out-of-scope count */}
+      <div className="text-sm text-slate-600 mb-4">
+        {project.scope_item_count > 0 ? (
+          <span>{project.completed_scope_count} of {project.scope_item_count} items complete</span>
+        ) : (
+          <span className="text-slate-400">No scope items yet</span>
         )}
       </div>
 
       {/* Footer */}
-      <div className="flex items-center justify-between pt-3 border-t border-gray-100">
-        <div className="text-sm text-gray-500">
+      <div className="flex items-center justify-between pt-4 border-t border-slate-100">
+        <div className="text-sm text-slate-500">
           {project.budget ? (
-            <span>Budget: {formatCurrency(project.budget)}</span>
+            <span className="font-medium text-slate-700">{formatCurrency(project.budget)}</span>
           ) : (
-            <span>Last activity {formatRelative(project.updated_at)}</span>
+            <span>{formatRelative(project.updated_at)}</span>
           )}
         </div>
-        <ChevronRight className="w-4 h-4 text-gray-400 group-hover:text-gray-600 transition-colors" />
+        <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-indigo-600 group-hover:translate-x-0.5 transition-all" />
       </div>
     </div>
   );
@@ -145,30 +133,30 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onClick, onEdit, onD
 
 // Skeleton Card
 const ProjectCardSkeleton: React.FC = () => (
-  <div className="bg-white rounded-xl border border-gray-200 p-5">
-    <div className="flex items-start justify-between mb-3">
+  <div className="bg-white rounded-2xl border border-slate-200/60 p-5 animate-pulse">
+    <div className="flex items-start justify-between mb-4">
       <div className="flex-1">
         <div className="flex items-center gap-2 mb-2">
-          <Skeleton className="h-5 w-40" />
-          <Skeleton className="h-5 w-16 rounded-full" />
+          <div className="h-5 w-40 bg-slate-200 rounded" />
+          <div className="h-5 w-16 bg-slate-100 rounded-full" />
         </div>
-        <Skeleton className="h-4 w-24" />
+        <div className="h-4 w-24 bg-slate-100 rounded" />
       </div>
     </div>
-    <div className="mb-3">
-      <Skeleton className="h-4 w-full mb-1" />
-      <Skeleton className="h-2 w-full rounded-full" />
+    <div className="mb-4">
+      <div className="h-4 w-full bg-slate-100 rounded mb-2" />
+      <div className="h-2 w-full bg-slate-100 rounded-full" />
     </div>
-    <Skeleton className="h-4 w-32 mb-3" />
-    <div className="pt-3 border-t border-gray-100">
-      <Skeleton className="h-4 w-28" />
+    <div className="h-4 w-32 bg-slate-100 rounded mb-4" />
+    <div className="pt-4 border-t border-slate-100">
+      <div className="h-4 w-28 bg-slate-100 rounded" />
     </div>
   </div>
 );
 
 export const ProjectsPage: React.FC = () => {
   const navigate = useNavigate();
-  const [activeFilter, setActiveFilter] = useState<FilterTab>('all');
+  const [activeFilter, setActiveFilter] = useState<FilterTab>('active');
   const [selectedClient, setSelectedClient] = useState<string>('all');
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [editingProject, setEditingProject] = useState<Project | null>(null);
@@ -207,12 +195,11 @@ export const ProjectsPage: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-fade-in">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-gray-900">Projects</h1>
-        <Button onClick={() => setIsCreateModalOpen(true)}>
-          <Plus className="w-4 h-4 mr-2" />
+        <h1 className="text-2xl font-bold text-slate-900">Projects</h1>
+        <Button onClick={() => setIsCreateModalOpen(true)} leftIcon={<Plus className="w-4 h-4" />}>
           New Project
         </Button>
       </div>
@@ -220,16 +207,16 @@ export const ProjectsPage: React.FC = () => {
       {/* Filters */}
       <div className="flex flex-col sm:flex-row sm:items-center gap-4">
         {/* Status Tabs */}
-        <div className="flex items-center gap-1 p-1 bg-gray-100 rounded-lg">
+        <div className="flex items-center gap-1 p-1 bg-slate-100 rounded-xl">
           {filterTabs.map((tab) => (
             <button
               key={tab.id}
               onClick={() => setActiveFilter(tab.id)}
               className={cn(
-                'px-4 py-2 text-sm font-medium rounded-md transition-colors',
+                'px-4 py-2 text-sm font-medium rounded-lg transition-all',
                 activeFilter === tab.id
-                  ? 'bg-white text-gray-900 shadow-sm'
-                  : 'text-gray-600 hover:text-gray-900'
+                  ? 'bg-white text-slate-900 shadow-sm'
+                  : 'text-slate-600 hover:text-slate-900'
               )}
             >
               {tab.label}
@@ -242,7 +229,7 @@ export const ProjectsPage: React.FC = () => {
           <select
             value={selectedClient}
             onChange={(e) => setSelectedClient(e.target.value)}
-            className="px-4 py-2 text-sm border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="px-4 py-2 text-sm border border-slate-200 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
           >
             <option value="all">Client: All Clients</option>
             {clients.map((client) => (
