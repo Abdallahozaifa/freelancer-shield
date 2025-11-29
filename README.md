@@ -97,7 +97,8 @@ freelancer-shield/
 │           ├── index.css
 │           ├── main.tsx
 │           ├── api
-│           │   ├── __tests__/api.test.ts
+│           │   ├── __tests__
+│           │   │   └── api.test.ts
 │           │   ├── auth.ts
 │           │   ├── client.ts
 │           │   ├── clients.ts
@@ -141,6 +142,7 @@ freelancer-shield/
 │           │   ├── useAuth.ts
 │           │   ├── useClients.ts
 │           │   ├── useProjects.ts
+│           │   ├── useProposals.ts
 │           │   ├── useRequests.ts
 │           │   └── useScope.ts
 │           ├── layouts
@@ -167,6 +169,21 @@ freelancer-shield/
 │           │       ├── __tests__
 │           │       │   ├── ProjectDetailPage.test.tsx
 │           │       │   └── ProjectsPage.test.tsx
+│           │       ├── proposals
+│           │       │   ├── __tests__
+│           │       │   │   ├── ProposalCard.test.tsx
+│           │       │   │   ├── ProposalFormModal.test.tsx
+│           │       │   │   ├── ProposalStats.test.tsx
+│           │       │   │   └── ProposalsTab.test.tsx
+│           │       │   ├── ProposalCard.tsx
+│           │       │   ├── ProposalFormModal.tsx
+│           │       │   ├── ProposalResponseModal.tsx
+│           │       │   ├── ProposalStats.tsx
+│           │       │   ├── ProposalStatusBadge.tsx
+│           │       │   ├── ProposalsPage.tsx
+│           │       │   ├── ProposalsTab.tsx
+│           │       │   ├── SendProposalModal.tsx
+│           │       │   └── index.ts
 │           │       ├── requests
 │           │       │   ├── __tests__
 │           │       │   │   ├── RequestCard.test.tsx
@@ -211,8 +228,10 @@ freelancer-shield/
 │           │   ├── authStore.ts
 │           │   ├── index.ts
 │           │   └── uiStore.ts
-│           ├── test/setup.ts
-│           ├── types/index.ts
+│           ├── test
+│           │   └── setup.ts
+│           ├── types
+│           │   └── index.ts
 │           └── utils
 │               ├── cn.ts
 │               ├── format.ts
@@ -221,17 +240,37 @@ freelancer-shield/
 │   ├── Build_Prompts.md
 │   └── MVP_Specification.md
 ├── packages
-│   ├── api (package.json, src/app.ts, index.ts, server.ts, middleware/, routes/)
+│   ├── api
+│   │   ├── package.json
+│   │   └── src
+│   │       ├── app.ts
+│   │       ├── index.ts
+│   │       ├── middleware
+│   │       ├── routes
+│   │       └── server.ts
 │   ├── auth (src/, tests/)
 │   ├── client-requests (src/, tests/)
 │   ├── clients (src/, tests/)
 │   ├── dashboard (src/, tests/)
-│   ├── database (package.json, prisma/schema.prisma, src/client.ts, index.ts, seed.ts, tests/)
+│   ├── database
+│   │   ├── package.json
+│   │   ├── prisma/schema.prisma
+│   │   ├── src/client.ts
+│   │   ├── src/index.ts
+│   │   ├── src/seed.ts
+│   │   └── tests/
 │   ├── projects (src/, tests/)
 │   ├── proposals (src/, tests/)
 │   ├── scope-analyzer (src/, tests/, fixtures/)
 │   ├── scope-items (src/, tests/)
-│   ├── shared (package.json, src/errors/index.ts, src/index.ts, src/types/index.ts, src/utils/index.ts, src/validation/index.ts)
+│   ├── shared
+│   │   ├── package.json
+│   │   └── src
+│   │       ├── errors/index.ts
+│   │       ├── index.ts
+│   │       ├── types/index.ts
+│   │       ├── utils/index.ts
+│   │       └── validation/index.ts
 │   └── users (src/, tests/)
 ├── scripts
 ├── tests
