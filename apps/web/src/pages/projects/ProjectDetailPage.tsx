@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate, Link, useSearchParams } from 'react-router-dom';
 import {
   ArrowLeft,
   Edit,
@@ -9,7 +9,6 @@ import {
   CheckCircle,
   AlertCircle,
   ListChecks,
-  MessageSquare,
   FileSignature,
   Target,
 } from 'lucide-react';
@@ -21,6 +20,7 @@ import { ProjectStatusBadge } from './ProjectStatusBadge';
 import { ProjectHealthGauge } from './ProjectHealthGauge';
 import { ProjectFormModal } from './ProjectFormModal';
 import { ScopeTab } from './scope';
+import { RequestsTab } from './requests';
 import { cn } from '../../utils/cn';
 import { formatCurrency, formatRelative } from '../../utils/format';
 import type { Project } from '../../types';
@@ -34,19 +34,47 @@ const tabs = [
   { id: 'proposals', label: 'Proposals' },
 ];
 
+const isValidTab = (tab: string | null): tab is TabId => {
+  return tab !== null && ['overview', 'scope', 'requests', 'proposals'].includes(tab);
+};
+
 export const ProjectDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const [activeTab, setActiveTab] = useState<TabId>('overview');
+  const [searchParams, setSearchParams] = useSearchParams();
+  
+  // Get initial tab from URL query param or default to 'overview'
+  const tabParam = searchParams.get('tab');
+  const initialTab = isValidTab(tabParam) ? tabParam : 'overview';
+  
+  const [activeTab, setActiveTab] = useState<TabId>(initialTab);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
   const { data: project, isLoading, error } = useProject(id!);
   const deleteProject = useDeleteProject();
 
+  // Sync tab state with URL query param on mount and when param changes
+  useEffect(() => {
+    const tabParam = searchParams.get('tab');
+    if (isValidTab(tabParam) && tabParam !== activeTab) {
+      setActiveTab(tabParam);
+    }
+  }, [searchParams]);
+
   const handleTabChange = (tabId: string) => {
-    setActiveTab(tabId as TabId);
+    const newTab = tabId as TabId;
+    setActiveTab(newTab);
+    
+    // Update URL query param
+    if (newTab === 'overview') {
+      searchParams.delete('tab');
+    } else {
+      searchParams.set('tab', newTab);
+    }
+    setSearchParams(searchParams, { replace: true });
+    
     // Refetch project data when switching to overview to get updated counts
     if (tabId === 'overview' && id) {
       queryClient.invalidateQueries({ queryKey: projectKeys.detail(id) });
@@ -145,7 +173,7 @@ export const ProjectDetailPage: React.FC = () => {
       {/* Tab Content */}
       {activeTab === 'overview' && <OverviewTab project={project} />}
       {activeTab === 'scope' && <ScopeTab projectId={project.id} />}
-      {activeTab === 'requests' && <RequestsTabPlaceholder projectId={project.id} />}
+      {activeTab === 'requests' && <RequestsTab projectId={project.id} />}
       {activeTab === 'proposals' && <ProposalsTabPlaceholder projectId={project.id} />}
 
       <ProjectFormModal
@@ -388,22 +416,7 @@ const StatBlock: React.FC<StatBlockProps> = ({ label, value, icon, color }) => (
   </div>
 );
 
-// Placeholder Tabs (to be implemented in future modules)
-const RequestsTabPlaceholder: React.FC<{ projectId: string }> = () => (
-  <Card className="p-8 text-center">
-    <div className="flex items-center justify-center w-12 h-12 mb-4 mx-auto rounded-full bg-gray-100 text-gray-300">
-      <MessageSquare className="w-6 h-6" />
-    </div>
-    <h3 className="text-lg font-medium text-gray-900 mb-2">Client Requests</h3>
-    <p className="text-gray-500 mb-4">
-      Track and analyze client requests here. This will be implemented in Module F07.
-    </p>
-    <Button variant="outline" disabled>
-      Coming Soon
-    </Button>
-  </Card>
-);
-
+// Placeholder Tab (to be implemented in future module)
 const ProposalsTabPlaceholder: React.FC<{ projectId: string }> = () => (
   <Card className="p-8 text-center">
     <div className="flex items-center justify-center w-12 h-12 mb-4 mx-auto rounded-full bg-gray-100 text-gray-300">

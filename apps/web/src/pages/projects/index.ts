@@ -7,3 +7,6 @@ export { ProjectHealthGauge } from './ProjectHealthGauge';
 
 // Scope components
 export * from './scope';
+
+// Request components
+export * from './requests';

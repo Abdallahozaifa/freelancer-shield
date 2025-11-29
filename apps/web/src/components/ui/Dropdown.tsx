@@ -5,7 +5,7 @@ import { cn } from '../../utils/cn';
 export interface DropdownItem {
   label: string;
   icon?: React.ReactNode;
-  onClick: () => void;
+  onClick: () => void | Promise<void>;
   danger?: boolean;
   disabled?: boolean;
 }
@@ -66,10 +66,12 @@ export const Dropdown: React.FC<DropdownProps> = ({
     }
   };
 
-  const handleItemClick = (item: DropdownItem) => {
+  const handleItemClick = async (item: DropdownItem) => {
     if (!item.disabled) {
-      item.onClick();
+      // Close the menu first for better UX
       handleClose();
+      // Then execute the action (await if it's async)
+      await item.onClick();
     }
   };
 

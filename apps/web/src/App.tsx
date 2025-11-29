@@ -5,6 +5,8 @@ import { useAuthStore } from './stores/authStore';
 import { Loading, ToastContainer } from './components/ui';
 import { LoginPage, RegisterPage, ProfilePage, ClientsPage, ClientDetailPage } from './pages';
 import { ProjectsPage, ProjectDetailPage, ProjectNewPage } from './pages/projects';
+import { RequestsPage } from './pages/projects/requests';
+import { ScopeItemsPage } from './pages/projects/scope';
 import { AppLayout } from './layouts';
 
 // Create query client
@@ -24,24 +26,6 @@ function DashboardPage() {
     <div>
       <h1 className="text-2xl font-bold text-gray-900 mb-2">Dashboard</h1>
       <p className="text-gray-500">Module F09 - Coming Soon</p>
-    </div>
-  );
-}
-
-function ScopeItemsPage() {
-  return (
-    <div>
-      <h1 className="text-2xl font-bold text-gray-900 mb-2">Scope Items</h1>
-      <p className="text-gray-500">Module F06 - Coming Soon</p>
-    </div>
-  );
-}
-
-function RequestsPage() {
-  return (
-    <div>
-      <h1 className="text-2xl font-bold text-gray-900 mb-2">Client Requests</h1>
-      <p className="text-gray-500">Module F07 - Coming Soon</p>
     </div>
   );
 }

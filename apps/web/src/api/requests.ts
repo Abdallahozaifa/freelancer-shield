@@ -7,14 +7,23 @@ import type {
   ScopeAnalysisResult 
 } from '../types';
 
+// API response type from backend
+interface ApiPaginatedResponse<T> {
+  items: T[];
+  total: number;
+  skip: number;
+  limit: number;
+}
+
 export const requestsApi = {
   getByProject: async (projectId: string, skip = 0, limit = 100): Promise<PaginatedResponse<ClientRequest>> => {
-    const response = await apiClient.get<ClientRequest[]>(`/projects/${projectId}/requests`, {
+    const response = await apiClient.get<ApiPaginatedResponse<ClientRequest>>(`/projects/${projectId}/requests`, {
       params: { skip, limit },
     });
+    // Backend already returns { items, total, skip, limit }
     return {
-      items: response.data,
-      total: response.data.length,
+      items: response.data.items,
+      total: response.data.total,
     };
   },
 
