@@ -21,15 +21,6 @@ const queryClient = new QueryClient({
   },
 });
 
-function SettingsPage() {
-  return (
-    <div>
-      <h1 className="text-2xl font-bold text-gray-900 mb-2">Settings</h1>
-      <p className="text-gray-500">Coming Soon</p>
-    </div>
-  );
-}
-
 // Protected route wrapper
 function ProtectedRoute({ children }: { children?: React.ReactNode }) {
   const { isAuthenticated, isLoading } = useAuthStore();
@@ -105,7 +96,7 @@ export default function App() {
               <Route path="/scope-items" element={<ScopeItemsPage />} />
               <Route path="/requests" element={<RequestsPage />} />
               <Route path="/proposals" element={<ProposalsPage />} />
-              <Route path="/settings" element={<SettingsPage />} />
+              <Route path="/settings" element={<Navigate to="/profile" replace />} />
             </Route>
           </Route>
 

@@ -55,34 +55,47 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggle }) => {
 
   return (
     <aside
-      className={`fixed left-0 top-0 h-full bg-white border-r border-gray-200 transition-all duration-300 z-40 ${
+      className={`fixed left-0 top-0 h-full bg-gray-900 transition-all duration-300 z-40 ${
         collapsed ? 'w-16' : 'w-60'
       }`}
       role="navigation"
       aria-label="Main navigation"
     >
       {/* Logo */}
-      <div className="flex items-center h-16 px-4 border-b border-gray-200">
+      <div className="flex items-center justify-between h-16 px-4 border-b border-gray-800">
         <div className="flex items-center gap-3">
-          <div className="flex items-center justify-center w-8 h-8 bg-indigo-600 rounded-lg">
+          <div className="flex items-center justify-center w-8 h-8 bg-indigo-500 rounded-lg">
             <Shield className="w-5 h-5 text-white" />
           </div>
           {!collapsed && (
-            <span className="font-semibold text-gray-900 whitespace-nowrap">
+            <span className="font-semibold text-white whitespace-nowrap">
               Project Shield
             </span>
           )}
         </div>
+        
+        {/* Collapse button in header */}
+        <button
+          onClick={onToggle}
+          className="p-1.5 text-gray-400 hover:text-white hover:bg-gray-800 rounded-lg transition-colors"
+          aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+        >
+          {collapsed ? (
+            <ChevronRight className="w-4 h-4" />
+          ) : (
+            <ChevronLeft className="w-4 h-4" />
+          )}
+        </button>
       </div>
 
       {/* Navigation */}
-      <nav className="flex flex-col h-[calc(100%-4rem)] py-4">
-        <ul className="flex-1 space-y-1 px-3" role="list">
+      <nav className="py-4">
+        <ul className="space-y-1 px-3" role="list">
           {navItems.map((item, index) => {
             if (item.divider) {
               return (
                 <li key={`divider-${index}`} className="my-4">
-                  <hr className="border-gray-200" />
+                  <hr className="border-gray-800" />
                 </li>
               );
             }
@@ -95,13 +108,13 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggle }) => {
               return (
                 <li key={item.path}>
                   <div
-                    className="group relative flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-400 cursor-not-allowed"
+                    className="group relative flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-500 cursor-not-allowed"
                   >
-                    <Icon className="w-5 h-5 flex-shrink-0 text-gray-300" />
+                    <Icon className="w-5 h-5 flex-shrink-0" />
                     {!collapsed && (
                       <div className="flex items-center gap-2">
                         <span className="font-medium whitespace-nowrap">{item.label}</span>
-                        <span className="text-xs bg-gray-100 text-gray-500 px-1.5 py-0.5 rounded">
+                        <span className="text-xs bg-gray-800 text-gray-400 px-1.5 py-0.5 rounded">
                           Soon
                         </span>
                       </div>
@@ -109,7 +122,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggle }) => {
                     
                     {/* Tooltip for collapsed state */}
                     {collapsed && (
-                      <div className="absolute left-full ml-2 px-2 py-1 bg-gray-900 text-white text-sm rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all whitespace-nowrap z-50">
+                      <div className="absolute left-full ml-2 px-2 py-1 bg-gray-800 text-white text-sm rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all whitespace-nowrap z-50">
                         {item.label} (Coming Soon)
                       </div>
                     )}
@@ -124,14 +137,14 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggle }) => {
                   to={item.path}
                   className={`group relative flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${
                     active
-                      ? 'bg-indigo-50 text-indigo-600'
-                      : 'text-gray-700 hover:bg-gray-100'
+                      ? 'bg-indigo-500/20 text-white'
+                      : 'text-gray-400 hover:bg-gray-800 hover:text-white'
                   }`}
                   aria-current={active ? 'page' : undefined}
                 >
                   <Icon
                     className={`w-5 h-5 flex-shrink-0 ${
-                      active ? 'text-indigo-600' : 'text-gray-500 group-hover:text-gray-700'
+                      active ? 'text-indigo-400' : ''
                     }`}
                   />
                   {!collapsed && (
@@ -140,38 +153,20 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggle }) => {
                   
                   {/* Tooltip for collapsed state */}
                   {collapsed && (
-                    <div className="absolute left-full ml-2 px-2 py-1 bg-gray-900 text-white text-sm rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all whitespace-nowrap z-50">
+                    <div className="absolute left-full ml-2 px-2 py-1 bg-gray-800 text-white text-sm rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all whitespace-nowrap z-50">
                       {item.label}
                     </div>
                   )}
 
                   {/* Active indicator */}
                   {active && (
-                    <div className="absolute right-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-indigo-600 rounded-l" />
+                    <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-indigo-400 rounded-r" />
                   )}
                 </NavLink>
               </li>
             );
           })}
         </ul>
-
-        {/* Collapse Toggle */}
-        <div className="px-3 mt-auto">
-          <button
-            onClick={onToggle}
-            className="flex items-center justify-center w-full gap-2 px-3 py-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
-            aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-          >
-            {collapsed ? (
-              <ChevronRight className="w-5 h-5" />
-            ) : (
-              <>
-                <ChevronLeft className="w-5 h-5" />
-                <span className="text-sm font-medium">Collapse</span>
-              </>
-            )}
-          </button>
-        </div>
       </nav>
     </aside>
   );

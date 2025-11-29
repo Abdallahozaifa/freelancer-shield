@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import {
   ArrowLeft,
   Building2,
@@ -9,8 +9,11 @@ import {
   Pencil,
   Trash2,
   FolderOpen,
+  ChevronRight,
+  Plus,
 } from 'lucide-react';
 import { useClient } from '../../hooks/useClients';
+import { useProjects } from '../../hooks/useProjects';
 import {
   Button,
   Card,
@@ -19,18 +22,38 @@ import {
   CardTitle,
   Loading,
   EmptyState,
+  Badge,
+  Skeleton,
 } from '../../components/ui';
 import { formatDate } from '../../utils/format';
 import { ClientFormModal } from './ClientFormModal';
 import { DeleteClientModal } from './DeleteClientModal';
+import type { ProjectStatus } from '../../types';
+
+const statusVariants: Record<ProjectStatus, 'success' | 'default' | 'warning' | 'danger'> = {
+  active: 'success',
+  completed: 'default',
+  on_hold: 'warning',
+  cancelled: 'danger',
+};
+
+const statusLabels: Record<ProjectStatus, string> = {
+  active: 'Active',
+  completed: 'Completed',
+  on_hold: 'On Hold',
+  cancelled: 'Cancelled',
+};
 
 export const ClientDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { data: client, isLoading, error } = useClient(id!);
+  const { data: projectsData, isLoading: projectsLoading } = useProjects(id);
 
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+
+  const projects = projectsData?.items ?? [];
 
   if (isLoading) {
     return (
@@ -164,41 +187,90 @@ export const ClientDetailPage: React.FC = () => {
           </CardContent>
         </Card>
 
-        {/* Projects Section */}
-        <Card className="lg:col-span-2">
-          <CardHeader className="flex flex-row items-center justify-between">
+        {/* Projects Section - Clean Table */}
+        <Card className="lg:col-span-2" padding="none">
+          <div className="p-4 border-b border-gray-200 flex items-center justify-between">
             <CardTitle>Projects</CardTitle>
-            <Link to={`/projects?client=${client.id}`}>
-              <Button variant="secondary" size="sm">
-                View All
-              </Button>
-            </Link>
-          </CardHeader>
-          <CardContent>
-            {client.project_count === 0 ? (
+            <Button
+              variant="primary"
+              size="sm"
+              leftIcon={<Plus className="h-4 w-4" />}
+              onClick={() => navigate(`/projects/new?client=${client.id}`)}
+            >
+              New Project
+            </Button>
+          </div>
+
+          {projectsLoading ? (
+            <div className="p-4 space-y-2">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="flex items-center justify-between py-2">
+                  <Skeleton className="h-5 w-40" />
+                  <Skeleton className="h-5 w-16" />
+                </div>
+              ))}
+            </div>
+          ) : projects.length === 0 ? (
+            <div className="p-6">
               <EmptyState
                 icon={<FolderOpen className="h-6 w-6" />}
                 title="No projects yet"
-                description="Create a project for this client to start tracking scope and requests."
+                description="Create a project to start tracking scope."
                 action={{
                   label: 'Create Project',
                   onClick: () => navigate(`/projects/new?client=${client.id}`),
                 }}
               />
-            ) : (
-              <div className="text-center py-8 text-gray-500">
-                <p>
-                  This client has {client.project_count} project(s).{' '}
-                  <Link
-                    to={`/projects?client=${client.id}`}
-                    className="text-blue-600 hover:text-blue-800"
-                  >
-                    View projects →
-                  </Link>
-                </p>
+            </div>
+          ) : (
+            <div className="divide-y divide-gray-100">
+              {/* Table Header */}
+              <div className="grid grid-cols-12 gap-4 px-4 py-2 bg-gray-50 text-xs font-medium text-gray-500 uppercase tracking-wide">
+                <div className="col-span-5">Project</div>
+                <div className="col-span-2 text-center">Status</div>
+                <div className="col-span-2 text-center">Scope Creep</div>
+                <div className="col-span-2 text-center">Progress</div>
+                <div className="col-span-1"></div>
               </div>
-            )}
-          </CardContent>
+              
+              {/* Project Rows */}
+              {projects.map((project) => (
+                <div
+                  key={project.id}
+                  className="grid grid-cols-12 gap-4 px-4 py-3 hover:bg-gray-50 cursor-pointer transition-colors items-center"
+                  onClick={() => navigate(`/projects/${project.id}`)}
+                >
+                  <div className="col-span-5">
+                    <p className="text-sm font-medium text-gray-900 truncate">
+                      {project.name}
+                    </p>
+                  </div>
+                  <div className="col-span-2 text-center">
+                    <Badge variant={statusVariants[project.status]} size="sm">
+                      {statusLabels[project.status]}
+                    </Badge>
+                  </div>
+                  <div className="col-span-2 text-center">
+                    {project.out_of_scope_request_count > 0 ? (
+                      <span className="text-sm font-medium text-red-600">
+                        {project.out_of_scope_request_count}
+                      </span>
+                    ) : (
+                      <span className="text-sm text-gray-400">0</span>
+                    )}
+                  </div>
+                  <div className="col-span-2 text-center">
+                    <span className="text-sm text-gray-600">
+                      {project.completed_scope_count}/{project.scope_item_count}
+                    </span>
+                  </div>
+                  <div className="col-span-1 text-right">
+                    <ChevronRight className="w-4 h-4 text-gray-400 inline-block" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </Card>
       </div>
 
