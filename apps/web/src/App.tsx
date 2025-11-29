@@ -7,6 +7,7 @@ import { LoginPage, RegisterPage, ProfilePage, ClientsPage, ClientDetailPage } f
 import { ProjectsPage, ProjectDetailPage, ProjectNewPage } from './pages/projects';
 import { RequestsPage } from './pages/projects/requests';
 import { ScopeItemsPage } from './pages/projects/scope';
+import { ProposalsPage } from './pages/projects/proposals';
 import { AppLayout } from './layouts';
 
 // Create query client
@@ -26,15 +27,6 @@ function DashboardPage() {
     <div>
       <h1 className="text-2xl font-bold text-gray-900 mb-2">Dashboard</h1>
       <p className="text-gray-500">Module F09 - Coming Soon</p>
-    </div>
-  );
-}
-
-function ProposalsPage() {
-  return (
-    <div>
-      <h1 className="text-2xl font-bold text-gray-900 mb-2">Proposals</h1>
-      <p className="text-gray-500">Module F08 - Coming Soon</p>
     </div>
   );
 }

@@ -175,6 +175,11 @@ describe('RequestsTab', () => {
     it('should render request cards', () => {
       render(<RequestsTab projectId="proj-1" />, { wrapper: createWrapper() });
       
+      // Default filter is "out_of_scope", so only out-of-scope request shows initially
+      expect(screen.getByTestId('request-card-req-1')).toBeInTheDocument();
+      
+      // Click "All Active" to see all requests
+      fireEvent.click(screen.getByText('All Active'));
       expect(screen.getByTestId('request-card-req-1')).toBeInTheDocument();
       expect(screen.getByTestId('request-card-req-2')).toBeInTheDocument();
     });
@@ -227,7 +232,8 @@ describe('RequestsTab', () => {
       render(<RequestsTab projectId="proj-1" />, { wrapper: createWrapper() });
       
       expect(screen.getByTestId('empty-state')).toBeInTheDocument();
-      expect(screen.getByText('No active requests')).toBeInTheDocument();
+      // Empty state message varies based on active filter
+      expect(screen.getByText(/No.*requests/i)).toBeInTheDocument();
     });
   });
 

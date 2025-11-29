@@ -21,7 +21,7 @@ const statusTabs = [
 ];
 
 export const ProjectsPage: React.FC = () => {
-  const [statusFilter, setStatusFilter] = useState<FilterStatus>('all');
+  const [statusFilter, setStatusFilter] = useState<FilterStatus>('active');
   const [clientFilter, setClientFilter] = useState<string>('');
   const [isModalOpen, setIsModalOpen] = useState(false);
 

@@ -9,7 +9,6 @@ import {
   CheckCircle,
   AlertCircle,
   ListChecks,
-  FileSignature,
   Target,
 } from 'lucide-react';
 import { useQueryClient } from '@tanstack/react-query';
@@ -21,6 +20,7 @@ import { ProjectHealthGauge } from './ProjectHealthGauge';
 import { ProjectFormModal } from './ProjectFormModal';
 import { ScopeTab } from './scope';
 import { RequestsTab } from './requests';
+import { ProposalsTab } from './proposals';
 import { cn } from '../../utils/cn';
 import { formatCurrency, formatRelative } from '../../utils/format';
 import type { Project } from '../../types';
@@ -174,7 +174,7 @@ export const ProjectDetailPage: React.FC = () => {
       {activeTab === 'overview' && <OverviewTab project={project} />}
       {activeTab === 'scope' && <ScopeTab projectId={project.id} />}
       {activeTab === 'requests' && <RequestsTab projectId={project.id} />}
-      {activeTab === 'proposals' && <ProposalsTabPlaceholder projectId={project.id} />}
+      {activeTab === 'proposals' && <ProposalsTab projectId={project.id} />}
 
       <ProjectFormModal
         isOpen={isEditModalOpen}
@@ -229,7 +229,7 @@ const OverviewTab: React.FC<OverviewTabProps> = ({ project }) => {
       {/* Top Stats Row */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {/* Health Score */}
-        <Card className="p-6 flex flex-col items-center justify-center">
+        <Card className="p-6">
           <h3 className="text-sm font-medium text-gray-500 mb-4">Health Score</h3>
           <ProjectHealthGauge score={healthScore} size="md" />
         </Card>
@@ -414,22 +414,6 @@ const StatBlock: React.FC<StatBlockProps> = ({ label, value, icon, color }) => (
       <p className="text-xs text-gray-500">{label}</p>
     </div>
   </div>
-);
-
-// Placeholder Tab (to be implemented in future module)
-const ProposalsTabPlaceholder: React.FC<{ projectId: string }> = () => (
-  <Card className="p-8 text-center">
-    <div className="flex items-center justify-center w-12 h-12 mb-4 mx-auto rounded-full bg-gray-100 text-gray-300">
-      <FileSignature className="w-6 h-6" />
-    </div>
-    <h3 className="text-lg font-medium text-gray-900 mb-2">Proposals</h3>
-    <p className="text-gray-500 mb-4">
-      Create and manage proposals here. This will be implemented in Module F08.
-    </p>
-    <Button variant="outline" disabled>
-      Coming Soon
-    </Button>
-  </Card>
 );
 
 // Loading Skeleton

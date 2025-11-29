@@ -345,6 +345,74 @@ async def send_proposal(
     return proposal_to_response(proposal, source_title)
 
 
+@router.post("/{project_id}/proposals/{proposal_id}/accept", response_model=ProposalResponse)
+async def accept_proposal(
+    project_id: uuid.UUID,
+    proposal_id: uuid.UUID,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+) -> ProposalResponse:
+    """Mark a proposal as accepted by the client."""
+    await get_project_or_404(project_id, db, current_user)
+    proposal = await get_proposal_or_404(proposal_id, project_id, db)
+    
+    # Check if proposal has been sent
+    if proposal.status != ProposalStatus.SENT:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Cannot accept a proposal with status '{proposal.status.value}'. Proposal must be sent first.",
+        )
+    
+    proposal.status = ProposalStatus.ACCEPTED
+    proposal.responded_at = datetime.now(timezone.utc)
+    
+    await db.commit()
+    await db.refresh(proposal)
+    
+    source_title = None
+    if proposal.source_request_id:
+        result = await db.execute(
+            select(ClientRequest.title).where(ClientRequest.id == proposal.source_request_id)
+        )
+        source_title = result.scalar_one_or_none()
+    
+    return proposal_to_response(proposal, source_title)
+
+
+@router.post("/{project_id}/proposals/{proposal_id}/decline", response_model=ProposalResponse)
+async def decline_proposal(
+    project_id: uuid.UUID,
+    proposal_id: uuid.UUID,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+) -> ProposalResponse:
+    """Mark a proposal as declined by the client."""
+    await get_project_or_404(project_id, db, current_user)
+    proposal = await get_proposal_or_404(proposal_id, project_id, db)
+    
+    # Check if proposal has been sent
+    if proposal.status != ProposalStatus.SENT:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Cannot decline a proposal with status '{proposal.status.value}'. Proposal must be sent first.",
+        )
+    
+    proposal.status = ProposalStatus.DECLINED
+    proposal.responded_at = datetime.now(timezone.utc)
+    
+    await db.commit()
+    await db.refresh(proposal)
+    
+    source_title = None
+    if proposal.source_request_id:
+        result = await db.execute(
+            select(ClientRequest.title).where(ClientRequest.id == proposal.source_request_id)
+        )
+        source_title = result.scalar_one_or_none()
+    
+    return proposal_to_response(proposal, source_title)
+
+
 @router.delete("/{project_id}/proposals/{proposal_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_proposal(
     project_id: uuid.UUID,

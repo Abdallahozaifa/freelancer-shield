@@ -1,0 +1,8 @@
+export { ProposalsPage } from './ProposalsPage';
+export { ProposalsTab } from './ProposalsTab';
+export { ProposalStats } from './ProposalStats';
+export { ProposalCard } from './ProposalCard';
+export { ProposalStatusBadge } from './ProposalStatusBadge';
+export { ProposalFormModal } from './ProposalFormModal';
+export { SendProposalModal } from './SendProposalModal';
+export { ProposalResponseModal } from './ProposalResponseModal';

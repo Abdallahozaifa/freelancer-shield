@@ -36,11 +36,11 @@ export function useRequests(projectId: string, filters?: RequestFilters) {
       const allItems = data?.items ?? [];
       let filteredItems = [...allItems];
       
-      // showActive: true = exclude addressed/declined
+      // showActive: true = exclude addressed/declined/proposal_sent
       // showActive: false/undefined = include all (for history view)
       if (filters?.showActive) {
         filteredItems = filteredItems.filter(
-          r => r.status !== 'declined' && r.status !== 'addressed'
+          r => r.status !== 'declined' && r.status !== 'addressed' && r.status !== 'proposal_sent'
         );
       }
       
@@ -141,9 +141,12 @@ export function useCreateProposalFromRequest() {
     mutationFn: ({ projectId, data }: { projectId: string; data: ProposalCreate }) =>
       proposalsApi.create(projectId, data),
     onSuccess: (_, variables) => {
+      // Invalidate requests to update the list (request moves to history)
       queryClient.invalidateQueries({ queryKey: ['requests', 'list'] });
       queryClient.invalidateQueries({ queryKey: projectKeys.detail(variables.projectId) });
-      queryClient.invalidateQueries({ queryKey: ['proposals'] });
+      // Invalidate proposals so the new proposal shows up
+      queryClient.invalidateQueries({ queryKey: ['projects', variables.projectId, 'proposals'] });
+      queryClient.invalidateQueries({ queryKey: ['dashboard'] });
     },
   });
 }
@@ -159,6 +162,7 @@ export function useRequestStats(projectId: string) {
     clarificationNeeded: 0,
     addressed: 0,
     declined: 0,
+    proposalSent: 0,
     active: 0,
   };
 
@@ -171,6 +175,8 @@ export function useRequestStats(projectId: string) {
         stats.addressed++;
       } else if (request.status === 'declined') {
         stats.declined++;
+      } else if (request.status === 'proposal_sent') {
+        stats.proposalSent++;
       } else {
         stats.active++;
         // Count classifications only for active requests

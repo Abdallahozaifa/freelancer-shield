@@ -21,12 +21,12 @@ interface RequestsTabProps {
 }
 
 type ViewMode = 'active' | 'history';
-type HistoryFilter = 'all' | 'addressed' | 'declined';
+type HistoryFilter = 'all' | 'addressed' | 'declined' | 'proposal_sent';
 
 export const RequestsTab: React.FC<RequestsTabProps> = ({ projectId }) => {
   const [viewMode, setViewMode] = useState<ViewMode>('active');
-  const [statsFilter, setStatsFilter] = useState<StatsFilter>('all');
-  const [historyFilter, setHistoryFilter] = useState<HistoryFilter>('all');
+  const [statsFilter, setStatsFilter] = useState<StatsFilter>('out_of_scope');
+  const [historyFilter, setHistoryFilter] = useState<HistoryFilter>('proposal_sent');
   const [searchQuery, setSearchQuery] = useState('');
   const [isFormModalOpen, setIsFormModalOpen] = useState(false);
   const [isProposalModalOpen, setIsProposalModalOpen] = useState(false);
@@ -63,9 +63,11 @@ export const RequestsTab: React.FC<RequestsTabProps> = ({ projectId }) => {
         filtered = filtered.filter(r => r.status === 'addressed');
       } else if (historyFilter === 'declined') {
         filtered = filtered.filter(r => r.status === 'declined');
+      } else if (historyFilter === 'proposal_sent') {
+        filtered = filtered.filter(r => r.status === 'proposal_sent');
       } else {
-        // 'all' - show both addressed and declined
-        filtered = filtered.filter(r => r.status === 'addressed' || r.status === 'declined');
+        // 'all' - show addressed, declined, and proposal_sent
+        filtered = filtered.filter(r => r.status === 'addressed' || r.status === 'declined' || r.status === 'proposal_sent');
       }
     }
 
@@ -172,7 +174,7 @@ export const RequestsTab: React.FC<RequestsTabProps> = ({ projectId }) => {
   };
 
   const isLoading = requestsLoading || statsLoading;
-  const archivedCount = stats.addressed + stats.declined;
+  const archivedCount = stats.addressed + stats.declined + stats.proposalSent;
 
   // ACTIVE VIEW
   if (viewMode === 'active') {
@@ -347,6 +349,16 @@ export const RequestsTab: React.FC<RequestsTabProps> = ({ projectId }) => {
           }`}
         >
           Addressed ({stats.addressed})
+        </button>
+        <button
+          onClick={() => setHistoryFilter('proposal_sent')}
+          className={`px-3 py-1.5 text-sm rounded-lg transition-colors ${
+            historyFilter === 'proposal_sent'
+              ? 'bg-green-100 text-green-800'
+              : 'text-gray-500 hover:bg-gray-100'
+          }`}
+        >
+          Proposal Sent ({stats.proposalSent})
         </button>
         <button
           onClick={() => setHistoryFilter('declined')}

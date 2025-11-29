@@ -139,6 +139,7 @@ export const RequestCard: React.FC<RequestCardProps> = ({
   const isInScope = request.classification === 'in_scope';
   const isClarificationNeeded = request.classification === 'clarification_needed';
   const isAddressed = request.status === 'addressed';
+  const isProposalSent = request.status === 'proposal_sent';
 
   const indicators = useMemo(() => extractIndicators(request), [request]);
 
@@ -202,21 +203,31 @@ export const RequestCard: React.FC<RequestCardProps> = ({
   if (isArchived) {
     return (
       <div className={cn(
-        'border border-gray-200 rounded-lg bg-gray-50 transition-all',
+        'border rounded-lg transition-all',
+        isProposalSent ? 'border-green-200 bg-green-50' : 'border-gray-200 bg-gray-50',
         (isRestoring) && 'opacity-50'
       )}>
         {/* Header */}
         <div className="flex items-start justify-between p-4 border-b border-gray-200">
           <div className="flex items-start gap-3">
-            <div className="p-2 rounded-lg bg-gray-200 text-gray-500">
+            <div className={cn(
+              'p-2 rounded-lg',
+              isProposalSent ? 'bg-green-200 text-green-600' : 'bg-gray-200 text-gray-500'
+            )}>
               <SourceIcon className="w-4 h-4" />
             </div>
             <div>
-              <h3 className="font-medium text-gray-600">{request.title}</h3>
+              <h3 className={cn(
+                'font-medium',
+                isProposalSent ? 'text-green-800' : 'text-gray-600'
+              )}>{request.title}</h3>
               <p className="text-xs text-gray-400 mt-1">
                 {sourceLabels[request.source]} • {formatRelative(request.created_at)} • 
-                <span className={isAddressed ? 'text-green-600 ml-1' : 'text-gray-500 ml-1'}>
-                  {isAddressed ? 'Addressed' : 'Declined'}
+                <span className={cn(
+                  'ml-1',
+                  isProposalSent ? 'text-green-600 font-medium' : isAddressed ? 'text-green-600' : 'text-gray-500'
+                )}>
+                  {isProposalSent ? '💰 Proposal Sent' : isAddressed ? 'Addressed' : 'Declined'}
                 </span>
               </p>
             </div>

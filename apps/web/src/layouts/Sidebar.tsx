@@ -8,8 +8,6 @@ import {
   ChevronLeft,
   ChevronRight,
   Shield,
-  FileText,
-  MessageSquare,
   BarChart3,
 } from 'lucide-react';
 
@@ -17,6 +15,7 @@ interface NavItem {
   icon: React.ElementType;
   label: string;
   path: string;
+  comingSoon?: boolean;
   divider?: never;
 }
 
@@ -25,6 +24,7 @@ interface NavDivider {
   icon?: never;
   label?: never;
   path?: never;
+  comingSoon?: never;
 }
 
 type NavItemOrDivider = NavItem | NavDivider;
@@ -33,9 +33,7 @@ const navItems: NavItemOrDivider[] = [
   { icon: LayoutDashboard, label: 'Dashboard', path: '/' },
   { icon: Users, label: 'Clients', path: '/clients' },
   { icon: FolderKanban, label: 'Projects', path: '/projects' },
-  { icon: FileText, label: 'Scope Items', path: '/scope-items' },
-  { icon: MessageSquare, label: 'Requests', path: '/requests' },
-  { icon: BarChart3, label: 'Proposals', path: '/proposals' },
+  { icon: BarChart3, label: 'Reports', path: '/reports', comingSoon: true },
   { divider: true },
   { icon: Settings, label: 'Settings', path: '/settings' },
 ];
@@ -91,6 +89,34 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggle }) => {
 
             const Icon = item.icon;
             const active = isActive(item.path);
+
+            // Coming soon items - not clickable
+            if (item.comingSoon) {
+              return (
+                <li key={item.path}>
+                  <div
+                    className="group relative flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-400 cursor-not-allowed"
+                  >
+                    <Icon className="w-5 h-5 flex-shrink-0 text-gray-300" />
+                    {!collapsed && (
+                      <div className="flex items-center gap-2">
+                        <span className="font-medium whitespace-nowrap">{item.label}</span>
+                        <span className="text-xs bg-gray-100 text-gray-500 px-1.5 py-0.5 rounded">
+                          Soon
+                        </span>
+                      </div>
+                    )}
+                    
+                    {/* Tooltip for collapsed state */}
+                    {collapsed && (
+                      <div className="absolute left-full ml-2 px-2 py-1 bg-gray-900 text-white text-sm rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all whitespace-nowrap z-50">
+                        {item.label} (Coming Soon)
+                      </div>
+                    )}
+                  </div>
+                </li>
+              );
+            }
 
             return (
               <li key={item.path}>
