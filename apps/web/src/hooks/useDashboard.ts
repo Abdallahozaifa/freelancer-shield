@@ -1,6 +1,5 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { dashboardApi, type RecentActivity, type DashboardResponse } from '../api/dashboard';
-import type { DashboardSummary, Alert, ProjectHealth } from '../types';
 
 // Re-export for convenience
 export type { RecentActivity, DashboardResponse };

@@ -24,6 +24,7 @@ export interface Client {
   project_count: number;
   created_at: string;
   updated_at: string;
+  [key: string]: unknown; // Index signature for Table component
 }
 
 export interface ClientCreate {
@@ -55,6 +56,7 @@ export interface Project {
   out_of_scope_request_count: number;
   created_at: string;
   updated_at: string;
+  [key: string]: unknown; // Index signature for Table component
 }
 
 export interface ProjectCreate {
@@ -108,11 +110,12 @@ export interface ClientRequest {
   id: string;
   project_id: string;
   linked_scope_item_id: string | null;
+  linked_scope_item_title: string | null;
   title: string;
   content: string;
   source: RequestSource;
   status: RequestStatus;
-  classification: ScopeClassification;
+  classification: ScopeClassification | null;
   confidence: number | null;
   analysis_reasoning: string | null;
   suggested_action: string | null;
@@ -131,6 +134,7 @@ export interface ClientRequestUpdate {
   content?: string;
   source?: RequestSource;
   status?: RequestStatus;
+  classification?: ScopeClassification | null;
   linked_scope_item_id?: string | null;
 }
 
@@ -148,6 +152,7 @@ export interface Proposal {
   source_request_title: string | null;
   created_at: string;
   updated_at: string;
+  [key: string]: unknown; // Index signature for Table component
 }
 
 export interface ProposalCreate {
@@ -178,11 +183,16 @@ export interface DashboardSummary {
   pending_proposals: number;
   accepted_proposals: number;
   total_revenue_protected: number;
+  // Additional fields used by dashboard
+  revenue_protected: number;
+  proposals_accepted: number;
+  completed_scope_items: number;
 }
 
 export interface Alert {
+  id: string;
   type: 'scope_creep' | 'pending_request' | 'proposal_expiring' | 'milestone_overdue';
-  severity: 'low' | 'medium' | 'high';
+  severity: 'low' | 'medium' | 'high' | 'LOW' | 'MEDIUM' | 'HIGH';
   message: string;
   project_id: string;
   project_name: string;

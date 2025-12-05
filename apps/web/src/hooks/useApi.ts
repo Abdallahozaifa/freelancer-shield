@@ -22,6 +22,7 @@ import type {
   ProposalCreate,
   ProposalUpdate,
   PaginatedResponse,
+  ProjectHealth,
 } from '../types';
 
 // ============ CLIENT HOOKS ============
@@ -80,7 +81,9 @@ export function useDeleteClient() {
 export function useProjects(clientId?: string, options?: Partial<UseQueryOptions<PaginatedResponse<Project>>>) {
   return useQuery({
     queryKey: ['projects', { clientId }],
-    queryFn: () => projectsApi.getAll(0, 100, clientId),
+    // API signature: getAll(skip, limit, status?, clientId?)
+    // Pass undefined for status, then clientId
+    queryFn: () => projectsApi.getAll(0, 100, undefined, clientId),
     ...options,
   });
 }
@@ -229,18 +232,6 @@ export function useDeleteClientRequest(projectId: string) {
   });
 }
 
-export function useAnalyzeRequest(projectId: string) {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: (id: string) => requestsApi.analyze(projectId, id),
-    onSuccess: (_, id) => {
-      queryClient.invalidateQueries({ queryKey: ['projects', projectId, 'requests'] });
-      queryClient.invalidateQueries({ queryKey: ['projects', projectId, 'requests', id] });
-      queryClient.invalidateQueries({ queryKey: ['dashboard'] });
-    },
-  });
-}
-
 // ============ PROPOSAL HOOKS ============
 
 export function useProposals(projectId: string, options?: Partial<UseQueryOptions<PaginatedResponse<Proposal>>>) {
@@ -308,24 +299,26 @@ export function useSendProposal(projectId: string) {
 }
 
 // ============ DASHBOARD HOOKS ============
+// Note: These are duplicated in useDashboard.ts - prefer using that file
 
-export function useDashboardSummary() {
+export function useApiDashboardSummary() {
   return useQuery({
     queryKey: ['dashboard', 'summary'],
     queryFn: dashboardApi.getSummary,
   });
 }
 
-export function useDashboardAlerts(limit = 10) {
+export function useApiDashboardAlerts(limit = 10) {
   return useQuery({
     queryKey: ['dashboard', 'alerts', limit],
     queryFn: () => dashboardApi.getAlerts(limit),
   });
 }
 
-export function useProjectHealth() {
-  return useQuery({
-    queryKey: ['dashboard', 'project-health'],
-    queryFn: dashboardApi.getProjectHealth,
+export function useApiProjectHealth(projectId: string) {
+  return useQuery<ProjectHealth>({
+    queryKey: ['dashboard', 'project-health', projectId],
+    queryFn: () => dashboardApi.getProjectHealth(projectId),
+    enabled: !!projectId,
   });
 }

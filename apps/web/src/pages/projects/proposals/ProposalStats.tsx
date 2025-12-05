@@ -1,5 +1,5 @@
 import React from 'react';
-import { FileText, Send, Clock, DollarSign } from 'lucide-react';
+import { FileText, Send, Clock } from 'lucide-react';
 import { cn } from '../../../utils/cn';
 import { formatCurrency } from '../../../utils/format';
 

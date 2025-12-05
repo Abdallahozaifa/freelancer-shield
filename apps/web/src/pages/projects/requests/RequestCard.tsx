@@ -155,7 +155,6 @@ export const RequestCard: React.FC<RequestCardProps> = ({
   const isInScope = request.classification === 'in_scope';
   const isClarificationNeeded = request.classification === 'clarification_needed';
   const isPending = request.classification === 'pending' || !request.classification;
-  const isAddressed = request.status === 'addressed';
   const isProposalSent = request.status === 'proposal_sent';
 
   const indicators = useMemo(() => extractIndicators(request), [request]);

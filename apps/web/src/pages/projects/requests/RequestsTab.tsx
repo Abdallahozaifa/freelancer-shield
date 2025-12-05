@@ -54,12 +54,8 @@ export const RequestsTab: React.FC<RequestsTabProps> = ({ projectId }) => {
 
     // Apply stats filter (only for active view)
     if (viewMode === 'active' && statsFilter !== 'all') {
-      if (statsFilter === 'pending') {
-        // Pending = unclassified (null classification)
-        filtered = filtered.filter(r => !r.classification);
-      } else {
-        filtered = filtered.filter(r => r.classification === statsFilter);
-      }
+      // Filter by classification type
+      filtered = filtered.filter(r => r.classification === statsFilter);
     }
 
     // Apply history filter (only for history view)
@@ -236,7 +232,6 @@ export const RequestsTab: React.FC<RequestsTabProps> = ({ projectId }) => {
         {/* Clickable Stats Cards */}
         <RequestStats
           total={stats.active}
-          pending={stats.pending}
           inScope={stats.inScope}
           outOfScope={stats.outOfScope}
           clarificationNeeded={stats.clarificationNeeded}
@@ -281,7 +276,7 @@ export const RequestsTab: React.FC<RequestsTabProps> = ({ projectId }) => {
             icon={<Search className="w-12 h-12" />}
             title={
               statsFilter !== 'all'
-                ? `No ${statsFilter === 'pending' ? 'pending' : statsFilter.replace('_', ' ')} requests`
+                ? `No ${statsFilter.replace('_', ' ')} requests`
                 : 'No active requests'
             }
             description={
@@ -290,12 +285,12 @@ export const RequestsTab: React.FC<RequestsTabProps> = ({ projectId }) => {
                 : 'Log client requests to track scope and detect scope creep.'
             }
             action={
-              statsFilter === 'all' && (
-                <Button onClick={() => setIsFormModalOpen(true)}>
-                  <Plus className="w-4 h-4 mr-2" />
-                  Log Request
-                </Button>
-              )
+              statsFilter === 'all'
+                ? {
+                    label: 'Log Request',
+                    onClick: () => setIsFormModalOpen(true),
+                  }
+                : undefined
             }
           />
         ) : (

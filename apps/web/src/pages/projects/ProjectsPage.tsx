@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Plus, ChevronRight, MoreHorizontal, Trash2, Edit } from 'lucide-react';
-import { Button, Dropdown, Skeleton, EmptyState, ConfirmDialog } from '../../components/ui';
+import { Button, Dropdown, EmptyState, ConfirmDialog } from '../../components/ui';
 import { useProjects, useDeleteProject } from '../../hooks/useProjects';
 import { useClients } from '../../hooks/useClients';
 import { ProjectFormModal } from './ProjectFormModal';

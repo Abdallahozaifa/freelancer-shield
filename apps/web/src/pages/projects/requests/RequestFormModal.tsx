@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import { FileText, Loader2, CheckCircle, AlertTriangle } from 'lucide-react';
+import { Loader2, CheckCircle, AlertTriangle } from 'lucide-react';
 import { Modal, Button, Input, Textarea, Select } from '../../../components/ui';
 import { RequestClassificationBadge } from './RequestClassificationBadge';
 import type { RequestSource, ClientRequest } from '../../../types';

@@ -25,7 +25,6 @@ export function useAuth(): UseAuthReturn {
     setAuth, 
     logout: storeLogout, 
     updateUser,
-    setLoading 
   } = useAuthStore();
 
   // Track if we've already tried to fetch user
@@ -43,7 +42,7 @@ export function useAuth(): UseAuthReturn {
         try {
           const userData = await authApi.getMe();
           setAuth(userData, token);
-        } catch (error) {
+        } catch {
           // Token is invalid, clear auth
           storeLogout();
         }
@@ -54,52 +53,44 @@ export function useAuth(): UseAuthReturn {
 
   const login = useCallback(
     async (email: string, password: string) => {
-      try {
-        // Get token
-        const tokenResponse = await authApi.login({ email, password });
-        
-        // Temporarily set token to make authenticated request
-        useAuthStore.setState({ token: tokenResponse.access_token });
-        
-        // Get user data
-        const userData = await authApi.getMe();
-        
-        // Set full auth state
-        setAuth(userData, tokenResponse.access_token);
-        
-        navigate('/dashboard');
-      } catch (error) {
-        throw error;
-      }
+      // Get token
+      const tokenResponse = await authApi.login({ email, password });
+      
+      // Temporarily set token to make authenticated request
+      useAuthStore.setState({ token: tokenResponse.access_token });
+      
+      // Get user data
+      const userData = await authApi.getMe();
+      
+      // Set full auth state
+      setAuth(userData, tokenResponse.access_token);
+      
+      navigate('/dashboard');
     },
     [navigate, setAuth]
   );
 
   const register = useCallback(
     async (data: RegisterRequest) => {
-      try {
-        // Register user
-        await authApi.register(data);
-        
-        // Auto-login after registration
-        const tokenResponse = await authApi.login({ 
-          email: data.email, 
-          password: data.password 
-        });
-        
-        // Temporarily set token
-        useAuthStore.setState({ token: tokenResponse.access_token });
-        
-        // Get user data
-        const userData = await authApi.getMe();
-        
-        // Set full auth state
-        setAuth(userData, tokenResponse.access_token);
-        
-        navigate('/dashboard');
-      } catch (error) {
-        throw error;
-      }
+      // Register user
+      await authApi.register(data);
+      
+      // Auto-login after registration
+      const tokenResponse = await authApi.login({ 
+        email: data.email, 
+        password: data.password 
+      });
+      
+      // Temporarily set token
+      useAuthStore.setState({ token: tokenResponse.access_token });
+      
+      // Get user data
+      const userData = await authApi.getMe();
+      
+      // Set full auth state
+      setAuth(userData, tokenResponse.access_token);
+      
+      navigate('/dashboard');
     },
     [navigate, setAuth]
   );

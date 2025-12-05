@@ -258,12 +258,9 @@ export const ProposalsTab: React.FC<ProposalsTabProps> = ({ projectId }) => {
                 : 'Create proposals for out-of-scope work to protect your revenue.'
             }
             action={
-              activeFilter === 'all' && !searchQuery && (
-                <Button onClick={handleCreateProposal}>
-                  <Plus className="w-4 h-4 mr-2" />
-                  Create Proposal
-                </Button>
-              )
+              activeFilter === 'all' && !searchQuery
+                ? { label: 'Create Proposal', onClick: handleCreateProposal }
+                : undefined
             }
           />
         ) : (

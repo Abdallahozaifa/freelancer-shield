@@ -3,7 +3,7 @@ import { AlertTriangle, Trash2, X } from 'lucide-react';
 import { Button } from './Button';
 import { cn } from '../../utils/cn';
 
-interface ConfirmDialogProps {
+export interface ConfirmDialogProps {
   isOpen: boolean;
   onClose: () => void;
   onConfirm: () => void;

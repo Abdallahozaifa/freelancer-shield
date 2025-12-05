@@ -3,7 +3,6 @@ import { requestsApi } from '../api/requests';
 import { proposalsApi } from '../api/proposals';
 import { projectKeys } from './useProjects';
 import type {
-  ClientRequest,
   ClientRequestCreate,
   ClientRequestUpdate,
   ScopeClassification,

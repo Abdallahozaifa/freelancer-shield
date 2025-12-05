@@ -55,10 +55,11 @@ export function ProfilePage() {
       });
       setIsEditing(false);
       toast.success('Profile updated successfully!');
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const error = err as { response?: { data?: { detail?: string } }; message?: string };
       const message =
-        err?.response?.data?.detail ||
-        err?.message ||
+        error?.response?.data?.detail ||
+        error?.message ||
         'Failed to update profile. Please try again.';
       setError(message);
     }
@@ -146,7 +147,7 @@ export function ProfilePage() {
           </div>
 
           {error && (
-            <Alert variant="error" className="mb-6">
+            <Alert type="error" className="mb-6">
               {error}
             </Alert>
           )}

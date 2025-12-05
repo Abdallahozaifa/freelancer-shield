@@ -25,20 +25,17 @@ export const ClientsPage: React.FC = () => {
   const [editingClient, setEditingClient] = useState<Client | null>(null);
   const [deletingClient, setDeletingClient] = useState<Client | null>(null);
 
-  // Extract clients from nested structure: data.items.clients
+  // Extract clients from PaginatedResponse<Client>
+  // Structure: { items: Client[], total: number, skip: number, limit: number }
   const clients: Client[] = useMemo(() => {
     if (!data) return [];
-    // Handle: data.items.clients (actual structure from API)
-    if (data.items?.clients && Array.isArray(data.items.clients)) {
-      return data.items.clients;
-    }
-    // Handle: data.items (if it's directly an array)
+    // data.items is Client[] from PaginatedResponse<Client>
     if (Array.isArray(data.items)) {
       return data.items;
     }
-    // Handle: data is directly an array
+    // Fallback: data is directly an array (shouldn't happen with proper typing)
     if (Array.isArray(data)) {
-      return data;
+      return data as unknown as Client[];
     }
     return [];
   }, [data]);
@@ -86,14 +83,14 @@ export const ClientsPage: React.FC = () => {
       key: 'company',
       header: 'Company',
       render: (client) => (
-        <span className="text-gray-600">{client.company || 'â€”'}</span>
+        <span className="text-gray-600">{client.company || '—'}</span>
       ),
     },
     {
       key: 'email',
       header: 'Email',
       render: (client) => (
-        <span className="text-gray-600">{client.email || 'â€”'}</span>
+        <span className="text-gray-600">{client.email || '—'}</span>
       ),
     },
     {
@@ -155,7 +152,7 @@ export const ClientsPage: React.FC = () => {
             Add Client
           </Button>
         </div>
-        <Table
+        <Table<Client>
           data={[]}
           columns={columns}
           isLoading={true}
@@ -214,7 +211,7 @@ export const ClientsPage: React.FC = () => {
         />
       ) : (
         <div className="overflow-visible">
-          <Table
+          <Table<Client>
             data={filteredClients}
             columns={columns}
             isLoading={false}

@@ -53,6 +53,22 @@ export const DashboardPage: React.FC = () => {
     return true;
   });
 
+  // Helper to normalize severity to lowercase for comparison
+  const getSeverityVariant = (severity: string) => {
+    const s = severity.toLowerCase();
+    if (s === 'high') return 'danger';
+    if (s === 'medium') return 'warning';
+    return 'info';
+  };
+
+  // Get revenue_protected from summary, fallback to total_revenue_protected
+  const revenueProtected = summary?.revenue_protected ?? summary?.total_revenue_protected ?? 0;
+  // Get proposals_accepted from summary, fallback to accepted_proposals
+  const proposalsAccepted = summary?.proposals_accepted ?? summary?.accepted_proposals ?? 0;
+  // Get completed_scope_items, calculate from projects if not available
+  const completedScopeItems = summary?.completed_scope_items ?? 
+    projects.reduce((sum, p) => sum + (p.scope_items_completed ?? 0), 0);
+
   return (
     <div className="space-y-8 animate-fade-in">
       {/* Header */}
@@ -89,8 +105,8 @@ export const DashboardPage: React.FC = () => {
           <>
             <StatCard
               title="Revenue Protected"
-              value={formatCurrency(summary?.revenue_protected ?? 0)}
-              subtitle={`${summary?.proposals_accepted ?? 0} proposals accepted`}
+              value={formatCurrency(revenueProtected)}
+              subtitle={`${proposalsAccepted} proposals accepted`}
               icon={<DollarSign className="w-6 h-6" />}
               iconVariant="success"
             />
@@ -138,9 +154,9 @@ export const DashboardPage: React.FC = () => {
                 </div>
               </div>
               <div className="divide-y divide-slate-100">
-                {validAlerts.slice(0, 5).map((alert) => (
+                {validAlerts.slice(0, 5).map((alert, index) => (
                   <div
-                    key={alert.id}
+                    key={alert.id || `alert-${index}`}
                     className="p-4 hover:bg-slate-50 transition-colors cursor-pointer group"
                     onClick={() => navigate(`/projects/${alert.project_id}`)}
                   >
@@ -148,16 +164,10 @@ export const DashboardPage: React.FC = () => {
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 mb-1">
                           <Badge
-                            variant={
-                              alert.severity === 'HIGH'
-                                ? 'danger'
-                                : alert.severity === 'MEDIUM'
-                                ? 'warning'
-                                : 'info'
-                            }
+                            variant={getSeverityVariant(alert.severity)}
                             size="sm"
                           >
-                            {alert.severity}
+                            {alert.severity.toUpperCase()}
                           </Badge>
                           <span className="text-xs text-slate-400">
                             {formatRelative(alert.created_at)}
@@ -302,7 +312,7 @@ export const DashboardPage: React.FC = () => {
               <div className="flex items-center justify-between">
                 <span className="text-sm text-slate-500">Revenue Protected</span>
                 <span className="text-sm font-semibold text-slate-900">
-                  {formatCurrency(summary?.revenue_protected ?? 0)}
+                  {formatCurrency(revenueProtected)}
                 </span>
               </div>
               <div className="flex items-center justify-between">
@@ -315,14 +325,14 @@ export const DashboardPage: React.FC = () => {
                 <span className="text-sm text-slate-500">Acceptance Rate</span>
                 <span className="text-sm font-semibold text-emerald-600">
                   {summary?.total_proposals
-                    ? Math.round(((summary?.proposals_accepted ?? 0) / summary.total_proposals) * 100)
+                    ? Math.round((proposalsAccepted / summary.total_proposals) * 100)
                     : 0}%
                 </span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm text-slate-500">Scope Items Completed</span>
                 <span className="text-sm font-semibold text-slate-900">
-                  {summary?.completed_scope_items ?? 0}
+                  {completedScopeItems}
                 </span>
               </div>
             </div>

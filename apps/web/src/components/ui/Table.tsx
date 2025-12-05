@@ -22,7 +22,7 @@ export interface TableProps<T> {
   onSort?: (column: string) => void;
 }
 
-export function Table<T extends Record<string, unknown>>({
+export function Table<T extends object>({
   data,
   columns,
   onRowClick,
@@ -41,7 +41,7 @@ export function Table<T extends Record<string, unknown>>({
       }
       return value as React.ReactNode;
     }
-    return item[key as keyof T] as React.ReactNode;
+    return (item as Record<string, unknown>)[key as string] as React.ReactNode;
   };
 
   const handleSort = (column: Column<T>) => {

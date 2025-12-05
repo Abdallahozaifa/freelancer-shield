@@ -4,7 +4,7 @@ import { cn } from '../../../utils/cn';
 import type { ScopeClassification } from '../../../types';
 
 interface RequestClassificationBadgeProps {
-  classification: ScopeClassification;
+  classification: ScopeClassification | null;
   size?: 'sm' | 'md' | 'lg';
   showIcon?: boolean;
 }
@@ -61,7 +61,9 @@ export const RequestClassificationBadge: React.FC<RequestClassificationBadgeProp
   size = 'md',
   showIcon = true,
 }) => {
-  const config = classificationConfig[classification];
+  // If no classification, show as pending
+  const effectiveClassification = classification ?? 'pending';
+  const config = classificationConfig[effectiveClassification];
   const Icon = config.icon;
 
   return (

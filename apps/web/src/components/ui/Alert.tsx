@@ -3,11 +3,14 @@ import { X, Info, CheckCircle, AlertTriangle, XCircle } from 'lucide-react';
 import { cn } from '../../utils/cn';
 
 export interface AlertProps {
-  type: 'info' | 'success' | 'warning' | 'error';
+  /** @deprecated Use `type` instead */
+  variant?: 'info' | 'success' | 'warning' | 'error';
+  type?: 'info' | 'success' | 'warning' | 'error';
   title?: string;
   children: React.ReactNode;
   onClose?: () => void;
   icon?: React.ReactNode;
+  className?: string;
 }
 
 const typeStyles = {
@@ -50,19 +53,24 @@ const defaultIcons = {
 
 export const Alert: React.FC<AlertProps> = ({
   type,
+  variant,
   title,
   children,
   onClose,
   icon,
+  className,
 }) => {
-  const styles = typeStyles[type];
-  const DefaultIcon = defaultIcons[type];
+  // Support both 'type' and 'variant' props (variant is deprecated alias)
+  const alertType = type || variant || 'info';
+  const styles = typeStyles[alertType];
+  const DefaultIcon = defaultIcons[alertType];
 
   return (
     <div
       className={cn(
         'rounded-lg border p-4',
-        styles.container
+        styles.container,
+        className
       )}
       role="alert"
     >
