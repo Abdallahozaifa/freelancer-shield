@@ -1,7 +1,10 @@
 import axios from 'axios';
 import { useAuthStore } from '../stores/authStore';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api/v1';
+// In production (Fly.io), API is on same origin at /api/v1
+// In development, use VITE_API_URL or default to localhost
+const API_BASE_URL = import.meta.env.VITE_API_URL || 
+  (import.meta.env.PROD ? '/api/v1' : 'http://localhost:8000/api/v1');
 
 export const apiClient = axios.create({
   baseURL: API_BASE_URL,
