@@ -108,112 +108,136 @@ export const ProjectFormModal: React.FC<ProjectFormModalProps> = ({
     })) ?? []),
   ];
 
+  const commonLabelStyle = "block text-sm font-semibold text-slate-700 mb-1";
+  const requiredStar = <span className="text-red-500">*</span>;
+
   return (
     <Modal
       isOpen={isOpen}
       onClose={onClose}
       title={isEditing ? 'Edit Project' : 'New Project'}
+      
     >
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Client <span className="text-red-500">*</span>
-          </label>
-          <Select
-            {...register('client_id', { required: 'Client is required' })}
-            options={clientOptions}
-            error={errors.client_id?.message}
-          />
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6"> {/* Increased main spacing */}
+        
+        {/* --- Primary Details Group --- */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+                <label className={commonLabelStyle}>
+                    Client {requiredStar}
+                </label>
+                <Select
+                    {...register('client_id', { required: 'Client is required' })}
+                    options={clientOptions}
+                    error={errors.client_id?.message}
+                    className="rounded-lg" // Added rounded style
+                />
+            </div>
+
+            <div>
+                <label className={commonLabelStyle}>
+                    Project Name {requiredStar}
+                </label>
+                <Input
+                    {...register('name', {
+                        required: 'Project name is required',
+                        minLength: { value: 2, message: 'Name must be at least 2 characters' },
+                    })}
+                    placeholder="e.g., Website Redesign"
+                    error={errors.name?.message}
+                    className="rounded-lg" // Added rounded style
+                />
+            </div>
+        </div>
+        
+        <div className="space-y-4">
+            <div>
+                <label className={commonLabelStyle}>
+                    Description
+                </label>
+                <Textarea
+                    {...register('description')}
+                    placeholder="Brief description of the project..."
+                    rows={3}
+                    className="rounded-lg" // Added rounded style
+                />
+            </div>
+
+            <div>
+                <label className={commonLabelStyle}>
+                    Status
+                </label>
+                <Select
+                    {...register('status')}
+                    options={statusOptions}
+                    className="rounded-lg" // Added rounded style
+                />
+            </div>
         </div>
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Project Name <span className="text-red-500">*</span>
-          </label>
-          <Input
-            {...register('name', {
-              required: 'Project name is required',
-              minLength: { value: 2, message: 'Name must be at least 2 characters' },
-            })}
-            placeholder="e.g., Website Redesign"
-            error={errors.name?.message}
-          />
+        {/* --- Budget & Scope Details Group --- */}
+        <div className="pt-4 border-t border-slate-200 space-y-4">
+            <h3 className="text-lg font-bold text-slate-800">Budget & Time Estimation</h3>
+            <div className="grid grid-cols-3 gap-4">
+                <div>
+                    <label className={commonLabelStyle}>
+                        Budget (USD)
+                    </label>
+                    <Input
+                        type="number"
+                        step="0.01"
+                        {...register('budget', {
+                            min: { value: 0, message: 'Must be positive' },
+                        })}
+                        placeholder="5000.00"
+                        error={errors.budget?.message}
+                        className="rounded-lg"
+                    />
+                </div>
+
+                <div>
+                    <label className={commonLabelStyle}>
+                        Hourly Rate (USD)
+                    </label>
+                    <Input
+                        type="number"
+                        step="0.01"
+                        {...register('hourly_rate', {
+                            min: { value: 0, message: 'Must be positive' },
+                        })}
+                        placeholder="75.00"
+                        error={errors.hourly_rate?.message}
+                        className="rounded-lg"
+                    />
+                </div>
+
+                <div>
+                    <label className={commonLabelStyle}>
+                        Estimated Hours
+                    </label>
+                    <Input
+                        type="number"
+                        step="0.5"
+                        {...register('estimated_hours', {
+                            min: { value: 0, message: 'Must be positive' },
+                        })}
+                        placeholder="40.0"
+                        error={errors.estimated_hours?.message}
+                        className="rounded-lg"
+                    />
+                </div>
+            </div>
         </div>
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Description
-          </label>
-          <Textarea
-            {...register('description')}
-            placeholder="Brief description of the project..."
-            rows={3}
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Status
-          </label>
-          <Select
-            {...register('status')}
-            options={statusOptions}
-          />
-        </div>
-
-        <div className="grid grid-cols-3 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Budget ($)
-            </label>
-            <Input
-              type="number"
-              step="0.01"
-              {...register('budget', {
-                min: { value: 0, message: 'Must be positive' },
-              })}
-              placeholder="5000"
-              error={errors.budget?.message}
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Hourly Rate ($)
-            </label>
-            <Input
-              type="number"
-              step="0.01"
-              {...register('hourly_rate', {
-                min: { value: 0, message: 'Must be positive' },
-              })}
-              placeholder="75"
-              error={errors.hourly_rate?.message}
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Est. Hours
-            </label>
-            <Input
-              type="number"
-              step="0.5"
-              {...register('estimated_hours', {
-                min: { value: 0, message: 'Must be positive' },
-              })}
-              placeholder="40"
-              error={errors.estimated_hours?.message}
-            />
-          </div>
-        </div>
-
-        <div className="flex justify-end gap-3 pt-4 border-t">
-          <Button type="button" variant="outline" onClick={onClose}>
+        {/* --- Footer Actions --- */}
+        <div className="flex justify-end gap-3 pt-6 border-t border-slate-200"> {/* Increased padding */}
+          <Button type="button" variant="outline" onClick={onClose} className="font-semibold">
             Cancel
           </Button>
           <Button
             type="submit"
+            // Ensure primary color and emphasis is strong
+            className="font-semibold shadow-md shadow-indigo-400/50"
             isLoading={isSubmitting || createProject.isPending || updateProject.isPending}
           >
             {isEditing ? 'Save Changes' : 'Create Project'}

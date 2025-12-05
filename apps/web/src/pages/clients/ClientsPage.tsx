@@ -15,7 +15,6 @@ import type { Client } from '../../types';
 import { formatDate } from '../../utils/format';
 import { ClientFormModal } from './ClientFormModal';
 import { DeleteClientModal } from './DeleteClientModal';
-import { cn } from '../../utils/cn'; // Ensure cn is available
 
 export const ClientsPage: React.FC = () => {
   const navigate = useNavigate();

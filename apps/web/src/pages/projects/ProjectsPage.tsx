@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Plus, ChevronRight, MoreHorizontal, Trash2, Edit, Users, DollarSign, Clock } from 'lucide-react';
+import { Plus, MoreHorizontal, Trash2, Edit, Users, DollarSign, Clock } from 'lucide-react';
 import { Button, Dropdown, EmptyState, ConfirmDialog } from '../../components/ui';
 import { useProjects, useDeleteProject } from '../../hooks/useProjects';
 import { useClients } from '../../hooks/useClients';
