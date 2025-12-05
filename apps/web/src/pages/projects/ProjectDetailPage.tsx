@@ -119,16 +119,28 @@ export const ProjectDetailPage: React.FC = () => {
           Back to Projects
         </Link>
 
+        {/* REDESIGNED PROJECT NAME/META SECTION */}
         <div className="flex items-start justify-between">
           <div>
-            <div className="flex items-center gap-3 mb-1">
-              <h1 className="text-2xl font-bold text-slate-900">{project.name}</h1>
+            {/* 1. Project Name (Larger & Bolder) */}
+            <h1 className="text-3xl font-extrabold text-gray-900 mb-1">
+              {project.name}
+            </h1>
+
+            {/* 2. Client Name and Status Badge (Grouped Meta Info) */}
+            <div className="flex items-center gap-3 mb-2">
+              <p className="text-lg font-medium text-slate-600">
+                {project.client_name}
+              </p>
               <ProjectStatusBadge status={project.status} />
             </div>
-            <p className="text-slate-500">
-              {project.client_name}
-              {project.description && ` • ${project.description}`}
-            </p>
+            
+            {/* 3. Description (Clearer separation) */}
+            {project.description && (
+              <p className="text-slate-500 italic max-w-3xl">
+                {project.description}
+              </p>
+            )}
           </div>
 
           <div className="flex items-center gap-2">
@@ -156,6 +168,7 @@ export const ProjectDetailPage: React.FC = () => {
             />
           </div>
         </div>
+        {/* END REDESIGNED PROJECT NAME/META SECTION */}
       </div>
 
       {/* Tabs */}
