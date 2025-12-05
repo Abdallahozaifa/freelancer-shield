@@ -2,13 +2,11 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Menu,
-  Bell,
   ChevronDown,
-  User,
   Settings,
   LogOut,
   HelpCircle,
-  Search,
+  CreditCard,
 } from 'lucide-react';
 import { useAuthStore } from '../stores/authStore';
 
@@ -21,18 +19,13 @@ export const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
   const navigate = useNavigate();
   const { user, logout } = useAuthStore();
   const [userMenuOpen, setUserMenuOpen] = useState(false);
-  const [notificationsOpen, setNotificationsOpen] = useState(false);
   const userMenuRef = useRef<HTMLDivElement>(null);
-  const notificationsRef = useRef<HTMLDivElement>(null);
 
-  // Close dropdowns when clicking outside
+  // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
         setUserMenuOpen(false);
-      }
-      if (notificationsRef.current && !notificationsRef.current.contains(event.target as Node)) {
-        setNotificationsOpen(false);
       }
     };
 
@@ -40,12 +33,11 @@ export const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Close dropdowns on escape key
+  // Close dropdown on escape key
   useEffect(() => {
     const handleEscape = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
         setUserMenuOpen(false);
-        setNotificationsOpen(false);
       }
     };
 
@@ -64,42 +56,12 @@ export const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
   };
 
   const userMenuItems = [
-    { icon: User, label: 'Profile', onClick: () => navigate('/profile') },
-    { icon: Settings, label: 'Settings', onClick: () => navigate('/settings') },
+    { icon: Settings, label: 'Settings', onClick: () => navigate('/profile') },
+    { icon: CreditCard, label: 'Billing', onClick: () => navigate('/settings/billing') },
     { icon: HelpCircle, label: 'Help & Support', onClick: () => {} },
     { divider: true },
     { icon: LogOut, label: 'Sign out', onClick: handleLogout, danger: true },
   ];
-
-  // Mock notifications
-  const notifications = [
-    {
-      id: '1',
-      title: 'Scope creep detected',
-      message: '15 out-of-scope requests on Project 454545',
-      time: '5 min ago',
-      unread: true,
-      type: 'warning',
-    },
-    {
-      id: '2',
-      title: 'Proposal accepted',
-      message: 'Website Redesign proposal was approved',
-      time: '1 hour ago',
-      unread: true,
-      type: 'success',
-    },
-    {
-      id: '3',
-      title: 'New client added',
-      message: 'Acme Inc. was added to your clients',
-      time: '3 hours ago',
-      unread: false,
-      type: 'info',
-    },
-  ];
-
-  const unreadCount = notifications.filter((n) => n.unread).length;
 
   return (
     <header className="sticky top-0 z-30 h-16 bg-white/80 backdrop-blur-md border-b border-slate-200/60">
@@ -114,101 +76,10 @@ export const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
           >
             <Menu className="w-5 h-5" />
           </button>
-
-          {/* Search - Desktop only */}
-          <div className="hidden lg:flex items-center">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-              <input
-                type="text"
-                placeholder="Search projects, clients..."
-                className="w-72 pl-10 pr-4 py-2 bg-slate-100 border-0 rounded-xl text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:bg-white transition-all"
-              />
-              <kbd className="absolute right-3 top-1/2 -translate-y-1/2 hidden xl:inline-flex items-center px-2 py-0.5 text-[10px] font-medium text-slate-400 bg-white rounded border border-slate-200">
-                ⌘K
-              </kbd>
-            </div>
-          </div>
         </div>
 
         {/* Right side */}
-        <div className="flex items-center gap-1">
-          {/* Notifications */}
-          <div className="relative" ref={notificationsRef}>
-            <button
-              onClick={() => setNotificationsOpen(!notificationsOpen)}
-              className="relative p-2.5 text-slate-500 hover:text-slate-700 hover:bg-slate-100 rounded-xl transition-all duration-150"
-              aria-label={`Notifications${unreadCount > 0 ? `, ${unreadCount} unread` : ''}`}
-            >
-              <Bell className="w-5 h-5" />
-              {unreadCount > 0 && (
-                <span className="absolute top-1.5 right-1.5 flex items-center justify-center min-w-[18px] h-[18px] text-[10px] font-bold text-white bg-red-500 rounded-full px-1">
-                  {unreadCount}
-                </span>
-              )}
-            </button>
-
-            {/* Notifications Dropdown */}
-            {notificationsOpen && (
-              <div className="absolute right-0 mt-2 w-96 bg-white rounded-2xl shadow-xl border border-slate-200/60 overflow-hidden z-50 animate-fade-in">
-                <div className="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
-                  <h3 className="font-semibold text-slate-900">Notifications</h3>
-                  {unreadCount > 0 && (
-                    <button className="text-xs font-medium text-indigo-600 hover:text-indigo-700">
-                      Mark all as read
-                    </button>
-                  )}
-                </div>
-                <div className="max-h-[400px] overflow-y-auto">
-                  {notifications.length === 0 ? (
-                    <div className="px-5 py-12 text-center">
-                      <Bell className="w-10 h-10 text-slate-300 mx-auto mb-3" />
-                      <p className="text-slate-500">No notifications yet</p>
-                    </div>
-                  ) : (
-                    notifications.map((notification) => (
-                      <button
-                        key={notification.id}
-                        className={`w-full px-5 py-4 text-left hover:bg-slate-50 transition-colors flex gap-3 ${
-                          notification.unread ? 'bg-indigo-50/50' : ''
-                        }`}
-                        onClick={() => setNotificationsOpen(false)}
-                      >
-                        <div className={`mt-0.5 w-2 h-2 rounded-full flex-shrink-0 ${
-                          notification.unread ? 'bg-indigo-500' : 'bg-transparent'
-                        }`} />
-                        <div className="flex-1 min-w-0">
-                          <p className="font-medium text-slate-900 text-sm">
-                            {notification.title}
-                          </p>
-                          <p className="text-slate-600 text-sm mt-0.5 truncate">
-                            {notification.message}
-                          </p>
-                          <p className="text-slate-400 text-xs mt-1">
-                            {notification.time}
-                          </p>
-                        </div>
-                      </button>
-                    ))
-                  )}
-                </div>
-                <div className="px-5 py-3 border-t border-slate-100 bg-slate-50">
-                  <button
-                    className="text-sm font-medium text-indigo-600 hover:text-indigo-700 w-full text-center"
-                    onClick={() => {
-                      setNotificationsOpen(false);
-                    }}
-                  >
-                    View all notifications
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* Divider */}
-          <div className="w-px h-8 bg-slate-200 mx-2" />
-
+        <div className="flex items-center">
           {/* User Menu */}
           <div className="relative" ref={userMenuRef}>
             <button

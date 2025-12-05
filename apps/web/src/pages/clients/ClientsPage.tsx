@@ -86,14 +86,14 @@ export const ClientsPage: React.FC = () => {
       key: 'company',
       header: 'Company',
       render: (client) => (
-        <span className="text-gray-600">{client.company || '—'}</span>
+        <span className="text-gray-600">{client.company || 'â€”'}</span>
       ),
     },
     {
       key: 'email',
       header: 'Email',
       render: (client) => (
-        <span className="text-gray-600">{client.email || '—'}</span>
+        <span className="text-gray-600">{client.email || 'â€”'}</span>
       ),
     },
     {
