@@ -35,6 +35,9 @@ export type { AlertProps } from './Alert';
 export { Modal } from './Modal';
 export type { ModalProps } from './Modal';
 
+export { ConfirmDialog } from './ConfirmDialog';
+export type { ConfirmDialogProps } from './ConfirmDialog';
+
 export { ToastContainer, useToast, useToastStore } from './Toast';
 export type { Toast } from './Toast';
 

@@ -16,6 +16,13 @@ const invalidateDashboard = (queryClient: ReturnType<typeof useQueryClient>) => 
   queryClient.invalidateQueries({ queryKey: ['dashboard'] });
 };
 
+// Helper to invalidate billing queries
+const invalidateBilling = (queryClient: ReturnType<typeof useQueryClient>) => {
+  queryClient.invalidateQueries({ queryKey: ['billing'] });
+  queryClient.invalidateQueries({ queryKey: ['subscription'] });
+  queryClient.invalidateQueries({ queryKey: ['plan-limits'] });
+};
+
 export function useProjects(params?: { status?: ProjectStatus; client_id?: string }) {
   const filterKey = JSON.stringify(params || {});
   return useQuery({
@@ -46,6 +53,8 @@ export function useCreateProject() {
       queryClient.invalidateQueries({ queryKey: clientKeys.details() });
       // Invalidate dashboard to update active projects count
       invalidateDashboard(queryClient);
+      // Invalidate billing to update project count
+      invalidateBilling(queryClient);
     },
   });
 }
@@ -61,6 +70,8 @@ export function useUpdateProject() {
       queryClient.invalidateQueries({ queryKey: projectKeys.detail(variables.id) });
       // Invalidate dashboard in case status changed
       invalidateDashboard(queryClient);
+      // Invalidate billing in case status changed (affects active count)
+      invalidateBilling(queryClient);
     },
   });
 }
@@ -79,6 +90,8 @@ export function useDeleteProject() {
       queryClient.invalidateQueries({ queryKey: clientKeys.details() });
       // Invalidate dashboard to update counts
       invalidateDashboard(queryClient);
+      // Invalidate billing to update project count
+      invalidateBilling(queryClient);
     },
   });
 }

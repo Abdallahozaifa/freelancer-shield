@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Plus, ChevronRight, MoreHorizontal, Trash2, Edit } from 'lucide-react';
-import { Button, Dropdown, Skeleton, EmptyState } from '../../components/ui';
+import { Button, Dropdown, Skeleton, EmptyState, ConfirmDialog } from '../../components/ui';
 import { useProjects, useDeleteProject } from '../../hooks/useProjects';
 import { useClients } from '../../hooks/useClients';
 import { ProjectFormModal } from './ProjectFormModal';
@@ -160,6 +160,7 @@ export const ProjectsPage: React.FC = () => {
   const [selectedClient, setSelectedClient] = useState<string>('all');
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [editingProject, setEditingProject] = useState<Project | null>(null);
+  const [projectToDelete, setProjectToDelete] = useState<Project | null>(null);
 
   const { data: projectsData, isLoading: projectsLoading } = useProjects();
   const { data: clientsData } = useClients();
@@ -183,12 +184,11 @@ export const ProjectsPage: React.FC = () => {
     });
   }, [projects, activeFilter, selectedClient]);
 
-  const handleDelete = async (project: Project) => {
-    if (!window.confirm(`Are you sure you want to delete "${project.name}"?`)) {
-      return;
-    }
+  const handleDeleteConfirm = async () => {
+    if (!projectToDelete) return;
     try {
-      await deleteProject.mutateAsync(project.id);
+      await deleteProject.mutateAsync(projectToDelete.id);
+      setProjectToDelete(null);
     } catch (error) {
       console.error('Failed to delete project:', error);
     }
@@ -273,7 +273,7 @@ export const ProjectsPage: React.FC = () => {
               project={project}
               onClick={() => navigate(`/projects/${project.id}`)}
               onEdit={() => setEditingProject(project)}
-              onDelete={() => handleDelete(project)}
+              onDelete={() => setProjectToDelete(project)}
             />
           ))}
         </div>
@@ -287,6 +287,18 @@ export const ProjectsPage: React.FC = () => {
           setEditingProject(null);
         }}
         project={editingProject ?? undefined}
+      />
+
+      {/* Delete Confirmation Dialog */}
+      <ConfirmDialog
+        isOpen={!!projectToDelete}
+        onClose={() => setProjectToDelete(null)}
+        onConfirm={handleDeleteConfirm}
+        title="Delete Project"
+        message={`Are you sure you want to delete "${projectToDelete?.name}"? This will also delete all scope items, requests, and proposals associated with this project. This action cannot be undone.`}
+        confirmText="Delete Project"
+        variant="danger"
+        isLoading={deleteProject.isPending}
       />
     </div>
   );
