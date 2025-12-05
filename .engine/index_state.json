@@ -1,0 +1,409 @@
+{
+  "version": "1.0",
+  "language": "python",
+  "last_indexed": "2025-12-04T20:59:25.418229",
+  "files": {
+    "app/__init__.py": {
+      "path": "app/__init__.py",
+      "mtime": 1764274299.0,
+      "size": 55,
+      "content_hash": "c1b950e2fead9aba5f15037e968205be6ab76abc4238a1c794ec04c7defd28a4"
+    },
+    "app/main.py": {
+      "path": "app/main.py",
+      "mtime": 1764274299.0,
+      "size": 1702,
+      "content_hash": "be1e534a156b0f6c0b68e3abcbb97e8748ffe61ccd20391e829d2119b781385e"
+    },
+    "tests/conftest.py": {
+      "path": "tests/conftest.py",
+      "mtime": 1764307187.102698,
+      "size": 12662,
+      "content_hash": "49a6b4f6f109e5d9bdef92a3e3ad00c22490e7ee45371ee2bdf42e3af1a74742"
+    },
+    "tests/__init__.py": {
+      "path": "tests/__init__.py",
+      "mtime": 1764274300.0,
+      "size": 52,
+      "content_hash": "170a475bed3b02974ed20d8fc31971dbd3c61e61077c9bb0e0fae3a26ed5ef45"
+    },
+    "app/core/config.py": {
+      "path": "app/core/config.py",
+      "mtime": 1764283912.1547835,
+      "size": 1557,
+      "content_hash": "a42e1fee944379ed922c21811206f80867453457ed70657859e5961d652b300d"
+    },
+    "app/core/security.py": {
+      "path": "app/core/security.py",
+      "mtime": 1764276401.2254808,
+      "size": 1919,
+      "content_hash": "ba7f7f43bf30523e103ec7d8bfdb74bfcd767d20cf9d0b95172118021bf0406c"
+    },
+    "app/core/__init__.py": {
+      "path": "app/core/__init__.py",
+      "mtime": 1764274295.0,
+      "size": 54,
+      "content_hash": "74bafd86e2eef0d4a3fc9c8430a48330a7364f04b0e0b1e6625f11026e10d9f3"
+    },
+    "app/models/user.py": {
+      "path": "app/models/user.py",
+      "mtime": 1764455887.9703295,
+      "size": 1803,
+      "content_hash": "9ffa76896a8522e5a9d338a95f6d714d955d1ea0e1499a06f34d7253283442e7"
+    },
+    "app/models/enums.py": {
+      "path": "app/models/enums.py",
+      "mtime": 1764274296.0,
+      "size": 1111,
+      "content_hash": "9aa2028a08d90a2684416697a84afa2078a7f19c3a4510f2d3cd96c8f2ff6f5f"
+    },
+    "app/models/subscription.py": {
+      "path": "app/models/subscription.py",
+      "mtime": 1764456368.2292168,
+      "size": 3303,
+      "content_hash": "6cd098995941fa1379629749042055d2d14cfb4d070437b022576008914e632c"
+    },
+    "app/models/client.py": {
+      "path": "app/models/client.py",
+      "mtime": 1764275506.4698849,
+      "size": 1568,
+      "content_hash": "144f4feb30b65ef84a01c2741a7b6e3efe5a4e35e7a8992c5341fcbc7be5c8a4"
+    },
+    "app/models/__init__.py": {
+      "path": "app/models/__init__.py",
+      "mtime": 1764455654.1700542,
+      "size": 971,
+      "content_hash": "6a80e15b28688b0e36d9d8a6e9891d3bf96d3325b6a25d2752247f6888083f92"
+    },
+    "app/models/proposal.py": {
+      "path": "app/models/proposal.py",
+      "mtime": 1764275762.3143852,
+      "size": 2273,
+      "content_hash": "5baa7bbfe1cb8d814c678396929850b63357edb8c724988284411551818f0f67"
+    },
+    "app/models/scope_item.py": {
+      "path": "app/models/scope_item.py",
+      "mtime": 1764275733.729898,
+      "size": 1826,
+      "content_hash": "637098e127c5bd960824148d6060130c9a23f86618c136a2644d9ebef70e284f"
+    },
+    "app/models/base.py": {
+      "path": "app/models/base.py",
+      "mtime": 1764275198.4400194,
+      "size": 2291,
+      "content_hash": "bc1f9bdaa2ab6a32adf41cc50938133961960de1d2e25bb7f96ab82cdb27f3e3"
+    },
+    "app/models/project.py": {
+      "path": "app/models/project.py",
+      "mtime": 1764275688.8245232,
+      "size": 2760,
+      "content_hash": "28bc86dd14194f6515676251682008085af8dfec0d9783d2667eb89bef67c777"
+    },
+    "app/models/client_request.py": {
+      "path": "app/models/client_request.py",
+      "mtime": 1764275791.2581565,
+      "size": 2659,
+      "content_hash": "eea16d9f03c5fffde2a47778909c459bc5b0883877b40d516b2bfa3e9229ab41"
+    },
+    "app/schemas/auth.py": {
+      "path": "app/schemas/auth.py",
+      "mtime": 1764276618.647831,
+      "size": 873,
+      "content_hash": "0a08f7aa33712f6337fcad7ac3fc60ced5f95ab061610d592e61df91b101ce64"
+    },
+    "app/schemas/user.py": {
+      "path": "app/schemas/user.py",
+      "mtime": 1764283912.1575785,
+      "size": 592,
+      "content_hash": "df820a1d37a5c8f44fbb93b20263658cc4d1fde81c21a3796ec16165bca13068"
+    },
+    "app/schemas/billing.py": {
+      "path": "app/schemas/billing.py",
+      "mtime": 1764464732.0,
+      "size": 1799,
+      "content_hash": "85b4063fda690e8203973a69b2f3ec6243a83b96613e03bec595805135d109c7"
+    },
+    "app/schemas/client.py": {
+      "path": "app/schemas/client.py",
+      "mtime": 1764283912.1556997,
+      "size": 1155,
+      "content_hash": "c061798153958b42535709c2ee8d9bc894f0410dd3c01a19a00007a7b8beb1c5"
+    },
+    "app/schemas/__init__.py": {
+      "path": "app/schemas/__init__.py",
+      "mtime": 1764309331.3316586,
+      "size": 1378,
+      "content_hash": "a263b860c47f22bc8ac6b22db5c418fd81a67b6bda0a21936b8ddb8cd12f9f0c"
+    },
+    "app/schemas/proposal.py": {
+      "path": "app/schemas/proposal.py",
+      "mtime": 1764307187.1023505,
+      "size": 1990,
+      "content_hash": "ce360d7793860660f9df85d242d4ce6c575ec842ab07ce90fcd8a1ce4b76cdd5"
+    },
+    "app/schemas/dashboard.py": {
+      "path": "app/schemas/dashboard.py",
+      "mtime": 1764309331.3319232,
+      "size": 3738,
+      "content_hash": "fad12df61c91917c165b8a2c6c2ad93a6834c68810ca73b6d5e45c239c3fe2cb"
+    },
+    "app/schemas/scope_item.py": {
+      "path": "app/schemas/scope_item.py",
+      "mtime": 1764285256.9390182,
+      "size": 2540,
+      "content_hash": "0561639362612df19187973e005840e3bc34d919e5b597d2521dbe4cd4d898e3"
+    },
+    "app/schemas/scope_analyzer.py": {
+      "path": "app/schemas/scope_analyzer.py",
+      "mtime": 1764283912.1570506,
+      "size": 2479,
+      "content_hash": "5d76636a4e097f63534d9d42fa99df7456b1ab373e4ae4b7d5c247b7d3fda048"
+    },
+    "app/schemas/project.py": {
+      "path": "app/schemas/project.py",
+      "mtime": 1764283912.1561637,
+      "size": 2056,
+      "content_hash": "18995b1fe10b4b5b6a5871dae0c32922c8777c68a2abc625947fe794f19e36bd"
+    },
+    "app/schemas/client_request.py": {
+      "path": "app/schemas/client_request.py",
+      "mtime": 1764373916.300744,
+      "size": 2282,
+      "content_hash": "178216ad60a3310adb60032b8695790dc46600a6b2606d950e085079245f44d0"
+    },
+    "app/db/session.py": {
+      "path": "app/db/session.py",
+      "mtime": 1764274296.0,
+      "size": 1385,
+      "content_hash": "038d6b0777a1b5630e97eda750578d9935c2744d44522b788879dc2a70b88f82"
+    },
+    "app/db/__init__.py": {
+      "path": "app/db/__init__.py",
+      "mtime": 1764274296.0,
+      "size": 26,
+      "content_hash": "b16993d9f40905ea3916647d28469eca45bd31eea92c39da238c283e63612c0c"
+    },
+    "app/api/deps.py": {
+      "path": "app/api/deps.py",
+      "mtime": 1764445990.1875584,
+      "size": 5664,
+      "content_hash": "df1c22765d1bbfb403522b158d9c0b6c8b514e8643d58c6f976c3e764d257aa3"
+    },
+    "app/api/__init__.py": {
+      "path": "app/api/__init__.py",
+      "mtime": 1764274297.0,
+      "size": 21,
+      "content_hash": "ff0153c777766c7bc0249a831ca34f5a8cb8f0d7eb01b792f45657c9092a3ef7"
+    },
+    "app/services/stripe_service.py": {
+      "path": "app/services/stripe_service.py",
+      "mtime": 1764446455.4845939,
+      "size": 8804,
+      "content_hash": "8284b04aefb0c8071b96624d95abcc07fe52653a15c6e20a3f57be56ce814c43"
+    },
+    "app/services/__init__.py": {
+      "path": "app/services/__init__.py",
+      "mtime": 1764274299.0,
+      "size": 33,
+      "content_hash": "61f1ec905bf1433b438c1e845d9350a2d9273430cbee615ed5943ae24d57528f"
+    },
+    "app/api/v1/__init__.py": {
+      "path": "app/api/v1/__init__.py",
+      "mtime": 1764274298.0,
+      "size": 24,
+      "content_hash": "6c50b386320c75ea102994b72affcd047365750dc658c6ebe3c349a91c345df8"
+    },
+    "app/api/v1/router.py": {
+      "path": "app/api/v1/router.py",
+      "mtime": 1764445822.8671005,
+      "size": 1510,
+      "content_hash": "112413471f10717354813041472f0edc6d4e97fcb35987042f290bfd13a29007"
+    },
+    "app/api/v1/endpoints/scope_items.py": {
+      "path": "app/api/v1/endpoints/scope_items.py",
+      "mtime": 1764285256.9371274,
+      "size": 11890,
+      "content_hash": "ead40a36a43c6a847e4eb8442a54f11a24e8d665d0ef843c24125cd3222a812a"
+    },
+    "app/api/v1/endpoints/auth.py": {
+      "path": "app/api/v1/endpoints/auth.py",
+      "mtime": 1764274298.0,
+      "size": 2600,
+      "content_hash": "a0cab3639967f629708af64f16c83703b028ad9f42a64cfbeb81ff386991e5b3"
+    },
+    "app/api/v1/endpoints/billing.py": {
+      "path": "app/api/v1/endpoints/billing.py",
+      "mtime": 1764464732.0,
+      "size": 7905,
+      "content_hash": "40049a672ca2e97c288875a57d3750a858df191c25d3ff1c1d5768b54c7dfcb1"
+    },
+    "app/api/v1/endpoints/users.py": {
+      "path": "app/api/v1/endpoints/users.py",
+      "mtime": 1764283912.1534295,
+      "size": 1832,
+      "content_hash": "7a2ece79b072c77ba2a34ee5dccd42e838043485009b6a01f2d148cb20c5ab62"
+    },
+    "app/api/v1/endpoints/client_requests.py": {
+      "path": "app/api/v1/endpoints/client_requests.py",
+      "mtime": 1764287731.314032,
+      "size": 12535,
+      "content_hash": "b460d4f225f310e83c97e67bf9dc0ab2e74eb88b14f053211b89f096ad9082e5"
+    },
+    "app/api/v1/endpoints/health.py": {
+      "path": "app/api/v1/endpoints/health.py",
+      "mtime": 1764274298.0,
+      "size": 337,
+      "content_hash": "5daf3591ec16dc36c80c70951d2cfc9c7941d2205860968d84f1ddd88274e432"
+    },
+    "app/api/v1/endpoints/__init__.py": {
+      "path": "app/api/v1/endpoints/__init__.py",
+      "mtime": 1764309331.3304834,
+      "size": 335,
+      "content_hash": "a99ef88ab2457b6025eb0ff802fda6b03a98e3f4a09faa39a3645d56c42fab05"
+    },
+    "app/api/v1/endpoints/dashboard.py": {
+      "path": "app/api/v1/endpoints/dashboard.py",
+      "mtime": 1764309331.330797,
+      "size": 21805,
+      "content_hash": "174ed810fe46554a66931d3be280b18fc1670615134d69302cd35c50dc7117fb"
+    },
+    "app/api/v1/endpoints/clients.py": {
+      "path": "app/api/v1/endpoints/clients.py",
+      "mtime": 1764283912.1524475,
+      "size": 6912,
+      "content_hash": "996ab8159790a542bec621b32d238234d43e760733fe7aa17660a23af410b731"
+    },
+    "app/api/v1/endpoints/scope_analyzer.py": {
+      "path": "app/api/v1/endpoints/scope_analyzer.py",
+      "mtime": 1764283912.1529224,
+      "size": 7064,
+      "content_hash": "04b3a0dde58caf86f4ad9159a8bfbb9b250a0e05676bb3774193cdb49a785c69"
+    },
+    "app/api/v1/endpoints/projects.py": {
+      "path": "app/api/v1/endpoints/projects.py",
+      "mtime": 1764364440.397486,
+      "size": 9459,
+      "content_hash": "46bb316bfbaa58baf9d595850b84c59242417ed01d8a6ebe36f4bc401bc1e6cb"
+    },
+    "app/api/v1/endpoints/proposals.py": {
+      "path": "app/api/v1/endpoints/proposals.py",
+      "mtime": 1764392946.160154,
+      "size": 14864,
+      "content_hash": "860dae293f813da2d7454d84be53a214c1b354b37ed4615cfe14df798f7d1fe4"
+    },
+    "app/services/scope_analyzer/service.py": {
+      "path": "app/services/scope_analyzer/service.py",
+      "mtime": 1764283912.1598198,
+      "size": 4284,
+      "content_hash": "98096056a64ed63d873501ec6ff615cf3e8b4318b87a6c37a449627c4288c599"
+    },
+    "app/services/scope_analyzer/models.py": {
+      "path": "app/services/scope_analyzer/models.py",
+      "mtime": 1764283912.159412,
+      "size": 3127,
+      "content_hash": "0d7f27f2a69dd0b8c66ceaf613c122340ae8982c008e60303db05f419384ae69"
+    },
+    "app/services/scope_analyzer/analyzer.py": {
+      "path": "app/services/scope_analyzer/analyzer.py",
+      "mtime": 1764283912.1588323,
+      "size": 894,
+      "content_hash": "8cd965d294e72438ec722d7e8afd2ca14e3040642fc98dc5172c805acf0c4aec"
+    },
+    "app/services/scope_analyzer/rules_analyzer.py": {
+      "path": "app/services/scope_analyzer/rules_analyzer.py",
+      "mtime": 1764283912.1596458,
+      "size": 8044,
+      "content_hash": "5bb48078b3d782c1818178b94d8b9955894b992a403ec8ac39fc1d7e71d47472"
+    },
+    "app/services/scope_analyzer/__init__.py": {
+      "path": "app/services/scope_analyzer/__init__.py",
+      "mtime": 1764283912.1580524,
+      "size": 1563,
+      "content_hash": "d8e3bdec8d726d41b5fd442d4fed8645d929ea9e771fb2fea4e65aba73e7801c"
+    },
+    "app/services/scope_analyzer/indicators.py": {
+      "path": "app/services/scope_analyzer/indicators.py",
+      "mtime": 1764283912.1592326,
+      "size": 1076,
+      "content_hash": "baa86cc40a19235657a7d582a182b136abc09a8c54a26f112d0f0c23666cf8c6"
+    },
+    "app/services/scope_analyzer/ai_analyzer.py": {
+      "path": "app/services/scope_analyzer/ai_analyzer.py",
+      "mtime": 1764283912.1586552,
+      "size": 4676,
+      "content_hash": "a7f69b72a46ff4e62c1ee07158186c6e2682845d37825e842400bcf15dd7ba2a"
+    },
+    "tests/unit/test_scope_analyzer.py": {
+      "path": "tests/unit/test_scope_analyzer.py",
+      "mtime": 1764283912.160994,
+      "size": 14847,
+      "content_hash": "8589d64d52a0a3ff2ddcb45459b1ee77c68adae7c708bbb8be315fb9ecc5102e"
+    },
+    "tests/unit/test_auth.py": {
+      "path": "tests/unit/test_auth.py",
+      "mtime": 1764274300.0,
+      "size": 4887,
+      "content_hash": "46e52a581bc3c8f430093b0e9021187925d06068fc8ecfce5637a37c4a9534c1"
+    },
+    "tests/unit/test_dashboard.py": {
+      "path": "tests/unit/test_dashboard.py",
+      "mtime": 1764309331.3321867,
+      "size": 21326,
+      "content_hash": "875092f7d0a092c3fa8a260beb7f9b06ba4a7c14ff9e0b4dfa8630ad885f658a"
+    },
+    "tests/unit/test_scope_items.py": {
+      "path": "tests/unit/test_scope_items.py",
+      "mtime": 1764285256.9393668,
+      "size": 17359,
+      "content_hash": "78f04fca0f903adf958c2b90948bc3849b4cfac229936a0452afa24731686777"
+    },
+    "tests/unit/__init__.py": {
+      "path": "tests/unit/__init__.py",
+      "mtime": 1764274300.0,
+      "size": 20,
+      "content_hash": "fcf7306825915be29b8f0066ae0704097ec05d73723ee223d91c7246a857ca91"
+    },
+    "tests/unit/test_proposals.py": {
+      "path": "tests/unit/test_proposals.py",
+      "mtime": 1764307187.1037831,
+      "size": 18018,
+      "content_hash": "94f0248944aaaed467c1f178349d272da33f1d6c0c5b5c2633f8b7e8b901bd83"
+    },
+    "tests/unit/test_clients.py": {
+      "path": "tests/unit/test_clients.py",
+      "mtime": 1764283912.1604075,
+      "size": 13521,
+      "content_hash": "8019600753d95b5e4e4707b8dec76f72eee20ddbb02f5b101a0179296b03f780"
+    },
+    "tests/unit/test_projects.py": {
+      "path": "tests/unit/test_projects.py",
+      "mtime": 1764283912.160603,
+      "size": 13003,
+      "content_hash": "c4f894f100f144b76a0b13d2b30b506cb7f5f381fa16efebb6a4ccb139379841"
+    },
+    "tests/unit/test_users.py": {
+      "path": "tests/unit/test_users.py",
+      "mtime": 1764283912.1612496,
+      "size": 8898,
+      "content_hash": "7da83c607455e4608ed87c4a5fb511b6a47caea68e62b886133a95e217370f28"
+    },
+    "tests/unit/test_health.py": {
+      "path": "tests/unit/test_health.py",
+      "mtime": 1764274300.0,
+      "size": 514,
+      "content_hash": "72012f9201c419d88cc9b75350e71a8ba53b18215d1a25c7caa885948816d33b"
+    },
+    "tests/unit/test_client_requests.py": {
+      "path": "tests/unit/test_client_requests.py",
+      "mtime": 1764287731.315221,
+      "size": 28548,
+      "content_hash": "8ec86a6f8477c8cd100d03d1359caf40bc85a58248b6e40d31a44e05bae90f1d"
+    },
+    "tests/integration/__init__.py": {
+      "path": "tests/integration/__init__.py",
+      "mtime": 1764274301.0,
+      "size": 27,
+      "content_hash": "b33967a7336a9725190202b74c480d129e6959a7ac1a667d4ce559e08e41f8c3"
+    }
+  }
+}

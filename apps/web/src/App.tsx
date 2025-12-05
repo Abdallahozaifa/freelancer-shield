@@ -9,6 +9,7 @@ import { RequestsPage } from './pages/projects/requests';
 import { ScopeItemsPage } from './pages/projects/scope';
 import { ProposalsPage } from './pages/projects/proposals';
 import { LandingPage } from './pages/landing';
+import { BillingPage } from './pages/settings';
 import { AppLayout } from './layouts';
 
 // Create query client
@@ -106,7 +107,8 @@ export default function App() {
               <Route path="/scope-items" element={<ScopeItemsPage />} />
               <Route path="/requests" element={<RequestsPage />} />
               <Route path="/proposals" element={<ProposalsPage />} />
-              <Route path="/settings" element={<Navigate to="/profile" replace />} />
+              <Route path="/settings" element={<Navigate to="/settings/billing" replace />} />
+              <Route path="/settings/billing" element={<BillingPage />} />
             </Route>
           </Route>
 

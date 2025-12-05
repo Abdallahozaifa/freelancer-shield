@@ -6,3 +6,4 @@ export { scopeApi } from './scope';
 export { requestsApi } from './requests';
 export { proposalsApi } from './proposals';
 export { dashboardApi } from './dashboard';
+export { billingApi } from './billing';

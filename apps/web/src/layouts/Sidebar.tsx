@@ -7,6 +7,7 @@ import {
   Settings,
   ShieldCheck,
   BarChart3,
+  CreditCard,
 } from 'lucide-react';
 
 interface NavItem {
@@ -28,12 +29,13 @@ interface NavDivider {
 type NavItemOrDivider = NavItem | NavDivider;
 
 const navItems: NavItemOrDivider[] = [
-  { icon: LayoutDashboard, label: 'Dashboard', path: '/' },
+  { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
   { icon: Users, label: 'Clients', path: '/clients' },
   { icon: FolderKanban, label: 'Projects', path: '/projects' },
   { icon: BarChart3, label: 'Reports', path: '/reports', comingSoon: true },
   { divider: true },
-  { icon: Settings, label: 'Settings', path: '/settings' },
+  { icon: CreditCard, label: 'Billing', path: '/settings/billing' },
+  { icon: Settings, label: 'Settings', path: '/profile' },
 ];
 
 interface SidebarProps {
@@ -44,8 +46,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed }) => {
   const location = useLocation();
 
   const isActive = (path: string) => {
-    if (path === '/') {
-      return location.pathname === '/';
+    if (path === '/dashboard') {
+      return location.pathname === '/dashboard';
     }
     return location.pathname.startsWith(path);
   };
