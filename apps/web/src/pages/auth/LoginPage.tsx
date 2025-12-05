@@ -186,8 +186,8 @@ export function LoginPage() {
           {/* Features */}
           <div className="space-y-4">
             {[
-              'AI-powered scope analysis',
-              'Automatic proposal generation',
+              'Smart scope creep detection',
+              'One-click proposal generation',
               'Real-time project tracking',
             ].map((feature, i) => (
               <div key={i} className="flex items-center gap-3">

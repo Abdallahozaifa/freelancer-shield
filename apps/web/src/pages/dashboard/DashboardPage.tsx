@@ -239,8 +239,8 @@ export const DashboardPage: React.FC = () => {
                   <div className="col-span-3 text-center">Progress</div>
                 </div>
                 
-                {/* Project Rows */}
-                {projects.slice(0, 5).map((project) => {
+                {/* Project Rows - Show ALL projects */}
+                {projects.map((project) => {
                   const progress = project.scope_items_total > 0
                     ? Math.round((project.scope_items_completed / project.scope_items_total) * 100)
                     : 0;

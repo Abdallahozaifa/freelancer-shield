@@ -11,6 +11,7 @@ import {
   Clock,
   DollarSign,
   ChevronRight,
+  Sparkles,
 } from 'lucide-react';
 import { Button } from '../../components/ui/Button';
 
@@ -171,60 +172,41 @@ export function LandingPage() {
                     </div>
 
                     {/* Alert Card */}
-                    <div className="bg-red-50 border border-red-200 rounded-lg p-3 mb-4">
-                      <div className="flex items-start gap-2">
-                        <div className="w-6 h-6 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0">
-                          <AlertTriangle className="w-3.5 h-3.5 text-red-600" />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="text-xs font-semibold text-red-800">2 out-of-scope requests detected</div>
-                          <div className="text-[10px] text-red-600">Website Redesign project needs attention</div>
-                        </div>
-                        <button className="text-[10px] font-medium text-red-700 bg-red-100 px-2 py-1 rounded">
-                          Review
-                        </button>
+                    <div className="bg-red-50 border border-red-200 rounded-lg p-3 mb-3">
+                      <div className="flex items-center gap-2">
+                        <AlertTriangle className="w-4 h-4 text-red-600" />
+                        <span className="text-xs font-medium text-red-800">2 requests need attention</span>
                       </div>
+                      <p className="text-[10px] text-red-600 mt-1 ml-6">Create proposals to protect your revenue</p>
                     </div>
 
-                    {/* Projects List */}
-                    <div className="bg-white rounded-lg p-3 shadow-sm">
-                      <div className="flex items-center justify-between mb-3">
-                        <div className="text-xs font-semibold text-slate-900">Active Projects</div>
-                        <div className="text-[10px] text-indigo-600 font-medium">View All</div>
+                    {/* Project List */}
+                    <div className="bg-white rounded-lg shadow-sm">
+                      <div className="px-3 py-2 border-b border-slate-100">
+                        <span className="text-xs font-semibold text-slate-700">Active Projects</span>
                       </div>
-                      <div className="space-y-2">
-                        {[
-                          { name: 'Website Redesign', client: 'Acme Corp', progress: 65, alert: true },
-                          { name: 'Mobile App', client: 'TechStart', progress: 40, alert: false },
-                          { name: 'Brand Identity', client: 'NewCo', progress: 85, alert: false },
-                        ].map((project, i) => (
-                          <div key={i} className="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-50">
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-center gap-2">
-                                <span className="text-xs font-medium text-slate-900">{project.name}</span>
-                                {project.alert && (
-                                  <span className="text-[9px] bg-red-100 text-red-700 px-1.5 py-0.5 rounded-full font-medium">
-                                    2 alerts
-                                  </span>
-                                )}
-                              </div>
-                              <div className="text-[10px] text-slate-500">{project.client}</div>
+                      {[
+                        { name: 'Website Redesign', scope: 2, progress: 75 },
+                        { name: 'Mobile App MVP', scope: 0, progress: 40 },
+                        { name: 'Brand Identity', scope: 1, progress: 90 },
+                      ].map((project, i) => (
+                        <div key={i} className="flex items-center justify-between px-3 py-2 border-b border-slate-50 last:border-0">
+                          <span className="text-xs text-slate-700">{project.name}</span>
+                          <div className="flex items-center gap-2">
+                            {project.scope > 0 && (
+                              <span className="px-1.5 py-0.5 bg-red-100 text-red-700 text-[10px] font-medium rounded">
+                                {project.scope}
+                              </span>
+                            )}
+                            <div className="w-16 h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                              <div 
+                                className="h-full bg-indigo-500 rounded-full" 
+                                style={{ width: `${project.progress}%` }}
+                              />
                             </div>
-                            <div className="w-20">
-                              <div className="flex items-center justify-between mb-1">
-                                <span className="text-[10px] text-slate-600">{project.progress}%</span>
-                              </div>
-                              <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
-                                <div 
-                                  className="h-full bg-indigo-500 rounded-full"
-                                  style={{ width: `${project.progress}%` }}
-                                />
-                              </div>
-                            </div>
-                            <ChevronRight className="w-4 h-4 text-slate-400" />
                           </div>
-                        ))}
-                      </div>
+                        </div>
+                      ))}
                     </div>
                   </div>
                 </div>
@@ -242,56 +224,46 @@ export function LandingPage() {
               Everything you need to protect your projects
             </h2>
             <p className="text-lg text-slate-600 max-w-2xl mx-auto">
-              From scope tracking to proposal generation, ScopeGuard gives you the tools to manage 
-              client expectations and protect your bottom line.
+              From tracking scope to generating proposals, ScopeGuard has you covered.
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-3 gap-8">
             {[
               {
-                icon: FileText,
+                icon: FolderKanban,
                 title: 'Scope Tracking',
-                description: 'Define project scope with clear deliverables. Every item is tracked and monitored.',
-                color: 'indigo',
-              },
-              {
-                icon: CheckCircle,
-                title: 'Smart Detection',
-                description: 'Automatically analyze client requests and flag potential scope creep.',
-                color: 'purple',
+                description: 'Define project scope with clear deliverables. Track progress and keep clients aligned.',
               },
               {
                 icon: AlertTriangle,
-                title: 'Real-time Alerts',
-                description: 'Get notified instantly when out-of-scope requests are detected.',
-                color: 'amber',
+                title: 'Scope Creep Detection',
+                description: 'Automatically flag client requests that fall outside the original scope.',
               },
               {
-                icon: DollarSign,
+                icon: FileText,
                 title: 'Proposal Generator',
-                description: 'Turn scope creep into revenue with one-click proposal generation.',
-                color: 'emerald',
+                description: 'Turn out-of-scope requests into paid proposals with one click.',
               },
               {
                 icon: BarChart3,
-                title: 'Project Dashboard',
-                description: 'Monitor all your projects at a glance with real-time progress tracking.',
-                color: 'blue',
+                title: 'Revenue Dashboard',
+                description: 'Track how much revenue you\'ve protected from scope creep.',
               },
               {
                 icon: Users,
                 title: 'Client Management',
-                description: 'Keep all your clients organized with contact info and project history.',
-                color: 'rose',
+                description: 'Organize projects by client with easy access to history and notes.',
+              },
+              {
+                icon: Clock,
+                title: 'Request History',
+                description: 'Keep a paper trail of all client requests and your responses.',
               },
             ].map((feature, i) => (
-              <div 
-                key={i} 
-                className="group p-6 rounded-2xl border border-slate-200 hover:border-slate-300 hover:shadow-lg transition-all duration-300"
-              >
-                <div className={`w-12 h-12 rounded-xl bg-${feature.color}-100 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
-                  <feature.icon className={`w-6 h-6 text-${feature.color}-600`} />
+              <div key={i} className="p-6 rounded-2xl border border-slate-200 hover:border-indigo-200 hover:shadow-lg transition-all">
+                <div className="w-12 h-12 rounded-xl bg-indigo-100 flex items-center justify-center mb-4">
+                  <feature.icon className="w-6 h-6 text-indigo-600" />
                 </div>
                 <h3 className="text-lg font-semibold text-slate-900 mb-2">{feature.title}</h3>
                 <p className="text-slate-600">{feature.description}</p>
@@ -301,15 +273,15 @@ export function LandingPage() {
         </div>
       </section>
 
-      {/* How It Works */}
+      {/* How It Works Section */}
       <section id="how-it-works" className="py-24 px-6 lg:px-8 bg-slate-50">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-4">
-              How ScopeGuard works
+              How ScopeGuard Works
             </h2>
             <p className="text-lg text-slate-600 max-w-2xl mx-auto">
-              Three simple steps to protect your projects from scope creep
+              Three simple steps to protect your revenue
             </p>
           </div>
 
@@ -318,12 +290,12 @@ export function LandingPage() {
               {
                 step: '01',
                 title: 'Define Your Scope',
-                description: 'Add your project deliverables and define what\'s included. Set clear boundaries from the start.',
+                description: 'Create a project and list all deliverables. This becomes your source of truth.',
               },
               {
                 step: '02',
                 title: 'Log Client Requests',
-                description: 'Track every client request. Our AI analyzes each one to determine if it\'s in scope or not.',
+                description: 'When clients ask for changes, log them. ScopeGuard flags what\'s out of scope.',
               },
               {
                 step: '03',
@@ -347,7 +319,7 @@ export function LandingPage() {
       </section>
 
       {/* Pricing Section */}
-      <section id="pricing" className="py-24 px-6 lg:px-8 bg-slate-50">
+      <section id="pricing" className="py-24 px-6 lg:px-8 bg-white">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-4">
@@ -392,23 +364,29 @@ export function LandingPage() {
 
             {/* Pro Tier */}
             <div className="relative p-8 rounded-2xl bg-gradient-to-br from-indigo-600 to-purple-600 text-white shadow-xl">
-              <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-amber-400 text-amber-900 text-sm font-semibold rounded-full">
-                Recommended
+              {/* Founder Pricing Badge */}
+              <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-amber-400 text-amber-900 text-sm font-semibold rounded-full flex items-center gap-1">
+                <Sparkles className="w-4 h-4" />
+                Founder Pricing
               </div>
               <div className="mb-6">
                 <h3 className="text-lg font-semibold text-white">Pro</h3>
-                <div className="flex items-baseline gap-1 mt-2">
+                <div className="flex items-baseline gap-2 mt-2">
+                  <span className="text-2xl text-indigo-200 line-through">$29</span>
                   <span className="text-5xl font-bold text-white">$19</span>
                   <span className="text-indigo-200">/month</span>
                 </div>
-                <p className="mt-2 text-sm text-indigo-200">For active freelancers</p>
+                <p className="mt-2 text-sm text-indigo-200">
+                  Lock in this price forever • Limited spots
+                </p>
               </div>
               <ul className="space-y-3 mb-8">
                 {[
                   'Unlimited projects',
                   'Unlimited clients',
-                  'AI scope analysis',
-                  'Proposal generator',
+                  'Scope creep detection',
+                  'One-click proposal generator',
+                  'Revenue dashboard',
                   'Priority support',
                 ].map((feature, j) => (
                   <li key={j} className="flex items-center gap-2">
@@ -420,9 +398,19 @@ export function LandingPage() {
               <Link to="/register" className="block">
                 <Button className="w-full bg-white text-indigo-600 hover:bg-indigo-50">
                   Start Free Trial
+                  <ArrowRight className="w-4 h-4 ml-2" />
                 </Button>
               </Link>
             </div>
+          </div>
+
+          {/* Value Proposition */}
+          <div className="mt-12 text-center">
+            <p className="text-slate-600">
+              The average freelancer loses <span className="font-semibold text-slate-900">$500-$2,000/month</span> to scope creep.
+              <br />
+              ScopeGuard pays for itself with a single protected proposal.
+            </p>
           </div>
         </div>
       </section>

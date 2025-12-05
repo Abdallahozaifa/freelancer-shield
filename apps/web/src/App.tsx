@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate, Outlet } from 'react-router-dom
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { useAuthStore } from './stores/authStore';
+import { AuthInitializer } from './components/AuthInitializer';
 import { Loading, ToastContainer } from './components/ui';
 import { LoginPage, RegisterPage, ProfilePage, ClientsPage, ClientDetailPage, DashboardPage } from './pages';
 import { ProjectsPage, ProjectDetailPage, ProjectNewPage } from './pages/projects';
@@ -65,57 +66,59 @@ export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
-        <Routes>
-          {/* Landing page - public, but redirects to dashboard if authenticated */}
-          <Route
-            path="/"
-            element={
-              <PublicRoute>
-                <LandingPage />
-              </PublicRoute>
-            }
-          />
+        <AuthInitializer>
+          <Routes>
+            {/* Landing page - public, but redirects to dashboard if authenticated */}
+            <Route
+              path="/"
+              element={
+                <PublicRoute>
+                  <LandingPage />
+                </PublicRoute>
+              }
+            />
 
-          {/* Auth routes */}
-          <Route
-            path="/login"
-            element={
-              <PublicRoute>
-                <LoginPage />
-              </PublicRoute>
-            }
-          />
-          <Route
-            path="/register"
-            element={
-              <PublicRoute>
-                <RegisterPage />
-              </PublicRoute>
-            }
-          />
+            {/* Auth routes */}
+            <Route
+              path="/login"
+              element={
+                <PublicRoute>
+                  <LoginPage />
+                </PublicRoute>
+              }
+            />
+            <Route
+              path="/register"
+              element={
+                <PublicRoute>
+                  <RegisterPage />
+                </PublicRoute>
+              }
+            />
 
-          {/* Protected routes with AppLayout */}
-          <Route element={<ProtectedRoute />}>
-            <Route element={<AppLayout />}>
-              <Route path="/dashboard" element={<DashboardPage />} />
-              <Route path="/profile" element={<ProfilePage />} />
-              <Route path="/clients" element={<ClientsPage />} />
-              <Route path="/clients/:id" element={<ClientDetailPage />} />
-              <Route path="/projects" element={<ProjectsPage />} />
-              <Route path="/projects/new" element={<ProjectNewPage />} />
-              <Route path="/projects/:id" element={<ProjectDetailPage />} />
-              <Route path="/scope-items" element={<ScopeItemsPage />} />
-              <Route path="/requests" element={<RequestsPage />} />
-              <Route path="/proposals" element={<ProposalsPage />} />
-              <Route path="/settings" element={<Navigate to="/settings/billing" replace />} />
-              <Route path="/settings/billing" element={<BillingPage />} />
+            {/* Protected routes with AppLayout */}
+            <Route element={<ProtectedRoute />}>
+              <Route element={<AppLayout />}>
+                <Route path="/dashboard" element={<DashboardPage />} />
+                <Route path="/profile" element={<ProfilePage />} />
+                <Route path="/clients" element={<ClientsPage />} />
+                <Route path="/clients/:id" element={<ClientDetailPage />} />
+                <Route path="/projects" element={<ProjectsPage />} />
+                <Route path="/projects/new" element={<ProjectNewPage />} />
+                <Route path="/projects/:id" element={<ProjectDetailPage />} />
+                <Route path="/scope-items" element={<ScopeItemsPage />} />
+                <Route path="/requests" element={<RequestsPage />} />
+                <Route path="/proposals" element={<ProposalsPage />} />
+                <Route path="/settings" element={<Navigate to="/settings/billing" replace />} />
+                <Route path="/settings/billing" element={<BillingPage />} />
+              </Route>
             </Route>
-          </Route>
 
-          {/* Catch all - redirect to landing */}
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-        <ToastContainer />
+            {/* Catch all - redirect to landing */}
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+          <ToastContainer />
+        </AuthInitializer>
       </BrowserRouter>
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>

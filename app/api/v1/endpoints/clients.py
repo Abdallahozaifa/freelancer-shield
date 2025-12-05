@@ -1,21 +1,19 @@
-"""Client management endpoints."""
-
+"""
+Client management endpoints.
+"""
 import uuid
+from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException, status, Query
-from sqlalchemy import select, func
+from fastapi import APIRouter, Depends, HTTPException, Query, status
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
 
 from app.api.deps import get_current_user, get_db
 from app.models.client import Client
 from app.models.project import Project
 from app.models.user import User
-from app.schemas.client import (
-    ClientCreate,
-    ClientUpdate,
-    ClientResponse,
-    ClientList,
-)
+from app.schemas.client import ClientCreate, ClientList, ClientResponse, ClientUpdate
 
 router = APIRouter()
 
@@ -36,44 +34,38 @@ def _client_to_response(client: Client, project_count: int = 0) -> ClientRespons
 
 @router.get("", response_model=ClientList)
 async def list_clients(
-    db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user),
-    skip: int = Query(default=0, ge=0),
-    limit: int = Query(default=100, ge=1, le=100),
+    db: Annotated[AsyncSession, Depends(get_db)],
+    current_user: Annotated[User, Depends(get_current_user)],
+    skip: Annotated[int, Query(ge=0)] = 0,
+    limit: Annotated[int, Query(ge=1, le=100)] = 20,
 ) -> ClientList:
-    """
-    List all clients for the current user with project counts.
-    
-    Supports pagination with skip and limit parameters.
-    """
-    # Get clients with project counts using a subquery
+    """List all clients for the current user."""
+    # Get clients with project counts
     project_count_subquery = (
-        select(Project.client_id, func.count(Project.id).label("project_count"))
+        select(func.count(Project.id))
+        .where(Project.client_id == Client.id)
         .where(Project.user_id == current_user.id)
-        .group_by(Project.client_id)
-        .subquery()
+        .scalar_subquery()
     )
     
-    # Query clients with left join to get project counts
     query = (
-        select(Client, func.coalesce(project_count_subquery.c.project_count, 0).label("project_count"))
-        .outerjoin(project_count_subquery, Client.id == project_count_subquery.c.client_id)
+        select(Client, project_count_subquery.label("project_count"))
         .where(Client.user_id == current_user.id)
+        .order_by(Client.name)
         .offset(skip)
         .limit(limit)
-        .order_by(Client.created_at.desc())
     )
     
     result = await db.execute(query)
     rows = result.all()
     
     # Get total count
-    count_query = select(func.count(Client.id)).where(Client.user_id == current_user.id)
-    total_result = await db.execute(count_query)
+    total_query = select(func.count(Client.id)).where(Client.user_id == current_user.id)
+    total_result = await db.execute(total_query)
     total = total_result.scalar() or 0
     
     clients = [
-        _client_to_response(row.Client, row.project_count)
+        _client_to_response(row.Client, row.project_count or 0)
         for row in rows
     ]
     
@@ -86,7 +78,7 @@ async def create_client(
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ) -> ClientResponse:
-    """Create a new client for the current user."""
+    """Create a new client."""
     client = Client(
         user_id=current_user.id,
         name=client_in.name,
@@ -94,11 +86,12 @@ async def create_client(
         company=client_in.company,
         notes=client_in.notes,
     )
+    
     db.add(client)
     await db.commit()
     await db.refresh(client)
     
-    return _client_to_response(client, project_count=0)
+    return _client_to_response(client, 0)
 
 
 @router.get("/{client_id}", response_model=ClientResponse)
@@ -120,7 +113,7 @@ async def get_client(
             detail="Client not found",
         )
     
-    # Get client with project count
+    # Get client with project count - only count projects that belong to the current user
     project_count_subquery = (
         select(func.count(Project.id))
         .where(Project.client_id == client_uuid)
@@ -146,7 +139,7 @@ async def get_client(
     return _client_to_response(row.Client, row.project_count or 0)
 
 
-@router.patch("/{client_id}", response_model=ClientResponse)
+@router.put("/{client_id}", response_model=ClientResponse)
 async def update_client(
     client_id: str,
     client_in: ClientUpdate,
@@ -189,7 +182,7 @@ async def update_client(
     await db.commit()
     await db.refresh(client)
     
-    # Get project count
+    # Get project count - only count projects that belong to the current user
     project_count_query = (
         select(func.count(Project.id))
         .where(Project.client_id == client_uuid)

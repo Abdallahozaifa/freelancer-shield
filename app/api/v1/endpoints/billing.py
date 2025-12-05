@@ -3,7 +3,7 @@ import os
 import stripe
 from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException, Request, Header
-from sqlalchemy import select, func
+from sqlalchemy import select, func, and_
 from sqlalchemy.ext.asyncio import AsyncSession
 from dotenv import load_dotenv
 
@@ -12,6 +12,7 @@ from app.models.user import User
 from app.models.subscription import Subscription, PlanType, SubscriptionStatus
 from app.models.project import Project
 from app.models.client import Client
+from app.models.enums import ProjectStatus
 from app.schemas.billing import (
     SubscriptionResponse,
     CreateCheckoutRequest,
@@ -50,9 +51,14 @@ async def get_subscription(
         await db.commit()
         await db.refresh(subscription)
 
-    # Get current usage
+    # Get current usage - only count ACTIVE projects
     projects_result = await db.execute(
-        select(func.count(Project.id)).where(Project.user_id == current_user.id)
+        select(func.count(Project.id)).where(
+            and_(
+                Project.user_id == current_user.id,
+                Project.status == ProjectStatus.ACTIVE,
+            )
+        )
     )
     current_projects = projects_result.scalar() or 0
     
@@ -95,8 +101,14 @@ async def get_plan_limits(
         await db.commit()
         await db.refresh(subscription)
 
+    # Only count ACTIVE projects
     projects_result = await db.execute(
-        select(func.count(Project.id)).where(Project.user_id == current_user.id)
+        select(func.count(Project.id)).where(
+            and_(
+                Project.user_id == current_user.id,
+                Project.status == ProjectStatus.ACTIVE,
+            )
+        )
     )
     current_projects = projects_result.scalar() or 0
     

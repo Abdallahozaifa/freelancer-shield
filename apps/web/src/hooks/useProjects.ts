@@ -11,6 +11,11 @@ export const projectKeys = {
   detail: (id: string) => [...projectKeys.details(), id] as const,
 };
 
+// Helper to invalidate all dashboard-related queries
+const invalidateDashboard = (queryClient: ReturnType<typeof useQueryClient>) => {
+  queryClient.invalidateQueries({ queryKey: ['dashboard'] });
+};
+
 export function useProjects(params?: { status?: ProjectStatus; client_id?: string }) {
   const filterKey = JSON.stringify(params || {});
   return useQuery({
@@ -39,6 +44,8 @@ export function useCreateProject() {
       queryClient.invalidateQueries({ queryKey: clientKeys.lists() });
       // Invalidate client details
       queryClient.invalidateQueries({ queryKey: clientKeys.details() });
+      // Invalidate dashboard to update active projects count
+      invalidateDashboard(queryClient);
     },
   });
 }
@@ -52,6 +59,8 @@ export function useUpdateProject() {
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: projectKeys.lists() });
       queryClient.invalidateQueries({ queryKey: projectKeys.detail(variables.id) });
+      // Invalidate dashboard in case status changed
+      invalidateDashboard(queryClient);
     },
   });
 }
@@ -68,6 +77,8 @@ export function useDeleteProject() {
       queryClient.invalidateQueries({ queryKey: clientKeys.lists() });
       // Invalidate client details
       queryClient.invalidateQueries({ queryKey: clientKeys.details() });
+      // Invalidate dashboard to update counts
+      invalidateDashboard(queryClient);
     },
   });
 }

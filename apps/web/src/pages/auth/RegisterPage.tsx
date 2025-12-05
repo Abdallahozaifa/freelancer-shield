@@ -217,12 +217,12 @@ export function RegisterPage() {
               { 
                 icon: FileText, 
                 title: 'Track every client request',
-                description: 'Log and categorize all incoming requests automatically'
+                description: 'Log and categorize all incoming requests in one place'
               },
               { 
                 icon: Zap, 
                 title: 'Detect scope creep instantly',
-                description: 'AI identifies out-of-scope work before it costs you'
+                description: 'Flag out-of-scope work before it costs you money'
               },
               { 
                 icon: BarChart3, 

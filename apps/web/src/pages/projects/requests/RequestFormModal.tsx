@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import { Brain, Loader2 } from 'lucide-react';
+import { FileText, Loader2, CheckCircle, AlertTriangle } from 'lucide-react';
 import { Modal, Button, Input, Textarea, Select } from '../../../components/ui';
 import { RequestClassificationBadge } from './RequestClassificationBadge';
-import { cn } from '../../../utils/cn';
-import type { RequestSource, ClientRequest, ScopeAnalysisResult } from '../../../types';
+import type { RequestSource, ClientRequest } from '../../../types';
 
 interface RequestFormModalProps {
   isOpen: boolean;
@@ -33,6 +32,22 @@ const sourceOptions = [
   { value: 'other', label: 'Other' },
 ];
 
+// Scope creep indicator phrases
+const scopeCreepPhrases = [
+  'also', 'as well', 'additionally', "shouldn't take long", "won't take long",
+  'quick addition', 'just a small', "while you're at it", 'one more thing',
+  'can you also', 'easy change', 'simple update', 'real quick', "shouldn't be hard",
+  'just wondering', 'btw', 'by the way', 'quick question', 'small tweak',
+  'minor change', 'tiny update',
+];
+
+const detectScopeCreepIndicators = (content: string): string[] => {
+  const lowerContent = content.toLowerCase();
+  return scopeCreepPhrases.filter(phrase => 
+    lowerContent.includes(phrase.toLowerCase())
+  ).slice(0, 3);
+};
+
 type SubmitState = 'idle' | 'submitting' | 'complete';
 
 export const RequestFormModal: React.FC<RequestFormModalProps> = ({
@@ -44,6 +59,7 @@ export const RequestFormModal: React.FC<RequestFormModalProps> = ({
   const [submitState, setSubmitState] = useState<SubmitState>('idle');
   const [createdRequest, setCreatedRequest] = useState<ClientRequest | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [detectedIndicators, setDetectedIndicators] = useState<string[]>([]);
 
   const {
     register,
@@ -69,6 +85,7 @@ export const RequestFormModal: React.FC<RequestFormModalProps> = ({
       setSubmitState('idle');
       setCreatedRequest(null);
       setError(null);
+      setDetectedIndicators([]);
     }
   }, [isOpen, reset]);
 
@@ -76,8 +93,23 @@ export const RequestFormModal: React.FC<RequestFormModalProps> = ({
     onClose();
   };
 
+  // Detect scope creep when user stops typing (on blur)
+  const handleContentBlur = (e: React.FocusEvent<HTMLTextAreaElement>) => {
+    const content = e.target.value;
+    if (content) {
+      const indicators = detectScopeCreepIndicators(content);
+      setDetectedIndicators(indicators);
+    } else {
+      setDetectedIndicators([]);
+    }
+  };
+
   const onFormSubmit = async (data: FormFields) => {
     setError(null);
+    
+    // Run detection on submit as well
+    const indicators = detectScopeCreepIndicators(data.content);
+    setDetectedIndicators(indicators);
 
     try {
       setSubmitState('submitting');
@@ -103,15 +135,14 @@ export const RequestFormModal: React.FC<RequestFormModalProps> = ({
     setSubmitState('idle');
     setCreatedRequest(null);
     setError(null);
+    setDetectedIndicators([]);
   };
 
   const isLoading = submitState === 'submitting';
   const isComplete = submitState === 'complete';
 
-  // Get confidence as a number
-  const confidencePercent = createdRequest?.confidence 
-    ? Math.round(Number(createdRequest.confidence) * 100) 
-    : null;
+  // Get the register props for content, then add onBlur
+  const contentRegister = register('content', { required: 'Content is required' });
 
   return (
     <Modal isOpen={isOpen} onClose={handleClose} title="Log Client Request" size="lg">
@@ -134,7 +165,11 @@ export const RequestFormModal: React.FC<RequestFormModalProps> = ({
               Request Content <span className="text-red-500">*</span>
             </label>
             <Textarea
-              {...register('content', { required: 'Content is required' })}
+              {...contentRegister}
+              onBlur={(e) => {
+                contentRegister.onBlur(e); // Call react-hook-form's onBlur
+                handleContentBlur(e); // Then our custom handler
+              }}
               placeholder="Paste the actual client message or describe their request..."
               rows={6}
               disabled={isLoading}
@@ -153,13 +188,25 @@ export const RequestFormModal: React.FC<RequestFormModalProps> = ({
             />
           </div>
 
-          {/* AI Analysis Note */}
-          <div className="flex items-center gap-2 p-3 bg-indigo-50 border border-indigo-200 rounded-lg">
-            <Brain className="w-5 h-5 text-indigo-600 flex-shrink-0" />
-            <p className="text-sm text-indigo-700">
-              AI will automatically analyze this request for scope creep
-            </p>
-          </div>
+          {/* Scope Creep Detection Hint - shows after user finishes typing */}
+          {detectedIndicators.length > 0 && (
+            <div className="flex items-start gap-2 p-3 bg-amber-50 border border-amber-200 rounded-lg">
+              <AlertTriangle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
+              <div>
+                <p className="text-sm font-medium text-amber-800">
+                  Potential scope creep detected
+                </p>
+                <p className="text-xs text-amber-600 mt-1">
+                  Found: {detectedIndicators.map((ind, i) => (
+                    <span key={i}>
+                      <span className="font-medium">"{ind}"</span>
+                      {i < detectedIndicators.length - 1 && ', '}
+                    </span>
+                  ))}
+                </p>
+              </div>
+            </div>
+          )}
 
           {error && (
             <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">
@@ -169,16 +216,11 @@ export const RequestFormModal: React.FC<RequestFormModalProps> = ({
 
           {/* Loading State */}
           {isLoading && (
-            <div className="flex items-center gap-3 p-4 bg-indigo-50 border border-indigo-200 rounded-lg">
+            <div className="flex items-center gap-3 p-4 bg-gray-50 border border-gray-200 rounded-lg">
               <Loader2 className="w-5 h-5 text-indigo-600 animate-spin" />
-              <div>
-                <p className="text-sm font-medium text-indigo-900">
-                  Creating and analyzing request...
-                </p>
-                <p className="text-xs text-indigo-600">
-                  AI is reviewing for scope creep
-                </p>
-              </div>
+              <p className="text-sm font-medium text-gray-700">
+                Logging request...
+              </p>
             </div>
           )}
 
@@ -187,7 +229,7 @@ export const RequestFormModal: React.FC<RequestFormModalProps> = ({
               Cancel
             </Button>
             <Button type="submit" isLoading={isLoading} disabled={isLoading || externalSubmitting}>
-              {isLoading ? 'Analyzing...' : 'Log Request'}
+              {isLoading ? 'Saving...' : 'Log Request'}
             </Button>
           </div>
         </form>
@@ -196,55 +238,27 @@ export const RequestFormModal: React.FC<RequestFormModalProps> = ({
         <div className="space-y-4">
           <div className="text-center py-4">
             <div className="flex items-center justify-center w-12 h-12 mx-auto mb-4 bg-green-100 rounded-full">
-              <Brain className="w-6 h-6 text-green-600" />
+              <CheckCircle className="w-6 h-6 text-green-600" />
             </div>
-            <h3 className="text-lg font-medium text-gray-900">Request Logged & Analyzed</h3>
+            <h3 className="text-lg font-medium text-gray-900">Request Logged</h3>
+            <p className="text-sm text-gray-500 mt-1">
+              You can now classify and take action on this request
+            </p>
           </div>
 
-          {/* Analysis Result */}
+          {/* Result Summary */}
           {createdRequest && (
             <div className="space-y-3 p-4 bg-gray-50 rounded-lg">
               <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600">Classification:</span>
+                <span className="text-sm font-medium text-gray-900">{createdRequest.title}</span>
                 <RequestClassificationBadge classification={createdRequest.classification} />
               </div>
               
-              {confidencePercent !== null && (
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-600">Confidence:</span>
-                  <div className="flex items-center gap-2">
-                    <div className="w-24 h-2 bg-gray-200 rounded-full overflow-hidden">
-                      <div
-                        className={cn(
-                          'h-full rounded-full',
-                          createdRequest.classification === 'out_of_scope'
-                            ? 'bg-red-500'
-                            : createdRequest.classification === 'in_scope'
-                            ? 'bg-green-500'
-                            : 'bg-yellow-500'
-                        )}
-                        style={{ width: `${confidencePercent}%` }}
-                      />
-                    </div>
-                    <span className="text-sm font-medium">
-                      {confidencePercent}%
-                    </span>
-                  </div>
-                </div>
-              )}
-
-              {createdRequest.analysis_reasoning && (
+              {detectedIndicators.length > 0 && (
                 <div className="pt-2 border-t">
-                  <p className="text-xs text-gray-500 mb-1">Analysis:</p>
-                  <p className="text-sm text-gray-700">{createdRequest.analysis_reasoning}</p>
-                </div>
-              )}
-
-              {createdRequest.suggested_action && (
-                <div className="pt-2">
-                  <p className="text-xs text-gray-500 mb-1">Suggested Action:</p>
-                  <p className="text-sm text-indigo-700 bg-indigo-50 p-2 rounded">
-                    {createdRequest.suggested_action}
+                  <p className="text-xs text-amber-600 flex items-center gap-1">
+                    <AlertTriangle className="w-3 h-3" />
+                    Scope creep indicators detected - review and classify this request
                   </p>
                 </div>
               )}

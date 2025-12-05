@@ -4,7 +4,7 @@ import type {
   ClientRequestCreate, 
   ClientRequestUpdate, 
   PaginatedResponse,
-  ScopeAnalysisResult 
+  ScopeClassification,
 } from '../types';
 
 // API response type from backend
@@ -46,8 +46,24 @@ export const requestsApi = {
     await apiClient.delete(`/projects/${projectId}/requests/${id}`);
   },
 
-  analyze: async (projectId: string, id: string): Promise<ScopeAnalysisResult> => {
-    const response = await apiClient.post<ScopeAnalysisResult>(`/projects/${projectId}/requests/${id}/analyze`);
+  /**
+   * Manually classify a request as in-scope or out-of-scope
+   */
+  classify: async (
+    projectId: string, 
+    id: string, 
+    classification: ScopeClassification,
+    linkedScopeItemId?: string
+  ): Promise<ClientRequest> => {
+    const params: Record<string, string> = { classification };
+    if (linkedScopeItemId) {
+      params.linked_scope_item_id = linkedScopeItemId;
+    }
+    const response = await apiClient.post<ClientRequest>(
+      `/projects/${projectId}/requests/${id}/classify`,
+      null,
+      { params }
+    );
     return response.data;
   },
 };

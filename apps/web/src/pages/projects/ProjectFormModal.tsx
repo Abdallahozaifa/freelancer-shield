@@ -28,6 +28,16 @@ const statusOptions = [
   { value: 'cancelled', label: 'Cancelled' },
 ];
 
+const getDefaultValues = (): FormData => ({
+  name: '',
+  description: '',
+  client_id: '',
+  status: 'active',
+  budget: '',
+  hourly_rate: '',
+  estimated_hours: '',
+});
+
 export const ProjectFormModal: React.FC<ProjectFormModalProps> = ({
   isOpen,
   onClose,
@@ -44,40 +54,27 @@ export const ProjectFormModal: React.FC<ProjectFormModalProps> = ({
     reset,
     formState: { errors, isSubmitting },
   } = useForm<FormData>({
-    defaultValues: {
-      name: '',
-      description: '',
-      client_id: '',
-      status: 'active',
-      budget: '',
-      hourly_rate: '',
-      estimated_hours: '',
-    },
+    defaultValues: getDefaultValues(),
   });
 
+  // Reset form when modal opens or project changes
   useEffect(() => {
-    if (project) {
-      reset({
-        name: project.name,
-        description: project.description || '',
-        client_id: project.client_id,
-        status: project.status,
-        budget: project.budget?.toString() || '',
-        hourly_rate: project.hourly_rate?.toString() || '',
-        estimated_hours: project.estimated_hours?.toString() || '',
-      });
-    } else {
-      reset({
-        name: '',
-        description: '',
-        client_id: '',
-        status: 'active',
-        budget: '',
-        hourly_rate: '',
-        estimated_hours: '',
-      });
+    if (isOpen) {
+      if (project) {
+        reset({
+          name: project.name,
+          description: project.description || '',
+          client_id: project.client_id,
+          status: project.status,
+          budget: project.budget?.toString() || '',
+          hourly_rate: project.hourly_rate?.toString() || '',
+          estimated_hours: project.estimated_hours?.toString() || '',
+        });
+      } else {
+        reset(getDefaultValues());
+      }
     }
-  }, [project, reset]);
+  }, [isOpen, project, reset]);
 
   const onSubmit = async (data: FormData) => {
     const payload: ProjectCreate = {
@@ -96,6 +93,7 @@ export const ProjectFormModal: React.FC<ProjectFormModalProps> = ({
       } else {
         await createProject.mutateAsync(payload);
       }
+      reset(getDefaultValues()); // Reset before closing
       onClose();
     } catch (error) {
       console.error('Failed to save project:', error);

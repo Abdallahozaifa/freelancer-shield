@@ -102,7 +102,7 @@ export function BillingPage() {
           {/* Usage */}
           <div className="grid grid-cols-2 gap-4 mb-6">
             <div className="p-4 bg-slate-50 rounded-xl">
-              <div className="text-sm text-slate-500 mb-1">Projects</div>
+              <div className="text-sm text-slate-500 mb-1">Active Projects</div>
               <div className="text-2xl font-bold text-slate-900">
                 {subscription?.current_projects} / {subscription?.max_projects === 999 ? '∞' : subscription?.max_projects}
               </div>
@@ -194,8 +194,8 @@ export function BillingPage() {
                 {[
                   'Unlimited projects',
                   'Unlimited clients',
-                  'AI scope analysis',
-                  'Proposal generator',
+                  'Smart scope detection',
+                  'One-click proposal generator',
                   'Priority support',
                 ].map((feature, i) => (
                   <li key={i} className="flex items-center gap-2 text-sm text-slate-600">

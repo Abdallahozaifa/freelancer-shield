@@ -78,6 +78,7 @@ export function useCreateRequest() {
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['requests', 'list'] });
       queryClient.invalidateQueries({ queryKey: projectKeys.detail(variables.projectId) });
+      queryClient.invalidateQueries({ queryKey: ['dashboard'] });
     },
   });
 }
@@ -101,6 +102,7 @@ export function useUpdateRequest() {
         queryKey: requestKeys.detail(variables.projectId, variables.requestId),
       });
       queryClient.invalidateQueries({ queryKey: projectKeys.detail(variables.projectId) });
+      queryClient.invalidateQueries({ queryKey: ['dashboard'] });
     },
   });
 }
@@ -114,22 +116,36 @@ export function useDeleteRequest() {
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['requests', 'list'] });
       queryClient.invalidateQueries({ queryKey: projectKeys.detail(variables.projectId) });
+      queryClient.invalidateQueries({ queryKey: ['dashboard'] });
     },
   });
 }
 
-export function useAnalyzeRequest() {
+/**
+ * Manually classify a request as in-scope or out-of-scope
+ */
+export function useClassifyRequest() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ projectId, requestId }: { projectId: string; requestId: string }) =>
-      requestsApi.analyze(projectId, requestId),
+    mutationFn: ({
+      projectId,
+      requestId,
+      classification,
+      linkedScopeItemId,
+    }: {
+      projectId: string;
+      requestId: string;
+      classification: ScopeClassification;
+      linkedScopeItemId?: string;
+    }) => requestsApi.classify(projectId, requestId, classification, linkedScopeItemId),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['requests', 'list'] });
       queryClient.invalidateQueries({
         queryKey: requestKeys.detail(variables.projectId, variables.requestId),
       });
       queryClient.invalidateQueries({ queryKey: projectKeys.detail(variables.projectId) });
+      queryClient.invalidateQueries({ queryKey: ['dashboard'] });
     },
   });
 }
@@ -157,6 +173,7 @@ export function useRequestStats(projectId: string) {
 
   const stats = {
     total: 0,
+    pending: 0,
     inScope: 0,
     outOfScope: 0,
     clarificationNeeded: 0,
@@ -180,16 +197,20 @@ export function useRequestStats(projectId: string) {
       } else {
         stats.active++;
         // Count classifications only for active requests
-        switch (request.classification) {
-          case 'in_scope':
-            stats.inScope++;
-            break;
-          case 'out_of_scope':
-            stats.outOfScope++;
-            break;
-          case 'clarification_needed':
-            stats.clarificationNeeded++;
-            break;
+        if (!request.classification) {
+          stats.pending++; // Unclassified
+        } else {
+          switch (request.classification) {
+            case 'in_scope':
+              stats.inScope++;
+              break;
+            case 'out_of_scope':
+              stats.outOfScope++;
+              break;
+            case 'clarification_needed':
+              stats.clarificationNeeded++;
+              break;
+          }
         }
       }
     });

@@ -48,7 +48,7 @@ export const ClientDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { data: client, isLoading, error } = useClient(id!);
-  const { data: projectsData, isLoading: projectsLoading } = useProjects(id);
+  const { data: projectsData, isLoading: projectsLoading } = useProjects({ client_id: id });
 
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);

@@ -68,9 +68,20 @@ async def get_dashboard_summary(
     if project_ids:
         requests_query = select(
             func.count(ClientRequest.id).label("total"),
+            # FIX: Only count out_of_scope requests that are NOT resolved
             func.sum(
                 case(
-                    (ClientRequest.classification == ScopeClassification.OUT_OF_SCOPE, 1),
+                    (
+                        and_(
+                            ClientRequest.classification == ScopeClassification.OUT_OF_SCOPE,
+                            ClientRequest.status.not_in([
+                                RequestStatus.ADDRESSED,
+                                RequestStatus.DECLINED,
+                                RequestStatus.PROPOSAL_SENT,
+                            ]),
+                        ),
+                        1
+                    ),
                     else_=0
                 )
             ).label("out_of_scope"),
@@ -156,7 +167,7 @@ async def get_alerts(
     
     project_ids = list(projects.keys())
     
-    # Alert 1: Scope creep - Projects with >3 OUT_OF_SCOPE requests in last 7 days
+    # Alert 1: Scope creep - Projects with >3 UNRESOLVED OUT_OF_SCOPE requests in last 7 days
     scope_creep_query = (
         select(
             ClientRequest.project_id,
@@ -166,6 +177,12 @@ async def get_alerts(
             and_(
                 ClientRequest.project_id.in_(project_ids),
                 ClientRequest.classification == ScopeClassification.OUT_OF_SCOPE,
+                # FIX: Only count unresolved requests
+                ClientRequest.status.not_in([
+                    RequestStatus.ADDRESSED,
+                    RequestStatus.DECLINED,
+                    RequestStatus.PROPOSAL_SENT,
+                ]),
                 ClientRequest.created_at >= seven_days_ago,
             )
         )
@@ -408,9 +425,20 @@ async def calculate_project_health(
                 else_=0
             )
         ).label("in_scope"),
+        # FIX: Only count unresolved out_of_scope requests
         func.sum(
             case(
-                (ClientRequest.classification == ScopeClassification.OUT_OF_SCOPE, 1),
+                (
+                    and_(
+                        ClientRequest.classification == ScopeClassification.OUT_OF_SCOPE,
+                        ClientRequest.status.not_in([
+                            RequestStatus.ADDRESSED,
+                            RequestStatus.DECLINED,
+                            RequestStatus.PROPOSAL_SENT,
+                        ]),
+                    ),
+                    1
+                ),
                 else_=0
             )
         ).label("out_of_scope"),
@@ -538,7 +566,6 @@ async def get_dashboard(
             )
         )
         .order_by(Project.updated_at.desc())
-        .limit(5)
     )
     
     projects_result = await db.execute(projects_query)

@@ -8,12 +8,12 @@ import {
   CheckCircle,
   FileText,
   XCircle,
-  RefreshCw,
   RotateCcw,
+  DollarSign,
+  HelpCircle,
 } from 'lucide-react';
 import { Card, Button, Dropdown } from '../../../components/ui';
 import { RequestClassificationBadge } from './RequestClassificationBadge';
-import { AnalysisPanel } from './AnalysisPanel';
 import { ScopeCreepAlert } from './ScopeCreepAlert';
 import { cn } from '../../../utils/cn';
 import { formatRelative } from '../../../utils/format';
@@ -24,9 +24,10 @@ interface RequestCardProps {
   onCreateProposal: (request: ClientRequest) => void;
   onMarkAddressed: (request: ClientRequest) => Promise<void>;
   onDismiss: (request: ClientRequest) => Promise<void>;
-  onReanalyze: (request: ClientRequest) => Promise<void>;
   onRestore?: (request: ClientRequest) => Promise<void>;
   onMarkInScope?: (request: ClientRequest) => Promise<void>;
+  onMarkOutOfScope?: (request: ClientRequest) => Promise<void>;
+  onMarkClarificationNeeded?: (request: ClientRequest) => Promise<void>;
   hourlyRate?: number | string | null;
   isArchived?: boolean;
 }
@@ -114,14 +115,28 @@ const extractIndicators = (request: ClientRequest): string[] => {
   return indicators.slice(0, 5);
 };
 
+// Dynamic hours estimation based on content complexity
+const estimateHours = (content: string): number => {
+  const wordCount = content.split(/\s+/).length;
+  const hasComplexKeywords = /api|database|integration|authentication|migration|refactor/i.test(content);
+  const hasSimpleKeywords = /color|text|copy|typo|font|spacing|padding|margin/i.test(content);
+  
+  if (hasSimpleKeywords && wordCount < 30) return 1;
+  if (wordCount < 20) return 2;
+  if (wordCount < 50) return 4;
+  if (hasComplexKeywords) return 8;
+  return 4;
+};
+
 export const RequestCard: React.FC<RequestCardProps> = ({
   request,
   onCreateProposal,
   onMarkAddressed,
   onDismiss,
-  onReanalyze,
   onRestore,
   onMarkInScope,
+  onMarkOutOfScope,
+  onMarkClarificationNeeded,
   hourlyRate: hourlyRateProp,
   isArchived,
 }) => {
@@ -129,8 +144,9 @@ export const RequestCard: React.FC<RequestCardProps> = ({
   const [isAddressing, setIsAddressing] = useState(false);
   const [isDismissing, setIsDismissing] = useState(false);
   const [isRestoring, setIsRestoring] = useState(false);
-  const [isReanalyzingLocal, setIsReanalyzingLocal] = useState(false);
   const [isMarkingInScope, setIsMarkingInScope] = useState(false);
+  const [isMarkingOutOfScope, setIsMarkingOutOfScope] = useState(false);
+  const [isMarkingClarification, setIsMarkingClarification] = useState(false);
 
   const hourlyRate = hourlyRateProp ? Number(hourlyRateProp) : null;
   
@@ -138,12 +154,18 @@ export const RequestCard: React.FC<RequestCardProps> = ({
   const isOutOfScope = request.classification === 'out_of_scope';
   const isInScope = request.classification === 'in_scope';
   const isClarificationNeeded = request.classification === 'clarification_needed';
+  const isPending = request.classification === 'pending' || !request.classification;
   const isAddressed = request.status === 'addressed';
   const isProposalSent = request.status === 'proposal_sent';
 
   const indicators = useMemo(() => extractIndicators(request), [request]);
 
-  const estimatedHours = isOutOfScope ? 4 : null;
+  // Dynamic hours estimation based on content
+  const estimatedHours = useMemo(() => {
+    if (!isOutOfScope) return null;
+    return estimateHours(request.content);
+  }, [isOutOfScope, request.content]);
+
   const suggestedAmount = hourlyRate && estimatedHours ? hourlyRate * estimatedHours : undefined;
 
   const contentPreview =
@@ -178,15 +200,6 @@ export const RequestCard: React.FC<RequestCardProps> = ({
     }
   };
 
-  const handleReanalyze = async () => {
-    setIsReanalyzingLocal(true);
-    try {
-      await onReanalyze(request);
-    } finally {
-      setIsReanalyzingLocal(false);
-    }
-  };
-
   const handleMarkInScope = async () => {
     if (!onMarkInScope) return;
     setIsMarkingInScope(true);
@@ -197,7 +210,27 @@ export const RequestCard: React.FC<RequestCardProps> = ({
     }
   };
 
-  const isActionLoading = isAddressing || isDismissing || isRestoring || isReanalyzingLocal || isMarkingInScope;
+  const handleMarkOutOfScope = async () => {
+    if (!onMarkOutOfScope) return;
+    setIsMarkingOutOfScope(true);
+    try {
+      await onMarkOutOfScope(request);
+    } finally {
+      setIsMarkingOutOfScope(false);
+    }
+  };
+
+  const handleMarkClarificationNeeded = async () => {
+    if (!onMarkClarificationNeeded) return;
+    setIsMarkingClarification(true);
+    try {
+      await onMarkClarificationNeeded(request);
+    } finally {
+      setIsMarkingClarification(false);
+    }
+  };
+
+  const isActionLoading = isAddressing || isDismissing || isRestoring || isMarkingInScope || isMarkingOutOfScope || isMarkingClarification;
 
   // Archived view - shows content but simpler actions
   if (isArchived) {
@@ -225,9 +258,9 @@ export const RequestCard: React.FC<RequestCardProps> = ({
                 {sourceLabels[request.source]} • {formatRelative(request.created_at)} • 
                 <span className={cn(
                   'ml-1',
-                  isProposalSent ? 'text-green-600 font-medium' : isAddressed ? 'text-green-600' : 'text-gray-500'
+                  isProposalSent ? 'text-green-600' : ''
                 )}>
-                  {isProposalSent ? '💰 Proposal Sent' : isAddressed ? 'Addressed' : 'Declined'}
+                  {isProposalSent ? 'Proposal Sent' : request.status === 'addressed' ? 'Addressed' : 'Declined'}
                 </span>
               </p>
             </div>
@@ -237,7 +270,9 @@ export const RequestCard: React.FC<RequestCardProps> = ({
 
         {/* Content */}
         <div className="p-4">
-          <p className="text-sm text-gray-500 italic">"{displayContent}"</p>
+          <div className="text-sm text-gray-600 bg-white p-3 rounded-lg border border-gray-200 italic">
+            "{displayContent}"
+          </div>
           {request.content.length > 200 && (
             <button
               type="button"
@@ -249,8 +284,8 @@ export const RequestCard: React.FC<RequestCardProps> = ({
           )}
         </div>
 
-        {/* Restore Action */}
-        <div className="flex justify-end p-4 pt-0">
+        {/* Restore Button */}
+        <div className="flex items-center justify-end p-3 border-t border-gray-200">
           <Button
             variant="ghost"
             size="sm"
@@ -269,16 +304,23 @@ export const RequestCard: React.FC<RequestCardProps> = ({
 
   // Active view - full card
   const dropdownItems = [
-    {
-      label: 'Re-analyze',
-      icon: <RefreshCw className="w-4 h-4" />,
-      onClick: handleReanalyze,
-    },
-    // Show "Mark as In Scope" for out_of_scope and clarification_needed
-    ...((isOutOfScope || isClarificationNeeded) && onMarkInScope ? [{
+    // Show "Mark as In Scope" for out_of_scope, clarification_needed, and pending
+    ...((isOutOfScope || isClarificationNeeded || isPending) && onMarkInScope ? [{
       label: 'Mark as In Scope',
       icon: <CheckCircle className="w-4 h-4" />,
       onClick: handleMarkInScope,
+    }] : []),
+    // Show "Flag as Out of Scope" for in_scope, clarification_needed, and pending
+    ...((isInScope || isClarificationNeeded || isPending) && onMarkOutOfScope ? [{
+      label: 'Flag as Out of Scope',
+      icon: <XCircle className="w-4 h-4" />,
+      onClick: handleMarkOutOfScope,
+    }] : []),
+    // Show "Needs Clarification" for in_scope, out_of_scope, and pending
+    ...((isInScope || isOutOfScope || isPending) && onMarkClarificationNeeded ? [{
+      label: 'Needs Clarification',
+      icon: <HelpCircle className="w-4 h-4" />,
+      onClick: handleMarkClarificationNeeded,
     }] : []),
     {
       label: 'Mark Addressed',
@@ -298,6 +340,7 @@ export const RequestCard: React.FC<RequestCardProps> = ({
       className={cn(
         'transition-all duration-200',
         isOutOfScope && 'border-red-300 shadow-red-100 shadow-md',
+        isClarificationNeeded && 'border-amber-300 shadow-amber-100 shadow-md',
         (isDismissing || isAddressing) && 'opacity-50'
       )}
       padding="none"
@@ -308,15 +351,29 @@ export const RequestCard: React.FC<RequestCardProps> = ({
           <div
             className={cn(
               'flex-shrink-0 p-2 rounded-lg',
-              isOutOfScope ? 'bg-red-100 text-red-600' : 'bg-gray-100 text-gray-500'
+              isOutOfScope ? 'bg-red-100 text-red-600' : 
+              isClarificationNeeded ? 'bg-amber-100 text-amber-600' :
+              'bg-gray-100 text-gray-500'
             )}
           >
             <SourceIcon className="w-4 h-4" />
           </div>
           <div className="flex-1 min-w-0">
-            <h3 className="font-medium text-gray-900 truncate">{request.title}</h3>
+            <div className="flex items-center gap-2">
+              <h3 className="font-medium text-gray-900 truncate">{request.title}</h3>
+              {/* Prominent $ estimate in header for out-of-scope */}
+              {isOutOfScope && suggestedAmount && (
+                <span className="flex items-center gap-1 px-2 py-0.5 bg-red-100 text-red-700 text-sm font-semibold rounded-full whitespace-nowrap">
+                  <DollarSign className="w-3 h-3" />
+                  {suggestedAmount.toLocaleString()}
+                </span>
+              )}
+            </div>
             <p className="text-xs text-gray-500 mt-1">
               {sourceLabels[request.source]} • {formatRelative(request.created_at)}
+              {isOutOfScope && estimatedHours && (
+                <span className="text-red-600 ml-1">• ~{estimatedHours}h est.</span>
+              )}
             </p>
           </div>
         </div>
@@ -350,7 +407,7 @@ export const RequestCard: React.FC<RequestCardProps> = ({
         )}
       </div>
 
-      {/* Scope Creep Alert */}
+      {/* Scope Creep Alert - Rule-based indicators */}
       {isOutOfScope && indicators.length > 0 && (
         <div className="px-4 pb-4">
           <ScopeCreepAlert
@@ -361,29 +418,52 @@ export const RequestCard: React.FC<RequestCardProps> = ({
         </div>
       )}
 
+      {/* Clarification Needed Alert */}
+      {isClarificationNeeded && (
+        <div className="px-4 pb-4">
+          <div className="flex items-start gap-2 p-3 bg-amber-50 border border-amber-200 rounded-lg">
+            <HelpCircle className="w-4 h-4 text-amber-500 mt-0.5 flex-shrink-0" />
+            <div>
+              <p className="text-sm text-amber-800 font-medium">Needs clarification from client</p>
+              <p className="text-xs text-amber-600 mt-1">
+                Follow up with the client to determine if this is within scope.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Scope Creep Hints for pending/unclassified requests */}
+      {isPending && indicators.length > 0 && (
+        <div className="px-4 pb-4">
+          <div className="flex items-start gap-2 p-3 bg-amber-50 border border-amber-200 rounded-lg">
+            <span className="text-amber-500 mt-0.5">⚠️</span>
+            <div>
+              <p className="text-sm text-amber-800 font-medium">Potential scope creep detected</p>
+              <p className="text-xs text-amber-600 mt-1">
+                Found: {indicators.map((ind, i) => (
+                  <span key={i}>
+                    <span className="font-medium">"{ind}"</span>
+                    {i < indicators.length - 1 && ', '}
+                  </span>
+                ))}
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* In Scope Match */}
       {isInScope && request.linked_scope_item_id && (
         <div className="px-4 pb-4">
           <div className="flex items-center gap-2 p-3 bg-green-50 border border-green-200 rounded-lg">
             <CheckCircle className="w-4 h-4 text-green-600 flex-shrink-0" />
             <span className="text-sm text-green-700">
-              Matches Scope Item: <span className="font-medium">{request.linked_scope_item_id}</span>
+              Matches Scope Item: <span className="font-medium">
+                {request.linked_scope_item_title || request.linked_scope_item_id}
+              </span>
             </span>
           </div>
-        </div>
-      )}
-
-      {/* Analysis Panel */}
-      {(request.analysis_reasoning || request.confidence !== null) && (
-        <div className="px-4 pb-4">
-          <AnalysisPanel
-            classification={request.classification}
-            confidence={request.confidence ? Number(request.confidence) : null}
-            reasoning={request.analysis_reasoning}
-            suggestedAction={request.suggested_action}
-            matchedScopeItemId={request.linked_scope_item_id}
-            indicators={isOutOfScope ? indicators : []}
-          />
         </div>
       )}
 
@@ -398,7 +478,11 @@ export const RequestCard: React.FC<RequestCardProps> = ({
               className="bg-red-600 hover:bg-red-700"
               disabled={isActionLoading}
             >
+              <DollarSign className="w-4 h-4 mr-1" />
               Create Proposal
+              {suggestedAmount && (
+                <span className="ml-1 opacity-90">• ${suggestedAmount.toLocaleString()}</span>
+              )}
             </Button>
             <Button
               variant="outline"
@@ -430,10 +514,34 @@ export const RequestCard: React.FC<RequestCardProps> = ({
             <CheckCircle className="w-4 h-4 mr-1" />
             Mark Complete
           </Button>
-        ) : (
+        ) : isClarificationNeeded ? (
           <>
+            {onMarkOutOfScope && (
+              <Button
+                variant="primary"
+                size="sm"
+                onClick={handleMarkOutOfScope}
+                isLoading={isMarkingOutOfScope}
+                disabled={isActionLoading}
+                className="bg-red-600 hover:bg-red-700"
+              >
+                Flag Out of Scope
+              </Button>
+            )}
+            {onMarkInScope && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleMarkInScope}
+                isLoading={isMarkingInScope}
+                disabled={isActionLoading}
+              >
+                <CheckCircle className="w-4 h-4 mr-1" />
+                Mark In Scope
+              </Button>
+            )}
             <Button
-              variant="outline"
+              variant="ghost"
               size="sm"
               onClick={handleMarkAddressed}
               isLoading={isAddressing}
@@ -441,16 +549,46 @@ export const RequestCard: React.FC<RequestCardProps> = ({
             >
               Mark Addressed
             </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleReanalyze}
-              isLoading={isReanalyzingLocal}
-              disabled={isActionLoading}
-            >
-              <RefreshCw className="w-4 h-4 mr-1" />
-              Re-analyze
-            </Button>
+          </>
+        ) : (
+          // Pending/unclassified - show classification buttons
+          <>
+            {onMarkOutOfScope && (
+              <Button
+                variant="primary"
+                size="sm"
+                onClick={handleMarkOutOfScope}
+                isLoading={isMarkingOutOfScope}
+                disabled={isActionLoading}
+                className="bg-red-600 hover:bg-red-700"
+              >
+                Flag Out of Scope
+              </Button>
+            )}
+            {onMarkInScope && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleMarkInScope}
+                isLoading={isMarkingInScope}
+                disabled={isActionLoading}
+              >
+                <CheckCircle className="w-4 h-4 mr-1" />
+                Mark In Scope
+              </Button>
+            )}
+            {onMarkClarificationNeeded && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleMarkClarificationNeeded}
+                isLoading={isMarkingClarification}
+                disabled={isActionLoading}
+              >
+                <HelpCircle className="w-4 h-4 mr-1" />
+                Needs Clarification
+              </Button>
+            )}
           </>
         )}
       </div>

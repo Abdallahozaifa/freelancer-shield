@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { useQueryClient } from '@tanstack/react-query';
 import { Card, Button, Tabs, Dropdown, Skeleton } from '../../components/ui';
+import { ConfirmDialog } from '../../components/ui/ConfirmDialog';
 import { useProject, useDeleteProject, projectKeys } from '../../hooks/useProjects';
 import { useScopeProgress } from '../../hooks/useScope';
 import { useRequestStats } from '../../hooks/useRequests';
@@ -52,6 +53,7 @@ export const ProjectDetailPage: React.FC = () => {
   
   const [activeTab, setActiveTab] = useState<TabId>(initialTab);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
   const { data: project, isLoading, error } = useProject(id!);
   const deleteProject = useDeleteProject();
@@ -80,9 +82,8 @@ export const ProjectDetailPage: React.FC = () => {
   };
 
   const handleDelete = async () => {
-    if (!project || !window.confirm('Are you sure you want to delete this project?')) {
-      return;
-    }
+    if (!project) return;
+    
     try {
       await deleteProject.mutateAsync(project.id);
       navigate('/projects');
@@ -148,7 +149,7 @@ export const ProjectDetailPage: React.FC = () => {
                 {
                   label: 'Delete Project',
                   icon: <Trash2 className="w-4 h-4" />,
-                  onClick: handleDelete,
+                  onClick: () => setIsDeleteDialogOpen(true),
                   danger: true,
                 },
               ]}
@@ -174,6 +175,19 @@ export const ProjectDetailPage: React.FC = () => {
         isOpen={isEditModalOpen}
         onClose={() => setIsEditModalOpen(false)}
         project={project}
+      />
+
+      {/* Delete Confirmation Dialog */}
+      <ConfirmDialog
+        isOpen={isDeleteDialogOpen}
+        onClose={() => setIsDeleteDialogOpen(false)}
+        onConfirm={handleDelete}
+        title="Delete Project"
+        message={`Are you sure you want to delete "${project.name}"? This will also delete all scope items, requests, and proposals. This action cannot be undone.`}
+        confirmText="Delete Project"
+        cancelText="Cancel"
+        variant="danger"
+        isLoading={deleteProject.isPending}
       />
     </div>
   );
@@ -217,7 +231,7 @@ const OverviewTab: React.FC<OverviewTabProps> = ({ project }) => {
           <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-red-100 flex-shrink-0">
             <AlertTriangle className="w-5 h-5 text-red-600" />
           </div>
-          <div className="flex-1 min-w-0">
+          <div className="flex-1">
             <p className="font-semibold text-red-900">
               {outOfScopeCount} out-of-scope request{outOfScopeCount !== 1 ? 's' : ''} detected
             </p>

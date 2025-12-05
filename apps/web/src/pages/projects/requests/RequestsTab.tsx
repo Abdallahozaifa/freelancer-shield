@@ -10,7 +10,7 @@ import {
   useRequestStats,
   useCreateRequest,
   useUpdateRequest,
-  useAnalyzeRequest,
+  useClassifyRequest,
   useCreateProposalFromRequest,
 } from '../../../hooks/useRequests';
 import { useProject } from '../../../hooks/useProjects';
@@ -43,7 +43,7 @@ export const RequestsTab: React.FC<RequestsTabProps> = ({ projectId }) => {
 
   const createRequest = useCreateRequest();
   const updateRequest = useUpdateRequest();
-  const analyzeRequest = useAnalyzeRequest();
+  const classifyRequest = useClassifyRequest();
   const createProposal = useCreateProposalFromRequest();
 
   // Filter requests based on view mode and filters
@@ -54,7 +54,12 @@ export const RequestsTab: React.FC<RequestsTabProps> = ({ projectId }) => {
 
     // Apply stats filter (only for active view)
     if (viewMode === 'active' && statsFilter !== 'all') {
-      filtered = filtered.filter(r => r.classification === statsFilter);
+      if (statsFilter === 'pending') {
+        // Pending = unclassified (null classification)
+        filtered = filtered.filter(r => !r.classification);
+      } else {
+        filtered = filtered.filter(r => r.classification === statsFilter);
+      }
     }
 
     // Apply history filter (only for history view)
@@ -84,11 +89,14 @@ export const RequestsTab: React.FC<RequestsTabProps> = ({ projectId }) => {
     return filtered;
   }, [requestsData?.items, viewMode, statsFilter, historyFilter, searchQuery]);
 
-  // Sort requests: out_of_scope first for active view, newest first for history
+  // Sort requests: unclassified first, then out_of_scope, then by date
   const sortedRequests = useMemo(() => {
     return [...filteredRequests].sort((a, b) => {
       if (viewMode === 'active') {
-        // Out of scope first
+        // Unclassified (pending) first
+        if (!a.classification && b.classification) return -1;
+        if (a.classification && !b.classification) return 1;
+        // Then out of scope
         if (a.classification === 'out_of_scope' && b.classification !== 'out_of_scope') return -1;
         if (b.classification === 'out_of_scope' && a.classification !== 'out_of_scope') return 1;
       }
@@ -154,21 +162,34 @@ export const RequestsTab: React.FC<RequestsTabProps> = ({ projectId }) => {
     await updateRequest.mutateAsync({
       projectId,
       requestId: request.id,
-      data: { status: 'analyzed' },
+      data: { status: 'new', classification: null },
     });
     refetchRequests();
   };
 
-  const handleReanalyze = async (request: ClientRequest): Promise<void> => {
-    await analyzeRequest.mutateAsync({ projectId, requestId: request.id });
+  const handleMarkOutOfScope = async (request: ClientRequest): Promise<void> => {
+    await classifyRequest.mutateAsync({
+      projectId,
+      requestId: request.id,
+      classification: 'out_of_scope',
+    });
     refetchRequests();
   };
 
   const handleMarkInScope = async (request: ClientRequest): Promise<void> => {
-    await updateRequest.mutateAsync({
+    await classifyRequest.mutateAsync({
       projectId,
       requestId: request.id,
-      data: { classification: 'in_scope' },
+      classification: 'in_scope',
+    });
+    refetchRequests();
+  };
+
+  const handleMarkClarificationNeeded = async (request: ClientRequest): Promise<void> => {
+    await classifyRequest.mutateAsync({
+      projectId,
+      requestId: request.id,
+      classification: 'clarification_needed',
     });
     refetchRequests();
   };
@@ -191,16 +212,22 @@ export const RequestsTab: React.FC<RequestsTabProps> = ({ projectId }) => {
           </button>
         </div>
 
-        {/* Alert Banner */}
-        {stats.outOfScope > 0 && (
+        {/* Alert Banner - show for pending or out of scope */}
+        {(stats.pending > 0 || stats.outOfScope > 0) && (
           <div className="flex items-center gap-3 p-4 bg-red-50 border border-red-200 rounded-lg">
             <AlertTriangle className="w-6 h-6 text-red-600 flex-shrink-0" />
             <div className="flex-1">
               <p className="font-medium text-red-800">
-                {stats.outOfScope} request{stats.outOfScope > 1 ? 's' : ''} need attention
+                {stats.pending > 0 && stats.outOfScope > 0
+                  ? `${stats.pending} pending + ${stats.outOfScope} out-of-scope requests`
+                  : stats.pending > 0
+                  ? `${stats.pending} request${stats.pending > 1 ? 's' : ''} need classification`
+                  : `${stats.outOfScope} out-of-scope request${stats.outOfScope > 1 ? 's' : ''}`}
               </p>
               <p className="text-sm text-red-600">
-                Review and create proposals to protect your earnings.
+                {stats.pending > 0
+                  ? 'Classify requests to track scope creep.'
+                  : 'Review and create proposals to protect your earnings.'}
               </p>
             </div>
           </div>
@@ -209,6 +236,7 @@ export const RequestsTab: React.FC<RequestsTabProps> = ({ projectId }) => {
         {/* Clickable Stats Cards */}
         <RequestStats
           total={stats.active}
+          pending={stats.pending}
           inScope={stats.inScope}
           outOfScope={stats.outOfScope}
           clarificationNeeded={stats.clarificationNeeded}
@@ -253,7 +281,7 @@ export const RequestsTab: React.FC<RequestsTabProps> = ({ projectId }) => {
             icon={<Search className="w-12 h-12" />}
             title={
               statsFilter !== 'all'
-                ? `No ${statsFilter.replace('_', ' ')} requests`
+                ? `No ${statsFilter === 'pending' ? 'pending' : statsFilter.replace('_', ' ')} requests`
                 : 'No active requests'
             }
             description={
@@ -279,8 +307,9 @@ export const RequestsTab: React.FC<RequestsTabProps> = ({ projectId }) => {
                 onCreateProposal={handleCreateProposal}
                 onMarkAddressed={handleMarkAddressed}
                 onDismiss={handleDismiss}
-                onReanalyze={handleReanalyze}
+                onMarkOutOfScope={handleMarkOutOfScope}
                 onMarkInScope={handleMarkInScope}
+                onMarkClarificationNeeded={handleMarkClarificationNeeded}
                 hourlyRate={project?.hourly_rate}
               />
             ))}
@@ -404,7 +433,6 @@ export const RequestsTab: React.FC<RequestsTabProps> = ({ projectId }) => {
               onCreateProposal={handleCreateProposal}
               onMarkAddressed={handleMarkAddressed}
               onDismiss={handleDismiss}
-              onReanalyze={handleReanalyze}
               onRestore={handleRestore}
               hourlyRate={project?.hourly_rate}
               isArchived

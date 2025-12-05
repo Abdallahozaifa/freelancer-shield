@@ -7,10 +7,12 @@ interface AuthState {
   token: string | null;
   isAuthenticated: boolean;
   isLoading: boolean;
+  _hasHydrated: boolean;
   setAuth: (user: User, token: string) => void;
   logout: () => void;
   updateUser: (user: Partial<User>) => void;
   setLoading: (loading: boolean) => void;
+  setHasHydrated: (hasHydrated: boolean) => void;
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -20,6 +22,7 @@ export const useAuthStore = create<AuthState>()(
       token: null,
       isAuthenticated: false,
       isLoading: true,
+      _hasHydrated: false,
       setAuth: (user, token) => set({ 
         user, 
         token, 
@@ -36,17 +39,47 @@ export const useAuthStore = create<AuthState>()(
         user: state.user ? { ...state.user, ...updates } : null
       })),
       setLoading: (isLoading) => set({ isLoading }),
+      setHasHydrated: (_hasHydrated) => set({ _hasHydrated }),
     }),
     {
       name: 'auth-storage',
       partialize: (state) => ({ token: state.token }),
-      onRehydrateStorage: () => (state) => {
+      onRehydrateStorage: () => (state, error) => {
+        if (error) {
+          console.error('Auth hydration error:', error);
+          state?.setLoading(false);
+          state?.setHasHydrated(true);
+          return;
+        }
+        
         if (state) {
-          state.setLoading(false);
+          state.setHasHydrated(true);
+          // If no token, we're done loading
+          // If token exists, useAuth will handle fetching user and setting isLoading to false
+          if (!state.token) {
+            state.setLoading(false);
+          }
         }
       },
     }
   )
 );
+
+// Helper to wait for hydration
+export const waitForHydration = () => {
+  return new Promise<void>((resolve) => {
+    if (useAuthStore.getState()._hasHydrated) {
+      resolve();
+      return;
+    }
+    
+    const unsub = useAuthStore.subscribe((state) => {
+      if (state._hasHydrated) {
+        unsub();
+        resolve();
+      }
+    });
+  });
+};
 
 export default useAuthStore;

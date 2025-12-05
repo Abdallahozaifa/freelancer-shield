@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
-import { ArrowLeft } from 'lucide-react';
 import { Card, Button, Input, Select, Textarea } from '../../components/ui';
 import { PageHeader } from '../../layouts/PageHeader';
 import { useClients } from '../../hooks/useClients';
@@ -25,6 +24,16 @@ const statusOptions = [
   { value: 'cancelled', label: 'Cancelled' },
 ];
 
+const getDefaultValues = (clientId: string = ''): FormData => ({
+  name: '',
+  description: '',
+  client_id: clientId,
+  status: 'active',
+  budget: '',
+  hourly_rate: '',
+  estimated_hours: '',
+});
+
 export const ProjectNewPage: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -36,26 +45,16 @@ export const ProjectNewPage: React.FC = () => {
   const {
     register,
     handleSubmit,
-    setValue,
+    reset,
     formState: { errors, isSubmitting },
   } = useForm<FormData>({
-    defaultValues: {
-      name: '',
-      description: '',
-      client_id: preselectedClientId,
-      status: 'active',
-      budget: '',
-      hourly_rate: '',
-      estimated_hours: '',
-    },
+    defaultValues: getDefaultValues(preselectedClientId),
   });
 
-  // Set client_id when it's available from URL params
+  // Reset form when component mounts or when navigating to this page
   useEffect(() => {
-    if (preselectedClientId) {
-      setValue('client_id', preselectedClientId);
-    }
-  }, [preselectedClientId, setValue]);
+    reset(getDefaultValues(preselectedClientId));
+  }, [reset, preselectedClientId]);
 
   const onSubmit = async (data: FormData) => {
     const payload: ProjectCreate = {
@@ -70,7 +69,9 @@ export const ProjectNewPage: React.FC = () => {
 
     try {
       const newProject = await createProject.mutateAsync(payload);
-      // Navigate to the new project or back to projects list
+      // Reset form before navigating (in case user comes back)
+      reset(getDefaultValues());
+      // Navigate to the new project
       navigate(`/projects/${newProject.id}`);
     } catch (error) {
       console.error('Failed to create project:', error);

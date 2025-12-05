@@ -20,7 +20,8 @@ export function useAuth(): UseAuthReturn {
     user, 
     token,
     isAuthenticated, 
-    isLoading, 
+    isLoading,
+    _hasHydrated,
     setAuth, 
     logout: storeLogout, 
     updateUser,
@@ -33,10 +34,12 @@ export function useAuth(): UseAuthReturn {
   // Fetch user on mount if we have a token but no user
   useEffect(() => {
     const fetchUser = async () => {
+      // Wait for hydration before checking token
+      if (!_hasHydrated) return;
+      
       // Only fetch once, and only if we have a token but no user
       if (token && !user && !hasFetchedUser.current) {
         hasFetchedUser.current = true;
-        setLoading(true);
         try {
           const userData = await authApi.getMe();
           setAuth(userData, token);
@@ -47,11 +50,10 @@ export function useAuth(): UseAuthReturn {
       }
     };
     fetchUser();
-  }, [token, user, setAuth, storeLogout, setLoading]);
+  }, [_hasHydrated, token, user, setAuth, storeLogout]);
 
   const login = useCallback(
     async (email: string, password: string) => {
-      // Don't set loading here - it can cause re-renders that reset component state
       try {
         // Get token
         const tokenResponse = await authApi.login({ email, password });
@@ -67,7 +69,6 @@ export function useAuth(): UseAuthReturn {
         
         navigate('/dashboard');
       } catch (error) {
-        // Don't call setLoading here - just throw the error
         throw error;
       }
     },
