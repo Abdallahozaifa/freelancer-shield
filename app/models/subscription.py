@@ -13,6 +13,9 @@ class PlanType(str, enum.Enum):
     """Subscription plan types."""
     FREE = "free"
     PRO = "pro"
+    
+    def __str__(self):
+        return self.value
 
 
 class SubscriptionStatus(str, enum.Enum):
@@ -23,6 +26,9 @@ class SubscriptionStatus(str, enum.Enum):
     INCOMPLETE = "incomplete"
     TRIALING = "trialing"
     UNPAID = "unpaid"
+    
+    def __str__(self):
+        return self.value
 
 
 class Subscription(BaseModel):
@@ -58,14 +64,24 @@ class Subscription(BaseModel):
         nullable=True
     )
     
-    # Plan info
+    # Plan info - use values_callable to ensure lowercase values are used
     plan: Mapped[PlanType] = mapped_column(
-        ENUM(PlanType, name='plantype', create_type=False),
+        ENUM(
+            PlanType, 
+            name='plantype', 
+            create_type=False,
+            values_callable=lambda x: [e.value for e in x]
+        ),
         default=PlanType.FREE, 
         nullable=False
     )
     status: Mapped[SubscriptionStatus] = mapped_column(
-        ENUM(SubscriptionStatus, name='subscriptionstatus', create_type=False),
+        ENUM(
+            SubscriptionStatus, 
+            name='subscriptionstatus', 
+            create_type=False,
+            values_callable=lambda x: [e.value for e in x]
+        ),
         default=SubscriptionStatus.ACTIVE, 
         nullable=False
     )

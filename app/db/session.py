@@ -14,13 +14,20 @@ from sqlalchemy.orm import DeclarativeBase
 
 from app.core.config import settings
 
+# Determine if we need SSL (Fly.io internal connections don't)
+connect_args = {}
+if ".internal" in settings.db_url or ".flycast" in settings.db_url:
+    # Disable SSL for internal Fly.io connections
+    connect_args["ssl"] = False
+
 # Create async engine
 engine = create_async_engine(
-    settings.database_url,
+    settings.db_url,
     echo=settings.database_echo,
     pool_pre_ping=True,
     pool_size=5,
     max_overflow=10,
+    connect_args=connect_args,
 )
 
 # Session factory

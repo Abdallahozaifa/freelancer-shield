@@ -11,15 +11,15 @@ import {
   FolderOpen,
   ChevronRight,
   Plus,
+  Briefcase,
+  AlertTriangle,
+  CheckCircle2
 } from 'lucide-react';
 import { useClient } from '../../hooks/useClients';
 import { useProjects } from '../../hooks/useProjects';
 import {
   Button,
   Card,
-  CardHeader,
-  CardContent,
-  CardTitle,
   Loading,
   EmptyState,
   Badge,
@@ -30,18 +30,21 @@ import { ClientFormModal } from './ClientFormModal';
 import { DeleteClientModal } from './DeleteClientModal';
 import type { ProjectStatus } from '../../types';
 
-const statusVariants: Record<ProjectStatus, 'success' | 'default' | 'warning' | 'danger'> = {
-  active: 'success',
-  completed: 'default',
-  on_hold: 'warning',
-  cancelled: 'danger',
+// Helper for avatar initials
+const getInitials = (name: string) => {
+  return name
+    .split(' ')
+    .map((n) => n[0])
+    .slice(0, 2)
+    .join('')
+    .toUpperCase();
 };
 
-const statusLabels: Record<ProjectStatus, string> = {
-  active: 'Active',
-  completed: 'Completed',
-  on_hold: 'On Hold',
-  cancelled: 'Cancelled',
+const statusConfig: Record<ProjectStatus, { label: string; className: string }> = {
+  active: { label: 'Active', className: 'bg-emerald-100 text-emerald-700 border-emerald-200' },
+  completed: { label: 'Completed', className: 'bg-slate-100 text-slate-700 border-slate-200' },
+  on_hold: { label: 'On Hold', className: 'bg-amber-100 text-amber-700 border-amber-200' },
+  cancelled: { label: 'Cancelled', className: 'bg-red-100 text-red-700 border-red-200' },
 };
 
 export const ClientDetailPage: React.FC = () => {
@@ -57,25 +60,26 @@ export const ClientDetailPage: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <Loading text="Loading client..." />
+      <div className="flex flex-col items-center justify-center min-h-[400px] space-y-4">
+        <Loading text="Loading client profile..." />
       </div>
     );
   }
 
   if (error || !client) {
     return (
-      <div className="space-y-6">
+      <div className="max-w-2xl mx-auto mt-12">
         <button
           onClick={() => navigate('/clients')}
-          className="inline-flex items-center text-sm text-gray-500 hover:text-gray-700"
+          className="inline-flex items-center text-sm font-medium text-slate-500 hover:text-slate-900 mb-6 transition-colors"
         >
           <ArrowLeft className="h-4 w-4 mr-1" />
           Back to Clients
         </button>
         <EmptyState
+          icon={<Briefcase className="w-12 h-12 text-slate-300" />}
           title="Client not found"
-          description="The client you're looking for doesn't exist or has been deleted."
+          description="The client you're looking for doesn't exist or has been removed."
           action={{
             label: 'Go to Clients',
             onClick: () => navigate('/clients'),
@@ -86,192 +90,234 @@ export const ClientDetailPage: React.FC = () => {
   }
 
   return (
-    <div className="space-y-6">
-      {/* Back Navigation */}
-      <button
-        onClick={() => navigate('/clients')}
-        className="inline-flex items-center text-sm text-gray-500 hover:text-gray-700 transition-colors"
-      >
-        <ArrowLeft className="h-4 w-4 mr-1" />
-        Back to Clients
-      </button>
+    <div className="max-w-6xl mx-auto space-y-8 animate-fade-in pb-12">
+      {/* Navigation */}
+      <div>
+        <button
+          onClick={() => navigate('/clients')}
+          className="group inline-flex items-center text-sm font-medium text-slate-500 hover:text-indigo-600 transition-colors"
+        >
+          <ArrowLeft className="h-4 w-4 mr-1 transition-transform group-hover:-translate-x-1" />
+          Back to Clients
+        </button>
+      </div>
 
-      {/* Header */}
-      <div className="flex items-start justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">{client.name}</h1>
-          {client.company && (
-            <p className="mt-1 text-gray-500 flex items-center gap-1">
-              <Building2 className="h-4 w-4" />
-              {client.company}
-            </p>
-          )}
-        </div>
-        <div className="flex items-center gap-2">
-          <Button
-            variant="secondary"
-            leftIcon={<Pencil className="h-4 w-4" />}
-            onClick={() => setIsEditModalOpen(true)}
-          >
-            Edit
-          </Button>
-          <Button
-            variant="danger"
-            leftIcon={<Trash2 className="h-4 w-4" />}
-            onClick={() => setIsDeleteModalOpen(true)}
-          >
-            Delete
-          </Button>
+      {/* Header Profile Card */}
+      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 md:p-8">
+        <div className="flex flex-col md:flex-row items-start justify-between gap-6">
+          <div className="flex items-start gap-6">
+            {/* Avatar */}
+            <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white text-2xl font-bold shadow-md shrink-0">
+              {getInitials(client.name)}
+            </div>
+            
+            {/* Info */}
+            <div className="space-y-1">
+              <h1 className="text-3xl font-bold text-slate-900">{client.name}</h1>
+              <div className="flex items-center flex-wrap gap-4 text-slate-500 text-sm">
+                {client.company && (
+                  <span className="flex items-center gap-1.5 font-medium text-slate-700">
+                    <Building2 className="h-4 w-4 text-slate-400" />
+                    {client.company}
+                  </span>
+                )}
+                <span className="flex items-center gap-1.5">
+                  <Calendar className="h-4 w-4 text-slate-400" />
+                  Joined {formatDate(client.created_at)}
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <Briefcase className="h-4 w-4 text-slate-400" />
+                  {client.project_count} Projects
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Actions */}
+          <div className="flex items-center gap-3 w-full md:w-auto mt-4 md:mt-0">
+            <Button
+              variant="outline"
+              leftIcon={<Pencil className="h-4 w-4" />}
+              onClick={() => setIsEditModalOpen(true)}
+              className="flex-1 md:flex-none justify-center"
+            >
+              Edit
+            </Button>
+            <Button
+              variant="danger"
+              leftIcon={<Trash2 className="h-4 w-4" />}
+              onClick={() => setIsDeleteModalOpen(true)}
+              className="flex-1 md:flex-none justify-center bg-white hover:bg-red-50 text-red-600 border-slate-200 hover:border-red-200"
+            >
+              Delete
+            </Button>
+          </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Client Info Card */}
-        <Card className="lg:col-span-1">
-          <CardHeader>
-            <CardTitle>Client Information</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {client.email && (
-              <div className="flex items-start gap-3">
-                <Mail className="h-5 w-5 text-gray-400 mt-0.5" />
-                <div>
-                  <p className="text-sm font-medium text-gray-500">Email</p>
-                  <a
-                    href={`mailto:${client.email}`}
-                    className="text-sm text-blue-600 hover:text-blue-800"
-                  >
-                    {client.email}
-                  </a>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Left Column: Contact & Notes */}
+        <div className="space-y-6">
+          <Card className="border-slate-200 shadow-sm h-full">
+            <div className="p-6">
+              <h3 className="text-lg font-bold text-slate-900 mb-6 flex items-center gap-2">
+                <Building2 className="w-5 h-5 text-slate-400" />
+                Contact Details
+              </h3>
+              
+              <div className="space-y-6">
+                <div className="group">
+                  <label className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1 block">Email Address</label>
+                  {client.email ? (
+                    <a href={`mailto:${client.email}`} className="flex items-center gap-2 text-indigo-600 hover:text-indigo-800 font-medium transition-colors">
+                      <Mail className="w-4 h-4" />
+                      {client.email}
+                    </a>
+                  ) : (
+                    <span className="text-slate-400 italic">No email provided</span>
+                  )}
                 </div>
-              </div>
-            )}
 
-            {client.company && (
-              <div className="flex items-start gap-3">
-                <Building2 className="h-5 w-5 text-gray-400 mt-0.5" />
                 <div>
-                  <p className="text-sm font-medium text-gray-500">Company</p>
-                  <p className="text-sm text-gray-900">{client.company}</p>
-                </div>
-              </div>
-            )}
-
-            <div className="flex items-start gap-3">
-              <FolderOpen className="h-5 w-5 text-gray-400 mt-0.5" />
-              <div>
-                <p className="text-sm font-medium text-gray-500">Projects</p>
-                <p className="text-sm text-gray-900">{client.project_count} project(s)</p>
-              </div>
-            </div>
-
-            <div className="flex items-start gap-3">
-              <Calendar className="h-5 w-5 text-gray-400 mt-0.5" />
-              <div>
-                <p className="text-sm font-medium text-gray-500">Client Since</p>
-                <p className="text-sm text-gray-900">{formatDate(client.created_at)}</p>
-              </div>
-            </div>
-
-            {client.notes && (
-              <div className="flex items-start gap-3">
-                <FileText className="h-5 w-5 text-gray-400 mt-0.5" />
-                <div>
-                  <p className="text-sm font-medium text-gray-500">Notes</p>
-                  <p className="text-sm text-gray-900 whitespace-pre-wrap">
-                    {client.notes}
+                  <label className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1 block">Company</label>
+                  <p className="text-slate-900 font-medium">
+                    {client.company || <span className="text-slate-400 italic">No company listed</span>}
                   </p>
                 </div>
-              </div>
-            )}
-          </CardContent>
-        </Card>
 
-        {/* Projects Section - Clean Table */}
-        <Card className="lg:col-span-2" padding="none">
-          <div className="p-4 border-b border-gray-200 flex items-center justify-between">
-            <CardTitle>Projects</CardTitle>
-            <Button
-              variant="primary"
-              size="sm"
-              leftIcon={<Plus className="h-4 w-4" />}
-              onClick={() => navigate(`/projects/new?client=${client.id}`)}
-            >
-              New Project
-            </Button>
-          </div>
-
-          {projectsLoading ? (
-            <div className="p-4 space-y-2">
-              {[1, 2, 3].map((i) => (
-                <div key={i} className="flex items-center justify-between py-2">
-                  <Skeleton className="h-5 w-40" />
-                  <Skeleton className="h-5 w-16" />
-                </div>
-              ))}
-            </div>
-          ) : projects.length === 0 ? (
-            <div className="p-6">
-              <EmptyState
-                icon={<FolderOpen className="h-6 w-6" />}
-                title="No projects yet"
-                description="Create a project to start tracking scope."
-                action={{
-                  label: 'Create Project',
-                  onClick: () => navigate(`/projects/new?client=${client.id}`),
-                }}
-              />
-            </div>
-          ) : (
-            <div className="divide-y divide-gray-100">
-              {/* Table Header */}
-              <div className="grid grid-cols-12 gap-4 px-4 py-2 bg-gray-50 text-xs font-medium text-gray-500 uppercase tracking-wide">
-                <div className="col-span-5">Project</div>
-                <div className="col-span-2 text-center">Status</div>
-                <div className="col-span-2 text-center">Scope Creep</div>
-                <div className="col-span-2 text-center">Progress</div>
-                <div className="col-span-1"></div>
-              </div>
-              
-              {/* Project Rows */}
-              {projects.map((project) => (
-                <div
-                  key={project.id}
-                  className="grid grid-cols-12 gap-4 px-4 py-3 hover:bg-gray-50 cursor-pointer transition-colors items-center"
-                  onClick={() => navigate(`/projects/${project.id}`)}
-                >
-                  <div className="col-span-5">
-                    <p className="text-sm font-medium text-gray-900 truncate">
-                      {project.name}
-                    </p>
-                  </div>
-                  <div className="col-span-2 text-center">
-                    <Badge variant={statusVariants[project.status]} size="sm">
-                      {statusLabels[project.status]}
-                    </Badge>
-                  </div>
-                  <div className="col-span-2 text-center">
-                    {project.out_of_scope_request_count > 0 ? (
-                      <span className="text-sm font-medium text-red-600">
-                        {project.out_of_scope_request_count}
-                      </span>
+                <div className="pt-6 border-t border-slate-100">
+                  <label className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2 block flex items-center gap-2">
+                    <FileText className="w-3.5 h-3.5" />
+                    Internal Notes
+                  </label>
+                  <div className="bg-slate-50 rounded-lg p-4 text-sm text-slate-700 leading-relaxed min-h-[100px] border border-slate-100">
+                    {client.notes ? (
+                      client.notes
                     ) : (
-                      <span className="text-sm text-gray-400">0</span>
+                      <span className="text-slate-400 italic">No notes added for this client yet.</span>
                     )}
                   </div>
-                  <div className="col-span-2 text-center">
-                    <span className="text-sm text-gray-600">
-                      {project.completed_scope_count}/{project.scope_item_count}
-                    </span>
-                  </div>
-                  <div className="col-span-1 text-right">
-                    <ChevronRight className="w-4 h-4 text-gray-400 inline-block" />
-                  </div>
                 </div>
-              ))}
+              </div>
             </div>
-          )}
-        </Card>
+          </Card>
+        </div>
+
+        {/* Right Column: Projects List */}
+        <div className="lg:col-span-2">
+          <Card padding="none" className="border-slate-200 shadow-sm overflow-hidden h-full">
+            <div className="px-6 py-5 border-b border-slate-100 flex items-center justify-between bg-white">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center">
+                  <FolderOpen className="w-4 h-4" />
+                </div>
+                <h2 className="font-bold text-slate-900 text-lg">Projects</h2>
+              </div>
+              <Button
+                size="sm"
+                leftIcon={<Plus className="h-4 w-4" />}
+                onClick={() => navigate(`/projects/new?client=${client.id}`)}
+                className="shadow-sm"
+              >
+                New Project
+              </Button>
+            </div>
+
+            {projectsLoading ? (
+              <div className="p-6 space-y-4">
+                {[1, 2, 3].map((i) => (
+                  <div key={i} className="flex items-center justify-between animate-pulse">
+                    <div className="h-10 bg-slate-100 rounded w-1/3" />
+                    <div className="h-6 bg-slate-100 rounded w-1/4" />
+                  </div>
+                ))}
+              </div>
+            ) : projects.length === 0 ? (
+              <div className="p-12 text-center bg-slate-50/30">
+                <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <FolderOpen className="w-8 h-8 text-slate-300" />
+                </div>
+                <h3 className="text-slate-900 font-medium mb-1">No projects found</h3>
+                <p className="text-slate-500 text-sm mb-6 max-w-sm mx-auto">
+                  Start working with {client.name} by creating a new project to track.
+                </p>
+                <Button
+                  variant="outline"
+                  onClick={() => navigate(`/projects/new?client=${client.id}`)}
+                >
+                  Create Project
+                </Button>
+              </div>
+            ) : (
+              <div className="divide-y divide-slate-100">
+                {/* Table Header */}
+                <div className="grid grid-cols-12 gap-4 px-6 py-3 bg-slate-50/80 text-xs font-semibold text-slate-500 uppercase tracking-wider border-b border-slate-100">
+                  <div className="col-span-5">Project Name</div>
+                  <div className="col-span-2 text-center">Status</div>
+                  <div className="col-span-2 text-center">Scope</div>
+                  <div className="col-span-3 text-right">Completion</div>
+                </div>
+                
+                {/* Rows */}
+                {projects.map((project) => {
+                  const progress = project.scope_item_count > 0 
+                    ? Math.round((project.completed_scope_count / project.scope_item_count) * 100) 
+                    : 0;
+
+                  return (
+                    <div
+                      key={project.id}
+                      className="grid grid-cols-12 gap-4 px-6 py-4 hover:bg-slate-50 cursor-pointer transition-all group items-center"
+                      onClick={() => navigate(`/projects/${project.id}`)}
+                    >
+                      <div className="col-span-5 min-w-0">
+                        <p className="font-semibold text-slate-900 truncate group-hover:text-indigo-600 transition-colors">
+                          {project.name}
+                        </p>
+                        <p className="text-xs text-slate-400 mt-0.5">
+                          Last updated {formatDate(project.updated_at)}
+                        </p>
+                      </div>
+
+                      <div className="col-span-2 flex justify-center">
+                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${statusConfig[project.status].className}`}>
+                          {statusConfig[project.status].label}
+                        </span>
+                      </div>
+
+                      <div className="col-span-2 flex justify-center">
+                        {project.out_of_scope_request_count > 0 ? (
+                          <div className="flex items-center gap-1.5 text-amber-600 bg-amber-50 px-2 py-1 rounded-md border border-amber-100" title="Out of scope requests detected">
+                            <AlertTriangle className="w-3.5 h-3.5" />
+                            <span className="text-xs font-bold">{project.out_of_scope_request_count}</span>
+                          </div>
+                        ) : (
+                          <span className="text-slate-300 text-xs">-</span>
+                        )}
+                      </div>
+
+                      <div className="col-span-3">
+                        <div className="flex flex-col items-end gap-1.5">
+                          <div className="flex items-center gap-2 w-full justify-end">
+                            <span className="text-xs font-medium text-slate-700">{progress}%</span>
+                          </div>
+                          <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                            <div
+                              className={`h-full rounded-full transition-all duration-500 ${
+                                progress === 100 ? 'bg-emerald-500' : 'bg-indigo-500'
+                              }`}
+                              style={{ width: `${progress}%` }}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </Card>
+        </div>
       </div>
 
       {/* Edit Modal */}

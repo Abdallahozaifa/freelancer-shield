@@ -1,8 +1,17 @@
 import React, { useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
+import { 
+  Briefcase, 
+  User, 
+  AlignLeft, 
+  DollarSign, 
+  Clock, 
+  Hash, 
+  ArrowLeft,
+  Activity
+} from 'lucide-react';
 import { Card, Button, Input, Select, Textarea } from '../../components/ui';
-import { PageHeader } from '../../layouts/PageHeader';
 import { useClients } from '../../hooks/useClients';
 import { useCreateProject } from '../../hooks/useProjects';
 import type { ProjectCreate, ProjectStatus } from '../../types';
@@ -51,7 +60,6 @@ export const ProjectNewPage: React.FC = () => {
     defaultValues: getDefaultValues(preselectedClientId),
   });
 
-  // Reset form when component mounts or when navigating to this page
   useEffect(() => {
     reset(getDefaultValues(preselectedClientId));
   }, [reset, preselectedClientId]);
@@ -69,9 +77,7 @@ export const ProjectNewPage: React.FC = () => {
 
     try {
       const newProject = await createProject.mutateAsync(payload);
-      // Reset form before navigating (in case user comes back)
       reset(getDefaultValues());
-      // Navigate to the new project
       navigate(`/projects/${newProject.id}`);
     } catch (error) {
       console.error('Failed to create project:', error);
@@ -79,7 +85,7 @@ export const ProjectNewPage: React.FC = () => {
   };
 
   const clientOptions = [
-    { value: '', label: 'Select a client' },
+    { value: '', label: 'Select a client...' },
     ...(clientsData?.items?.map((client) => ({
       value: client.id,
       label: client.name,
@@ -87,114 +93,171 @@ export const ProjectNewPage: React.FC = () => {
   ];
 
   return (
-    <div className="space-y-6">
-      <PageHeader
-        title="New Project"
-        description="Create a new project for a client"
-      />
+    <div className="max-w-3xl mx-auto space-y-6 animate-fade-in pb-12">
+      {/* Header with Back Button */}
+      <div className="flex items-center gap-4 mb-6">
+        <button 
+          onClick={() => navigate(-1)}
+          className="p-2 hover:bg-slate-100 rounded-full transition-colors text-slate-500"
+        >
+          <ArrowLeft className="w-5 h-5" />
+        </button>
+        <div>
+          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Create New Project</h1>
+          <p className="text-slate-500 text-sm">Set up the details and scope for your new engagement.</p>
+        </div>
+      </div>
 
-      <Card className="max-w-2xl">
-        <form onSubmit={handleSubmit(onSubmit)} className="p-6 space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Client <span className="text-red-500">*</span>
-            </label>
-            <Select
-              {...register('client_id', { required: 'Client is required' })}
-              options={clientOptions}
-              error={errors.client_id?.message}
-            />
-          </div>
+      <Card className="overflow-hidden border-slate-200 shadow-sm">
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col">
+          
+          {/* Main Form Section */}
+          <div className="p-6 md:p-8 space-y-6 bg-white">
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Client Selection */}
+              <div className="space-y-1.5">
+                <label className="text-sm font-semibold text-slate-700 flex items-center gap-2">
+                  <User className="w-4 h-4 text-slate-400" />
+                  Client <span className="text-red-500">*</span>
+                </label>
+                <Select
+                  {...register('client_id', { required: 'Please select a client' })}
+                  options={clientOptions}
+                  error={errors.client_id?.message}
+                  className="w-full"
+                />
+              </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Project Name <span className="text-red-500">*</span>
-            </label>
-            <Input
-              {...register('name', {
-                required: 'Project name is required',
-                minLength: { value: 2, message: 'Name must be at least 2 characters' },
-              })}
-              placeholder="e.g., Website Redesign"
-              error={errors.name?.message}
-            />
-          </div>
+              {/* Status Selection */}
+              <div className="space-y-1.5">
+                <label className="text-sm font-semibold text-slate-700 flex items-center gap-2">
+                  <Activity className="w-4 h-4 text-slate-400" />
+                  Initial Status
+                </label>
+                <Select
+                  {...register('status')}
+                  options={statusOptions}
+                  className="w-full"
+                />
+              </div>
+            </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Description
-            </label>
-            <Textarea
-              {...register('description')}
-              placeholder="Brief description of the project..."
-              rows={3}
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Status
-            </label>
-            <Select
-              {...register('status')}
-              options={statusOptions}
-            />
-          </div>
-
-          <div className="grid grid-cols-3 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Budget ($)
+            {/* Project Name */}
+            <div className="space-y-1.5">
+              <label className="text-sm font-semibold text-slate-700 flex items-center gap-2">
+                <Briefcase className="w-4 h-4 text-slate-400" />
+                Project Name <span className="text-red-500">*</span>
               </label>
               <Input
-                type="number"
-                step="0.01"
-                {...register('budget', {
-                  min: { value: 0, message: 'Must be positive' },
+                {...register('name', {
+                  required: 'Project name is required',
+                  minLength: { value: 2, message: 'Name must be at least 2 characters' },
                 })}
-                placeholder="5000"
-                error={errors.budget?.message}
+                placeholder="e.g., Website Redesign Q4"
+                error={errors.name?.message}
+                className="w-full"
               />
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Hourly Rate ($)
+            {/* Description */}
+            <div className="space-y-1.5">
+              <label className="text-sm font-semibold text-slate-700 flex items-center gap-2">
+                <AlignLeft className="w-4 h-4 text-slate-400" />
+                Description
               </label>
-              <Input
-                type="number"
-                step="0.01"
-                {...register('hourly_rate', {
-                  min: { value: 0, message: 'Must be positive' },
-                })}
-                placeholder="75"
-                error={errors.hourly_rate?.message}
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Est. Hours
-              </label>
-              <Input
-                type="number"
-                step="0.5"
-                {...register('estimated_hours', {
-                  min: { value: 0, message: 'Must be positive' },
-                })}
-                placeholder="40"
-                error={errors.estimated_hours?.message}
+              <Textarea
+                {...register('description')}
+                placeholder="Briefly describe the project goals and scope..."
+                rows={4}
+                className="resize-none"
               />
             </div>
           </div>
 
-          <div className="flex justify-end gap-3 pt-4 border-t">
-            <Button type="button" variant="outline" onClick={() => navigate(-1)}>
+          {/* Financials Section */}
+          <div className="bg-slate-50 p-6 md:p-8 border-t border-slate-100">
+            <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wide mb-4">
+              Financials & Estimates
+            </h3>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {/* Budget */}
+              <div className="space-y-1.5 relative">
+                <label className="text-xs font-semibold text-slate-500">
+                  Total Budget
+                </label>
+                <div className="relative group">
+                  <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none group-focus-within:text-indigo-500 transition-colors">
+                    <DollarSign className="w-4 h-4" />
+                  </div>
+                  <Input
+                    type="number"
+                    step="0.01"
+                    {...register('budget', { min: { value: 0, message: 'Must be positive' } })}
+                    placeholder="0.00"
+                    error={errors.budget?.message}
+                    className="pl-9 bg-white"
+                  />
+                </div>
+              </div>
+
+              {/* Hourly Rate */}
+              <div className="space-y-1.5 relative">
+                <label className="text-xs font-semibold text-slate-500">
+                  Hourly Rate
+                </label>
+                <div className="relative group">
+                  <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none group-focus-within:text-indigo-500 transition-colors">
+                    <Hash className="w-4 h-4" />
+                  </div>
+                  <Input
+                    type="number"
+                    step="0.01"
+                    {...register('hourly_rate', { min: { value: 0, message: 'Must be positive' } })}
+                    placeholder="0.00"
+                    error={errors.hourly_rate?.message}
+                    className="pl-9 bg-white"
+                  />
+                </div>
+              </div>
+
+              {/* Est Hours */}
+              <div className="space-y-1.5 relative">
+                <label className="text-xs font-semibold text-slate-500">
+                  Estimated Hours
+                </label>
+                <div className="relative group">
+                  <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none group-focus-within:text-indigo-500 transition-colors">
+                    <Clock className="w-4 h-4" />
+                  </div>
+                  <Input
+                    type="number"
+                    step="0.5"
+                    {...register('estimated_hours', { min: { value: 0, message: 'Must be positive' } })}
+                    placeholder="0.0"
+                    error={errors.estimated_hours?.message}
+                    className="pl-9 bg-white"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Footer Actions */}
+          <div className="p-6 md:p-8 bg-white border-t border-slate-100 flex items-center justify-end gap-3">
+            <Button 
+              type="button" 
+              variant="ghost" 
+              onClick={() => navigate(-1)}
+              className="text-slate-500 hover:text-slate-800"
+            >
               Cancel
             </Button>
             <Button
               type="submit"
               isLoading={isSubmitting || createProject.isPending}
+              className="px-8 shadow-lg shadow-indigo-500/20"
             >
               Create Project
             </Button>

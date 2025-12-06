@@ -8,6 +8,10 @@ import {
   TrendingUp,
   Clock,
   Plus,
+  ArrowUpRight,
+  CheckCircle2,
+  Briefcase,
+  Activity
 } from 'lucide-react';
 import { useDashboard } from '../../hooks/useDashboard';
 import { useAuthStore } from '../../stores/authStore';
@@ -26,34 +30,32 @@ export const DashboardPage: React.FC = () => {
     return 'Good evening';
   };
 
+  const currentDate = new Date().toLocaleDateString('en-US', {
+    weekday: 'long',
+    month: 'long',
+    day: 'numeric'
+  });
+
   const firstName = user?.full_name?.split(' ')[0] || 'there';
 
-  // Calculate real total out-of-scope from project_health (more accurate than summary)
+  // Calculate real total out-of-scope
   const realTotalOutOfScope = projects.reduce(
     (sum, p) => sum + (p.out_of_scope_requests ?? 0),
     0
   );
 
-  // Build a map of project_id -> out_of_scope_requests for quick lookup
   const projectOutOfScopeMap = new Map(
     projects.map((p) => [p.project_id, p.out_of_scope_requests ?? 0])
   );
 
-  // Filter alerts to only show ones with actual out-of-scope issues
-  // This filters out stale alerts where requests have been dismissed
   const validAlerts = alerts.filter((alert) => {
-    // If alert is about out-of-scope requests, verify the project still has them
     if (alert.message.toLowerCase().includes('out-of-scope')) {
       const outOfScopeCount = projectOutOfScopeMap.get(alert.project_id);
-      // Only show if we have data AND count > 0
-      // If project not in map (e.g., on hold), don't show the alert
       return outOfScopeCount !== undefined && outOfScopeCount > 0;
     }
-    // Keep non-scope-creep alerts (e.g., pending requests, etc.)
     return true;
   });
 
-  // Helper to normalize severity to lowercase for comparison
   const getSeverityVariant = (severity: string) => {
     const s = severity.toLowerCase();
     if (s === 'high') return 'danger';
@@ -61,315 +63,346 @@ export const DashboardPage: React.FC = () => {
     return 'info';
   };
 
-  // Get revenue_protected from summary, fallback to total_revenue_protected
   const revenueProtected = summary?.revenue_protected ?? summary?.total_revenue_protected ?? 0;
-  // Get proposals_accepted from summary, fallback to accepted_proposals
   const proposalsAccepted = summary?.proposals_accepted ?? summary?.accepted_proposals ?? 0;
-  // Get completed_scope_items, calculate from projects if not available
   const completedScopeItems = summary?.completed_scope_items ?? 
     projects.reduce((sum, p) => sum + (p.scope_items_completed ?? 0), 0);
 
   return (
-    <div className="space-y-8 animate-fade-in">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div className="space-y-8 animate-fade-in max-w-7xl mx-auto">
+      {/* Header Section */}
+      <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 border-b border-slate-200 pb-6">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">
+          <p className="text-sm font-medium text-slate-500 mb-1">{currentDate}</p>
+          <h1 className="text-3xl font-bold text-slate-900 tracking-tight">
             {getGreeting()}, {firstName}
           </h1>
-          <p className="text-slate-500 mt-1">
-            Here's what's happening with your projects today.
+          <p className="text-slate-600 mt-2 max-w-2xl">
+            You have <span className="font-semibold text-indigo-600">{summary?.active_projects ?? 0} active projects</span> and <span className="font-semibold text-emerald-600">{realTotalOutOfScope} potential scope items</span> to review.
           </p>
         </div>
-        <Button
-          onClick={() => navigate('/projects/new')}
-          leftIcon={<Plus className="w-4 h-4" />}
-        >
-          New Project
-        </Button>
+        <div className="flex gap-3">
+          <Button
+            variant="outline"
+            onClick={() => navigate('/clients')}
+          >
+            Manage Clients
+          </Button>
+          <Button
+            onClick={() => navigate('/projects/new')}
+            leftIcon={<Plus className="w-4 h-4" />}
+            className="shadow-lg shadow-indigo-500/20"
+          >
+            New Project
+          </Button>
+        </div>
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
         {isLoading ? (
-          <>
-            {[1, 2, 3, 4].map((i) => (
-              <Card key={i} className="h-32 animate-pulse">
-                <div className="h-4 bg-slate-200 rounded w-24 mb-3" />
-                <div className="h-8 bg-slate-200 rounded w-20 mb-2" />
-                <div className="h-3 bg-slate-100 rounded w-32" />
-              </Card>
-            ))}
-          </>
+          [1, 2, 3, 4].map((i) => (
+            <Card key={i} className="h-32 animate-pulse bg-slate-50 border-slate-100">
+              <div className="h-4 bg-slate-200 rounded w-24 mb-3" />
+              <div className="h-8 bg-slate-200 rounded w-20 mb-2" />
+            </Card>
+          ))
         ) : (
           <>
-            <StatCard
-              title="Revenue Protected"
-              value={formatCurrency(revenueProtected)}
-              subtitle={`${proposalsAccepted} proposals accepted`}
-              icon={<DollarSign className="w-6 h-6" />}
-              iconVariant="success"
-            />
+            {/* Hero Metric: Revenue */}
+            <div className="relative overflow-hidden bg-gradient-to-br from-indigo-600 to-violet-700 rounded-xl p-5 text-white shadow-lg shadow-indigo-500/20 transform transition-all hover:scale-[1.01]">
+              <div className="relative z-10">
+                <div className="flex items-center gap-2 text-indigo-100 text-sm font-medium mb-1">
+                  <DollarSign className="w-4 h-4" />
+                  <span>Revenue Protected</span>
+                </div>
+                <div className="text-3xl font-bold mb-1 tracking-tight">
+                  {formatCurrency(revenueProtected)}
+                </div>
+                <div className="text-sm text-indigo-100/80">
+                  Across {proposalsAccepted} accepted proposals
+                </div>
+              </div>
+              <div className="absolute right-0 top-0 p-4 opacity-10">
+                <DollarSign className="w-24 h-24" />
+              </div>
+            </div>
+
             <StatCard
               title="Active Projects"
               value={summary?.active_projects ?? 0}
-              subtitle={`${summary?.total_projects ?? 0} total projects`}
-              icon={<FolderOpen className="w-6 h-6" />}
+              subtitle="Currently in progress"
+              icon={<Briefcase className="w-5 h-5" />}
               iconVariant="primary"
             />
+            
             <StatCard
-              title="Pending Requests"
-              value={summary?.pending_requests ?? 0}
-              subtitle="Awaiting review"
-              icon={<Clock className="w-6 h-6" />}
-              iconVariant="warning"
-            />
-            <StatCard
-              title="Scope Creep Detected"
+              title="Scope Creep"
               value={realTotalOutOfScope}
-              subtitle="Out-of-scope requests"
-              icon={<AlertTriangle className="w-6 h-6" />}
+              subtitle="Items needing approval"
+              icon={<AlertTriangle className="w-5 h-5" />}
               iconVariant="danger"
+            />
+
+            <StatCard
+              title="Acceptance Rate"
+              value={`${summary?.total_proposals ? Math.round((proposalsAccepted / summary.total_proposals) * 100) : 0}%`}
+              subtitle={`${summary?.total_proposals ?? 0} total proposals`}
+              icon={<Activity className="w-5 h-5" />}
+              iconVariant="success"
             />
           </>
         )}
       </div>
 
-      {/* Main Content Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Alerts Section - Takes 2 columns */}
-        <div className="lg:col-span-2 space-y-4">
-          {/* Needs Attention */}
+      {/* Main Content Layout */}
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+        
+        {/* Left Column: Alerts & Projects (2/3 width) */}
+        <div className="xl:col-span-2 space-y-6">
+          
+          {/* Alerts Section (Conditional) */}
           {validAlerts.length > 0 && (
-            <Card padding="none">
-              <div className="p-5 border-b border-slate-100">
+            <div className="bg-orange-50/50 border border-orange-100 rounded-xl overflow-hidden">
+              <div className="px-5 py-4 border-b border-orange-100 flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-red-100">
-                    <AlertTriangle className="w-4 h-4 text-red-600" />
+                  <div className="flex items-center justify-center w-6 h-6 rounded-full bg-orange-100 ring-4 ring-orange-50">
+                    <AlertTriangle className="w-3.5 h-3.5 text-orange-600" />
                   </div>
-                  <div>
-                    <h2 className="font-semibold text-slate-900">Needs Attention</h2>
-                    <p className="text-sm text-slate-500">{validAlerts.length} items require your review</p>
-                  </div>
+                  <h3 className="font-semibold text-slate-800">Action Required</h3>
                 </div>
+                <span className="text-xs font-medium px-2.5 py-1 rounded-full bg-orange-100 text-orange-700">
+                  {validAlerts.length} items
+                </span>
               </div>
-              <div className="divide-y divide-slate-100">
-                {validAlerts.slice(0, 5).map((alert, index) => (
+              <div className="divide-y divide-orange-100/50">
+                {validAlerts.slice(0, 3).map((alert, index) => (
                   <div
                     key={alert.id || `alert-${index}`}
-                    className="p-4 hover:bg-slate-50 transition-colors cursor-pointer group"
+                    className="px-5 py-3 hover:bg-orange-50 transition-colors cursor-pointer flex items-center justify-between gap-4 group"
                     onClick={() => navigate(`/projects/${alert.project_id}`)}
                   >
-                    <div className="flex items-start justify-between gap-4">
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-1">
-                          <Badge
-                            variant={getSeverityVariant(alert.severity)}
-                            size="sm"
-                          >
-                            {alert.severity.toUpperCase()}
-                          </Badge>
-                          <span className="text-xs text-slate-400">
-                            {formatRelative(alert.created_at)}
-                          </span>
-                        </div>
-                        <p className="text-sm font-medium text-slate-900 mb-0.5">
-                          {alert.message}
-                        </p>
-                        <p className="text-sm text-slate-500">{alert.project_name}</p>
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="text-xs font-semibold text-slate-700">{alert.project_name}</span>
+                        <span className="w-1 h-1 rounded-full bg-slate-300"></span>
+                        <span className="text-xs text-slate-500">{formatRelative(alert.created_at)}</span>
                       </div>
-                      <ChevronRight className="w-5 h-5 text-slate-300 group-hover:text-slate-500 transition-colors flex-shrink-0 mt-1" />
+                      <p className="text-sm text-slate-700 group-hover:text-slate-900 transition-colors">
+                        {alert.message}
+                      </p>
                     </div>
+                    <ChevronRight className="w-4 h-4 text-orange-300 group-hover:text-orange-500 transition-colors" />
                   </div>
                 ))}
               </div>
-              {validAlerts.length > 5 && (
-                <div className="p-4 border-t border-slate-100 bg-slate-50/50">
-                  <button
-                    onClick={() => navigate('/projects')}
-                    className="text-sm font-medium text-indigo-600 hover:text-indigo-700"
-                  >
-                    View all {validAlerts.length} alerts →
-                  </button>
-                </div>
-              )}
-            </Card>
+            </div>
           )}
 
-          {/* Active Projects */}
-          <Card padding="none">
-            <div className="p-5 border-b border-slate-100 flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-indigo-100">
-                  <FolderOpen className="w-4 h-4 text-indigo-600" />
-                </div>
-                <h2 className="font-semibold text-slate-900">Active Projects</h2>
+          {/* Active Projects List */}
+          <Card padding="none" className="overflow-hidden border-slate-200 shadow-sm">
+            <div className="px-6 py-5 border-b border-slate-100 flex items-center justify-between bg-white">
+              <div>
+                <h2 className="font-semibold text-slate-900 text-lg">Project Health</h2>
+                <p className="text-sm text-slate-500 mt-0.5">Overview of progress and scope status</p>
               </div>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => navigate('/projects')}
-              >
-                View All
+              <Button variant="ghost" size="sm" onClick={() => navigate('/projects')}>
+                View All Projects
               </Button>
             </div>
             
             {isLoading ? (
-              <div className="p-5 space-y-3">
+              <div className="p-6 space-y-4">
                 {[1, 2, 3].map((i) => (
-                  <div key={i} className="animate-pulse flex items-center justify-between py-2">
-                    <div className="h-4 bg-slate-200 rounded w-40" />
-                    <div className="h-6 bg-slate-100 rounded w-12" />
+                  <div key={i} className="animate-pulse flex items-center justify-between">
+                    <div className="h-12 bg-slate-100 rounded w-full" />
                   </div>
                 ))}
               </div>
             ) : projects.length === 0 ? (
-              <div className="p-8 text-center">
-                <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center mx-auto mb-3">
-                  <FolderOpen className="w-6 h-6 text-slate-400" />
+              <div className="p-12 text-center bg-slate-50/50">
+                <div className="w-16 h-16 rounded-2xl bg-white shadow-sm flex items-center justify-center mx-auto mb-4 border border-slate-100">
+                  <FolderOpen className="w-8 h-8 text-indigo-500" />
                 </div>
-                <p className="text-slate-600 font-medium mb-1">No active projects</p>
-                <p className="text-sm text-slate-400 mb-4">
-                  Create your first project to start tracking scope.
+                <h3 className="text-slate-900 font-medium mb-1">No active projects</h3>
+                <p className="text-slate-500 text-sm mb-6 max-w-sm mx-auto">
+                  Start tracking your first project to prevent scope creep and protect your revenue.
                 </p>
-                <Button
-                  size="sm"
-                  onClick={() => navigate('/projects/new')}
-                  leftIcon={<Plus className="w-4 h-4" />}
-                >
-                  New Project
-                </Button>
+                <Button onClick={() => navigate('/projects/new')}>Create First Project</Button>
               </div>
             ) : (
-              <div className="divide-y divide-slate-100">
-                {/* Table Header */}
-                <div className="grid grid-cols-12 gap-4 px-5 py-3 bg-slate-50/80 text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                  <div className="col-span-6">Project</div>
-                  <div className="col-span-3 text-center">Scope Creep</div>
-                  <div className="col-span-3 text-center">Progress</div>
+              <div className="w-full">
+                {/* Custom Table Header */}
+                <div className="grid grid-cols-12 gap-4 px-6 py-3 bg-slate-50 border-b border-slate-100 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                  <div className="col-span-5">Project Name</div>
+                  <div className="col-span-3 text-center">Status</div>
+                  <div className="col-span-2 text-center">Scope Alerts</div>
+                  <div className="col-span-2 text-right">Completion</div>
                 </div>
-                
-                {/* Project Rows - Show ALL projects */}
-                {projects.map((project) => {
-                  const progress = project.scope_items_total > 0
-                    ? Math.round((project.scope_items_completed / project.scope_items_total) * 100)
-                    : 0;
-                    
-                  return (
-                    <div
-                      key={project.project_id}
-                      className="grid grid-cols-12 gap-4 px-5 py-4 hover:bg-slate-50 cursor-pointer transition-colors group items-center"
-                      onClick={() => navigate(`/projects/${project.project_id}`)}
-                    >
-                      <div className="col-span-6">
-                        <p className="font-medium text-slate-900 group-hover:text-indigo-600 transition-colors truncate">
-                          {project.project_name}
-                        </p>
-                        <p className="text-xs text-slate-400 mt-0.5">{project.status}</p>
-                      </div>
-                      <div className="col-span-3 text-center">
-                        {project.out_of_scope_requests > 0 ? (
-                          <span className="inline-flex items-center justify-center min-w-[24px] h-6 px-2 bg-red-100 text-red-700 text-sm font-semibold rounded-full">
-                            {project.out_of_scope_requests}
-                          </span>
-                        ) : (
-                          <span className="text-sm text-slate-300">0</span>
-                        )}
-                      </div>
-                      <div className="col-span-3">
-                        <div className="flex items-center gap-2">
-                          <div className="flex-1 h-1.5 bg-slate-100 rounded-full overflow-hidden">
-                            <div
-                              className="h-full bg-indigo-500 rounded-full transition-all"
-                              style={{ width: `${progress}%` }}
-                            />
+
+                <div className="divide-y divide-slate-50">
+                  {projects.map((project) => {
+                    const progress = project.scope_items_total > 0
+                      ? Math.round((project.scope_items_completed / project.scope_items_total) * 100)
+                      : 0;
+                    const hasIssues = project.out_of_scope_requests > 0;
+
+                    return (
+                      <div
+                        key={project.project_id}
+                        onClick={() => navigate(`/projects/${project.project_id}`)}
+                        className="grid grid-cols-12 gap-4 px-6 py-4 items-center hover:bg-slate-50/80 cursor-pointer transition-all group"
+                      >
+                        <div className="col-span-5 pr-4">
+                          <p className="font-medium text-slate-900 group-hover:text-indigo-600 transition-colors truncate">
+                            {project.project_name}
+                          </p>
+                          <div className="flex items-center gap-2 mt-1">
+                            <span className="text-xs text-slate-500">
+                              {project.scope_items_total} deliverables
+                            </span>
                           </div>
-                          <span className="text-xs text-slate-500 tabular-nums w-8 text-right">
-                            {progress}%
-                          </span>
+                        </div>
+
+                        <div className="col-span-3 flex justify-center">
+                          <Badge variant={project.status === 'Active' ? 'success' : 'neutral'} size="sm">
+                            {project.status}
+                          </Badge>
+                        </div>
+
+                        <div className="col-span-2 flex justify-center">
+                          {hasIssues ? (
+                            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-red-50 border border-red-100">
+                              <AlertTriangle className="w-3.5 h-3.5 text-red-600" />
+                              <span className="text-xs font-semibold text-red-700">
+                                {project.out_of_scope_requests}
+                              </span>
+                            </div>
+                          ) : (
+                            <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-slate-50 text-slate-300">
+                              <CheckCircle2 className="w-4 h-4" />
+                            </span>
+                          )}
+                        </div>
+
+                        <div className="col-span-2 text-right">
+                          <div className="flex flex-col items-end gap-1">
+                            <span className="text-sm font-semibold text-slate-700">{progress}%</span>
+                            <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden max-w-[80px]">
+                              <div
+                                className={`h-full rounded-full transition-all duration-500 ${
+                                  progress === 100 ? 'bg-emerald-500' : 'bg-indigo-500'
+                                }`}
+                                style={{ width: `${progress}%` }}
+                              />
+                            </div>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  );
-                })}
+                    );
+                  })}
+                </div>
               </div>
             )}
           </Card>
         </div>
 
-        {/* Right Column - Quick Stats */}
-        <div className="space-y-4">
-          {/* Performance Summary */}
-          <Card>
-            <div className="flex items-center gap-3 mb-4">
-              <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-emerald-100">
-                <TrendingUp className="w-4 h-4 text-emerald-600" />
+        {/* Right Column: Summary & Tools (1/3 width) */}
+        <div className="space-y-6">
+          
+          {/* Monthly Performance */}
+          <Card className="border-slate-200 shadow-sm">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-emerald-50 text-emerald-600">
+                <TrendingUp className="w-5 h-5" />
               </div>
-              <h3 className="font-semibold text-slate-900">This Month</h3>
+              <div>
+                <h3 className="font-semibold text-slate-900 leading-tight">Monthly Recap</h3>
+                <p className="text-xs text-slate-500">Performance metrics</p>
+              </div>
             </div>
             
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-slate-500">Revenue Protected</span>
-                <span className="text-sm font-semibold text-slate-900">
-                  {formatCurrency(revenueProtected)}
-                </span>
+            <div className="space-y-5">
+              <div className="group">
+                <div className="flex items-center justify-between mb-1.5">
+                  <span className="text-sm font-medium text-slate-600">Proposals Sent</span>
+                  <span className="text-sm font-bold text-slate-900">{summary?.total_proposals ?? 0}</span>
+                </div>
+                <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
+                   {/* Decorative bar since we don't have a max value for proposals, just show activity */}
+                  <div className="h-full bg-indigo-200 rounded-full w-2/3" />
+                </div>
               </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-slate-500">Proposals Sent</span>
-                <span className="text-sm font-semibold text-slate-900">
-                  {summary?.total_proposals ?? 0}
-                </span>
+
+              <div className="group">
+                <div className="flex items-center justify-between mb-1.5">
+                  <span className="text-sm font-medium text-slate-600">Acceptance Rate</span>
+                  <span className="text-sm font-bold text-emerald-600">
+                    {summary?.total_proposals
+                      ? Math.round((proposalsAccepted / summary.total_proposals) * 100)
+                      : 0}%
+                  </span>
+                </div>
+                <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
+                  <div 
+                    className="h-full bg-emerald-500 rounded-full transition-all" 
+                    style={{ width: `${summary?.total_proposals ? (proposalsAccepted / summary.total_proposals) * 100 : 0}%` }}
+                  />
+                </div>
               </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-slate-500">Acceptance Rate</span>
-                <span className="text-sm font-semibold text-emerald-600">
-                  {summary?.total_proposals
-                    ? Math.round((proposalsAccepted / summary.total_proposals) * 100)
-                    : 0}%
-                </span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-slate-500">Scope Items Completed</span>
-                <span className="text-sm font-semibold text-slate-900">
-                  {completedScopeItems}
-                </span>
+
+              <div className="pt-4 border-t border-slate-100">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-xs text-slate-500 uppercase tracking-wide font-semibold">Total Delivered</p>
+                    <p className="text-lg font-bold text-slate-900 mt-1">{completedScopeItems}</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-xs text-slate-500 uppercase tracking-wide font-semibold">Pending Review</p>
+                    <p className="text-lg font-bold text-amber-600 mt-1">{summary?.pending_requests ?? 0}</p>
+                  </div>
+                </div>
               </div>
             </div>
           </Card>
 
-          {/* Quick Actions */}
-          <Card>
-            <h3 className="font-semibold text-slate-900 mb-4">Quick Actions</h3>
-            <div className="space-y-2">
+          {/* Quick Actions Panel */}
+          <div className="bg-slate-900 rounded-xl p-5 text-white shadow-xl shadow-slate-900/10">
+            <h3 className="font-semibold mb-4 text-slate-100">Quick Actions</h3>
+            <div className="space-y-3">
               <button
                 onClick={() => navigate('/projects/new')}
-                className="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-slate-50 hover:bg-slate-100 transition-colors text-left"
+                className="w-full flex items-center justify-between p-3 rounded-lg bg-slate-800 hover:bg-slate-700 transition-colors group border border-slate-700"
               >
-                <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-indigo-100">
-                  <Plus className="w-4 h-4 text-indigo-600" />
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-full bg-indigo-500/20 flex items-center justify-center text-indigo-400 group-hover:text-indigo-300">
+                    <Plus className="w-4 h-4" />
+                  </div>
+                  <div className="text-left">
+                    <p className="text-sm font-medium text-slate-200 group-hover:text-white">New Project</p>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-sm font-medium text-slate-900">New Project</p>
-                  <p className="text-xs text-slate-400">Create a new project</p>
-                </div>
+                <ArrowUpRight className="w-4 h-4 text-slate-500 group-hover:text-white transition-colors" />
               </button>
-              
+
               <button
                 onClick={() => navigate('/clients')}
-                className="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-slate-50 hover:bg-slate-100 transition-colors text-left"
+                className="w-full flex items-center justify-between p-3 rounded-lg bg-slate-800 hover:bg-slate-700 transition-colors group border border-slate-700"
               >
-                <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-emerald-100">
-                  <Plus className="w-4 h-4 text-emerald-600" />
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-400 group-hover:text-emerald-300">
+                    <Briefcase className="w-4 h-4" />
+                  </div>
+                  <div className="text-left">
+                    <p className="text-sm font-medium text-slate-200 group-hover:text-white">Add Client</p>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-sm font-medium text-slate-900">Add Client</p>
-                  <p className="text-xs text-slate-400">Add a new client</p>
-                </div>
+                <ArrowUpRight className="w-4 h-4 text-slate-500 group-hover:text-white transition-colors" />
               </button>
             </div>
-          </Card>
+          </div>
         </div>
+
       </div>
     </div>
   );

@@ -6,7 +6,7 @@ import uuid
 from decimal import Decimal
 
 from sqlalchemy import ForeignKey, Numeric, String, Text
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.dialects.postgresql import UUID, ENUM
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.models.enums import ProjectStatus
@@ -45,6 +45,12 @@ class Project(BaseModel):
         nullable=True,
     )
     status: Mapped[ProjectStatus] = mapped_column(
+        ENUM(
+            ProjectStatus,
+            name='projectstatus',
+            create_type=False,
+            values_callable=lambda x: [e.value for e in x]
+        ),
         default=ProjectStatus.ACTIVE,
         nullable=False,
     )

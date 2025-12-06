@@ -1,5 +1,15 @@
 import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
+import { 
+  Briefcase, 
+  AlignLeft, 
+  DollarSign, 
+  Clock, 
+  User, 
+  Activity, 
+  Hash,
+  Calculator
+} from 'lucide-react';
 import { Modal, Input, Select, Textarea, Button } from '../../components/ui';
 import { useClients } from '../../hooks/useClients';
 import { useCreateProject, useUpdateProject } from '../../hooks/useProjects';
@@ -57,7 +67,6 @@ export const ProjectFormModal: React.FC<ProjectFormModalProps> = ({
     defaultValues: getDefaultValues(),
   });
 
-  // Reset form when modal opens or project changes
   useEffect(() => {
     if (isOpen) {
       if (project) {
@@ -93,7 +102,7 @@ export const ProjectFormModal: React.FC<ProjectFormModalProps> = ({
       } else {
         await createProject.mutateAsync(payload);
       }
-      reset(getDefaultValues()); // Reset before closing
+      reset(getDefaultValues());
       onClose();
     } catch (error) {
       console.error('Failed to save project:', error);
@@ -101,143 +110,169 @@ export const ProjectFormModal: React.FC<ProjectFormModalProps> = ({
   };
 
   const clientOptions = [
-    { value: '', label: 'Select a client' },
+    { value: '', label: 'Select a client...' },
     ...(clientsData?.items?.map((client) => ({
       value: client.id,
       label: client.name,
     })) ?? []),
   ];
 
-  const commonLabelStyle = "block text-sm font-semibold text-slate-700 mb-1";
-  const requiredStar = <span className="text-red-500">*</span>;
-
   return (
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title={isEditing ? 'Edit Project' : 'New Project'}
-      
+      title={isEditing ? 'Edit Project Details' : 'Create New Project'}
     >
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6"> {/* Increased main spacing */}
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
         
-        {/* --- Primary Details Group --- */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-                <label className={commonLabelStyle}>
-                    Client {requiredStar}
-                </label>
-                <Select
-                    {...register('client_id', { required: 'Client is required' })}
-                    options={clientOptions}
-                    error={errors.client_id?.message}
-                    className="rounded-lg" // Added rounded style
-                />
+        {/* --- Section 1: Core Details --- */}
+        <div className="space-y-5">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            {/* Client Selection */}
+            <div className="space-y-1.5">
+              <label className="text-sm font-semibold text-slate-700 flex items-center gap-2">
+                <User className="w-4 h-4 text-slate-400" />
+                Client <span className="text-red-500">*</span>
+              </label>
+              <Select
+                {...register('client_id', { required: 'Please select a client' })}
+                options={clientOptions}
+                error={errors.client_id?.message}
+                className="w-full"
+              />
             </div>
 
-            <div>
-                <label className={commonLabelStyle}>
-                    Project Name {requiredStar}
-                </label>
+            {/* Status Selection */}
+            <div className="space-y-1.5">
+              <label className="text-sm font-semibold text-slate-700 flex items-center gap-2">
+                <Activity className="w-4 h-4 text-slate-400" />
+                Project Status
+              </label>
+              <Select
+                {...register('status')}
+                options={statusOptions}
+                className="w-full"
+              />
+            </div>
+          </div>
+
+          {/* Project Name */}
+          <div className="space-y-1.5">
+            <label className="text-sm font-semibold text-slate-700 flex items-center gap-2">
+              <Briefcase className="w-4 h-4 text-slate-400" />
+              Project Name <span className="text-red-500">*</span>
+            </label>
+            <Input
+              {...register('name', {
+                required: 'Project name is required',
+                minLength: { value: 2, message: 'Name must be at least 2 characters' },
+              })}
+              placeholder="e.g., Q4 Marketing Campaign"
+              error={errors.name?.message}
+              className="w-full"
+            />
+          </div>
+
+          {/* Description */}
+          <div className="space-y-1.5">
+            <label className="text-sm font-semibold text-slate-700 flex items-center gap-2">
+              <AlignLeft className="w-4 h-4 text-slate-400" />
+              Description
+            </label>
+            <Textarea
+              {...register('description')}
+              placeholder="Outline the main goals and deliverables..."
+              rows={3}
+              className="resize-none"
+            />
+          </div>
+        </div>
+
+        {/* --- Section 2: Financials & Scope (Grouped in a Card) --- */}
+        <div className="bg-slate-50 rounded-xl p-5 border border-slate-100 space-y-4">
+          <div className="flex items-center gap-2 pb-2 border-b border-slate-200/60">
+            <Calculator className="w-4 h-4 text-indigo-500" />
+            <h3 className="text-sm font-bold text-slate-800 uppercase tracking-wide">
+              Financials & Scope
+            </h3>
+          </div>
+          
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            {/* Total Budget */}
+            <div className="space-y-1.5 relative">
+              <label className="text-xs font-semibold text-slate-500 uppercase">
+                Total Budget
+              </label>
+              <div className="relative group">
+                <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none group-focus-within:text-indigo-500 transition-colors">
+                  <DollarSign className="w-4 h-4" />
+                </div>
                 <Input
-                    {...register('name', {
-                        required: 'Project name is required',
-                        minLength: { value: 2, message: 'Name must be at least 2 characters' },
-                    })}
-                    placeholder="e.g., Website Redesign"
-                    error={errors.name?.message}
-                    className="rounded-lg" // Added rounded style
+                  type="number"
+                  step="0.01"
+                  {...register('budget', { min: { value: 0, message: 'Must be positive' } })}
+                  placeholder="0.00"
+                  error={errors.budget?.message}
+                  className="pl-9 bg-white"
                 />
+              </div>
             </div>
-        </div>
-        
-        <div className="space-y-4">
-            <div>
-                <label className={commonLabelStyle}>
-                    Description
-                </label>
-                <Textarea
-                    {...register('description')}
-                    placeholder="Brief description of the project..."
-                    rows={3}
-                    className="rounded-lg" // Added rounded style
+
+            {/* Hourly Rate */}
+            <div className="space-y-1.5 relative">
+              <label className="text-xs font-semibold text-slate-500 uppercase">
+                Hourly Rate
+              </label>
+              <div className="relative group">
+                <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none group-focus-within:text-indigo-500 transition-colors">
+                  <Hash className="w-4 h-4" />
+                </div>
+                <Input
+                  type="number"
+                  step="0.01"
+                  {...register('hourly_rate', { min: { value: 0, message: 'Must be positive' } })}
+                  placeholder="0.00"
+                  error={errors.hourly_rate?.message}
+                  className="pl-9 bg-white"
                 />
+              </div>
             </div>
 
-            <div>
-                <label className={commonLabelStyle}>
-                    Status
-                </label>
-                <Select
-                    {...register('status')}
-                    options={statusOptions}
-                    className="rounded-lg" // Added rounded style
+            {/* Estimated Hours */}
+            <div className="space-y-1.5 relative">
+              <label className="text-xs font-semibold text-slate-500 uppercase">
+                Est. Hours
+              </label>
+              <div className="relative group">
+                <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none group-focus-within:text-indigo-500 transition-colors">
+                  <Clock className="w-4 h-4" />
+                </div>
+                <Input
+                  type="number"
+                  step="0.5"
+                  {...register('estimated_hours', { min: { value: 0, message: 'Must be positive' } })}
+                  placeholder="0.0"
+                  error={errors.estimated_hours?.message}
+                  className="pl-9 bg-white"
                 />
+              </div>
             </div>
-        </div>
-
-        {/* --- Budget & Scope Details Group --- */}
-        <div className="pt-4 border-t border-slate-200 space-y-4">
-            <h3 className="text-lg font-bold text-slate-800">Budget & Time Estimation</h3>
-            <div className="grid grid-cols-3 gap-4">
-                <div>
-                    <label className={commonLabelStyle}>
-                        Budget (USD)
-                    </label>
-                    <Input
-                        type="number"
-                        step="0.01"
-                        {...register('budget', {
-                            min: { value: 0, message: 'Must be positive' },
-                        })}
-                        placeholder="5000.00"
-                        error={errors.budget?.message}
-                        className="rounded-lg"
-                    />
-                </div>
-
-                <div>
-                    <label className={commonLabelStyle}>
-                        Hourly Rate (USD)
-                    </label>
-                    <Input
-                        type="number"
-                        step="0.01"
-                        {...register('hourly_rate', {
-                            min: { value: 0, message: 'Must be positive' },
-                        })}
-                        placeholder="75.00"
-                        error={errors.hourly_rate?.message}
-                        className="rounded-lg"
-                    />
-                </div>
-
-                <div>
-                    <label className={commonLabelStyle}>
-                        Estimated Hours
-                    </label>
-                    <Input
-                        type="number"
-                        step="0.5"
-                        {...register('estimated_hours', {
-                            min: { value: 0, message: 'Must be positive' },
-                        })}
-                        placeholder="40.0"
-                        error={errors.estimated_hours?.message}
-                        className="rounded-lg"
-                    />
-                </div>
-            </div>
+          </div>
         </div>
 
-        {/* --- Footer Actions --- */}
-        <div className="flex justify-end gap-3 pt-6 border-t border-slate-200"> {/* Increased padding */}
-          <Button type="button" variant="outline" onClick={onClose} className="font-semibold">
+        {/* --- Footer --- */}
+        <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-100">
+          <Button 
+            type="button" 
+            variant="ghost" 
+            onClick={onClose}
+            className="text-slate-500 hover:text-slate-800"
+          >
             Cancel
           </Button>
           <Button
             type="submit"
-            // Ensure primary color and emphasis is strong
-            className="font-semibold shadow-md shadow-indigo-400/50"
+            className="px-6 shadow-lg shadow-indigo-500/20"
             isLoading={isSubmitting || createProject.isPending || updateProject.isPending}
           >
             {isEditing ? 'Save Changes' : 'Create Project'}

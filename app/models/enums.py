@@ -11,6 +11,9 @@ class ProjectStatus(str, Enum):
     COMPLETED = "completed"
     ON_HOLD = "on_hold"
     CANCELLED = "cancelled"
+    
+    def __str__(self):
+        return self.value
 
 
 class RequestSource(str, Enum):
@@ -20,6 +23,9 @@ class RequestSource(str, Enum):
     CALL = "call"
     MEETING = "meeting"
     OTHER = "other"
+    
+    def __str__(self):
+        return self.value
 
 
 class ScopeClassification(str, Enum):
@@ -29,6 +35,9 @@ class ScopeClassification(str, Enum):
     CLARIFICATION_NEEDED = "clarification_needed"
     REVISION = "revision"
     PENDING = "pending"  # Not yet analyzed
+    
+    def __str__(self):
+        return self.value
 
 
 class RequestStatus(str, Enum):
@@ -38,6 +47,9 @@ class RequestStatus(str, Enum):
     ADDRESSED = "addressed"
     PROPOSAL_SENT = "proposal_sent"
     DECLINED = "declined"
+    
+    def __str__(self):
+        return self.value
 
 
 class ProposalStatus(str, Enum):
@@ -47,3 +59,6 @@ class ProposalStatus(str, Enum):
     ACCEPTED = "accepted"
     DECLINED = "declined"
     EXPIRED = "expired"
+    
+    def __str__(self):
+        return self.value

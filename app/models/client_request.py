@@ -6,7 +6,7 @@ import uuid
 from decimal import Decimal
 
 from sqlalchemy import ForeignKey, Numeric, String, Text
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.dialects.postgresql import UUID, ENUM
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.models.base import BaseModel, GUID # Import the GUID type
@@ -44,16 +44,34 @@ class ClientRequest(BaseModel):
         nullable=False,
     )
     source: Mapped[RequestSource] = mapped_column(
+        ENUM(
+            RequestSource,
+            name='requestsource',
+            create_type=False,
+            values_callable=lambda x: [e.value for e in x]
+        ),
         default=RequestSource.EMAIL,
         nullable=False,
     )
     status: Mapped[RequestStatus] = mapped_column(
+        ENUM(
+            RequestStatus,
+            name='requeststatus',
+            create_type=False,
+            values_callable=lambda x: [e.value for e in x]
+        ),
         default=RequestStatus.NEW,
         nullable=False,
     )
     
     # Analysis results
     classification: Mapped[ScopeClassification] = mapped_column(
+        ENUM(
+            ScopeClassification,
+            name='scopeclassification',
+            create_type=False,
+            values_callable=lambda x: [e.value for e in x]
+        ),
         default=ScopeClassification.PENDING,
         nullable=False,
     )

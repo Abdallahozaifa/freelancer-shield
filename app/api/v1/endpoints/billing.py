@@ -51,12 +51,12 @@ async def get_subscription(
         await db.commit()
         await db.refresh(subscription)
 
-    # Get current usage - only count ACTIVE projects
+    # Get current usage - only count ACTIVE projects (use string value for comparison)
     projects_result = await db.execute(
         select(func.count(Project.id)).where(
             and_(
                 Project.user_id == current_user.id,
-                Project.status == ProjectStatus.ACTIVE,
+                Project.status == "active",  # Use string value
             )
         )
     )
@@ -101,12 +101,12 @@ async def get_plan_limits(
         await db.commit()
         await db.refresh(subscription)
 
-    # Only count ACTIVE projects
+    # Only count ACTIVE projects (use string value for comparison)
     projects_result = await db.execute(
         select(func.count(Project.id)).where(
             and_(
                 Project.user_id == current_user.id,
-                Project.status == ProjectStatus.ACTIVE,
+                Project.status == "active",  # Use string value
             )
         )
     )

@@ -7,7 +7,7 @@ from datetime import datetime
 from decimal import Decimal
 
 from sqlalchemy import DateTime, ForeignKey, Numeric, String, Text
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.dialects.postgresql import UUID, ENUM
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.models.enums import ProposalStatus
@@ -45,6 +45,12 @@ class Proposal(BaseModel):
         nullable=False,
     )
     status: Mapped[ProposalStatus] = mapped_column(
+        ENUM(
+            ProposalStatus,
+            name='proposalstatus',
+            create_type=False,
+            values_callable=lambda x: [e.value for e in x]
+        ),
         default=ProposalStatus.DRAFT,
         nullable=False,
     )
