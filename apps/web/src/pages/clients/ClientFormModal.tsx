@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import { User, Building2, Mail, FileText, AlignLeft } from 'lucide-react';
 import { Modal, Button, Input, Textarea, useToast } from '../../components/ui';
 import { useCreateClient, useUpdateClient } from '../../hooks/useClients';
 import type { Client } from '../../types';
@@ -79,10 +80,10 @@ export const ClientFormModal: React.FC<ClientFormModalProps> = ({
 
       if (isEditing && client) {
         await updateMutation.mutateAsync({ id: client.id, data: payload });
-        toast.success(`${data.name} has been updated successfully.`);
+        toast.success(`${data.name} has been updated.`);
       } else {
         await createMutation.mutateAsync(payload);
-        toast.success(`${data.name} has been added to your clients.`);
+        toast.success(`${data.name} added to clients.`);
       }
 
       onClose();
@@ -103,50 +104,101 @@ export const ClientFormModal: React.FC<ClientFormModalProps> = ({
     <Modal
       isOpen={isOpen}
       onClose={handleClose}
-      title={isEditing ? 'Edit Client' : 'Add Client'}
+      title={isEditing ? 'Edit Client Details' : 'Add New Client'}
       size="md"
     >
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-        <Input
-          label="Name"
-          placeholder="Enter client name"
-          error={errors.name?.message}
-          {...register('name')}
-        />
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
+        
+        {/* --- Identity Section --- */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          {/* Name Field */}
+          <div className="space-y-1.5 relative">
+            <label className="text-sm font-semibold text-slate-700 flex items-center gap-1">
+              Client Name <span className="text-red-500">*</span>
+            </label>
+            <div className="relative group">
+              <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none group-focus-within:text-indigo-500 transition-colors">
+                <User className="w-4 h-4" />
+              </div>
+              <Input
+                placeholder="e.g. John Doe"
+                error={errors.name?.message}
+                {...register('name')}
+                className="pl-9"
+              />
+            </div>
+          </div>
 
-        <Input
-          label="Email"
-          type="email"
-          placeholder="client@example.com"
-          error={errors.email?.message}
-          {...register('email')}
-        />
+          {/* Company Field */}
+          <div className="space-y-1.5 relative">
+            <label className="text-sm font-semibold text-slate-700 flex items-center gap-1">
+              Company
+            </label>
+            <div className="relative group">
+              <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none group-focus-within:text-indigo-500 transition-colors">
+                <Building2 className="w-4 h-4" />
+              </div>
+              <Input
+                placeholder="e.g. Acme Corp"
+                error={errors.company?.message}
+                {...register('company')}
+                className="pl-9"
+              />
+            </div>
+          </div>
+        </div>
 
-        <Input
-          label="Company"
-          placeholder="Enter company name"
-          error={errors.company?.message}
-          {...register('company')}
-        />
+        {/* --- Contact Section --- */}
+        <div className="space-y-1.5 relative">
+          <label className="text-sm font-semibold text-slate-700">
+            Email Address
+          </label>
+          <div className="relative group">
+            <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none group-focus-within:text-indigo-500 transition-colors">
+              <Mail className="w-4 h-4" />
+            </div>
+            <Input
+              type="email"
+              placeholder="contact@example.com"
+              error={errors.email?.message}
+              {...register('email')}
+              className="pl-9"
+            />
+          </div>
+        </div>
 
-        <Textarea
-          label="Notes"
-          placeholder="Add any notes about this client..."
-          rows={3}
-          error={errors.notes?.message}
-          {...register('notes')}
-        />
+        {/* --- Notes Section --- */}
+        <div className="space-y-1.5">
+          <label className="text-sm font-semibold text-slate-700 flex items-center gap-2">
+            <AlignLeft className="w-4 h-4 text-slate-400" />
+            Internal Notes
+          </label>
+          <Textarea
+            placeholder="Add any specific requirements, preferences, or background info..."
+            rows={4}
+            error={errors.notes?.message}
+            {...register('notes')}
+            className="resize-none"
+          />
+        </div>
 
-        <div className="flex justify-end gap-3 pt-4">
+        {/* --- Footer Actions --- */}
+        <div className="flex justify-end gap-3 pt-4 border-t border-slate-100">
           <Button
             type="button"
-            variant="secondary"
+            variant="ghost"
             onClick={handleClose}
             disabled={isSubmitting}
+            className="text-slate-500 hover:text-slate-800"
           >
             Cancel
           </Button>
-          <Button type="submit" variant="primary" isLoading={isSubmitting}>
+          <Button 
+            type="submit" 
+            variant="primary" 
+            isLoading={isSubmitting}
+            className="shadow-lg shadow-indigo-500/20"
+          >
             {isEditing ? 'Save Changes' : 'Add Client'}
           </Button>
         </div>

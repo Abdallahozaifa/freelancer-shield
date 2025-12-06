@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { Plus, ListChecks } from 'lucide-react';
+import { Plus, ListChecks, CheckCircle2, Target, AlertCircle } from 'lucide-react';
 import { Button, Card, EmptyState, Skeleton } from '../../../components/ui';
 import { ScopeProgressCard } from './ScopeProgressCard';
 import { ScopeDragDrop } from './ScopeDragDrop';
@@ -60,7 +60,6 @@ export const ScopeTab: React.FC<ScopeTabProps> = ({ projectId }) => {
             data,
           });
         } else {
-          // Set order to be at the end of the list
           const order = items?.length ?? 0;
           await createItem.mutateAsync({
             projectId,
@@ -96,7 +95,6 @@ export const ScopeTab: React.FC<ScopeTabProps> = ({ projectId }) => {
 
   const handleConfirmDelete = useCallback(async () => {
     if (!deletingItem) return;
-
     try {
       await deleteItem.mutateAsync({
         projectId,
@@ -119,63 +117,90 @@ export const ScopeTab: React.FC<ScopeTabProps> = ({ projectId }) => {
     [projectId, reorderItems]
   );
 
-  // Loading state
   if (isLoading) {
     return <ScopeTabSkeleton />;
   }
 
-  // Error state
   if (error) {
     return (
-      <Card className="p-8 text-center">
-        <p className="text-red-600 mb-4">Failed to load scope items.</p>
-        <Button variant="outline" onClick={() => window.location.reload()}>
-          Retry
+      <div className="flex flex-col items-center justify-center p-12 bg-red-50 rounded-xl border border-red-100">
+        <AlertCircle className="w-10 h-10 text-red-500 mb-4" />
+        <p className="text-red-900 font-medium mb-4">Unable to load scope items.</p>
+        <Button variant="outline" onClick={() => window.location.reload()} className="bg-white">
+          Retry Connection
         </Button>
-      </Card>
+      </div>
     );
   }
 
   const hasItems = items && items.length > 0;
 
   return (
-    <div className="space-y-4">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <h2 className="text-lg font-medium text-gray-900">Scope Items</h2>
-        <Button variant="primary" size="sm" onClick={handleOpenCreateForm}>
-          <Plus className="w-4 h-4 mr-1.5" />
-          Add Item
-        </Button>
+    <div className="space-y-8 animate-fade-in">
+      {/* Header Section */}
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-slate-200 pb-6">
+        <div>
+          <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
+            <Target className="w-5 h-5 text-indigo-600" />
+            Scope Definition
+          </h2>
+          <p className="text-slate-500 mt-1 max-w-2xl">
+            Define the specific deliverables agreed upon. Clear scope prevents creep.
+          </p>
+        </div>
+        {hasItems && (
+           <Button variant="primary" onClick={handleOpenCreateForm} className="shadow-lg shadow-indigo-500/20">
+             <Plus className="w-4 h-4 mr-2" />
+             Add Deliverable
+           </Button>
+        )}
       </div>
 
-      {/* Progress card - only show when there are items */}
-      {hasItems && progress && <ScopeProgressCard progress={progress} />}
-
-      {/* Items list or empty state */}
-      {hasItems ? (
-        <ScopeDragDrop
-          items={items}
-          onReorder={handleReorder}
-          onToggleComplete={handleToggleComplete}
-          onEdit={handleOpenEditForm}
-          onDelete={handleDeleteClick}
-        />
-      ) : (
-        <Card padding="none">
-          <EmptyState
-            icon={<ListChecks className="w-6 h-6" />}
-            title="No scope items yet"
-            description="Define your project scope by adding items that outline what's included in this project."
-            action={{
-              label: 'Add First Item',
-              onClick: handleOpenCreateForm,
-            }}
-          />
-        </Card>
+      {/* Progress Overview */}
+      {hasItems && progress && (
+        <div className="mb-8">
+          <ScopeProgressCard progress={progress} />
+        </div>
       )}
 
-      {/* Create/Edit Form Modal */}
+      {/* Main Content */}
+      <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden min-h-[400px]">
+        {hasItems ? (
+          <div className="p-1">
+             {/* List Header */}
+            <div className="grid grid-cols-12 gap-4 px-6 py-3 bg-slate-50/80 border-b border-slate-100 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+              <div className="col-span-1">Status</div>
+              <div className="col-span-6 md:col-span-7">Deliverable</div>
+              <div className="col-span-3 md:col-span-2 text-right">Estimate</div>
+              <div className="col-span-2 text-right">Actions</div>
+            </div>
+            
+            {/* Draggable List */}
+            <div className="bg-white">
+              <ScopeDragDrop
+                items={items}
+                onReorder={handleReorder}
+                onToggleComplete={handleToggleComplete}
+                onEdit={handleOpenEditForm}
+                onDelete={handleDeleteClick}
+              />
+            </div>
+          </div>
+        ) : (
+          <div className="py-16 px-6">
+            <EmptyState
+              icon={<ListChecks className="w-12 h-12 text-slate-300" />}
+              title="No deliverables defined yet"
+              description="Start by adding the first item to the project scope. This will serve as the baseline for detecting scope creep."
+              action={{
+                label: 'Add First Item',
+                onClick: handleOpenCreateForm,
+              }}
+            />
+          </div>
+        )}
+      </div>
+
       <ScopeItemForm
         isOpen={isFormOpen}
         onClose={handleCloseForm}
@@ -184,7 +209,6 @@ export const ScopeTab: React.FC<ScopeTabProps> = ({ projectId }) => {
         isLoading={createItem.isPending || updateItem.isPending}
       />
 
-      {/* Delete Confirmation Modal */}
       <DeleteScopeItemModal
         isOpen={!!deletingItem}
         onClose={() => setDeletingItem(null)}
@@ -196,18 +220,20 @@ export const ScopeTab: React.FC<ScopeTabProps> = ({ projectId }) => {
   );
 };
 
-// Loading skeleton
 const ScopeTabSkeleton: React.FC = () => (
-  <div className="space-y-4">
-    <div className="flex items-center justify-between">
-      <Skeleton className="h-6 w-32" />
-      <Skeleton className="h-9 w-28" />
+  <div className="space-y-6 animate-pulse">
+    <div className="flex items-center justify-between border-b border-slate-100 pb-6">
+      <div className="space-y-2">
+        <Skeleton className="h-6 w-48" />
+        <Skeleton className="h-4 w-96" />
+      </div>
+      <Skeleton className="h-10 w-32" />
     </div>
-    <Skeleton className="h-24 w-full" />
-    <div className="space-y-2">
-      <Skeleton className="h-20 w-full" />
-      <Skeleton className="h-20 w-full" />
-      <Skeleton className="h-20 w-full" />
+    <Skeleton className="h-32 w-full rounded-xl" />
+    <div className="space-y-3">
+      <Skeleton className="h-16 w-full rounded-lg" />
+      <Skeleton className="h-16 w-full rounded-lg" />
+      <Skeleton className="h-16 w-full rounded-lg" />
     </div>
   </div>
 );
