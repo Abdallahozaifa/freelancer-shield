@@ -1,45 +1,50 @@
 import React, { useState, useMemo } from 'react';
-import { Plus, Search, RefreshCw, FileText, ArrowLeft, DollarSign } from 'lucide-react';
-import { Button, EmptyState, Spinner } from '../../../components/ui';
-import { ProposalStats } from './ProposalStats';
-import { ProposalCard } from './ProposalCard';
+import { 
+  Plus, Search, FileText, CheckCircle2, XCircle, Send, Archive, DollarSign 
+} from 'lucide-react';
+import { Button, Spinner, Badge } from '../../../components/ui';
+import { ProposalRow } from './ProposalRow';
 import { ProposalFormModal } from './ProposalFormModal';
 import { SendProposalModal } from './SendProposalModal';
 import { ProposalResponseModal } from './ProposalResponseModal';
 import {
-  useProposals,
-  useCreateProposal,
-  useUpdateProposal,
-  useDeleteProposal,
-  useSendProposal,
+  useProposals, useCreateProposal, useUpdateProposal, useDeleteProposal, useSendProposal
 } from '../../../hooks/useApi';
 import { useAcceptProposal, useDeclineProposal } from '../../../hooks/useProposals';
-import { formatCurrency } from '../../../utils/format';
-import { cn } from '../../../utils/cn';
 import type { Proposal, ProposalCreate, ProposalUpdate, ProposalStatus } from '../../../types';
+import { cn } from '../../../utils/cn';
 
 interface ProposalsTabProps {
   projectId: string;
 }
 
-type ViewMode = 'active' | 'history';
-type ActiveFilter = 'all' | 'draft' | 'sent';
-type HistoryFilter = 'accepted' | 'declined';
+type TabFilter = 'all' | 'draft' | 'sent' | 'accepted' | 'declined';
 
 export const ProposalsTab: React.FC<ProposalsTabProps> = ({ projectId }) => {
-  // State
-  const [viewMode, setViewMode] = useState<ViewMode>('active');
-  const [activeFilter, setActiveFilter] = useState<ActiveFilter>('draft');
-  const [historyFilter, setHistoryFilter] = useState<HistoryFilter>('accepted');
+  const [activeTab, setActiveTab] = useState<TabFilter>('all');
   const [searchQuery, setSearchQuery] = useState('');
+  
+  // Modals
   const [isFormModalOpen, setIsFormModalOpen] = useState(false);
   const [isSendModalOpen, setIsSendModalOpen] = useState(false);
   const [isResponseModalOpen, setIsResponseModalOpen] = useState(false);
   const [selectedProposal, setSelectedProposal] = useState<Proposal | null>(null);
   const [responseType, setResponseType] = useState<'accept' | 'decline' | undefined>();
 
-  // Queries & Mutations
+  // Queries
   const { data, isLoading, refetch } = useProposals(projectId);
+  const proposals = data?.items ?? [];
+
+  // Stats for badges
+  const stats = useMemo(() => ({
+    draft: proposals.filter(p => p.status === 'draft').length,
+    sent: proposals.filter(p => p.status === 'sent').length,
+    accepted: proposals.filter(p => p.status === 'accepted').length,
+    declined: proposals.filter(p => p.status === 'declined').length,
+    total: proposals.length
+  }), [proposals]);
+
+  // Mutations
   const createProposal = useCreateProposal(projectId);
   const updateProposal = useUpdateProposal(projectId);
   const deleteProposal = useDeleteProposal(projectId);
@@ -47,73 +52,26 @@ export const ProposalsTab: React.FC<ProposalsTabProps> = ({ projectId }) => {
   const acceptProposal = useAcceptProposal(projectId);
   const declineProposal = useDeclineProposal(projectId);
 
-  const proposals = data?.items ?? [];
-
-  // Calculate stats
-  const stats = useMemo(() => {
-    const draft = proposals.filter(p => p.status === 'draft').length;
-    const sent = proposals.filter(p => p.status === 'sent').length;
-    const acceptedList = proposals.filter(p => p.status === 'accepted');
-    const declined = proposals.filter(p => p.status === 'declined').length;
-    
-    const revenueProtected = acceptedList.reduce((sum, p) => sum + p.amount, 0);
-    const pendingAmount = proposals
-      .filter(p => p.status === 'sent')
-      .reduce((sum, p) => sum + p.amount, 0);
-
-    return {
-      total: proposals.length,
-      active: draft + sent,
-      draft,
-      sent,
-      accepted: acceptedList.length,
-      declined,
-      revenueProtected,
-      pendingAmount,
-    };
-  }, [proposals]);
-
-  // Filter proposals based on view mode
+  // Filter Logic
   const filteredProposals = useMemo(() => {
     let filtered = [...proposals];
 
-    if (viewMode === 'active') {
-      // Active view: draft and sent only
-      filtered = filtered.filter(p => p.status === 'draft' || p.status === 'sent');
-      
-      if (activeFilter === 'draft') {
-        filtered = filtered.filter(p => p.status === 'draft');
-      } else if (activeFilter === 'sent') {
-        filtered = filtered.filter(p => p.status === 'sent');
-      }
-    } else {
-      // History view: accepted and declined
-      filtered = filtered.filter(p => p.status === historyFilter);
+    if (activeTab !== 'all') {
+      filtered = filtered.filter(p => p.status === activeTab);
     }
 
-    // Apply search filter
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase();
       filtered = filtered.filter(
-        (proposal) =>
-          proposal.title.toLowerCase().includes(query) ||
-          proposal.description?.toLowerCase().includes(query)
+        (p) => p.title.toLowerCase().includes(query) || p.description?.toLowerCase().includes(query)
       );
     }
-
     return filtered;
-  }, [proposals, viewMode, activeFilter, historyFilter, searchQuery]);
+  }, [proposals, activeTab, searchQuery]);
 
-  // Sort: drafts first, then sent, then by date
+  // Sorting
   const sortedProposals = useMemo(() => {
-    const statusOrder: Record<ProposalStatus, number> = {
-      draft: 0,
-      sent: 1,
-      accepted: 2,
-      declined: 3,
-      expired: 4,
-    };
-
+    const statusOrder: Record<ProposalStatus, number> = { draft: 0, sent: 1, accepted: 2, declined: 3, expired: 4 };
     return [...filteredProposals].sort((a, b) => {
       const statusDiff = statusOrder[a.status] - statusOrder[b.status];
       if (statusDiff !== 0) return statusDiff;
@@ -122,303 +80,162 @@ export const ProposalsTab: React.FC<ProposalsTabProps> = ({ projectId }) => {
   }, [filteredProposals]);
 
   // Handlers
-  const handleCreateProposal = () => {
-    setSelectedProposal(null);
-    setIsFormModalOpen(true);
+  const handleCreate = () => { setSelectedProposal(null); setIsFormModalOpen(true); };
+  const handleEdit = (p: Proposal) => { setSelectedProposal(p); setIsFormModalOpen(true); };
+  const handleSend = (p: Proposal) => { setSelectedProposal(p); setIsSendModalOpen(true); };
+  const handleDelete = async (p: Proposal) => { 
+    if (window.confirm(`Delete "${p.title}"?`)) await deleteProposal.mutateAsync(p.id); 
   };
-
-  const handleEditProposal = (proposal: Proposal) => {
-    setSelectedProposal(proposal);
-    setIsFormModalOpen(true);
-  };
-
-  const handleSendProposal = (proposal: Proposal) => {
-    setSelectedProposal(proposal);
-    setIsSendModalOpen(true);
-  };
-
-  const handleDeleteProposal = async (proposal: Proposal) => {
-    if (!window.confirm(`Are you sure you want to delete "${proposal.title}"?`)) {
-      return;
-    }
-    await deleteProposal.mutateAsync(proposal.id);
-  };
-
-  const handleMarkAccepted = (proposal: Proposal) => {
-    setSelectedProposal(proposal);
-    setResponseType('accept');
-    setIsResponseModalOpen(true);
-  };
-
-  const handleMarkDeclined = (proposal: Proposal) => {
-    setSelectedProposal(proposal);
-    setResponseType('decline');
-    setIsResponseModalOpen(true);
+  const handleMarkResponse = (p: Proposal, type: 'accept' | 'decline') => { 
+    setSelectedProposal(p); 
+    setResponseType(type); 
+    setIsResponseModalOpen(true); 
   };
 
   const handleFormSubmit = async (data: ProposalCreate | ProposalUpdate) => {
-    if (selectedProposal) {
-      await updateProposal.mutateAsync({ id: selectedProposal.id, data });
-    } else {
-      await createProposal.mutateAsync(data as ProposalCreate);
-    }
+    if (selectedProposal) await updateProposal.mutateAsync({ id: selectedProposal.id, data });
+    else await createProposal.mutateAsync(data as ProposalCreate);
   };
 
-  const handleSendConfirm = async () => {
-    if (selectedProposal) {
-      await sendProposal.mutateAsync(selectedProposal.id);
-    }
-  };
-
-  const handleAcceptConfirm = async () => {
-    if (selectedProposal) {
-      await acceptProposal.mutateAsync(selectedProposal.id);
-    }
-  };
-
-  const handleDeclineConfirm = async () => {
-    if (selectedProposal) {
-      await declineProposal.mutateAsync(selectedProposal.id);
-    }
-  };
-
-  const historyCount = stats.accepted + stats.declined;
-
-  // ACTIVE VIEW
-  if (viewMode === 'active') {
-    return (
-      <div className="space-y-6">
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-gray-800">Active Proposals</h2>
-          <button
-            onClick={() => setViewMode('history')}
-            className="text-sm text-indigo-600 hover:text-indigo-800"
-          >
-            View History →
-          </button>
-        </div>
-
-        {/* Stats Cards */}
-        <ProposalStats
-          draft={stats.draft}
-          sent={stats.sent}
-          pendingAmount={stats.pendingAmount}
-          isLoading={isLoading}
-          activeFilter={activeFilter}
-          onFilterChange={setActiveFilter}
-        />
-
-        {/* Search + Create Button */}
-        <div className="flex gap-4">
-          <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-            <input
-              type="text"
-              placeholder="Search proposals..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-            />
-          </div>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => refetch()}
-            disabled={isLoading}
-          >
-            <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
-          </Button>
-          <Button onClick={handleCreateProposal}>
-            <Plus className="w-4 h-4 mr-2" />
-            Create Proposal
-          </Button>
-        </div>
-
-        {/* Proposals List */}
-        {isLoading ? (
-          <div className="flex items-center justify-center py-12">
-            <Spinner size="lg" />
-          </div>
-        ) : sortedProposals.length === 0 ? (
-          <EmptyState
-            icon={<FileText className="w-12 h-12" />}
-            title={
-              activeFilter !== 'all'
-                ? `No ${activeFilter} proposals`
-                : searchQuery
-                ? 'No matching proposals'
-                : 'No active proposals'
-            }
-            description={
-              activeFilter !== 'all'
-                ? 'Try selecting a different filter above.'
-                : searchQuery
-                ? 'Try a different search term.'
-                : 'Create proposals for out-of-scope work to protect your revenue.'
-            }
-            action={
-              activeFilter === 'all' && !searchQuery
-                ? { label: 'Create Proposal', onClick: handleCreateProposal }
-                : undefined
-            }
-          />
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {sortedProposals.map((proposal) => (
-              <ProposalCard
-                key={proposal.id}
-                proposal={proposal}
-                onEdit={handleEditProposal}
-                onSend={handleSendProposal}
-                onDelete={handleDeleteProposal}
-                onMarkAccepted={handleMarkAccepted}
-                onMarkDeclined={handleMarkDeclined}
+  return (
+    <div className="w-full space-y-6 animate-fade-in -mt-4">
+      {/* Main Unified Card */}
+      <div className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden flex flex-col min-h-[600px]">
+        
+        {/* 1. Header Toolbar */}
+        <div className="border-b border-slate-200 bg-white p-4">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            {/* Search */}
+            <div className="relative w-full md:w-72">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+              <input
+                type="text"
+                placeholder="Search proposals..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all placeholder:text-slate-400"
               />
-            ))}
+            </div>
+
+            {/* Action */}
+            <Button 
+              onClick={handleCreate}
+              className="shadow-sm whitespace-nowrap h-9"
+              size="sm"
+              leftIcon={<Plus className="w-4 h-4" />}
+            >
+              Create Proposal
+            </Button>
+          </div>
+
+          {/* Filter Tabs */}
+          <div className="flex items-center gap-1 mt-6 -mb-4 overflow-x-auto no-scrollbar">
+            <TabButton active={activeTab === 'all'} onClick={() => setActiveTab('all')} label="All" count={stats.total} />
+            <TabButton active={activeTab === 'draft'} onClick={() => setActiveTab('draft')} label="Drafts" count={stats.draft} />
+            <TabButton active={activeTab === 'sent'} onClick={() => setActiveTab('sent')} label="Sent" count={stats.sent} variant="info" />
+            <TabButton active={activeTab === 'accepted'} onClick={() => setActiveTab('accepted')} label="Accepted" count={stats.accepted} variant="success" />
+            <TabButton active={activeTab === 'declined'} onClick={() => setActiveTab('declined')} label="Declined" count={stats.declined} variant="danger" />
+          </div>
+        </div>
+
+        {/* 2. List Header */}
+        <div className="grid grid-cols-12 gap-4 px-6 py-3 bg-slate-50 border-b border-slate-200 text-xs font-bold text-slate-500 uppercase tracking-wider">
+          <div className="col-span-5">Proposal Details</div>
+          <div className="col-span-2 hidden md:block">Amount</div>
+          <div className="col-span-2 hidden md:block">Status</div>
+          <div className="col-span-2 hidden md:block text-right">Created</div>
+          <div className="col-span-1 text-center"></div>
+        </div>
+
+        {/* 3. The List */}
+        <div className="flex-1 bg-white relative">
+          {isLoading ? (
+            <div className="absolute inset-0 flex items-center justify-center bg-white/80 z-10">
+              <Spinner size="lg" />
+            </div>
+          ) : sortedProposals.length === 0 ? (
+            <div className="flex flex-col items-center justify-center h-80 text-center px-4">
+              <div className="w-14 h-14 bg-slate-50 rounded-full flex items-center justify-center mb-3 border border-slate-100">
+                <FileText className="w-7 h-7 text-slate-300" />
+              </div>
+              <h3 className="text-slate-900 font-medium mb-1">No proposals found</h3>
+              <p className="text-slate-500 text-sm max-w-xs">
+                {activeTab === 'all' ? "Create a proposal to bill for extra work." : `No ${activeTab} proposals found.`}
+              </p>
+            </div>
+          ) : (
+            <div className="divide-y divide-slate-100">
+              {sortedProposals.map((proposal) => (
+                <ProposalRow
+                  key={proposal.id}
+                  proposal={proposal}
+                  onEdit={() => handleEdit(proposal)}
+                  onSend={() => handleSend(proposal)}
+                  onDelete={() => handleDelete(proposal)}
+                  onAccept={() => handleMarkResponse(proposal, 'accept')}
+                  onDecline={() => handleMarkResponse(proposal, 'decline')}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+        
+        {sortedProposals.length > 0 && (
+          <div className="bg-slate-50/50 border-t border-slate-200 p-2 text-center text-xs text-slate-400 font-medium">
+            Showing {sortedProposals.length} item{sortedProposals.length !== 1 && 's'}
           </div>
         )}
-
-        {/* Modals */}
-        <ProposalFormModal
-          isOpen={isFormModalOpen}
-          onClose={() => {
-            setIsFormModalOpen(false);
-            setSelectedProposal(null);
-          }}
-          onSubmit={handleFormSubmit}
-          proposal={selectedProposal}
-        />
-
-        <SendProposalModal
-          isOpen={isSendModalOpen}
-          onClose={() => {
-            setIsSendModalOpen(false);
-            setSelectedProposal(null);
-          }}
-          onConfirm={handleSendConfirm}
-          proposal={selectedProposal}
-        />
-
-        <ProposalResponseModal
-          isOpen={isResponseModalOpen}
-          onClose={() => {
-            setIsResponseModalOpen(false);
-            setSelectedProposal(null);
-            setResponseType(undefined);
-          }}
-          onAccept={handleAcceptConfirm}
-          onDecline={handleDeclineConfirm}
-          proposal={selectedProposal}
-          initialResponse={responseType}
-        />
-      </div>
-    );
-  }
-
-  // HISTORY VIEW
-  return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => setViewMode('active')}
-            className="p-1 text-gray-400 hover:text-gray-600"
-          >
-            <ArrowLeft className="w-5 h-5" />
-          </button>
-          <h2 className="text-lg font-semibold text-gray-800">Proposal History</h2>
-        </div>
-        <span className="text-sm text-gray-500">{historyCount} completed proposals</span>
       </div>
 
-      {/* Revenue Protected Banner */}
-      <div className="bg-white rounded-lg border-2 border-green-200 p-4">
-        <div className="flex items-center gap-3">
-          <div className="p-2 rounded-full bg-green-100">
-            <DollarSign className="w-6 h-6 text-green-600" />
-          </div>
-          <div>
-            <p className="text-sm text-gray-600">Total Revenue Protected</p>
-            <p className="text-3xl font-bold text-green-600">
-              {formatCurrency(stats.revenueProtected)}
-            </p>
-          </div>
-        </div>
-      </div>
-
-      {/* History Filter Buttons */}
-      <div className="flex gap-2">
-        <button
-          onClick={() => setHistoryFilter('accepted')}
-          className={cn(
-            'px-3 py-1.5 text-sm rounded-lg transition-colors',
-            historyFilter === 'accepted'
-              ? 'bg-green-100 text-green-800'
-              : 'text-gray-500 hover:bg-gray-100'
-          )}
-        >
-          Accepted ({stats.accepted})
-        </button>
-        <button
-          onClick={() => setHistoryFilter('declined')}
-          className={cn(
-            'px-3 py-1.5 text-sm rounded-lg transition-colors',
-            historyFilter === 'declined'
-              ? 'bg-red-100 text-red-800'
-              : 'text-gray-500 hover:bg-gray-100'
-          )}
-        >
-          Declined ({stats.declined})
-        </button>
-      </div>
-
-      {/* Search */}
-      <div className="relative max-w-md">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-        <input
-          type="text"
-          placeholder="Search history..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-        />
-      </div>
-
-      {/* History List */}
-      {isLoading ? (
-        <div className="flex items-center justify-center py-12">
-          <Spinner size="lg" />
-        </div>
-      ) : sortedProposals.length === 0 ? (
-        <EmptyState
-          icon={<FileText className="w-12 h-12" />}
-          title={`No ${historyFilter} proposals`}
-          description={
-            historyFilter === 'accepted'
-              ? 'Accepted proposals will appear here once clients approve them.'
-              : 'Declined proposals will appear here.'
-          }
-        />
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {sortedProposals.map((proposal) => (
-            <ProposalCard
-              key={proposal.id}
-              proposal={proposal}
-              onEdit={handleEditProposal}
-              onSend={handleSendProposal}
-              onDelete={handleDeleteProposal}
-              onMarkAccepted={handleMarkAccepted}
-              onMarkDeclined={handleMarkDeclined}
-              isArchived
-            />
-          ))}
-        </div>
-      )}
+      {/* Modals */}
+      <ProposalFormModal
+        isOpen={isFormModalOpen}
+        onClose={() => { setIsFormModalOpen(false); setSelectedProposal(null); }}
+        onSubmit={handleFormSubmit}
+        proposal={selectedProposal}
+      />
+      <SendProposalModal
+        isOpen={isSendModalOpen}
+        onClose={() => { setIsSendModalOpen(false); setSelectedProposal(null); }}
+        onConfirm={async () => { if(selectedProposal) await sendProposal.mutateAsync(selectedProposal.id); }}
+        proposal={selectedProposal}
+      />
+      <ProposalResponseModal
+        isOpen={isResponseModalOpen}
+        onClose={() => { setIsResponseModalOpen(false); setSelectedProposal(null); setResponseType(undefined); }}
+        onAccept={async () => { if(selectedProposal) await acceptProposal.mutateAsync(selectedProposal.id); }}
+        onDecline={async () => { if(selectedProposal) await declineProposal.mutateAsync(selectedProposal.id); }}
+        proposal={selectedProposal}
+        initialResponse={responseType}
+      />
     </div>
   );
 };
+
+// Tab Button Component
+const TabButton = ({ active, onClick, label, count, variant }: any) => (
+  <button
+    onClick={onClick}
+    className={cn(
+      "flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-all whitespace-nowrap hover:bg-slate-50",
+      active 
+        ? variant === 'danger' ? "border-red-500 text-red-700 bg-red-50/30"
+        : variant === 'success' ? "border-emerald-500 text-emerald-700 bg-emerald-50/30"
+        : variant === 'info' ? "border-blue-500 text-blue-700 bg-blue-50/30"
+        : "border-indigo-500 text-indigo-700 bg-indigo-50/30"
+        : "border-transparent text-slate-500 hover:text-slate-700"
+    )}
+  >
+    {label}
+    {count > 0 && (
+      <span className={cn(
+        "px-1.5 py-0.5 rounded-full text-[10px] leading-none font-bold",
+        active ? "bg-white shadow-sm" : "bg-slate-200 text-slate-600"
+      )}>
+        {count}
+      </span>
+    )}
+  </button>
+);
 
 export default ProposalsTab;
