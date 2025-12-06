@@ -13,10 +13,9 @@ interface ScopeItemCardProps {
 }
 
 const formatHours = (hours: number | null): string => {
-  if (hours === null || hours === undefined) return '0';
+  if (hours === null || hours === undefined) return '—';
   const num = Number(hours);
-  // Remove unnecessary decimal places (8.0 -> 8, 8.5 -> 8.5)
-  return num % 1 === 0 ? num.toFixed(0) : num.toFixed(1);
+  return num % 1 === 0 ? num.toFixed(0) + 'h' : num.toFixed(1) + 'h';
 };
 
 export const ScopeItemCard: React.FC<ScopeItemCardProps> = ({
@@ -30,45 +29,48 @@ export const ScopeItemCard: React.FC<ScopeItemCardProps> = ({
   return (
     <div
       className={cn(
-        'group flex items-start gap-3 p-4 bg-white border border-gray-200 rounded-lg',
-        'transition-all duration-200',
+        'group grid grid-cols-12 gap-4 px-6 py-4 bg-white border-b border-slate-100 items-center',
+        'transition-all duration-200 hover:bg-slate-50',
         isDragging && 'shadow-lg border-blue-300 bg-blue-50',
-        item.is_completed && 'bg-gray-50'
+        item.is_completed && 'bg-slate-50/50'
       )}
     >
-      {/* Drag handle */}
-      <div
-        {...dragHandleProps}
-        className={cn(
-          'flex-shrink-0 mt-0.5 cursor-grab active:cursor-grabbing',
-          'text-gray-400 hover:text-gray-600 transition-colors'
-        )}
-      >
-        <GripVertical className="w-5 h-5" />
+      {/* 1. Status - col-span-1 */}
+      <div className="col-span-1 flex items-center gap-2">
+        {/* Drag handle */}
+        <div
+          {...dragHandleProps}
+          className={cn(
+            'flex-shrink-0 cursor-grab active:cursor-grabbing',
+            'text-slate-300 hover:text-slate-500 transition-colors'
+          )}
+        >
+          <GripVertical className="w-4 h-4" />
+        </div>
+
+        {/* Checkbox */}
+        <button
+          type="button"
+          onClick={() => onToggleComplete(item)}
+          className={cn(
+            'flex-shrink-0 w-5 h-5 rounded border-2 transition-all duration-200',
+            'flex items-center justify-center',
+            item.is_completed
+              ? 'bg-emerald-500 border-emerald-500 text-white'
+              : 'border-slate-300 hover:border-emerald-400'
+          )}
+          aria-label={item.is_completed ? 'Mark as incomplete' : 'Mark as complete'}
+        >
+          {item.is_completed && <Check className="w-3 h-3" strokeWidth={3} />}
+        </button>
       </div>
 
-      {/* Checkbox */}
-      <button
-        type="button"
-        onClick={() => onToggleComplete(item)}
-        className={cn(
-          'flex-shrink-0 w-5 h-5 mt-0.5 rounded border-2 transition-all duration-200',
-          'flex items-center justify-center',
-          item.is_completed
-            ? 'bg-green-500 border-green-500 text-white'
-            : 'border-gray-300 hover:border-green-400'
-        )}
-        aria-label={item.is_completed ? 'Mark as incomplete' : 'Mark as complete'}
-      >
-        {item.is_completed && <Check className="w-3 h-3" strokeWidth={3} />}
-      </button>
-
-      {/* Content */}
-      <div className="flex-1 min-w-0">
+      {/* 2. Deliverable - col-span-7 */}
+      <div className="col-span-6 md:col-span-7 min-w-0">
         <p
           className={cn(
-            'text-sm font-medium text-gray-900 transition-all duration-200',
-            item.is_completed && 'line-through text-gray-500'
+            'text-sm font-medium text-slate-900 truncate',
+            item.is_completed && 'line-through text-slate-500'
           )}
         >
           {item.title}
@@ -76,32 +78,34 @@ export const ScopeItemCard: React.FC<ScopeItemCardProps> = ({
         {item.description && (
           <p
             className={cn(
-              'text-sm text-gray-500 mt-0.5 line-clamp-2',
-              item.is_completed && 'text-gray-400'
+              'text-xs text-slate-500 mt-0.5 truncate',
+              item.is_completed && 'text-slate-400'
             )}
           >
             {item.description}
           </p>
         )}
-        {item.estimated_hours !== null && (
-          <p
-            className={cn(
-              'text-xs text-gray-400 mt-1.5',
-              item.is_completed && 'text-gray-400'
-            )}
-          >
-            Est: {formatHours(item.estimated_hours)}h
-          </p>
-        )}
       </div>
 
-      {/* Actions */}
-      <div className="flex-shrink-0 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+      {/* 3. Estimate - col-span-2, right aligned */}
+      <div className="col-span-3 md:col-span-2 text-right">
+        <span
+          className={cn(
+            'text-sm font-medium text-slate-600',
+            item.is_completed && 'text-slate-400'
+          )}
+        >
+          {formatHours(item.estimated_hours)}
+        </span>
+      </div>
+
+      {/* 4. Actions - col-span-2, always visible */}
+      <div className="col-span-2 flex items-center justify-end gap-1">
         <button
           type="button"
           onClick={() => onEdit(item)}
           className={cn(
-            'p-1.5 rounded-md text-gray-400 hover:text-blue-600 hover:bg-blue-50',
+            'p-1.5 rounded-md text-slate-400 hover:text-indigo-600 hover:bg-indigo-50',
             'transition-colors duration-150'
           )}
           aria-label="Edit scope item"
@@ -112,7 +116,7 @@ export const ScopeItemCard: React.FC<ScopeItemCardProps> = ({
           type="button"
           onClick={() => onDelete(item)}
           className={cn(
-            'p-1.5 rounded-md text-gray-400 hover:text-red-600 hover:bg-red-50',
+            'p-1.5 rounded-md text-slate-400 hover:text-red-600 hover:bg-red-50',
             'transition-colors duration-150'
           )}
           aria-label="Delete scope item"

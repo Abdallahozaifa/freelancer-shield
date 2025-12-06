@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { 
-  Plus, Search, FileText, CheckCircle2, XCircle, Send, Archive, DollarSign 
+  Plus, Search, FileText, CheckCircle2, Send, 
+  DollarSign, Archive
 } from 'lucide-react';
 import { Button, Spinner, Badge } from '../../../components/ui';
 import { ProposalRow } from './ProposalRow';
@@ -18,7 +19,8 @@ interface ProposalsTabProps {
   projectId: string;
 }
 
-type TabFilter = 'all' | 'draft' | 'sent' | 'accepted' | 'declined';
+// Simplified workflow: Draft -> Sent -> Accepted
+type TabFilter = 'all' | 'draft' | 'sent' | 'accepted';
 
 export const ProposalsTab: React.FC<ProposalsTabProps> = ({ projectId }) => {
   const [activeTab, setActiveTab] = useState<TabFilter>('all');
@@ -35,15 +37,6 @@ export const ProposalsTab: React.FC<ProposalsTabProps> = ({ projectId }) => {
   const { data, isLoading, refetch } = useProposals(projectId);
   const proposals = data?.items ?? [];
 
-  // Stats for badges
-  const stats = useMemo(() => ({
-    draft: proposals.filter(p => p.status === 'draft').length,
-    sent: proposals.filter(p => p.status === 'sent').length,
-    accepted: proposals.filter(p => p.status === 'accepted').length,
-    declined: proposals.filter(p => p.status === 'declined').length,
-    total: proposals.length
-  }), [proposals]);
-
   // Mutations
   const createProposal = useCreateProposal(projectId);
   const updateProposal = useUpdateProposal(projectId);
@@ -51,6 +44,14 @@ export const ProposalsTab: React.FC<ProposalsTabProps> = ({ projectId }) => {
   const sendProposal = useSendProposal(projectId);
   const acceptProposal = useAcceptProposal(projectId);
   const declineProposal = useDeclineProposal(projectId);
+
+  // Stats for badges
+  const stats = useMemo(() => ({
+    draft: proposals.filter(p => p.status === 'draft').length,
+    sent: proposals.filter(p => p.status === 'sent').length,
+    accepted: proposals.filter(p => p.status === 'accepted').length,
+    total: proposals.length
+  }), [proposals]);
 
   // Filter Logic
   const filteredProposals = useMemo(() => {
@@ -69,7 +70,7 @@ export const ProposalsTab: React.FC<ProposalsTabProps> = ({ projectId }) => {
     return filtered;
   }, [proposals, activeTab, searchQuery]);
 
-  // Sorting
+  // Sorting: Drafts -> Sent -> Accepted -> Others
   const sortedProposals = useMemo(() => {
     const statusOrder: Record<ProposalStatus, number> = { draft: 0, sent: 1, accepted: 2, declined: 3, expired: 4 };
     return [...filteredProposals].sort((a, b) => {
@@ -128,20 +129,19 @@ export const ProposalsTab: React.FC<ProposalsTabProps> = ({ projectId }) => {
             </Button>
           </div>
 
-          {/* Filter Tabs */}
+          {/* Simplified Filter Tabs */}
           <div className="flex items-center gap-1 mt-6 -mb-4 overflow-x-auto no-scrollbar">
             <TabButton active={activeTab === 'all'} onClick={() => setActiveTab('all')} label="All" count={stats.total} />
             <TabButton active={activeTab === 'draft'} onClick={() => setActiveTab('draft')} label="Drafts" count={stats.draft} />
             <TabButton active={activeTab === 'sent'} onClick={() => setActiveTab('sent')} label="Sent" count={stats.sent} variant="info" />
             <TabButton active={activeTab === 'accepted'} onClick={() => setActiveTab('accepted')} label="Accepted" count={stats.accepted} variant="success" />
-            <TabButton active={activeTab === 'declined'} onClick={() => setActiveTab('declined')} label="Declined" count={stats.declined} variant="danger" />
           </div>
         </div>
 
         {/* 2. List Header */}
         <div className="grid grid-cols-12 gap-4 px-6 py-3 bg-slate-50 border-b border-slate-200 text-xs font-bold text-slate-500 uppercase tracking-wider">
           <div className="col-span-5">Proposal Details</div>
-          <div className="col-span-2 hidden md:block">Amount</div>
+          <div className="col-span-2 hidden md:block text-right pr-4">Amount</div>
           <div className="col-span-2 hidden md:block">Status</div>
           <div className="col-span-2 hidden md:block text-right">Created</div>
           <div className="col-span-1 text-center"></div>
@@ -160,7 +160,9 @@ export const ProposalsTab: React.FC<ProposalsTabProps> = ({ projectId }) => {
               </div>
               <h3 className="text-slate-900 font-medium mb-1">No proposals found</h3>
               <p className="text-slate-500 text-sm max-w-xs">
-                {activeTab === 'all' ? "Create a proposal to bill for extra work." : `No ${activeTab} proposals found.`}
+                {activeTab === 'all' 
+                  ? "Create a proposal to bill for extra work." 
+                  : `No ${activeTab.toLowerCase()} proposals.`}
               </p>
             </div>
           ) : (
@@ -219,8 +221,7 @@ const TabButton = ({ active, onClick, label, count, variant }: any) => (
     className={cn(
       "flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-all whitespace-nowrap hover:bg-slate-50",
       active 
-        ? variant === 'danger' ? "border-red-500 text-red-700 bg-red-50/30"
-        : variant === 'success' ? "border-emerald-500 text-emerald-700 bg-emerald-50/30"
+        ? variant === 'success' ? "border-emerald-500 text-emerald-700 bg-emerald-50/30"
         : variant === 'info' ? "border-blue-500 text-blue-700 bg-blue-50/30"
         : "border-indigo-500 text-indigo-700 bg-indigo-50/30"
         : "border-transparent text-slate-500 hover:text-slate-700"

@@ -81,7 +81,7 @@ export const AppLayout: React.FC = () => {
         {/* Footer */}
         <footer className="py-4 px-6 border-t border-slate-200/60 bg-white/50">
           <p className="text-sm text-slate-400 text-center">
-            © {new Date().getFullYear()} Freelancer Project Shield. All rights reserved.
+            © {new Date().getFullYear()} ScopeGuard. All rights reserved.
           </p>
         </footer>
       </div>

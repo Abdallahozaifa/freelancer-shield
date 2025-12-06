@@ -2,16 +2,14 @@ import React, { useState, useMemo } from 'react';
 import { 
   Plus, 
   Search, 
-  Inbox, 
-  SlidersHorizontal 
+  Inbox
 } from 'lucide-react';
-import { Button, Spinner, Badge } from '../../../components/ui';
+import { Button, Spinner } from '../../../components/ui';
 import { RequestCard } from './RequestCard';
 import { RequestFormModal, RequestFormData } from './RequestFormModal';
 import { CreateProposalFromRequest } from './CreateProposalFromRequest';
 import {
   useRequests,
-  useRequestStats,
   useCreateRequest,
   useUpdateRequest,
   useClassifyRequest,
@@ -25,10 +23,10 @@ interface RequestsTabProps {
   projectId: string;
 }
 
-type TabFilter = 'inbox' | 'out_of_scope' | 'processed' | 'archived';
+type TabFilter = 'all' | 'out_of_scope' | 'processed' | 'archived';
 
 export const RequestsTab: React.FC<RequestsTabProps> = ({ projectId }) => {
-  const [activeTab, setActiveTab] = useState<TabFilter>('inbox');
+  const [activeTab, setActiveTab] = useState<TabFilter>('all');
   const [searchQuery, setSearchQuery] = useState('');
   
   const [isFormModalOpen, setIsFormModalOpen] = useState(false);
@@ -36,44 +34,97 @@ export const RequestsTab: React.FC<RequestsTabProps> = ({ projectId }) => {
   const [selectedRequest, setSelectedRequest] = useState<ClientRequest | null>(null);
 
   const { data: project } = useProject(projectId);
-  const { stats, isLoading: statsLoading } = useRequestStats(projectId);
   const {
     data: requestsData,
     isLoading: requestsLoading,
     refetch: refetchRequests,
-  } = useRequests(projectId, { showActive: true });
+  } = useRequests(projectId); // Fetch all requests, not just active ones
 
   const createRequest = useCreateRequest();
   const updateRequest = useUpdateRequest();
   const classifyRequest = useClassifyRequest();
   const createProposal = useCreateProposalFromRequest();
 
+  // --- Calculate counts from actual data ---
+  const counts = useMemo(() => {
+    if (!requestsData?.items) return { all: 0, outOfScope: 0, processed: 0, archived: 0 };
+    
+    // Use allItems to include addressed/archived items for accurate counts
+    const items = requestsData.allItems || requestsData.items;
+    
+    return {
+      // All = active items needing attention (new or analyzed but not yet addressed)
+      all: items.filter(r => 
+        r.status === 'new' || 
+        r.status === 'analyzed'
+      ).length,
+      // Out of Scope = classified as out_of_scope, still active (not addressed/proposal_sent/declined)
+      outOfScope: items.filter(r => 
+        r.classification === 'out_of_scope' && 
+        (r.status === 'new' || r.status === 'analyzed')
+      ).length,
+      // Processed = currently being worked on (in_scope and active)
+      processed: items.filter(r => 
+        r.classification === 'in_scope' && 
+        (r.status === 'new' || r.status === 'analyzed')
+      ).length,
+      // Archived = HISTORY - all completed requests (addressed, proposal_sent, declined)
+      archived: items.filter(r => 
+        r.status === 'addressed' || 
+        r.status === 'proposal_sent' || 
+        r.status === 'declined'
+      ).length,
+    };
+  }, [requestsData?.items, requestsData?.allItems]);
+
   // --- Filtering Logic ---
   const filteredRequests = useMemo(() => {
     if (!requestsData?.items) return [];
-    let filtered = [...requestsData.items];
+    // Use allItems to include addressed/archived items for History tab
+    const allItems = requestsData.allItems || requestsData.items;
+    let filtered = [...allItems];
 
     switch (activeTab) {
-      case 'inbox':
-        filtered = filtered.filter(r => (r.status === 'new' || r.status === 'open') && (!r.classification || r.classification === 'pending' || r.classification === 'clarification_needed'));
+      case 'all':
+        // Active items needing attention
+        filtered = filtered.filter(r => 
+          r.status === 'new' || 
+          r.status === 'analyzed'
+        );
         break;
       case 'out_of_scope':
-        filtered = filtered.filter(r => r.classification === 'out_of_scope' && r.status !== 'proposal_sent' && r.status !== 'declined');
+        // Out of scope and still active
+        filtered = filtered.filter(r => 
+          r.classification === 'out_of_scope' && 
+          (r.status === 'new' || r.status === 'analyzed')
+        );
         break;
       case 'processed':
-        filtered = filtered.filter(r => r.classification === 'in_scope' || r.status === 'addressed' || r.status === 'proposal_sent');
+        // In scope and still active
+        filtered = filtered.filter(r => 
+          r.classification === 'in_scope' && 
+          (r.status === 'new' || r.status === 'analyzed')
+        );
         break;
       case 'archived':
-        filtered = filtered.filter(r => r.status === 'declined' || r.status === 'archived');
+        // HISTORY - all completed requests
+        filtered = filtered.filter(r => 
+          r.status === 'addressed' || 
+          r.status === 'proposal_sent' || 
+          r.status === 'declined'
+        );
         break;
     }
 
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase();
-      filtered = filtered.filter(r => r.title.toLowerCase().includes(query) || r.content.toLowerCase().includes(query));
+      filtered = filtered.filter(r => 
+        r.title.toLowerCase().includes(query) || 
+        r.content.toLowerCase().includes(query)
+      );
     }
     return filtered;
-  }, [requestsData?.items, activeTab, searchQuery]);
+  }, [requestsData?.items, requestsData?.allItems, activeTab, searchQuery]);
 
   // --- Sorting Logic ---
   const sortedRequests = useMemo(() => {
@@ -101,8 +152,6 @@ export const RequestsTab: React.FC<RequestsTabProps> = ({ projectId }) => {
     classifyIn: async (r: ClientRequest) => { await classifyRequest.mutateAsync({ projectId, requestId: r.id, classification: 'in_scope' }); refetchRequests(); },
     classifyInfo: async (r: ClientRequest) => { await classifyRequest.mutateAsync({ projectId, requestId: r.id, classification: 'clarification_needed' }); refetchRequests(); },
   };
-
-  const isLoading = requestsLoading || statsLoading;
 
   return (
     <div className="w-full space-y-6 animate-fade-in -mt-4">
@@ -138,27 +187,29 @@ export const RequestsTab: React.FC<RequestsTabProps> = ({ projectId }) => {
           {/* Filter Tabs - Clean Text Style */}
           <div className="flex items-center gap-1 mt-6 -mb-4 overflow-x-auto no-scrollbar">
             <TabButton 
-              active={activeTab === 'inbox'} 
-              onClick={() => setActiveTab('inbox')} 
-              label="Inbox" 
-              count={stats.pending + stats.clarificationNeeded} 
+              active={activeTab === 'all'} 
+              onClick={() => setActiveTab('all')} 
+              label="All" 
+              count={counts.all} 
             />
             <TabButton 
               active={activeTab === 'out_of_scope'} 
               onClick={() => setActiveTab('out_of_scope')} 
               label="Out of Scope" 
-              count={stats.outOfScope}
+              count={counts.outOfScope}
               variant="danger"
             />
             <TabButton 
               active={activeTab === 'processed'} 
               onClick={() => setActiveTab('processed')} 
               label="Processed" 
+              count={counts.processed}
             />
             <TabButton 
               active={activeTab === 'archived'} 
               onClick={() => setActiveTab('archived')} 
-              label="Archived" 
+              label="History" 
+              count={counts.archived}
             />
           </div>
         </div>
@@ -174,7 +225,7 @@ export const RequestsTab: React.FC<RequestsTabProps> = ({ projectId }) => {
 
         {/* 3. The List */}
         <div className="flex-1 bg-white relative">
-          {isLoading ? (
+          {requestsLoading ? (
             <div className="absolute inset-0 flex items-center justify-center bg-white/80 z-10">
               <Spinner size="lg" />
             </div>
@@ -187,8 +238,8 @@ export const RequestsTab: React.FC<RequestsTabProps> = ({ projectId }) => {
                 {searchQuery ? 'No matching requests' : 'No requests here'}
               </h3>
               <p className="text-slate-500 text-sm max-w-xs">
-                {activeTab === 'inbox' 
-                  ? "Great job! Your inbox is empty." 
+                {activeTab === 'all' 
+                  ? "Log a new client request to get started." 
                   : "Check other tabs or log a new request."}
               </p>
             </div>
@@ -234,8 +285,14 @@ export const RequestsTab: React.FC<RequestsTabProps> = ({ projectId }) => {
   );
 };
 
-// Simplified Tab Button (No Icons)
-const TabButton = ({ active, onClick, label, count, variant }: any) => {
+// Simplified Tab Button - Shows count even if 1
+const TabButton = ({ active, onClick, label, count, variant }: {
+  active: boolean;
+  onClick: () => void;
+  label: string;
+  count?: number;
+  variant?: 'danger';
+}) => {
   return (
     <button
       onClick={onClick}
@@ -249,7 +306,7 @@ const TabButton = ({ active, onClick, label, count, variant }: any) => {
       )}
     >
       {label}
-      {count > 0 && (
+      {count !== undefined && count > 0 && (
         <span className={cn(
           "px-1.5 py-0.5 rounded-full text-[10px] leading-none font-bold",
           active 
