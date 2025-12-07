@@ -134,19 +134,23 @@ export const ClientFormModal: React.FC<ClientFormModalProps> = ({
         title="Client Limit Reached"
         size="md"
       >
-        <div className="text-center py-6">
-          <div className="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <Crown className="w-8 h-8 text-amber-600" />
+        <div className="text-center py-4 sm:py-6 px-2 sm:px-4">
+          <div className="w-14 h-14 sm:w-16 sm:h-16 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
+            <Crown className="w-7 h-7 sm:w-8 sm:h-8 text-amber-600" />
           </div>
-          <h3 className="text-lg font-bold text-slate-900 mb-2">
+          <h3 className="text-base sm:text-lg font-bold text-slate-900 mb-2">
             Upgrade to Add More Clients
           </h3>
-          <p className="text-slate-600 mb-6">
+          <p className="text-sm sm:text-base text-slate-600 mb-5 sm:mb-6">
             You've reached the maximum of {limits.maxClients} clients on the Free plan.
             Upgrade to Pro for unlimited clients.
           </p>
-          <div className="flex gap-3 justify-center">
-            <Button variant="outline" onClick={handleClose}>
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 sm:justify-center">
+            <Button 
+              variant="outline" 
+              onClick={handleClose}
+              className="w-full sm:w-auto order-2 sm:order-1"
+            >
               Maybe Later
             </Button>
             <Button 
@@ -154,7 +158,7 @@ export const ClientFormModal: React.FC<ClientFormModalProps> = ({
                 handleClose();
                 navigate('/settings/billing');
               }}
-              className="bg-indigo-600 hover:bg-indigo-700"
+              className="w-full sm:w-auto order-1 sm:order-2 bg-indigo-600 hover:bg-indigo-700"
             >
               <Crown className="w-4 h-4 mr-2" />
               Upgrade to Pro — $29/mo
@@ -172,10 +176,10 @@ export const ClientFormModal: React.FC<ClientFormModalProps> = ({
       title={isEditing ? 'Edit Client Details' : 'Add New Client'}
       size="md"
     >
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4 sm:gap-6">
         
-        {/* --- Identity Section --- */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+        {/* --- Identity Section - Stack on mobile --- */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
           {/* Name Field */}
           <div className="space-y-1.5 relative">
             <label className="text-sm font-semibold text-slate-700 flex items-center gap-1">
@@ -199,7 +203,7 @@ export const ClientFormModal: React.FC<ClientFormModalProps> = ({
                 className={cn('pl-9', isSubmitting && 'opacity-50 cursor-not-allowed')}
               />
               {errors.name && (
-                <p id="name-error" role="alert" className="text-red-500 text-sm mt-1">
+                <p id="name-error" role="alert" className="text-red-500 text-xs sm:text-sm mt-1">
                   {errors.name.message}
                 </p>
               )}
@@ -225,7 +229,7 @@ export const ClientFormModal: React.FC<ClientFormModalProps> = ({
                 className={cn('pl-9', isSubmitting && 'opacity-50 cursor-not-allowed')}
               />
               {errors.company && (
-                <p id="company-error" role="alert" className="text-red-500 text-sm mt-1">
+                <p id="company-error" role="alert" className="text-red-500 text-xs sm:text-sm mt-1">
                   {errors.company.message}
                 </p>
               )}
@@ -253,7 +257,7 @@ export const ClientFormModal: React.FC<ClientFormModalProps> = ({
               className={cn('pl-9', isSubmitting && 'opacity-50 cursor-not-allowed')}
             />
             {errors.email && (
-              <p id="email-error" role="alert" className="text-red-500 text-sm mt-1">
+              <p id="email-error" role="alert" className="text-red-500 text-xs sm:text-sm mt-1">
                 {errors.email.message}
               </p>
             )}
@@ -268,29 +272,29 @@ export const ClientFormModal: React.FC<ClientFormModalProps> = ({
           </label>
           <Textarea
             placeholder="Add any specific requirements, preferences, or background info..."
-            rows={4}
+            rows={3}
             error={errors.notes?.message}
             {...register('notes')}
             disabled={isSubmitting}
             aria-invalid={!!errors.notes}
             aria-describedby={errors.notes ? 'notes-error' : undefined}
-            className={cn('resize-none', isSubmitting && 'opacity-50 cursor-not-allowed')}
+            className={cn('resize-none text-sm sm:text-base', isSubmitting && 'opacity-50 cursor-not-allowed')}
           />
           {errors.notes && (
-            <p id="notes-error" role="alert" className="text-red-500 text-sm mt-1">
+            <p id="notes-error" role="alert" className="text-red-500 text-xs sm:text-sm mt-1">
               {errors.notes.message}
             </p>
           )}
         </div>
 
-        {/* --- Footer Actions --- */}
-        <div className="flex justify-end gap-3 pt-4 border-t border-slate-100">
+        {/* --- Footer Actions - Stack on mobile, reverse order --- */}
+        <div className="flex flex-col-reverse sm:flex-row justify-end gap-2 sm:gap-3 pt-3 sm:pt-4 border-t border-slate-100">
           <Button
             type="button"
             variant="ghost"
             onClick={handleClose}
             disabled={isSubmitting}
-            className="text-slate-500 hover:text-slate-800"
+            className="w-full sm:w-auto text-slate-500 hover:text-slate-800"
           >
             Cancel
           </Button>
@@ -298,7 +302,7 @@ export const ClientFormModal: React.FC<ClientFormModalProps> = ({
             type="submit" 
             variant="primary" 
             isLoading={isSubmitting}
-            className="shadow-lg shadow-indigo-500/20"
+            className="w-full sm:w-auto shadow-lg shadow-indigo-500/20"
           >
             {isEditing ? 'Save Changes' : 'Add Client'}
           </Button>
