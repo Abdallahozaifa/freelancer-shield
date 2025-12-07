@@ -12,6 +12,8 @@ export interface User {
   full_name: string;
   business_name: string | null;
   is_active: boolean;
+  picture?: string | null;
+  auth_provider?: string | null;
   created_at: string;
 }
 
@@ -274,4 +276,15 @@ export interface RegisterRequest {
 export interface TokenResponse {
   access_token: string;
   token_type: string;
+}
+
+export interface GoogleAuthRequest {
+  credential: string;
+}
+
+export interface GoogleAuthResponse {
+  access_token: string;
+  token_type: string;
+  user: User;
+  is_new_user: boolean;
 }

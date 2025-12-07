@@ -27,7 +27,7 @@ class User(BaseModel):
     )
     hashed_password: Mapped[str] = mapped_column(
         String(255),
-        nullable=False,
+        nullable=True,  # Allow None for Google OAuth users
     )
     full_name: Mapped[str] = mapped_column(
         String(255),
@@ -39,6 +39,22 @@ class User(BaseModel):
     )
     is_active: Mapped[bool] = mapped_column(
         default=True,
+        nullable=False,
+    )
+    # Google OAuth fields
+    google_id: Mapped[str | None] = mapped_column(
+        String(255),
+        unique=True,
+        nullable=True,
+        index=True,
+    )
+    picture: Mapped[str | None] = mapped_column(
+        String(500),
+        nullable=True,
+    )
+    auth_provider: Mapped[str] = mapped_column(
+        String(50),
+        default="email",
         nullable=False,
     )
     

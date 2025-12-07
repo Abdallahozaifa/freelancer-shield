@@ -4,6 +4,7 @@ Pydantic schemas for authentication.
 
 from pydantic import BaseModel, EmailStr, Field
 from uuid import UUID
+from typing import Optional
 
 
 class UserRegister(BaseModel):
@@ -37,6 +38,34 @@ class UserResponse(BaseModel):
     full_name: str
     business_name: str | None
     is_active: bool
+    picture: Optional[str] = None
+    auth_provider: Optional[str] = None
     
     class Config:
         from_attributes = True
+
+
+# Google OAuth schemas
+class GoogleAuthRequest(BaseModel):
+    """Request body for Google OAuth token verification."""
+    
+    credential: str  # The ID token from Google Sign-In
+
+
+class GoogleUserInfo(BaseModel):
+    """User info extracted from Google token."""
+    
+    google_id: str
+    email: EmailStr
+    full_name: str
+    picture: Optional[str] = None
+    email_verified: bool = False
+
+
+class GoogleAuthResponse(BaseModel):
+    """Response after successful Google authentication."""
+    
+    access_token: str
+    token_type: str = "bearer"
+    user: UserResponse
+    is_new_user: bool
