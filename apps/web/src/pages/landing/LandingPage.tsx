@@ -17,6 +17,7 @@ import {
   ArrowDown,
   ChevronDown,
   Shield,
+  DollarSign,
 } from 'lucide-react';
 import { Button } from '../../components/ui/Button';
 
@@ -85,7 +86,7 @@ export function LandingPage() {
       </nav>
 
       {/* 1. Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 text-white pt-32 pb-20 md:pt-40 md:pb-32">
+      <section className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 text-white pt-24 pb-16 sm:pt-32 sm:pb-20 md:pt-40 md:pb-24 lg:pt-40 lg:pb-32">
         {/* Background pattern */}
         <div className="absolute inset-0 opacity-10">
           <div className="absolute inset-0" style={{
@@ -94,115 +95,195 @@ export function LandingPage() {
           }} />
         </div>
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-32 relative z-10">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            {/* Left: Copy */}
-            <div>
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+            {/* Left: Copy - Always visible, centered on mobile */}
+            <div className="text-center lg:text-left">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6">
                 Stop Scope Creep.
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">
-                  {' '}Protect Your Revenue.
+                <span className="block text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">
+                  Protect Your Revenue.
                 </span>
               </h1>
 
-              <p className="text-xl text-slate-300 mb-8 max-w-lg">
+              <p className="text-lg sm:text-xl text-slate-300 mb-8 max-w-lg mx-auto lg:mx-0">
                 ScopeGuard helps freelancers track project scope, identify out-of-scope requests, 
                 and generate professional proposals — all in one place.
               </p>
 
-              <div className="flex flex-col sm:flex-row gap-4">
+              <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
                 <Button 
                   size="lg" 
                   onClick={() => navigate('/register')}
-                  className="bg-white text-indigo-600 hover:bg-indigo-50"
+                  className="w-full sm:w-auto bg-white text-indigo-600 hover:bg-indigo-50"
                 >
                   Get Started Free
                   <ArrowRight className="w-5 h-5 ml-2" />
                 </Button>
               </div>
 
-              <p className="text-sm text-slate-400 mt-4">
+              <p className="text-sm text-slate-400 mt-4 text-center lg:text-left">
                 No credit card required • Free plan available forever
               </p>
             </div>
 
-            {/* Right: Dashboard Preview */}
-            <div className="relative">
+            {/* Right: Dashboard Preview - Hidden on small mobile, shown on sm+ */}
+            <div className="relative hidden sm:block">
               <div className="absolute -inset-4 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-2xl blur-2xl opacity-20" />
               
-              {/* Mockup Container */}
-              <div className="relative bg-slate-800 rounded-xl shadow-2xl border border-slate-700 overflow-hidden">
-                {/* Browser Chrome */}
-                <div className="flex items-center gap-2 px-4 py-3 bg-slate-900 border-b border-slate-700">
-                  <div className="flex gap-1.5">
-                    <div className="w-3 h-3 rounded-full bg-red-500" />
-                    <div className="w-3 h-3 rounded-full bg-yellow-500" />
-                    <div className="w-3 h-3 rounded-full bg-green-500" />
-                  </div>
-                  <div className="flex-1 mx-4">
-                    <div className="bg-slate-700 rounded-md px-3 py-1 text-xs text-slate-400 max-w-xs">
-                      app.scopeguard.com/dashboard
-                    </div>
+              <div className="relative bg-slate-800 rounded-xl shadow-2xl border border-slate-700 overflow-hidden transform lg:scale-100 md:scale-95 sm:scale-90 origin-top-right">
+                {/* Browser Chrome - NO URL */}
+                <div className="flex items-center gap-2 px-3 sm:px-4 py-2 sm:py-3 bg-slate-900 border-b border-slate-700">
+                  <div className="flex gap-1 sm:gap-1.5">
+                    <div className="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-red-500" />
+                    <div className="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-yellow-500" />
+                    <div className="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-green-500" />
                   </div>
                 </div>
                 
                 {/* Dashboard Content */}
-                <div className="p-4 bg-slate-50">
+                <div className="p-3 sm:p-4 lg:p-5 bg-slate-50">
                   {/* Header */}
-                  <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center justify-between mb-3 sm:mb-4 lg:mb-5">
                     <div>
-                      <div className="h-6 w-48 bg-slate-300 rounded mb-2" />
-                      <div className="h-4 w-32 bg-slate-200 rounded" />
+                      <h3 className="text-sm sm:text-base lg:text-lg font-bold text-slate-900">Good evening, Sarah</h3>
+                      <p className="text-xs sm:text-sm text-slate-500 hidden sm:block">Here's what's happening with your projects</p>
                     </div>
-                    <div className="h-8 w-24 bg-indigo-500 rounded-lg" />
+                    <button className="px-2 sm:px-3 lg:px-4 py-1.5 sm:py-2 bg-indigo-600 text-white text-xs sm:text-sm font-medium rounded-lg">
+                      + New Project
+                    </button>
                   </div>
                   
-                  {/* Stats Grid */}
-                  <div className="grid grid-cols-4 gap-3 mb-4">
-                    <div className="bg-white rounded-lg p-3 border border-slate-200">
-                      <div className="h-3 w-16 bg-slate-200 rounded mb-2" />
-                      <div className="h-6 w-12 bg-emerald-500 rounded" />
-                    </div>
-                    <div className="bg-white rounded-lg p-3 border border-slate-200">
-                      <div className="h-3 w-16 bg-slate-200 rounded mb-2" />
-                      <div className="h-6 w-8 bg-indigo-500 rounded" />
-                    </div>
-                    <div className="bg-white rounded-lg p-3 border border-slate-200">
-                      <div className="h-3 w-16 bg-slate-200 rounded mb-2" />
-                      <div className="h-6 w-10 bg-amber-500 rounded" />
-                    </div>
-                    <div className="bg-white rounded-lg p-3 border border-slate-200">
-                      <div className="h-3 w-16 bg-slate-200 rounded mb-2" />
-                      <div className="h-6 w-14 bg-purple-500 rounded" />
-                    </div>
-                  </div>
-                  
-                  {/* Content Area */}
-                  <div className="grid grid-cols-3 gap-3">
-                    <div className="col-span-2 bg-white rounded-lg p-3 border border-slate-200">
-                      <div className="h-4 w-24 bg-slate-300 rounded mb-3" />
-                      <div className="space-y-2">
-                        <div className="flex items-center gap-2">
-                          <div className="w-2 h-2 rounded-full bg-emerald-500" />
-                          <div className="h-3 flex-1 bg-slate-100 rounded" />
-                          <div className="h-3 w-8 bg-slate-200 rounded" />
+                  {/* Stats Grid - Responsive */}
+                  <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 mb-3 sm:mb-4 lg:mb-5">
+                    {/* Revenue Protected */}
+                    <div className="bg-white rounded-lg sm:rounded-xl p-2 sm:p-3 lg:p-4 border border-slate-200 shadow-sm">
+                      <div className="flex items-center justify-between mb-1 sm:mb-2">
+                        <span className="text-[10px] sm:text-xs font-medium text-slate-500 uppercase tracking-wide leading-tight">Revenue</span>
+                        <div className="w-6 h-6 sm:w-8 sm:h-8 bg-emerald-100 rounded-lg flex items-center justify-center shrink-0">
+                          <DollarSign className="w-3 h-3 sm:w-4 sm:h-4 text-emerald-600" />
                         </div>
-                        <div className="flex items-center gap-2">
+                      </div>
+                      <p className="text-lg sm:text-xl lg:text-2xl font-bold text-slate-900">$4,280</p>
+                      <p className="text-[10px] sm:text-xs text-emerald-600 mt-0.5 sm:mt-1">↑ 12% this month</p>
+                    </div>
+                    
+                    {/* Active Projects */}
+                    <div className="bg-white rounded-lg sm:rounded-xl p-2 sm:p-3 lg:p-4 border border-slate-200 shadow-sm">
+                      <div className="flex items-center justify-between mb-1 sm:mb-2">
+                        <span className="text-[10px] sm:text-xs font-medium text-slate-500 uppercase tracking-wide leading-tight">Projects</span>
+                        <div className="w-6 h-6 sm:w-8 sm:h-8 bg-indigo-100 rounded-lg flex items-center justify-center shrink-0">
+                          <FileText className="w-3 h-3 sm:w-4 sm:h-4 text-indigo-600" />
+                        </div>
+                      </div>
+                      <p className="text-lg sm:text-xl lg:text-2xl font-bold text-slate-900">8</p>
+                      <p className="text-[10px] sm:text-xs text-slate-500 mt-0.5 sm:mt-1">3 due this week</p>
+                    </div>
+                    
+                    {/* Scope Creep Alerts */}
+                    <div className="bg-white rounded-lg sm:rounded-xl p-2 sm:p-3 lg:p-4 border border-slate-200 shadow-sm">
+                      <div className="flex items-center justify-between mb-1 sm:mb-2">
+                        <span className="text-[10px] sm:text-xs font-medium text-slate-500 uppercase tracking-wide leading-tight">Alerts</span>
+                        <div className="w-6 h-6 sm:w-8 sm:h-8 bg-amber-100 rounded-lg flex items-center justify-center shrink-0">
+                          <AlertTriangle className="w-3 h-3 sm:w-4 sm:h-4 text-amber-600" />
+                        </div>
+                      </div>
+                      <p className="text-lg sm:text-xl lg:text-2xl font-bold text-slate-900">5</p>
+                      <p className="text-[10px] sm:text-xs text-amber-600 mt-0.5 sm:mt-1">Needs review</p>
+                    </div>
+                    
+                    {/* Acceptance Rate */}
+                    <div className="bg-white rounded-lg sm:rounded-xl p-2 sm:p-3 lg:p-4 border border-slate-200 shadow-sm">
+                      <div className="flex items-center justify-between mb-1 sm:mb-2">
+                        <span className="text-[10px] sm:text-xs font-medium text-slate-500 uppercase tracking-wide leading-tight">Accepted</span>
+                        <div className="w-6 h-6 sm:w-8 sm:h-8 bg-purple-100 rounded-lg flex items-center justify-center shrink-0">
+                          <CheckCircle2 className="w-3 h-3 sm:w-4 sm:h-4 text-purple-600" />
+                        </div>
+                      </div>
+                      <p className="text-lg sm:text-xl lg:text-2xl font-bold text-slate-900">89%</p>
+                      <p className="text-[10px] sm:text-xs text-purple-600 mt-0.5 sm:mt-1">8 of 9</p>
+                    </div>
+                  </div>
+                  
+                  {/* Bottom Section: Alerts + Quick Stats - Hidden on small screens */}
+                  <div className="hidden lg:grid grid-cols-3 gap-4">
+                    {/* Alerts Section */}
+                    <div className="col-span-2 bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+                      <div className="px-4 py-3 border-b border-slate-100 flex items-center justify-between">
+                        <h4 className="font-semibold text-slate-900 text-sm">Scope Creep Alerts</h4>
+                        <span className="px-2 py-0.5 bg-amber-100 text-amber-700 text-xs font-medium rounded-full">5 new</span>
+                      </div>
+                      <div className="divide-y divide-slate-100">
+                        <div className="px-4 py-3 flex items-center gap-3 hover:bg-slate-50">
                           <div className="w-2 h-2 rounded-full bg-amber-500" />
-                          <div className="h-3 flex-1 bg-slate-100 rounded" />
-                          <div className="h-3 w-8 bg-slate-200 rounded" />
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium text-slate-900 truncate">Website Redesign</p>
+                            <p className="text-xs text-slate-500">3 out-of-scope requests</p>
+                          </div>
+                          <span className="text-xs text-slate-400">2h ago</span>
                         </div>
-                        <div className="flex items-center gap-2">
-                          <div className="w-2 h-2 rounded-full bg-indigo-500" />
-                          <div className="h-3 flex-1 bg-slate-100 rounded" />
-                          <div className="h-3 w-8 bg-slate-200 rounded" />
+                        <div className="px-4 py-3 flex items-center gap-3 hover:bg-slate-50">
+                          <div className="w-2 h-2 rounded-full bg-amber-500" />
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium text-slate-900 truncate">Mobile App MVP</p>
+                            <p className="text-xs text-slate-500">2 out-of-scope requests</p>
+                          </div>
+                          <span className="text-xs text-slate-400">5h ago</span>
                         </div>
                       </div>
                     </div>
-                    <div className="bg-white rounded-lg p-3 border border-slate-200">
-                      <div className="h-4 w-20 bg-slate-300 rounded mb-3" />
-                      <div className="h-24 bg-gradient-to-t from-indigo-100 to-transparent rounded" />
+                    
+                    {/* Project Health */}
+                    <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+                      <div className="px-4 py-3 border-b border-slate-100">
+                        <h4 className="font-semibold text-slate-900 text-sm">This Month</h4>
+                      </div>
+                      <div className="p-4 space-y-3">
+                        <div>
+                          <div className="flex justify-between text-xs mb-1">
+                            <span className="text-slate-500">Proposals Sent</span>
+                            <span className="font-medium text-slate-900">12</span>
+                          </div>
+                          <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                            <div className="h-full w-3/4 bg-indigo-500 rounded-full" />
+                          </div>
+                        </div>
+                        <div>
+                          <div className="flex justify-between text-xs mb-1">
+                            <span className="text-slate-500">Accepted</span>
+                            <span className="font-medium text-emerald-600">9</span>
+                          </div>
+                          <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                            <div className="h-full w-[75%] bg-emerald-500 rounded-full" />
+                          </div>
+                        </div>
+                        <div>
+                          <div className="flex justify-between text-xs mb-1">
+                            <span className="text-slate-500">Pending</span>
+                            <span className="font-medium text-amber-600">3</span>
+                          </div>
+                          <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                            <div className="h-full w-1/4 bg-amber-500 rounded-full" />
+                          </div>
+                        </div>
+                      </div>
                     </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            {/* Mobile-only simplified stats - Shown on small screens */}
+            <div className="sm:hidden mt-8">
+              <div className="bg-white/10 backdrop-blur-sm rounded-xl shadow-lg border border-white/20 p-4 mx-auto max-w-sm">
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="bg-emerald-500/20 rounded-lg p-3 text-center">
+                    <p className="text-xl font-bold text-white">$4,280</p>
+                    <p className="text-xs text-slate-300">Protected</p>
+                  </div>
+                  <div className="bg-indigo-500/20 rounded-lg p-3 text-center">
+                    <p className="text-xl font-bold text-white">89%</p>
+                    <p className="text-xs text-slate-300">Accepted</p>
                   </div>
                 </div>
               </div>
@@ -293,61 +374,104 @@ export function LandingPage() {
               </div>
               <div>
                 {/* Scope Detection Mockup */}
-                <div className="relative bg-white rounded-xl shadow-lg border border-slate-200 overflow-hidden">
-                  {/* Header */}
-                  <div className="px-4 py-3 border-b border-slate-100 flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 bg-indigo-100 rounded-lg flex items-center justify-center">
-                        <AlertTriangle className="w-4 h-4 text-indigo-600" />
-                      </div>
-                      <span className="font-semibold text-slate-900">Client Requests</span>
-                    </div>
-                    <div className="flex gap-2">
-                      <span className="px-2 py-1 bg-amber-100 text-amber-700 text-xs font-medium rounded-full">
-                        3 Out of Scope
-                      </span>
+                <div className="bg-white rounded-xl shadow-lg border border-slate-200 overflow-hidden">
+                  {/* Tabs Header */}
+                  <div className="border-b border-slate-200">
+                    <div className="flex">
+                      <button className="px-4 py-3 text-sm font-medium text-indigo-600 border-b-2 border-indigo-600">
+                        All Requests
+                      </button>
+                      <button className="px-4 py-3 text-sm font-medium text-slate-500 hover:text-slate-700">
+                        Out of Scope
+                        <span className="ml-2 px-1.5 py-0.5 bg-amber-100 text-amber-700 text-xs rounded-full">3</span>
+                      </button>
+                      <button className="px-4 py-3 text-sm font-medium text-slate-500 hover:text-slate-700">
+                        In Scope
+                      </button>
                     </div>
                   </div>
                   
                   {/* Request Items */}
-                  <div className="p-4 space-y-3">
-                    <div className="flex items-start gap-3 p-3 bg-amber-50 border border-amber-200 rounded-lg">
-                      <div className="w-6 h-6 bg-amber-100 rounded-full flex items-center justify-center shrink-0">
-                        <AlertTriangle className="w-3 h-3 text-amber-600" />
+                  <div className="divide-y divide-slate-100">
+                    {/* Out of Scope Request */}
+                    <div className="p-4 bg-amber-50/50">
+                      <div className="flex items-start gap-3">
+                        <div className="w-8 h-8 bg-amber-100 rounded-full flex items-center justify-center shrink-0 mt-0.5">
+                          <AlertTriangle className="w-4 h-4 text-amber-600" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-1">
+                            <h4 className="font-medium text-slate-900">Add user authentication system</h4>
+                            <span className="px-2 py-0.5 bg-amber-100 text-amber-700 text-xs font-medium rounded-full">
+                              Out of Scope
+                            </span>
+                          </div>
+                          <p className="text-sm text-slate-600 mb-2">
+                            Client requested OAuth login with Google and GitHub integration.
+                          </p>
+                          <div className="flex items-center gap-4 text-xs text-slate-500">
+                            <span>Est. 8 hours</span>
+                            <span>•</span>
+                            <span>Requested 2 days ago</span>
+                          </div>
+                        </div>
+                        <button className="px-3 py-1.5 bg-indigo-600 text-white text-sm font-medium rounded-lg shrink-0 hover:bg-indigo-700">
+                          Create Proposal
+                        </button>
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-slate-900">Add user authentication system</p>
-                        <p className="text-xs text-slate-500 mt-1">Not in original scope • Est. 8 hours</p>
-                      </div>
-                      <button className="px-3 py-1 bg-indigo-600 text-white text-xs font-medium rounded-lg shrink-0">
-                        Create Proposal
-                      </button>
                     </div>
                     
-                    <div className="flex items-start gap-3 p-3 bg-emerald-50 border border-emerald-200 rounded-lg">
-                      <div className="w-6 h-6 bg-emerald-100 rounded-full flex items-center justify-center shrink-0">
-                        <Check className="w-3 h-3 text-emerald-600" />
+                    {/* In Scope Request - Completed */}
+                    <div className="p-4">
+                      <div className="flex items-start gap-3">
+                        <div className="w-8 h-8 bg-emerald-100 rounded-full flex items-center justify-center shrink-0 mt-0.5">
+                          <Check className="w-4 h-4 text-emerald-600" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-1">
+                            <h4 className="font-medium text-slate-900">Update homepage hero section</h4>
+                            <span className="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-xs font-medium rounded-full">
+                              Completed
+                            </span>
+                          </div>
+                          <p className="text-sm text-slate-600 mb-2">
+                            New hero with updated copy and call-to-action buttons.
+                          </p>
+                          <div className="flex items-center gap-4 text-xs text-slate-500">
+                            <span>4 hours</span>
+                            <span>•</span>
+                            <span>Completed yesterday</span>
+                          </div>
+                        </div>
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-slate-900">Update homepage hero section</p>
-                        <p className="text-xs text-slate-500 mt-1">In scope • Marked complete</p>
-                      </div>
-                      <span className="px-2 py-1 bg-emerald-100 text-emerald-700 text-xs font-medium rounded-full shrink-0">
-                        Done
-                      </span>
                     </div>
                     
-                    <div className="flex items-start gap-3 p-3 bg-amber-50 border border-amber-200 rounded-lg">
-                      <div className="w-6 h-6 bg-amber-100 rounded-full flex items-center justify-center shrink-0">
-                        <AlertTriangle className="w-3 h-3 text-amber-600" />
+                    {/* Out of Scope Request */}
+                    <div className="p-4 bg-amber-50/50">
+                      <div className="flex items-start gap-3">
+                        <div className="w-8 h-8 bg-amber-100 rounded-full flex items-center justify-center shrink-0 mt-0.5">
+                          <AlertTriangle className="w-4 h-4 text-amber-600" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-1">
+                            <h4 className="font-medium text-slate-900">Build mobile app version</h4>
+                            <span className="px-2 py-0.5 bg-amber-100 text-amber-700 text-xs font-medium rounded-full">
+                              Out of Scope
+                            </span>
+                          </div>
+                          <p className="text-sm text-slate-600 mb-2">
+                            Full React Native app with push notifications and offline mode.
+                          </p>
+                          <div className="flex items-center gap-4 text-xs text-slate-500">
+                            <span>Est. 40 hours</span>
+                            <span>•</span>
+                            <span>Requested 5 days ago</span>
+                          </div>
+                        </div>
+                        <button className="px-3 py-1.5 bg-indigo-600 text-white text-sm font-medium rounded-lg shrink-0 hover:bg-indigo-700">
+                          Create Proposal
+                        </button>
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-slate-900">Build mobile app version</p>
-                        <p className="text-xs text-slate-500 mt-1">Not in original scope • Est. 40 hours</p>
-                      </div>
-                      <button className="px-3 py-1 bg-indigo-600 text-white text-xs font-medium rounded-lg shrink-0">
-                        Create Proposal
-                      </button>
                     </div>
                   </div>
                 </div>
@@ -370,8 +494,8 @@ export function LandingPage() {
           </div>
 
           {/* Feature 1: Dashboard */}
-          <div className="grid lg:grid-cols-2 gap-12 items-center mb-20">
-            <div>
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center mb-16 lg:mb-20">
+            <div className="text-center lg:text-left">
               <div className="inline-flex items-center gap-2 px-3 py-1 bg-indigo-100 text-indigo-700 rounded-full text-sm font-medium mb-4">
                 <LayoutDashboard className="w-4 h-4" />
                 Dashboard
@@ -384,44 +508,52 @@ export function LandingPage() {
                 Track revenue protected, monitor project health, and catch scope creep early.
               </p>
               <ul className="space-y-3">
-                <li className="flex items-center gap-2 text-slate-700">
+                <li className="flex items-center gap-2 text-slate-700 justify-center lg:justify-start">
                   <Check className="w-5 h-5 text-emerald-500" />
                   Real-time project status
                 </li>
-                <li className="flex items-center gap-2 text-slate-700">
+                <li className="flex items-center gap-2 text-slate-700 justify-center lg:justify-start">
                   <Check className="w-5 h-5 text-emerald-500" />
                   Revenue protection tracking
                 </li>
-                <li className="flex items-center gap-2 text-slate-700">
+                <li className="flex items-center gap-2 text-slate-700 justify-center lg:justify-start">
                   <Check className="w-5 h-5 text-emerald-500" />
                   Scope creep alerts
                 </li>
               </ul>
             </div>
-            <div className="relative">
+            <div className="relative max-w-md mx-auto lg:max-w-none">
               <div className="absolute -inset-4 bg-gradient-to-r from-indigo-200 to-purple-200 rounded-2xl blur-xl opacity-50" />
               <div className="relative bg-white rounded-xl shadow-xl border border-slate-200 overflow-hidden">
+                <div className="p-4 border-b border-slate-100 flex items-center justify-between">
+                  <h4 className="font-semibold text-slate-900">Project Health</h4>
+                  <span className="text-xs text-slate-500">Last 30 days</span>
+                </div>
                 <div className="p-4">
-                  <div className="flex items-center gap-2 mb-4">
-                    <div className="w-8 h-8 bg-indigo-100 rounded-lg" />
-                    <div className="h-4 w-32 bg-slate-200 rounded" />
-                  </div>
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-2 gap-4 mb-4">
                     <div className="bg-emerald-50 rounded-lg p-3">
-                      <div className="text-2xl font-bold text-emerald-600">$4,200</div>
-                      <div className="text-xs text-slate-500">Revenue Protected</div>
+                      <p className="text-2xl font-bold text-emerald-600">$4,280</p>
+                      <p className="text-xs text-slate-600">Revenue Protected</p>
                     </div>
                     <div className="bg-indigo-50 rounded-lg p-3">
-                      <div className="text-2xl font-bold text-indigo-600">12</div>
-                      <div className="text-xs text-slate-500">Active Projects</div>
+                      <p className="text-2xl font-bold text-indigo-600">89%</p>
+                      <p className="text-xs text-slate-600">Proposal Acceptance</p>
                     </div>
-                    <div className="bg-amber-50 rounded-lg p-3">
-                      <div className="text-2xl font-bold text-amber-600">5</div>
-                      <div className="text-xs text-slate-500">Scope Alerts</div>
+                  </div>
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-slate-600">Website Redesign</span>
+                      <span className="text-sm font-medium text-emerald-600">75%</span>
                     </div>
-                    <div className="bg-purple-50 rounded-lg p-3">
-                      <div className="text-2xl font-bold text-purple-600">89%</div>
-                      <div className="text-xs text-slate-500">Proposal Rate</div>
+                    <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
+                      <div className="h-full w-3/4 bg-emerald-500 rounded-full" />
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-slate-600">Mobile App MVP</span>
+                      <span className="text-sm font-medium text-indigo-600">45%</span>
+                    </div>
+                    <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
+                      <div className="h-full w-[45%] bg-indigo-500 rounded-full" />
                     </div>
                   </div>
                 </div>
@@ -430,44 +562,54 @@ export function LandingPage() {
           </div>
 
           {/* Feature 2: Scope Tracking (reversed) */}
-          <div className="grid lg:grid-cols-2 gap-12 items-center mb-20">
-            <div className="order-2 lg:order-1 relative">
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center mb-16 lg:mb-20">
+            <div className="order-2 lg:order-1 relative max-w-md mx-auto lg:max-w-none">
               <div className="absolute -inset-4 bg-gradient-to-r from-emerald-200 to-teal-200 rounded-2xl blur-xl opacity-50" />
               <div className="relative bg-white rounded-xl shadow-xl border border-slate-200 overflow-hidden">
-                <div className="px-4 py-3 border-b border-slate-100">
-                  <span className="font-semibold text-slate-900">Project Scope</span>
+                <div className="px-4 py-3 border-b border-slate-100 flex items-center justify-between">
+                  <h4 className="font-semibold text-slate-900">Project Scope</h4>
+                  <span className="text-xs text-slate-500">Website Redesign</span>
                 </div>
-                <div className="p-4 space-y-3">
-                  {[
-                    { name: 'Homepage Design', status: 'complete', hours: 8 },
-                    { name: 'About Page', status: 'complete', hours: 4 },
-                    { name: 'Contact Form', status: 'in-progress', hours: 3 },
-                    { name: 'Blog Integration', status: 'pending', hours: 12 },
-                  ].map((item, i) => (
-                    <div key={i} className="flex items-center gap-3">
-                      <div className={`w-5 h-5 rounded-full flex items-center justify-center ${
-                        item.status === 'complete' ? 'bg-emerald-100' :
-                        item.status === 'in-progress' ? 'bg-indigo-100' : 'bg-slate-100'
-                      }`}>
-                        {item.status === 'complete' && <Check className="w-3 h-3 text-emerald-600" />}
+                <div className="p-4">
+                  <div className="space-y-3">
+                    {[
+                      { name: 'Homepage Design', done: true, hours: 8 },
+                      { name: 'About Page', done: true, hours: 4 },
+                      { name: 'Services Section', done: true, hours: 6 },
+                      { name: 'Contact Form', done: false, hours: 3 },
+                      { name: 'Blog Integration', done: false, hours: 12 },
+                    ].map((item, i) => (
+                      <div key={i} className="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-50">
+                        <div className={`w-5 h-5 rounded border-2 flex items-center justify-center ${
+                          item.done 
+                            ? 'bg-emerald-500 border-emerald-500' 
+                            : 'border-slate-300'
+                        }`}>
+                          {item.done && (
+                            <Check className="w-3 h-3 text-white" strokeWidth={3} />
+                          )}
+                        </div>
+                        <span className={`flex-1 text-sm ${item.done ? 'text-slate-500 line-through' : 'text-slate-700'}`}>
+                          {item.name}
+                        </span>
+                        <span className="text-xs text-slate-400">{item.hours}h</span>
                       </div>
-                      <span className="flex-1 text-sm text-slate-700">{item.name}</span>
-                      <span className="text-xs text-slate-400">{item.hours}h</span>
-                    </div>
-                  ))}
-                </div>
-                <div className="px-4 py-3 bg-slate-50 border-t border-slate-100">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-slate-500">Progress</span>
-                    <span className="font-medium text-slate-900">45%</span>
+                    ))}
                   </div>
-                  <div className="mt-2 h-2 bg-slate-200 rounded-full overflow-hidden">
-                    <div className="h-full w-[45%] bg-indigo-500 rounded-full" />
+                  <div className="mt-4 pt-4 border-t border-slate-100">
+                    <div className="flex justify-between text-sm mb-2">
+                      <span className="text-slate-600">Overall Progress</span>
+                      <span className="font-semibold text-slate-900">54%</span>
+                    </div>
+                    <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
+                      <div className="h-full w-[54%] bg-indigo-500 rounded-full" />
+                    </div>
+                    <p className="text-xs text-slate-500 mt-2">18 of 33 hours completed</p>
                   </div>
                 </div>
               </div>
             </div>
-            <div className="order-1 lg:order-2">
+            <div className="order-1 lg:order-2 text-center lg:text-left">
               <div className="inline-flex items-center gap-2 px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-sm font-medium mb-4">
                 <Target className="w-4 h-4" />
                 Scope Tracking
@@ -480,15 +622,15 @@ export function LandingPage() {
                 When clients request changes, you'll know exactly what's in scope and what isn't.
               </p>
               <ul className="space-y-3">
-                <li className="flex items-center gap-2 text-slate-700">
+                <li className="flex items-center gap-2 text-slate-700 justify-center lg:justify-start">
                   <Check className="w-5 h-5 text-emerald-500" />
                   Deliverable checklists
                 </li>
-                <li className="flex items-center gap-2 text-slate-700">
+                <li className="flex items-center gap-2 text-slate-700 justify-center lg:justify-start">
                   <Check className="w-5 h-5 text-emerald-500" />
                   Hour estimates
                 </li>
-                <li className="flex items-center gap-2 text-slate-700">
+                <li className="flex items-center gap-2 text-slate-700 justify-center lg:justify-start">
                   <Check className="w-5 h-5 text-emerald-500" />
                   Progress tracking
                 </li>
@@ -497,8 +639,8 @@ export function LandingPage() {
           </div>
 
           {/* Feature 3: Request Management */}
-          <div className="grid lg:grid-cols-2 gap-12 items-center mb-20">
-            <div>
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center mb-16 lg:mb-20">
+            <div className="text-center lg:text-left">
               <div className="inline-flex items-center gap-2 px-3 py-1 bg-amber-100 text-amber-700 rounded-full text-sm font-medium mb-4">
                 <MessageSquare className="w-4 h-4" />
                 Request Management
@@ -511,40 +653,49 @@ export function LandingPage() {
                 Never let a billable request slip through the cracks again.
               </p>
               <ul className="space-y-3">
-                <li className="flex items-center gap-2 text-slate-700">
+                <li className="flex items-center gap-2 text-slate-700 justify-center lg:justify-start">
                   <Check className="w-5 h-5 text-emerald-500" />
                   Quick request logging
                 </li>
-                <li className="flex items-center gap-2 text-slate-700">
+                <li className="flex items-center gap-2 text-slate-700 justify-center lg:justify-start">
                   <Check className="w-5 h-5 text-emerald-500" />
                   In-scope vs out-of-scope classification
                 </li>
-                <li className="flex items-center gap-2 text-slate-700">
+                <li className="flex items-center gap-2 text-slate-700 justify-center lg:justify-start">
                   <Check className="w-5 h-5 text-emerald-500" />
                   Full audit trail
                 </li>
               </ul>
             </div>
-            <div className="relative">
+            <div className="relative max-w-md mx-auto lg:max-w-none">
               <div className="absolute -inset-4 bg-gradient-to-r from-amber-200 to-orange-200 rounded-2xl blur-xl opacity-50" />
               <div className="relative bg-white rounded-xl shadow-xl border border-slate-200 overflow-hidden">
                 <div className="px-4 py-3 border-b border-slate-100 flex items-center justify-between">
-                  <span className="font-semibold text-slate-900">Recent Requests</span>
-                  <span className="px-2 py-1 bg-amber-100 text-amber-700 text-xs font-medium rounded-full">
-                    2 Need Review
-                  </span>
+                  <h4 className="font-semibold text-slate-900">Client Requests</h4>
+                  <button className="text-xs text-indigo-600 font-medium">+ Add Request</button>
                 </div>
                 <div className="divide-y divide-slate-100">
                   {[
-                    { text: 'Add dark mode toggle', type: 'out', time: '2h ago' },
-                    { text: 'Fix mobile nav bug', type: 'in', time: '5h ago' },
-                    { text: 'New payment gateway', type: 'out', time: '1d ago' },
+                    { text: 'Add dark mode toggle', type: 'out', time: '2h ago', project: 'Website' },
+                    { text: 'Fix mobile navigation bug', type: 'in', time: '5h ago', project: 'Website' },
+                    { text: 'New payment gateway', type: 'out', time: '1d ago', project: 'E-commerce' },
+                    { text: 'Update footer links', type: 'in', time: '2d ago', project: 'Website' },
                   ].map((req, i) => (
-                    <div key={i} className="px-4 py-3 flex items-center gap-3">
-                      <div className={`w-2 h-2 rounded-full ${
+                    <div key={i} className="px-4 py-3 flex items-center gap-3 hover:bg-slate-50">
+                      <div className={`w-2.5 h-2.5 rounded-full shrink-0 ${
                         req.type === 'out' ? 'bg-amber-500' : 'bg-emerald-500'
                       }`} />
-                      <span className="flex-1 text-sm text-slate-700">{req.text}</span>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-slate-900 truncate">{req.text}</p>
+                        <p className="text-xs text-slate-500">{req.project}</p>
+                      </div>
+                      <span className={`px-2 py-0.5 text-xs font-medium rounded-full ${
+                        req.type === 'out' 
+                          ? 'bg-amber-100 text-amber-700' 
+                          : 'bg-emerald-100 text-emerald-700'
+                      }`}>
+                        {req.type === 'out' ? 'Out' : 'In'}
+                      </span>
                       <span className="text-xs text-slate-400">{req.time}</span>
                     </div>
                   ))}
@@ -555,33 +706,42 @@ export function LandingPage() {
 
           {/* Feature 4: Proposals (Pro) */}
           <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div className="order-2 lg:order-1 relative">
+            <div className="order-2 lg:order-1 relative max-w-md mx-auto lg:max-w-none">
               <div className="absolute -inset-4 bg-gradient-to-r from-purple-200 to-pink-200 rounded-2xl blur-xl opacity-50" />
               <div className="relative bg-white rounded-xl shadow-xl border border-slate-200 overflow-hidden">
                 <div className="px-4 py-3 border-b border-slate-100 flex items-center justify-between">
-                  <span className="font-semibold text-slate-900">Change Order Proposal</span>
-                  <span className="px-2 py-1 bg-indigo-100 text-indigo-700 text-xs font-medium rounded-full">
+                  <h4 className="font-semibold text-slate-900">Change Order Proposal</h4>
+                  <span className="px-2 py-0.5 bg-amber-100 text-amber-700 text-xs font-medium rounded-full">
                     Draft
                   </span>
                 </div>
                 <div className="p-4">
                   <div className="mb-4">
-                    <div className="text-xs text-slate-500 mb-1">Requested Work</div>
-                    <div className="text-sm font-medium text-slate-900">User Authentication System</div>
+                    <label className="text-xs font-medium text-slate-500 uppercase tracking-wide">Client</label>
+                    <p className="text-sm font-medium text-slate-900 mt-1">Acme Corporation</p>
+                  </div>
+                  <div className="mb-4">
+                    <label className="text-xs font-medium text-slate-500 uppercase tracking-wide">Requested Work</label>
+                    <p className="text-sm text-slate-900 mt-1">User Authentication System with OAuth</p>
                   </div>
                   <div className="grid grid-cols-2 gap-4 mb-4">
-                    <div>
-                      <div className="text-xs text-slate-500 mb-1">Estimated Hours</div>
-                      <div className="text-lg font-bold text-slate-900">8 hours</div>
+                    <div className="bg-slate-50 rounded-lg p-3">
+                      <label className="text-xs font-medium text-slate-500">Estimated Hours</label>
+                      <p className="text-xl font-bold text-slate-900 mt-1">8 hours</p>
                     </div>
-                    <div>
-                      <div className="text-xs text-slate-500 mb-1">Proposed Cost</div>
-                      <div className="text-lg font-bold text-emerald-600">$800</div>
+                    <div className="bg-emerald-50 rounded-lg p-3">
+                      <label className="text-xs font-medium text-slate-500">Proposed Cost</label>
+                      <p className="text-xl font-bold text-emerald-600 mt-1">$800</p>
                     </div>
                   </div>
-                  <button className="w-full py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg">
-                    Send to Client
-                  </button>
+                  <div className="flex gap-2">
+                    <button className="flex-1 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700">
+                      Send to Client
+                    </button>
+                    <button className="px-4 py-2 border border-slate-200 text-slate-600 text-sm font-medium rounded-lg hover:bg-slate-50">
+                      Edit
+                    </button>
+                  </div>
                 </div>
               </div>
               {/* Pro badge overlay */}
@@ -589,7 +749,7 @@ export function LandingPage() {
                 PRO
               </div>
             </div>
-            <div className="order-1 lg:order-2">
+            <div className="order-1 lg:order-2 text-center lg:text-left">
               <div className="inline-flex items-center gap-2 px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm font-medium mb-4">
                 <FileText className="w-4 h-4" />
                 Proposal Generator
@@ -602,15 +762,15 @@ export function LandingPage() {
                 Stop leaving money on the table.
               </p>
               <ul className="space-y-3">
-                <li className="flex items-center gap-2 text-slate-700">
+                <li className="flex items-center gap-2 text-slate-700 justify-center lg:justify-start">
                   <Check className="w-5 h-5 text-emerald-500" />
                   Auto-generated proposals
                 </li>
-                <li className="flex items-center gap-2 text-slate-700">
+                <li className="flex items-center gap-2 text-slate-700 justify-center lg:justify-start">
                   <Check className="w-5 h-5 text-emerald-500" />
                   Professional templates
                 </li>
-                <li className="flex items-center gap-2 text-slate-700">
+                <li className="flex items-center gap-2 text-slate-700 justify-center lg:justify-start">
                   <Check className="w-5 h-5 text-emerald-500" />
                   Track client responses
                 </li>
@@ -676,7 +836,7 @@ export function LandingPage() {
             </div>
 
             {/* Pro Plan */}
-            <div className="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl border-2 border-indigo-200 p-8 relative">
+            <div className="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-xl sm:rounded-2xl border-2 border-indigo-200 p-5 sm:p-6 lg:p-8 relative">
               {/* Popular badge */}
               <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white text-sm font-bold px-4 py-1 rounded-full">
                 RECOMMENDED
