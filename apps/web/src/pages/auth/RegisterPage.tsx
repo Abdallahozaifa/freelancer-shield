@@ -7,9 +7,11 @@ import {
   Eye, 
   EyeOff, 
   ShieldCheck, 
+  Shield,
   Loader2, 
   Check, 
   ArrowRight,
+  ArrowLeft,
   LayoutDashboard,
   PieChart,
   Settings,
@@ -19,6 +21,9 @@ import {
   Lock,
   CheckCircle2,
   Crown,
+  Mail,
+  User,
+  Building2,
 } from 'lucide-react';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
@@ -119,7 +124,7 @@ export function RegisterPage() {
         upgrade();
       } else {
         // Normal signup flow - go to dashboard
-        navigate('/dashboard');
+      navigate('/dashboard');
       }
     } catch (err: any) {
       const message = getErrorMessage(err);
@@ -134,17 +139,279 @@ export function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen flex bg-white">
+    <div className="min-h-screen">
+      
+      {/* ============================================ */}
+      {/* MOBILE LAYOUT - Only visible below lg */}
+      {/* ============================================ */}
+      <div className="lg:hidden min-h-screen flex flex-col bg-white">
+        
+        {/* Top Section - Gradient - SMALLER for signup */}
+        <div className="relative h-[20vh] min-h-[140px] max-h-[160px] bg-gradient-to-br from-indigo-600 via-purple-600 to-indigo-700 overflow-visible">
+          
+          {/* Navigation Row - Back button + ScopeGuard Branding */}
+          <div className="absolute top-6 left-4 right-4 flex items-center justify-between z-10">
+            {/* Back button */}
+            <Link 
+              to="/" 
+              className="w-9 h-9 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-white/30 transition-colors"
+            >
+              <ArrowLeft className="w-4 h-4" />
+            </Link>
+            
+            {/* ScopeGuard Branding */}
+            <Link to="/" className="flex items-center gap-2">
+              <div className="w-8 h-8 bg-white/20 backdrop-blur-sm rounded-lg flex items-center justify-center">
+                <Shield className="w-4 h-4 text-white" />
+              </div>
+              <span className="font-bold text-white">ScopeGuard</span>
+            </Link>
+          </div>
+          
+          {/* Decorative orbs - Positioned safely */}
+          <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/4 pointer-events-none" />
+          <div className="absolute bottom-16 left-8 w-20 h-20 bg-purple-400/20 rounded-full blur-2xl pointer-events-none" />
+          
+          {/* Grid pattern */}
+          <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff08_1px,transparent_1px),linear-gradient(to_bottom,#ffffff08_1px,transparent_1px)] bg-[size:32px_32px]" />
+          
+          {/* Curved bottom edge - Overlapping to prevent line */}
+          <div className="absolute -bottom-px left-0 right-0">
+            <svg viewBox="0 0 1440 70" className="w-full h-[50px] fill-white block" preserveAspectRatio="none">
+              <path d="M0,35 C360,80 720,0 1080,50 C1260,70 1380,30 1440,35 L1440,70 L0,70 Z" />
+            </svg>
+          </div>
+          
+          {/* Floating icon at curve - SAFE POSITION */}
+          <div className="absolute bottom-0 right-8 translate-y-1/2 w-11 h-11 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-xl flex items-center justify-center shadow-xl shadow-indigo-500/30 rotate-12 z-20">
+            <Shield className="w-5 h-5 text-white -rotate-12" />
+          </div>
+        </div>
+        
+        {/* Form Section - Seamless connection */}
+        <div className="flex-1 bg-white px-5 pt-4 relative overflow-y-auto -mt-2">
+          
+          {/* Header */}
+          <div className="mb-4 pr-12">
+            <h1 className="text-xl font-bold text-slate-900 mb-0.5">
+              Create Account
+            </h1>
+            <p className="text-slate-500 text-xs">
+              Start managing your project scope
+            </p>
+          </div>
+          
+          {/* Form - Very tight spacing */}
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-2.5">
+            {error && (
+              <Alert type="error" className="animate-fade-in mb-2">
+                {error}
+              </Alert>
+            )}
+
+            {/* Show Pro plan indicator if coming from pricing */}
+            {planParam === 'pro' && (
+              <div className="mb-2 p-2 bg-indigo-50 border border-indigo-200 rounded-lg animate-fade-in">
+                <div className="flex items-center gap-1.5 text-indigo-900 mb-0.5">
+                  <Crown className="w-3.5 h-3.5 text-indigo-600" />
+                  <span className="font-medium text-xs">Pro plan signup</span>
+                </div>
+                <p className="text-[10px] text-indigo-700">
+                  Redirected to checkout after signup
+                </p>
+              </div>
+            )}
+
+            {/* Full Name */}
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <User className="w-4 h-4 text-slate-400" />
+              </div>
+              <Input
+                id="full_name"
+                type="text"
+                autoComplete="name"
+                placeholder="Full Name"
+                disabled={isSubmitting}
+                {...register('full_name')}
+                className={`pl-10 pr-4 py-2.5 bg-indigo-50/50 border border-indigo-100 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent focus:bg-white transition-all text-sm ${errors.full_name ? 'border-red-500 focus:ring-red-500' : ''}`}
+              />
+            </div>
+            {errors.full_name && (
+              <p className="text-sm text-red-600 -mt-1">{errors.full_name.message}</p>
+            )}
+
+            {/* Email */}
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <Mail className="w-4 h-4 text-slate-400" />
+              </div>
+              <Input
+                id="email"
+                type="email"
+                autoComplete="email"
+                placeholder="Email address"
+                disabled={isSubmitting}
+                {...register('email')}
+                className={`pl-10 pr-4 py-2.5 bg-indigo-50/50 border border-indigo-100 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent focus:bg-white transition-all text-sm ${errors.email ? 'border-red-500 focus:ring-red-500' : ''}`}
+              />
+            </div>
+            {errors.email && (
+              <p className="text-sm text-red-600 -mt-1">{errors.email.message}</p>
+            )}
+
+            {/* Business Name (Optional) */}
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <Building2 className="w-4 h-4 text-slate-400" />
+              </div>
+              <Input
+                id="business_name"
+                type="text"
+                autoComplete="organization"
+                placeholder="Business Name (Optional)"
+                disabled={isSubmitting}
+                {...register('business_name')}
+                className="pl-10 pr-4 py-2.5 bg-indigo-50/50 border border-indigo-100 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent focus:bg-white transition-all text-sm"
+              />
+            </div>
+
+            {/* Password */}
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <Lock className="w-4 h-4 text-slate-400" />
+              </div>
+              <Input
+                id="password"
+                type={showPassword ? 'text' : 'password'}
+                autoComplete="new-password"
+                placeholder="Password"
+                disabled={isSubmitting}
+                {...register('password')}
+                className={`pl-10 pr-10 py-2.5 bg-indigo-50/50 border border-indigo-100 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent focus:bg-white transition-all text-sm ${errors.password ? 'border-red-500 focus:ring-red-500' : ''}`}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute inset-y-0 right-0 pr-3 flex items-center"
+              >
+                {showPassword ? <EyeOff className="w-4 h-4 text-slate-400" /> : <Eye className="w-4 h-4 text-slate-400" />}
+              </button>
+            </div>
+            {errors.password && (
+              <p className="text-sm text-red-600 -mt-1">{errors.password.message}</p>
+            )}
+
+            {/* Password Requirements - Inline, compact */}
+            <div className="grid grid-cols-2 gap-x-3 gap-y-1 px-1">
+              {passwordRequirements.map((req) => {
+                const isMet = req.regex.test(password);
+                return (
+                  <div
+                    key={req.label}
+                    className={`flex items-center gap-1 text-[10px] ${isMet ? 'text-emerald-600' : 'text-slate-400'}`}
+                  >
+                    <div className={`w-3 h-3 rounded-full flex items-center justify-center shrink-0 ${isMet ? 'bg-emerald-500' : 'border border-slate-300'}`}>
+                      {isMet && <Check className="w-1.5 h-1.5 text-white" />}
+                    </div>
+                    {req.label}
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Confirm Password */}
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <Lock className="w-4 h-4 text-slate-400" />
+              </div>
+              <Input
+                id="confirmPassword"
+                type={showConfirmPassword ? 'text' : 'password'}
+                autoComplete="new-password"
+                placeholder="Confirm Password"
+                disabled={isSubmitting}
+                {...register('confirmPassword')}
+                className={`pl-10 pr-10 py-2.5 bg-indigo-50/50 border border-indigo-100 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent focus:bg-white transition-all text-sm ${errors.confirmPassword ? 'border-red-500 focus:ring-red-500' : ''}`}
+              />
+              <button
+                type="button"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                className="absolute inset-y-0 right-0 pr-3 flex items-center"
+              >
+                {showConfirmPassword ? <EyeOff className="w-4 h-4 text-slate-400" /> : <Eye className="w-4 h-4 text-slate-400" />}
+              </button>
+            </div>
+            {errors.confirmPassword && (
+              <p className="text-sm text-red-600 -mt-1">{errors.confirmPassword.message}</p>
+            )}
+
+            {/* Submit Button */}
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="w-full py-3 bg-gradient-to-r from-slate-800 to-slate-900 hover:from-slate-700 hover:to-slate-800 text-white font-semibold rounded-xl shadow-lg shadow-slate-900/20 transition-all mt-1 disabled:opacity-50 flex items-center justify-center gap-2 text-sm"
+            >
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  Creating account...
+                </>
+              ) : (
+                'Create Account'
+              )}
+            </button>
+          </form>
+
+          {/* Divider */}
+          <div className="relative my-3">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-slate-200" />
+            </div>
+            <div className="relative flex justify-center">
+              <span className="px-3 bg-white text-xs text-slate-400">Or sign up with</span>
+            </div>
+          </div>
+
+          {/* Social Login */}
+          <div className="flex justify-center gap-3">
+            <button className="w-11 h-11 bg-slate-50 border border-slate-200 rounded-xl flex items-center justify-center hover:bg-slate-100 transition-colors">
+              <svg className="w-5 h-5" viewBox="0 0 24 24">
+                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+              </svg>
+            </button>
+            <button className="w-12 h-12 bg-slate-50 border border-slate-200 rounded-xl flex items-center justify-center hover:bg-slate-100 transition-colors">
+              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
+              </svg>
+            </button>
+          </div>
+
+          {/* Sign In Link */}
+          <p className="mt-3 mb-3 text-center text-slate-600 text-xs">
+            Already have an account?{' '}
+            <Link to="/login" className="font-semibold text-indigo-600">Sign in</Link>
+          </p>
+        </div>
+      </div>
+
+      {/* ============================================ */}
+      {/* DESKTOP LAYOUT - Only visible at lg and above */}
+      {/* ============================================ */}
+      <div className="hidden lg:flex min-h-screen bg-white">
       
       {/* --- Left Panel: Dashboard Visual & Brand --- */}
-      <div className="hidden lg:flex lg:w-[50%] bg-slate-900 relative overflow-hidden flex-col justify-center p-12 text-white">
+      <div className="lg:w-[50%] bg-slate-900 relative overflow-hidden flex flex-col items-center justify-center p-12 text-white">
         
         {/* Background Gradients */}
         <div className="absolute inset-0 bg-gradient-to-br from-indigo-950 via-slate-900 to-slate-950 z-0" />
         <div className="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] bg-indigo-600/20 rounded-full blur-[120px]" />
         <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-purple-600/20 rounded-full blur-[100px]" />
 
-        {/* Dashboard Mockup Container */}
+        {/* Dashboard Mockup Container - Centered */}
         <div className="relative z-10 w-full max-w-2xl mx-auto transform -rotate-2 hover:rotate-0 transition-transform duration-700 ease-out perspective-1000">
           <div className="bg-slate-900/80 backdrop-blur-xl rounded-xl border border-white/10 shadow-2xl overflow-hidden ring-1 ring-white/5">
             
@@ -230,48 +497,69 @@ export function RegisterPage() {
       </div>
 
       {/* --- Right Panel: Registration Form --- */}
-      <div className="flex-1 flex flex-col justify-center px-6 lg:px-24 bg-white overflow-y-auto py-10">
-        <div className="w-full max-w-md mx-auto space-y-8">
+      <div className="hidden lg:flex w-1/2 items-start justify-center relative overflow-y-auto pt-6 pb-6">
+        {/* Professional gradient background */}
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-white to-indigo-50/30" />
+        
+        {/* Soft decorative orbs */}
+        <div className="absolute top-16 right-16 w-72 h-72 bg-indigo-100/30 rounded-full filter blur-3xl pointer-events-none" />
+        <div className="absolute bottom-16 left-12 w-64 h-64 bg-purple-100/30 rounded-full filter blur-3xl pointer-events-none" />
+        
+        {/* Subtle top accent line */}
+        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-indigo-300/50 to-transparent" />
+        
+        {/* Scrollable form container */}
+        <div className="relative w-full max-w-lg mx-auto px-6 py-4 max-h-[85vh] overflow-y-auto scrollbar-hide">
           
-          {/* Mobile Logo */}
-          <div className="lg:hidden flex items-center gap-2 mb-8">
-            <div className="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center">
-              <ShieldCheck className="w-5 h-5 text-white" />
+          {/* Desktop Logo - Centered above form */}
+          <div className="flex justify-center mb-4">
+            <Link to="/" className="inline-flex items-center gap-2.5">
+              <div className="w-10 h-10 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-500/25">
+                <Shield className="w-5 h-5 text-white" />
             </div>
-            <span className="text-lg font-bold text-slate-900">ScopeGuard</span>
+              <span className="font-bold text-xl text-slate-900">ScopeGuard</span>
+            </Link>
           </div>
 
-          <div className="space-y-2">
-            <h1 className="text-3xl font-bold text-slate-900 tracking-tight">Create your account</h1>
-            <p className="text-slate-500">
-              Start managing your project scope effectively.
+          {/* Form Card - Enhanced styling with better definition */}
+          <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl shadow-slate-200/50 border border-slate-200/50 p-8">
+            {/* Desktop Header - Centered inside card */}
+            <div className="text-center mb-4">
+              <h1 className="text-2xl font-bold text-slate-900 mb-1 tracking-tight">Create your account</h1>
+              <p className="text-slate-500 text-sm">
+                Start managing your project scope effectively
             </p>
           </div>
 
-          {/* Show Pro plan indicator if coming from pricing */}
-          {planParam === 'pro' && (
-            <div className="mb-6 p-4 bg-indigo-50 border border-indigo-200 rounded-lg animate-fade-in">
-              <div className="flex items-center gap-2 text-indigo-900 mb-1">
-                <Crown className="w-5 h-5 text-indigo-600" />
-                <span className="font-medium">You're signing up for the Pro plan</span>
+            {/* Show Pro plan indicator if coming from pricing */}
+            {planParam === 'pro' && (
+              <div className="mb-4 p-3 bg-indigo-50 border border-indigo-200 rounded-lg animate-fade-in">
+                <div className="flex items-center gap-2 text-indigo-900 mb-1">
+                  <Crown className="w-4 h-4 text-indigo-600" />
+                  <span className="font-medium text-sm">You're signing up for the Pro plan</span>
+                </div>
+                <p className="text-xs text-indigo-700">
+                  After creating your account, you'll be redirected to complete your subscription.
+                </p>
               </div>
-              <p className="text-sm text-indigo-700">
-                After creating your account, you'll be redirected to complete your subscription.
-              </p>
-            </div>
-          )}
+            )}
 
           {error && (
-            <Alert type="error" className="animate-fade-in">
+              <Alert type="error" className="animate-fade-in mb-4">
               {error}
             </Alert>
           )}
 
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-            <div className="space-y-1.5">
-              <label htmlFor="full_name" className="block text-sm font-semibold text-slate-700">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            <div>
+              <label htmlFor="full_name" className="block text-sm font-medium text-slate-700 mb-1.5">
                 Full Name <span className="text-red-500">*</span>
               </label>
+              <div className="relative">
+                {/* Icon - Desktop only */}
+                <div className="hidden lg:flex absolute inset-y-0 left-0 pl-3.5 items-center pointer-events-none">
+                  <User className="h-5 w-5 text-slate-400" />
+                </div>
               <Input
                 id="full_name"
                 type="text"
@@ -279,17 +567,26 @@ export function RegisterPage() {
                 placeholder="e.g. Jane Smith"
                 disabled={isSubmitting}
                 {...register('full_name')}
-                className={`h-11 ${errors.full_name ? 'border-red-500 focus:ring-red-500' : ''}`}
+                  className={`lg:pl-11 px-4 py-3 h-12 bg-slate-50 border rounded-xl text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200 ${errors.full_name ? 'border-red-500 bg-red-50/50 focus:ring-red-500' : 'border-slate-200 focus:ring-indigo-500'}`}
               />
+              </div>
+              {/* Reserved error space */}
+              <div className="h-4 mt-1">
               {errors.full_name && (
-                <p className="text-sm text-red-600">{errors.full_name.message}</p>
+                  <p className="text-xs text-red-600">{errors.full_name.message}</p>
               )}
+              </div>
             </div>
 
-            <div className="space-y-1.5">
-              <label htmlFor="email" className="block text-sm font-semibold text-slate-700">
+            <div>
+              <label htmlFor="email" className="block text-sm font-medium text-slate-700 mb-1.5">
                 Work Email <span className="text-red-500">*</span>
               </label>
+              <div className="relative">
+                {/* Icon - Desktop only */}
+                <div className="hidden lg:flex absolute inset-y-0 left-0 pl-3.5 items-center pointer-events-none">
+                  <Mail className="h-5 w-5 text-slate-400" />
+                </div>
               <Input
                 id="email"
                 type="email"
@@ -297,17 +594,26 @@ export function RegisterPage() {
                 placeholder="name@company.com"
                 disabled={isSubmitting}
                 {...register('email')}
-                className={`h-11 ${errors.email ? 'border-red-500 focus:ring-red-500' : ''}`}
+                  className={`lg:pl-11 px-4 py-3 h-12 bg-slate-50 border rounded-xl text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200 ${errors.email ? 'border-red-500 bg-red-50/50 focus:ring-red-500' : 'border-slate-200 focus:ring-indigo-500'}`}
               />
+              </div>
+              {/* Reserved error space */}
+              <div className="h-4 mt-1">
               {errors.email && (
-                <p className="text-sm text-red-600">{errors.email.message}</p>
+                  <p className="text-xs text-red-600">{errors.email.message}</p>
               )}
+              </div>
             </div>
 
             <div className="space-y-1.5">
-              <label htmlFor="business_name" className="block text-sm font-semibold text-slate-700">
+              <label htmlFor="business_name" className="block text-sm font-medium text-slate-700 mb-1">
                 Business Name <span className="text-slate-400 font-normal">(Optional)</span>
               </label>
+              <div className="relative">
+                {/* Icon - Desktop only */}
+                <div className="hidden lg:flex absolute inset-y-0 left-0 pl-3.5 items-center pointer-events-none">
+                  <Building2 className="h-5 w-5 text-slate-400" />
+                </div>
               <Input
                 id="business_name"
                 type="text"
@@ -315,16 +621,20 @@ export function RegisterPage() {
                 placeholder="e.g. Acme Design Studio"
                 disabled={isSubmitting}
                 {...register('business_name')}
-                className="h-11"
+                  className="lg:pl-11 px-4 py-3 h-12 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200"
               />
+              </div>
             </div>
 
-            <div className="space-y-4">
-              <div className="space-y-1.5">
-                <label htmlFor="password" className="block text-sm font-semibold text-slate-700">
+            <div>
+              <label htmlFor="password" className="block text-sm font-medium text-slate-700 mb-1.5">
                   Password <span className="text-red-500">*</span>
                 </label>
                 <div className="relative">
+                {/* Icon - Desktop only */}
+                <div className="hidden lg:flex absolute inset-y-0 left-0 pl-3.5 items-center pointer-events-none">
+                  <Lock className="h-5 w-5 text-slate-400" />
+                </div>
                   <Input
                     id="password"
                     type={showPassword ? 'text' : 'password'}
@@ -332,46 +642,56 @@ export function RegisterPage() {
                     placeholder="Create a strong password"
                     disabled={isSubmitting}
                     {...register('password')}
-                    className={`h-11 pr-11 ${errors.password ? 'border-red-500 focus:ring-red-500' : ''}`}
+                  className={`lg:pl-11 px-4 pr-12 py-3 h-12 bg-slate-50 border rounded-xl text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200 ${errors.password ? 'border-red-500 bg-red-50/50 focus:ring-red-500' : 'border-slate-200 focus:ring-indigo-500'}`}
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-0 top-0 h-full px-3 text-slate-400 hover:text-slate-600 transition-colors focus:outline-none"
+                  className="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-slate-600 transition-colors focus:outline-none"
                     tabIndex={-1}
                   >
-                    {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                  {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                   </button>
                 </div>
+              {/* Reserved error space */}
+              <div className="h-4 mt-1">
+                {errors.password && (
+                  <p className="text-xs text-red-600">{errors.password.message}</p>
+                )}
               </div>
 
-              {/* Password Strength Indicators */}
-              <div className="grid grid-cols-2 gap-2 bg-slate-50 p-3 rounded-lg border border-slate-100">
+              {/* Password Strength Indicators - Always visible */}
+              <div className="mt-2.5 grid grid-cols-2 gap-x-4 gap-y-1.5">
                 {passwordRequirements.map((req) => {
                   const isMet = req.regex.test(password);
                   return (
                     <div
                       key={req.label}
-                      className={`flex items-center gap-2 text-xs font-medium transition-colors ${
+                      className={`flex items-center gap-1.5 text-xs transition-colors ${
                         isMet ? 'text-emerald-600' : 'text-slate-400'
                       }`}
                     >
-                      <div className={`w-4 h-4 rounded-full flex items-center justify-center border ${
-                        isMet ? 'bg-emerald-100 border-emerald-200' : 'bg-white border-slate-200'
+                      <div className={`w-3.5 h-3.5 rounded-full flex items-center justify-center shrink-0 ${
+                        isMet ? 'bg-emerald-500' : 'border border-slate-300'
                       }`}>
-                        <Check className={`w-2.5 h-2.5 ${isMet ? 'opacity-100' : 'opacity-0'}`} />
+                        {isMet && <Check className="w-2 h-2 text-white" />}
                       </div>
                       {req.label}
                     </div>
                   );
                 })}
               </div>
+              </div>
 
-              <div className="space-y-1.5">
-                <label htmlFor="confirmPassword" className="block text-sm font-semibold text-slate-700">
+            <div>
+              <label htmlFor="confirmPassword" className="block text-sm font-medium text-slate-700 mb-1.5">
                   Confirm Password <span className="text-red-500">*</span>
                 </label>
                 <div className="relative">
+                {/* Icon - Desktop only */}
+                <div className="hidden lg:flex absolute inset-y-0 left-0 pl-3.5 items-center pointer-events-none">
+                  <Lock className="h-5 w-5 text-slate-400" />
+                </div>
                   <Input
                     id="confirmPassword"
                     type={showConfirmPassword ? 'text' : 'password'}
@@ -379,19 +699,21 @@ export function RegisterPage() {
                     placeholder="Confirm your password"
                     disabled={isSubmitting}
                     {...register('confirmPassword')}
-                    className={`h-11 pr-11 ${errors.confirmPassword ? 'border-red-500 focus:ring-red-500' : ''}`}
+                  className={`lg:pl-11 px-4 pr-12 py-3 h-12 bg-slate-50 border rounded-xl text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200 ${errors.confirmPassword ? 'border-red-500 bg-red-50/50 focus:ring-red-500' : 'border-slate-200 focus:ring-indigo-500'}`}
                   />
                   <button
                     type="button"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    className="absolute right-0 top-0 h-full px-3 text-slate-400 hover:text-slate-600 transition-colors focus:outline-none"
+                  className="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-slate-600 transition-colors focus:outline-none"
                     tabIndex={-1}
                   >
-                    {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                  {showConfirmPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                   </button>
                 </div>
+              {/* Reserved error space */}
+              <div className="h-4 mt-1">
                 {errors.confirmPassword && (
-                  <p className="text-sm text-red-600">{errors.confirmPassword.message}</p>
+                  <p className="text-xs text-red-600">{errors.confirmPassword.message}</p>
                 )}
               </div>
             </div>
@@ -399,7 +721,7 @@ export function RegisterPage() {
             <Button
               type="submit"
               disabled={isSubmitting}
-              className="w-full h-11 text-base shadow-lg shadow-indigo-500/20 mt-4"
+                className="w-full h-12 text-base bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-semibold rounded-xl shadow-lg shadow-indigo-500/30 hover:shadow-indigo-500/40 transition-all duration-200 mt-3"
             >
               {isSubmitting ? (
                 <>
@@ -409,33 +731,73 @@ export function RegisterPage() {
               ) : (
                 <>
                   Get Started
-                  <ArrowRight className="w-4 h-4 ml-2" />
+                    <ArrowRight className="w-5 h-5 ml-2" />
                 </>
               )}
             </Button>
           </form>
 
-          <div className="pt-6 border-t border-slate-100 text-center">
+            {/* Social Signup Options - Desktop only */}
+            <div className="mt-4">
+              <div className="relative mb-4">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-slate-200" />
+                </div>
+                <div className="relative flex justify-center text-sm">
+                  <span className="px-4 bg-white/80 backdrop-blur-sm text-slate-500">or sign up with</span>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <button
+                  type="button"
+                  className="flex items-center justify-center gap-2 px-4 py-2.5 border border-slate-300 rounded-xl text-slate-700 font-medium hover:bg-slate-50 transition-colors"
+                >
+                  <svg className="w-5 h-5" viewBox="0 0 24 24">
+                    <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                    <path fill="currentColor" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                    <path fill="currentColor" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                    <path fill="currentColor" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                  </svg>
+                  <span className="text-sm">Google</span>
+                </button>
+                <button
+                  type="button"
+                  className="flex items-center justify-center gap-2 px-4 py-2.5 border border-slate-300 rounded-xl text-slate-700 font-medium hover:bg-slate-50 transition-colors"
+                >
+                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                  </svg>
+                  <span className="text-sm">GitHub</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Sign In Link - Inside card */}
+            <div className="pt-4 border-t border-slate-100 text-center mt-4">
             <p className="text-sm text-slate-600">
               Already have an account?{' '}
               <Link 
                 to="/login" 
-                className="font-semibold text-indigo-600 hover:text-indigo-700 hover:underline"
+                  className="font-semibold text-indigo-600 hover:text-indigo-500 transition-colors"
               >
                 Sign in
               </Link>
             </p>
+            </div>
           </div>
 
-          <div className="flex items-center justify-center gap-4 text-xs text-slate-400">
-             <div className="flex items-center gap-1">
+          {/* Security Badges - Centered below card */}
+          <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-xs text-slate-400 mt-4 pb-4 px-4">
+            <span className="flex items-center gap-1">
                <Lock className="w-3 h-3" />
                Secure Encryption
+            </span>
+            <span className="hidden sm:inline">•</span>
+            <Link to="/privacy" className="hover:text-slate-300 lg:hover:text-slate-600 transition-colors">Privacy Policy</Link>
+            <span className="hidden sm:inline">•</span>
+            <Link to="/terms" className="hover:text-slate-300 lg:hover:text-slate-600 transition-colors">Terms of Service</Link>
              </div>
-             <span>•</span>
-             <Link to="/privacy" className="hover:text-slate-600">Privacy Policy</Link>
-             <span>•</span>
-             <Link to="/terms" className="hover:text-slate-600">Terms of Service</Link>
           </div>
         </div>
       </div>

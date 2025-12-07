@@ -1070,17 +1070,24 @@ export function LandingPage() {
         </div>
       </section>
 
-      {/* 5. Pricing Section */}
+      {/* 5. Pricing Section - Enhanced */}
       <section id="pricing" className="py-20 relative overflow-hidden">
-        {/* Background */}
-        <div className="absolute inset-0 bg-gradient-to-b from-slate-50 to-white" />
-        
-        {/* Decorative */}
-        <div className="absolute top-10 left-1/4 w-64 h-64 bg-indigo-100 rounded-full filter blur-3xl opacity-40" />
-        <div className="absolute bottom-10 right-1/4 w-64 h-64 bg-purple-100 rounded-full filter blur-3xl opacity-40" />
+        {/* Background Layers */}
+        <div className="absolute inset-0">
+          {/* Base gradient */}
+          <div className="absolute inset-0 bg-gradient-to-b from-slate-50 via-white to-slate-50" />
+          
+          {/* Decorative gradient orbs */}
+          <div className="absolute top-0 left-1/4 w-96 h-96 bg-indigo-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30" />
+          <div className="absolute top-0 right-1/4 w-96 h-96 bg-purple-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30" />
+          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-96 h-96 bg-pink-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30" />
+          
+          {/* Subtle grid pattern */}
+          <div className="absolute inset-0 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:32px_32px]" />
+        </div>
         
         <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
+          <div className="text-center mb-12 sm:mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
               Simple, Transparent Pricing
             </h2>
@@ -1089,9 +1096,9 @@ export function LandingPage() {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            {/* Free Plan */}
-            <div className="bg-white rounded-2xl border border-slate-200 p-8 hover:border-slate-300 transition-colors">
+          <div className="grid md:grid-cols-2 gap-6 sm:gap-8 max-w-4xl mx-auto">
+            {/* Free Plan Card */}
+            <div className="relative bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-lg shadow-slate-200/50 hover:shadow-xl hover:shadow-slate-200/50 transition-shadow duration-300">
               <h3 className="text-xl font-bold text-slate-900 mb-2">Free</h3>
               <p className="text-slate-500 mb-6">For freelancers just starting out</p>
 
@@ -1102,167 +1109,204 @@ export function LandingPage() {
 
               <Button 
                 variant="outline" 
-                className="w-full mb-8"
-                onClick={() => navigate('/register')}
+                className="w-full mb-8 border-slate-300 hover:bg-slate-50"
+                onClick={handleFreePlanClick}
               >
                 Get Started Free
               </Button>
 
               <ul className="space-y-4">
                 <li className="flex items-center gap-3 text-slate-600">
-                  <Check className="w-5 h-5 text-slate-400" />
+                  <Check className="w-5 h-5 text-slate-400 shrink-0" />
                   Up to 3 active projects
-                  </li>
+                </li>
                 <li className="flex items-center gap-3 text-slate-600">
-                  <Check className="w-5 h-5 text-slate-400" />
+                  <Check className="w-5 h-5 text-slate-400 shrink-0" />
                   Up to 2 clients
                 </li>
                 <li className="flex items-center gap-3 text-slate-600">
-                  <Check className="w-5 h-5 text-slate-400" />
+                  <Check className="w-5 h-5 text-slate-400 shrink-0" />
                   Basic scope tracking
                 </li>
                 <li className="flex items-center gap-3 text-slate-600">
-                  <Check className="w-5 h-5 text-slate-400" />
+                  <Check className="w-5 h-5 text-slate-400 shrink-0" />
                   Request logging
                 </li>
                 <li className="flex items-center gap-3 text-slate-600">
-                  <Check className="w-5 h-5 text-slate-400" />
+                  <Check className="w-5 h-5 text-slate-400 shrink-0" />
                   Email support
                 </li>
               </ul>
             </div>
 
-            {/* Pro Plan */}
-            <div className="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-xl sm:rounded-2xl border-2 border-indigo-200 p-5 sm:p-6 lg:p-8 relative">
-              {/* Popular badge */}
-              <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white text-sm font-bold px-4 py-1 rounded-full">
-                RECOMMENDED
-              </div>
+            {/* Pro Plan Card - Enhanced with glow */}
+            <div className="relative">
+              {/* Glow effect behind card */}
+              <div className="absolute -inset-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-2xl blur-lg opacity-25" />
+              
+              {/* Card */}
+              <div className="relative bg-gradient-to-br from-indigo-50 via-white to-purple-50 rounded-2xl border-2 border-indigo-200 p-6 sm:p-8 shadow-xl">
+                {/* Recommended badge */}
+                <div className="absolute -top-4 left-1/2 -translate-x-1/2">
+                  <span className="px-4 py-1.5 bg-gradient-to-r from-indigo-600 to-purple-600 text-white text-sm font-bold rounded-full shadow-lg">
+                    RECOMMENDED
+                  </span>
+                </div>
 
-              <h3 className="text-xl font-bold text-indigo-900 mb-2">Pro</h3>
-              <p className="text-indigo-600 mb-6">For growing freelancers</p>
+                <h3 className="text-xl font-bold text-indigo-900 mb-2 mt-2">Pro</h3>
+                <p className="text-indigo-600 mb-6">For growing freelancers</p>
 
-              <div className="mb-2">
-                <span className="text-lg text-slate-400 line-through mr-2">$39</span>
-                <span className="text-4xl font-bold text-indigo-900">$29</span>
-                <span className="text-slate-500">/month</span>
-              </div>
-              <p className="text-emerald-600 text-sm font-medium mb-6">
-                Save $10/month
-              </p>
+                <div className="mb-2">
+                  <span className="text-lg text-slate-400 line-through mr-2">$39</span>
+                  <span className="text-4xl font-bold text-indigo-900">$29</span>
+                  <span className="text-slate-500">/month</span>
+                </div>
+                <p className="text-emerald-600 text-sm font-semibold mb-6">Save $10/month</p>
 
-              <Button 
-                className="w-full mb-8 bg-indigo-600 hover:bg-indigo-700"
-                onClick={handleProPlanClick}
-                disabled={isUpgrading || authLoading}
-              >
-                {isUpgrading ? (
-                  <>
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    Loading...
-                  </>
-                ) : (
-                  'Get Started'
-                )}
+                <Button 
+                  className="w-full mb-8 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 shadow-lg shadow-indigo-500/25"
+                  onClick={handleProPlanClick}
+                  disabled={isUpgrading || authLoading}
+                >
+                  {isUpgrading ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      Loading...
+                    </>
+                  ) : (
+                    'Get Started'
+                  )}
                 </Button>
 
-              <ul className="space-y-4">
-                <li className="flex items-center gap-3 text-slate-700 font-medium">
-                  <Check className="w-5 h-5 text-indigo-600" />
-                  Unlimited projects
+                <ul className="space-y-4">
+                  <li className="flex items-center gap-3 text-slate-700 font-medium">
+                    <div className="w-5 h-5 rounded-full bg-indigo-100 flex items-center justify-center shrink-0">
+                      <Check className="w-3 h-3 text-indigo-600" />
+                    </div>
+                    Unlimited projects
                   </li>
-                <li className="flex items-center gap-3 text-slate-700 font-medium">
-                  <Check className="w-5 h-5 text-indigo-600" />
-                  Unlimited clients
-                </li>
-                <li className="flex items-center gap-3 text-slate-700 font-medium">
-                  <Check className="w-5 h-5 text-indigo-600" />
-                  Smart scope creep detection
-                </li>
-                <li className="flex items-center gap-3 text-slate-700 font-medium">
-                  <Check className="w-5 h-5 text-indigo-600" />
-                  One-click proposal generator
-                </li>
-                <li className="flex items-center gap-3 text-slate-700 font-medium">
-                  <Check className="w-5 h-5 text-indigo-600" />
-                  Advanced analytics
-                </li>
-                <li className="flex items-center gap-3 text-slate-700 font-medium">
-                  <Check className="w-5 h-5 text-indigo-600" />
-                  Priority support
-                </li>
-              </ul>
+                  <li className="flex items-center gap-3 text-slate-700 font-medium">
+                    <div className="w-5 h-5 rounded-full bg-indigo-100 flex items-center justify-center shrink-0">
+                      <Check className="w-3 h-3 text-indigo-600" />
+                    </div>
+                    Unlimited clients
+                  </li>
+                  <li className="flex items-center gap-3 text-slate-700 font-medium">
+                    <div className="w-5 h-5 rounded-full bg-indigo-100 flex items-center justify-center shrink-0">
+                      <Check className="w-3 h-3 text-indigo-600" />
+                    </div>
+                    Smart scope creep detection
+                  </li>
+                  <li className="flex items-center gap-3 text-slate-700 font-medium">
+                    <div className="w-5 h-5 rounded-full bg-indigo-100 flex items-center justify-center shrink-0">
+                      <Check className="w-3 h-3 text-indigo-600" />
+                    </div>
+                    One-click proposal generator
+                  </li>
+                  <li className="flex items-center gap-3 text-slate-700 font-medium">
+                    <div className="w-5 h-5 rounded-full bg-indigo-100 flex items-center justify-center shrink-0">
+                      <Check className="w-3 h-3 text-indigo-600" />
+                    </div>
+                    Advanced analytics
+                  </li>
+                  <li className="flex items-center gap-3 text-slate-700 font-medium">
+                    <div className="w-5 h-5 rounded-full bg-indigo-100 flex items-center justify-center shrink-0">
+                      <Check className="w-3 h-3 text-indigo-600" />
+                    </div>
+                    Priority support
+                  </li>
+                </ul>
+              </div>
             </div>
           </div>
 
-          {/* Money-back guarantee */}
-          <p className="text-center text-slate-500 mt-8">
-            <ShieldCheck className="w-5 h-5 inline mr-2" />
-            14-day money-back guarantee. No questions asked.
-          </p>
+          {/* Money-back guarantee - Enhanced */}
+          <div className="mt-12 text-center">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-white rounded-full border border-slate-200 shadow-sm">
+              <ShieldCheck className="w-5 h-5 text-emerald-500" />
+              <span className="text-slate-600">14-day money-back guarantee. No questions asked.</span>
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* 5. FAQ Section */}
-      <section id="faq" className="py-20 bg-gradient-to-b from-white via-slate-50 to-white">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
+      {/* 5. FAQ Section - Enhanced */}
+      <section id="faq" className="py-20 relative overflow-hidden">
+        {/* Background Layers */}
+        <div className="absolute inset-0">
+          {/* Gradient background */}
+          <div className="absolute inset-0 bg-gradient-to-b from-white via-slate-50 to-slate-100" />
+          
+          {/* Decorative elements */}
+          <div className="absolute top-1/4 left-0 w-72 h-72 bg-indigo-100 rounded-full mix-blend-multiply filter blur-3xl opacity-30" />
+          <div className="absolute bottom-1/4 right-0 w-72 h-72 bg-purple-100 rounded-full mix-blend-multiply filter blur-3xl opacity-30" />
+          
+          {/* Subtle pattern */}
+          <div className="absolute inset-0 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:24px_24px]" />
+        </div>
+        
+        <div className="relative max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12 sm:mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
               Frequently Asked Questions
-          </h2>
+            </h2>
+            <p className="text-lg text-slate-600">
+              Everything you need to know about ScopeGuard
+            </p>
           </div>
 
+          {/* FAQ Items - Enhanced styling */}
           <div className="space-y-4">
-            <details className="group bg-white rounded-xl border border-slate-200 overflow-hidden">
-              <summary className="flex items-center justify-between p-6 cursor-pointer font-medium text-slate-900 hover:bg-slate-50">
+            <details className="group bg-white rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow duration-200 overflow-hidden">
+              <summary className="flex items-center justify-between p-5 sm:p-6 cursor-pointer font-semibold text-slate-900 hover:text-indigo-600 transition-colors">
                 What is scope creep?
-                <ChevronDown className="w-5 h-5 text-slate-400 group-open:rotate-180 transition-transform" />
+                <ChevronDown className="w-5 h-5 text-slate-400 group-open:rotate-180 transition-transform duration-200 shrink-0" />
               </summary>
-              <div className="px-6 pb-6 text-slate-600">
+              <div className="px-5 sm:px-6 pb-5 sm:pb-6 text-slate-600 border-t border-slate-100 pt-4">
                 Scope creep happens when clients request work beyond the original project agreement. 
                 Small "quick changes" add up, and you end up doing extra work without additional pay.
               </div>
             </details>
 
-            <details className="group bg-white rounded-xl border border-slate-200 overflow-hidden">
-              <summary className="flex items-center justify-between p-6 cursor-pointer font-medium text-slate-900 hover:bg-slate-50">
+            <details className="group bg-white rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow duration-200 overflow-hidden">
+              <summary className="flex items-center justify-between p-5 sm:p-6 cursor-pointer font-semibold text-slate-900 hover:text-indigo-600 transition-colors">
                 Is there really a free plan?
-                <ChevronDown className="w-5 h-5 text-slate-400 group-open:rotate-180 transition-transform" />
+                <ChevronDown className="w-5 h-5 text-slate-400 group-open:rotate-180 transition-transform duration-200 shrink-0" />
               </summary>
-              <div className="px-6 pb-6 text-slate-600">
+              <div className="px-5 sm:px-6 pb-5 sm:pb-6 text-slate-600 border-t border-slate-100 pt-4">
                 Yes! The free plan is free forever with no credit card required. 
                 It includes up to 3 projects and 2 clients. Upgrade to Pro anytime for unlimited access.
               </div>
             </details>
 
-            <details className="group bg-white rounded-xl border border-slate-200 overflow-hidden">
-              <summary className="flex items-center justify-between p-6 cursor-pointer font-medium text-slate-900 hover:bg-slate-50">
+            <details className="group bg-white rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow duration-200 overflow-hidden">
+              <summary className="flex items-center justify-between p-5 sm:p-6 cursor-pointer font-semibold text-slate-900 hover:text-indigo-600 transition-colors">
                 How does the proposal generator work?
-                <ChevronDown className="w-5 h-5 text-slate-400 group-open:rotate-180 transition-transform" />
+                <ChevronDown className="w-5 h-5 text-slate-400 group-open:rotate-180 transition-transform duration-200 shrink-0" />
               </summary>
-              <div className="px-6 pb-6 text-slate-600">
+              <div className="px-5 sm:px-6 pb-5 sm:pb-6 text-slate-600 border-t border-slate-100 pt-4">
                 When you identify an out-of-scope request, click "Generate Proposal" and we'll create 
                 a professional change order document with your pricing that you can send directly to your client.
               </div>
             </details>
 
-            <details className="group bg-white rounded-xl border border-slate-200 overflow-hidden">
-              <summary className="flex items-center justify-between p-6 cursor-pointer font-medium text-slate-900 hover:bg-slate-50">
+            <details className="group bg-white rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow duration-200 overflow-hidden">
+              <summary className="flex items-center justify-between p-5 sm:p-6 cursor-pointer font-semibold text-slate-900 hover:text-indigo-600 transition-colors">
                 Can I cancel anytime?
-                <ChevronDown className="w-5 h-5 text-slate-400 group-open:rotate-180 transition-transform" />
+                <ChevronDown className="w-5 h-5 text-slate-400 group-open:rotate-180 transition-transform duration-200 shrink-0" />
               </summary>
-              <div className="px-6 pb-6 text-slate-600">
+              <div className="px-5 sm:px-6 pb-5 sm:pb-6 text-slate-600 border-t border-slate-100 pt-4">
                 Absolutely. No contracts, no commitments. Cancel with one click anytime, 
                 and you'll keep access until the end of your billing period.
               </div>
             </details>
 
-            <details className="group bg-white rounded-xl border border-slate-200 overflow-hidden">
-              <summary className="flex items-center justify-between p-6 cursor-pointer font-medium text-slate-900 hover:bg-slate-50">
+            <details className="group bg-white rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow duration-200 overflow-hidden">
+              <summary className="flex items-center justify-between p-5 sm:p-6 cursor-pointer font-semibold text-slate-900 hover:text-indigo-600 transition-colors">
                 What payment methods do you accept?
-                <ChevronDown className="w-5 h-5 text-slate-400 group-open:rotate-180 transition-transform" />
+                <ChevronDown className="w-5 h-5 text-slate-400 group-open:rotate-180 transition-transform duration-200 shrink-0" />
               </summary>
-              <div className="px-6 pb-6 text-slate-600">
+              <div className="px-5 sm:px-6 pb-5 sm:pb-6 text-slate-600 border-t border-slate-100 pt-4">
                 We accept all major credit cards through Stripe. Your payment information is securely 
                 processed and we never store your card details.
               </div>
