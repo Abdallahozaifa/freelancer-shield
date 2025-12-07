@@ -16,7 +16,7 @@ import {
   PieChart
 } from 'lucide-react';
 import { useQueryClient } from '@tanstack/react-query';
-import { Card, Button, Tabs, Dropdown, useToast } from '../../components/ui';
+import { Card, Button, Dropdown, useToast } from '../../components/ui';
 import { ConfirmDialog } from '../../components/ui/ConfirmDialog';
 import { useProject, useDeleteProject, projectKeys } from '../../hooks/useProjects';
 import { useScopeProgress } from '../../hooks/useScope';
@@ -113,77 +113,108 @@ export const ProjectDetailPage: React.FC = () => {
   }
 
   return (
-    <div className="max-w-7xl mx-auto space-y-8 animate-fade-in pb-12">
+    <div className="max-w-7xl mx-auto space-y-6 sm:space-y-8 animate-fade-in pb-8 sm:pb-12 px-4 sm:px-0">
       {/* Navigation */}
-      <div>
+      <div className="mb-4 sm:mb-6">
         <Link
           to="/projects"
           className="group inline-flex items-center text-sm font-medium text-slate-500 hover:text-indigo-600 transition-colors"
         >
-          <ArrowLeft className="w-4 h-4 mr-1 transition-transform group-hover:-translate-x-1" />
+          <ArrowLeft className="h-4 w-4 mr-1 transition-transform group-hover:-translate-x-1" />
           Back to Projects
         </Link>
       </div>
 
       {/* Hero Header */}
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 md:p-8">
-        <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-3 mb-3">
-              <ProjectStatusBadge status={project.status} />
-              <span className="text-sm text-slate-400">•</span>
-              <span className="text-sm font-medium text-slate-500 flex items-center gap-1.5">
-                <Briefcase className="w-3.5 h-3.5" />
-                {project.client_name}
-              </span>
+      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 sm:p-6 lg:p-8">
+        <div className="flex flex-col gap-4 sm:gap-6">
+          {/* Top: Project Info */}
+          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+            <div className="flex items-start gap-3 sm:gap-4">
+              {/* Icon - Smaller on mobile */}
+              <div className="w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 rounded-xl sm:rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white shadow-lg shrink-0">
+                <Briefcase className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8" />
+              </div>
+              
+              {/* Info */}
+              <div className="flex-1 min-w-0">
+                <div className="flex flex-wrap items-center gap-2 mb-1">
+                  <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-slate-900 truncate">
+                    {project.name}
+                  </h1>
+                  <ProjectStatusBadge status={project.status} />
+                </div>
+                
+                <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-xs sm:text-sm text-slate-500">
+                  {project.client_name && (
+                    <span className="flex items-center gap-1 sm:gap-1.5">
+                      <Briefcase className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-400" />
+                      <span className="truncate max-w-[120px] sm:max-w-none">{project.client_name}</span>
+                    </span>
+                  )}
+                  <span className="flex items-center gap-1 sm:gap-1.5">
+                    <Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-400" />
+                    Created {formatRelative(project.created_at)}
+                  </span>
+                </div>
+              </div>
             </div>
-            
-            <h1 className="text-3xl md:text-4xl font-extrabold text-slate-900 mb-3 tracking-tight">
-              {project.name}
-            </h1>
-            
-            {project.description && (
-              <p className="text-slate-600 text-lg leading-relaxed max-w-3xl break-words">
-                {project.description}
-              </p>
-            )}
+
+            {/* Actions - Full width on mobile */}
+            <div className="flex items-center gap-2 sm:gap-3">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setIsEditModalOpen(true)}
+                leftIcon={<Edit className="h-4 w-4" />}
+                className="flex-1 sm:flex-none justify-center text-xs sm:text-sm"
+              >
+                Edit
+              </Button>
+              <Dropdown
+                trigger={
+                  <Button variant="outline" size="sm" className="px-3 sm:px-3">
+                    <MoreHorizontal className="w-4 h-4" />
+                  </Button>
+                }
+                items={[
+                  {
+                    label: 'Delete Project',
+                    icon: <Trash2 className="w-4 h-4" />,
+                    onClick: () => setIsDeleteDialogOpen(true),
+                    danger: true,
+                  },
+                ]}
+                align="right"
+              />
+            </div>
           </div>
 
-          <div className="flex items-center gap-3 shrink-0">
-            <Button
-              variant="outline"
-              onClick={() => setIsEditModalOpen(true)}
-              leftIcon={<Edit className="w-4 h-4" />}
-              className="bg-white"
-            >
-              Edit Details
-            </Button>
-            <Dropdown
-              trigger={
-                <Button variant="outline" className="px-3 bg-white">
-                  <MoreHorizontal className="w-4 h-4" />
-                </Button>
-              }
-              items={[
-                {
-                  label: 'Delete Project',
-                  icon: <Trash2 className="w-4 h-4" />,
-                  onClick: () => setIsDeleteDialogOpen(true),
-                  danger: true,
-                },
-              ]}
-              align="right"
-            />
-          </div>
-        </div>
+          {/* Description - if exists */}
+          {project.description && (
+            <p className="text-sm sm:text-base text-slate-600 leading-relaxed">
+              {project.description}
+            </p>
+          )}
 
-        {/* Tab Navigation */}
-        <div className="mt-8 border-b border-slate-100">
-          <Tabs
-            tabs={tabs}
-            activeTab={activeTab}
-            onChange={handleTabChange}
-          />
+          {/* Tab Navigation - Scrollable on mobile */}
+          <div className="mt-4 sm:mt-8 border-b border-slate-100 -mx-4 sm:mx-0 px-4 sm:px-0">
+            <div className="flex gap-1 overflow-x-auto scrollbar-hide">
+              {tabs.map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => handleTabChange(tab.id)}
+                  className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2.5 sm:py-3 text-xs sm:text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${
+                    activeTab === tab.id
+                      ? 'border-indigo-500 text-indigo-600'
+                      : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'
+                  }`}
+                >
+                  <span>{tab.label}</span>
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
 
@@ -275,27 +306,27 @@ const OverviewTab: React.FC<OverviewTabProps> = ({ project }) => {
         </div>
       )}
 
-      {/* Metrics Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      {/* Metrics Grid - 2x2 on mobile, 3 columns on desktop */}
+      <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 lg:gap-6">
         {/* Budget Card */}
-        <Card className="p-6 border-slate-200 shadow-sm relative overflow-hidden group hover:border-slate-300 transition-colors">
-          <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
-            <DollarSign className="w-24 h-24" />
+        <Card className="p-3 sm:p-4 lg:p-6 border-slate-200 shadow-sm relative overflow-hidden group hover:border-slate-300 transition-colors">
+          <div className="absolute top-0 right-0 p-2 sm:p-4 opacity-5 group-hover:opacity-10 transition-opacity">
+            <DollarSign className="w-12 h-12 sm:w-24 sm:h-24" />
           </div>
           <div className="relative z-10">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
-                <DollarSign className="w-5 h-5" />
+            <div className="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-4">
+              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                <DollarSign className="w-4 h-4 sm:w-5 sm:h-5" />
               </div>
-              <span className="font-semibold text-slate-700">Budget</span>
+              <span className="font-semibold text-slate-700 text-xs sm:text-sm">Budget</span>
             </div>
-            <div className="mb-2">
-              <span className="text-3xl font-bold text-slate-900">
+            <div className="mb-1 sm:mb-2">
+              <span className="text-lg sm:text-2xl lg:text-3xl font-bold text-slate-900">
                 {project.budget ? formatCurrency(project.budget) : '—'}
               </span>
             </div>
             {project.hourly_rate && (
-              <div className="inline-flex items-center px-2 py-1 rounded-md bg-slate-100 text-xs font-medium text-slate-600">
+              <div className="inline-flex items-center px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-md bg-slate-100 text-xs font-medium text-slate-600">
                 {formatCurrency(project.hourly_rate)} / hr
               </div>
             )}
@@ -303,23 +334,23 @@ const OverviewTab: React.FC<OverviewTabProps> = ({ project }) => {
         </Card>
 
         {/* Hours Card */}
-        <Card className="p-6 border-slate-200 shadow-sm hover:border-slate-300 transition-colors">
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
-                <Clock className="w-5 h-5" />
+        <Card className="p-3 sm:p-4 lg:p-6 border-slate-200 shadow-sm hover:border-slate-300 transition-colors">
+          <div className="flex items-center justify-between mb-3 sm:mb-6">
+            <div className="flex items-center gap-2 sm:gap-3">
+              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
+                <Clock className="w-4 h-4 sm:w-5 sm:h-5" />
               </div>
-              <span className="font-semibold text-slate-700">Time Tracking</span>
+              <span className="font-semibold text-slate-700 text-xs sm:text-sm">Time</span>
             </div>
-            <span className="text-2xl font-bold text-slate-900">{hoursPercent}%</span>
+            <span className="text-lg sm:text-xl lg:text-2xl font-bold text-slate-900">{hoursPercent}%</span>
           </div>
           
-          <div className="space-y-3">
-            <div className="flex justify-between text-sm">
+          <div className="space-y-2 sm:space-y-3">
+            <div className="flex justify-between text-xs sm:text-sm">
               <span className="text-slate-500">Consumed</span>
               <span className="font-medium text-slate-900">{formatHours(completedHours)} hrs</span>
             </div>
-            <div className="h-2.5 bg-slate-100 rounded-full overflow-hidden">
+            <div className="h-2 sm:h-2.5 bg-slate-100 rounded-full overflow-hidden">
               <div 
                 className="h-full bg-blue-500 rounded-full transition-all duration-500"
                 style={{ width: `${hoursPercent}%` }}
@@ -327,96 +358,96 @@ const OverviewTab: React.FC<OverviewTabProps> = ({ project }) => {
             </div>
             <div className="flex justify-between text-xs text-slate-400">
               <span>0 hrs</span>
-              <span>{formatHours(scopedHours)} hrs total</span>
+              <span>{formatHours(scopedHours)} hrs</span>
             </div>
           </div>
         </Card>
 
         {/* Scope Progress Card */}
-        <Card className="p-6 border-slate-200 shadow-sm hover:border-slate-300 transition-colors">
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
-                <Target className="w-5 h-5" />
+        <Card className="p-3 sm:p-4 lg:p-6 border-slate-200 shadow-sm hover:border-slate-300 transition-colors col-span-2 lg:col-span-1">
+          <div className="flex items-center justify-between mb-3 sm:mb-6">
+            <div className="flex items-center gap-2 sm:gap-3">
+              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
+                <Target className="w-4 h-4 sm:w-5 sm:h-5" />
               </div>
-              <span className="font-semibold text-slate-700">Deliverables</span>
+              <span className="font-semibold text-slate-700 text-xs sm:text-sm">Progress</span>
             </div>
-            <span className="text-2xl font-bold text-slate-900">{scopeProgressPercent}%</span>
+            <span className="text-lg sm:text-xl lg:text-2xl font-bold text-slate-900">{scopeProgressPercent}%</span>
           </div>
 
-          <div className="space-y-3">
-            <div className="flex justify-between text-sm">
-              <span className="text-slate-500">Completed Items</span>
+          <div className="space-y-2 sm:space-y-3">
+            <div className="flex justify-between text-xs sm:text-sm">
+              <span className="text-slate-500">Completed</span>
               <span className="font-medium text-slate-900">
                 {project.completed_scope_count} / {project.scope_item_count}
               </span>
             </div>
-            <div className="h-2.5 bg-slate-100 rounded-full overflow-hidden">
+            <div className="h-2 sm:h-2.5 bg-slate-100 rounded-full overflow-hidden">
               <div 
                 className="h-full bg-indigo-500 rounded-full transition-all duration-500"
                 style={{ width: `${scopeProgressPercent}%` }}
               />
             </div>
             <div className="flex items-center gap-1.5 text-xs text-slate-400 mt-1">
-              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
-              <span>{project.scope_item_count - project.completed_scope_count} remaining items</span>
+              <CheckCircle2 className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-emerald-500" />
+              <span>{project.scope_item_count - project.completed_scope_count} remaining</span>
             </div>
           </div>
         </Card>
       </div>
 
       {/* Quick Actions Panel */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <Card className="lg:col-span-2 border-slate-200 shadow-sm p-6">
-          <div className="flex items-center gap-2 mb-6">
-            <PieChart className="w-5 h-5 text-slate-400" />
-            <h3 className="font-bold text-slate-900">Management Actions</h3>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
+        <Card className="lg:col-span-2 border-slate-200 shadow-sm p-4 sm:p-6">
+          <div className="flex items-center gap-2 mb-4 sm:mb-6">
+            <PieChart className="w-4 h-4 sm:w-5 sm:h-5 text-slate-400" />
+            <h3 className="font-bold text-slate-900 text-sm sm:text-base">Management Actions</h3>
           </div>
           
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
             <button
               onClick={() => navigate(`/projects/${project.id}?tab=scope`)}
-              className="flex items-start gap-4 p-4 rounded-xl border border-slate-200 hover:border-indigo-300 hover:bg-indigo-50/30 hover:shadow-md transition-all group text-left"
+              className="flex items-start gap-3 sm:gap-4 p-3 sm:p-4 rounded-xl border border-slate-200 hover:border-indigo-300 hover:bg-indigo-50/30 hover:shadow-md transition-all group text-left"
             >
-              <div className="w-10 h-10 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
-                <Plus className="w-5 h-5" />
+              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+                <Plus className="w-4 h-4 sm:w-5 sm:h-5" />
               </div>
               <div>
-                <h4 className="font-semibold text-slate-900 group-hover:text-indigo-700">Add Deliverable</h4>
-                <p className="text-sm text-slate-500 mt-1">Define new scope items or tasks for this project.</p>
+                <h4 className="font-semibold text-slate-900 group-hover:text-indigo-700 text-sm sm:text-base">Add Deliverable</h4>
+                <p className="text-xs sm:text-sm text-slate-500 mt-1">Define new scope items or tasks for this project.</p>
               </div>
             </button>
 
             <button
               onClick={() => navigate(`/projects/${project.id}?tab=proposals`)}
-              className="flex items-start gap-4 p-4 rounded-xl border border-slate-200 hover:border-emerald-300 hover:bg-emerald-50/30 hover:shadow-md transition-all group text-left"
+              className="flex items-start gap-3 sm:gap-4 p-3 sm:p-4 rounded-xl border border-slate-200 hover:border-emerald-300 hover:bg-emerald-50/30 hover:shadow-md transition-all group text-left"
             >
-              <div className="w-10 h-10 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
-                <FileText className="w-5 h-5" />
+              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+                <FileText className="w-4 h-4 sm:w-5 sm:h-5" />
               </div>
               <div>
-                <h4 className="font-semibold text-slate-900 group-hover:text-emerald-700">Generate Proposal</h4>
-                <p className="text-sm text-slate-500 mt-1">Create a professional proposal for new work.</p>
+                <h4 className="font-semibold text-slate-900 group-hover:text-emerald-700 text-sm sm:text-base">Generate Proposal</h4>
+                <p className="text-xs sm:text-sm text-slate-500 mt-1">Create a professional proposal for new work.</p>
               </div>
             </button>
           </div>
         </Card>
 
         {/* Meta Details Sidebar */}
-        <Card className="border-slate-200 shadow-sm p-6 bg-slate-50/50">
-           <h3 className="font-bold text-slate-900 mb-4 text-sm uppercase tracking-wide">Project Metadata</h3>
-           <div className="space-y-4">
+        <Card className="border-slate-200 shadow-sm p-4 sm:p-6 bg-slate-50/50">
+           <h3 className="font-bold text-slate-900 mb-3 sm:mb-4 text-xs sm:text-sm uppercase tracking-wide">Project Metadata</h3>
+           <div className="space-y-3 sm:space-y-4">
              <div>
                <p className="text-xs font-semibold text-slate-500 uppercase">Created</p>
-               <p className="text-sm font-medium text-slate-900 mt-1">{formatRelative(project.created_at)}</p>
+               <p className="text-xs sm:text-sm font-medium text-slate-900 mt-1">{formatRelative(project.created_at)}</p>
              </div>
              <div>
                <p className="text-xs font-semibold text-slate-500 uppercase">Last Updated</p>
-               <p className="text-sm font-medium text-slate-900 mt-1">{formatRelative(project.updated_at)}</p>
+               <p className="text-xs sm:text-sm font-medium text-slate-900 mt-1">{formatRelative(project.updated_at)}</p>
              </div>
              <div>
                <p className="text-xs font-semibold text-slate-500 uppercase">Client Contact</p>
-               <Link to={`/clients/${project.client_id}`} className="text-sm font-medium text-indigo-600 hover:underline mt-1 block">
+               <Link to={`/clients/${project.client_id}`} className="text-xs sm:text-sm font-medium text-indigo-600 hover:underline mt-1 block">
                  View Client Profile →
                </Link>
              </div>

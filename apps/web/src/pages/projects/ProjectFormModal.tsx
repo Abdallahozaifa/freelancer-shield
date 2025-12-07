@@ -128,11 +128,12 @@ export const ProjectFormModal: React.FC<ProjectFormModalProps> = ({
       onClose={onClose}
       title={isEditing ? 'Edit Project Details' : 'Create New Project'}
     >
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4 sm:gap-6">
         
         {/* --- Section 1: Core Details --- */}
-        <div className="space-y-5">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <div className="space-y-4 sm:space-y-5">
+          {/* Client & Status - Stack on mobile */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
             {/* Client Selection */}
             <div className="space-y-1.5">
               <label className="text-sm font-semibold text-slate-700 flex items-center gap-2">
@@ -188,21 +189,22 @@ export const ProjectFormModal: React.FC<ProjectFormModalProps> = ({
               {...register('description')}
               placeholder="Outline the main goals and deliverables..."
               rows={3}
-              className="resize-none"
+              className="resize-none text-sm sm:text-base"
             />
           </div>
         </div>
 
-        {/* --- Section 2: Financials & Scope (Grouped in a Card) --- */}
-        <div className="bg-slate-50 rounded-xl p-5 border border-slate-100 space-y-4">
+        {/* --- Section 2: Financials & Scope --- */}
+        <div className="bg-slate-50 rounded-xl p-4 sm:p-5 border border-slate-100 space-y-3 sm:space-y-4">
           <div className="flex items-center gap-2 pb-2 border-b border-slate-200/60">
             <Calculator className="w-4 h-4 text-indigo-500" />
-            <h3 className="text-sm font-bold text-slate-800 uppercase tracking-wide">
+            <h3 className="text-xs sm:text-sm font-bold text-slate-800 uppercase tracking-wide">
               Financials & Scope
             </h3>
           </div>
           
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          {/* Financial inputs - Stack on mobile, 3 columns on desktop */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
             {/* Total Budget */}
             <div className="space-y-1.5 relative">
               <label className="text-xs font-semibold text-slate-500 uppercase">
@@ -265,19 +267,19 @@ export const ProjectFormModal: React.FC<ProjectFormModalProps> = ({
           </div>
         </div>
 
-        {/* --- Footer --- */}
-        <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-100">
+        {/* --- Footer - Stack buttons on mobile --- */}
+        <div className="flex flex-col-reverse sm:flex-row items-center justify-end gap-2 sm:gap-3 pt-3 sm:pt-4 border-t border-slate-100">
           <Button 
             type="button" 
             variant="ghost" 
             onClick={onClose}
-            className="text-slate-500 hover:text-slate-800"
+            className="w-full sm:w-auto text-slate-500 hover:text-slate-800"
           >
             Cancel
           </Button>
           <Button
             type="submit"
-            className="px-6 shadow-lg shadow-indigo-500/20"
+            className="w-full sm:w-auto px-6 shadow-lg shadow-indigo-500/20"
             isLoading={isSubmitting || createProject.isPending || updateProject.isPending}
           >
             {isEditing ? 'Save Changes' : 'Create Project'}
