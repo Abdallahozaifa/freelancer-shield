@@ -69,6 +69,48 @@ CurrentUser = Annotated[User, Depends(get_current_user)]
 
 
 # =============================================================================
+# Authorization Helpers
+# =============================================================================
+
+def verify_ownership(resource, user_id: uuid.UUID, resource_name: str = "Resource") -> None:
+    """
+    Verify that a resource belongs to the specified user.
+    
+    Args:
+        resource: The resource object to verify (must have user_id attribute)
+        user_id: The user ID to verify against
+        resource_name: Name of the resource type for error messages
+        
+    Raises:
+        HTTPException: 404 if resource is None, 403 if ownership doesn't match
+    """
+    if resource is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"{resource_name} not found",
+        )
+    
+    # Check if resource has user_id attribute
+    if not hasattr(resource, 'user_id'):
+        # For resources accessed through projects (ScopeItem, ClientRequest, Proposal)
+        # we verify project ownership instead
+        if hasattr(resource, 'project_id') and hasattr(resource, 'project'):
+            if resource.project and resource.project.user_id != user_id:
+                raise HTTPException(
+                    status_code=status.HTTP_403_FORBIDDEN,
+                    detail=f"Not authorized to access this {resource_name.lower()}",
+                )
+            return
+    
+    # Direct user_id check
+    if resource.user_id != user_id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=f"Not authorized to access this {resource_name.lower()}",
+        )
+
+
+# =============================================================================
 # Billing / Subscription Dependencies
 # =============================================================================
 

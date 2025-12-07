@@ -25,7 +25,7 @@ export const DashboardPage: React.FC = () => {
   const { user } = useAuthStore();
   const { summary, alerts, project_health: projects, isLoading, error, refresh } = useDashboard();
   const { isPro, isLoading: isSubscriptionLoading } = useProStatus();
-  const { projectsRemaining, clientsRemaining } = useFeatureGate();
+  const { projectsRemaining, clientsRemaining, canCreateProject, canCreateClient } = useFeatureGate();
 
   const getGreeting = () => {
     const hour = new Date().getHours();
@@ -447,33 +447,89 @@ export const DashboardPage: React.FC = () => {
             <h3 className="font-semibold mb-4 text-slate-100">Quick Actions</h3>
             <div className="space-y-3">
               <button
-                onClick={() => navigate('/projects/new')}
-                className="w-full flex items-center justify-between p-3 rounded-lg bg-slate-800 hover:bg-slate-700 transition-colors group border border-slate-700"
+                onClick={() => {
+                  if (!canCreateProject) {
+                    navigate('/settings/billing');
+                  } else {
+                    navigate('/projects/new');
+                  }
+                }}
+                className={`w-full flex items-center justify-between p-3 rounded-lg transition-colors group border ${
+                  canCreateProject
+                    ? 'bg-slate-800 hover:bg-slate-700 border-slate-700'
+                    : 'bg-slate-800/50 border-amber-500/30 opacity-75'
+                }`}
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-full bg-indigo-500/20 flex items-center justify-center text-indigo-400 group-hover:text-indigo-300">
-                    <Plus className="w-4 h-4" />
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                    canCreateProject
+                      ? 'bg-indigo-500/20 text-indigo-400 group-hover:text-indigo-300'
+                      : 'bg-amber-500/20 text-amber-400'
+                  }`}>
+                    {canCreateProject ? (
+                      <Plus className="w-4 h-4" />
+                    ) : (
+                      <Crown className="w-4 h-4" />
+                    )}
                   </div>
                   <div className="text-left">
-                    <p className="text-sm font-medium text-slate-200 group-hover:text-white">New Project</p>
+                    <p className={`text-sm font-medium ${
+                      canCreateProject
+                        ? 'text-slate-200 group-hover:text-white'
+                        : 'text-amber-200'
+                    }`}>
+                      {canCreateProject ? 'New Project' : 'Upgrade for More Projects'}
+                    </p>
                   </div>
                 </div>
-                <ArrowUpRight className="w-4 h-4 text-slate-500 group-hover:text-white transition-colors" />
+                <ArrowUpRight className={`w-4 h-4 transition-colors ${
+                  canCreateProject
+                    ? 'text-slate-500 group-hover:text-white'
+                    : 'text-amber-500/50'
+                }`} />
               </button>
 
               <button
-                onClick={() => navigate('/clients')}
-                className="w-full flex items-center justify-between p-3 rounded-lg bg-slate-800 hover:bg-slate-700 transition-colors group border border-slate-700"
+                onClick={() => {
+                  if (!canCreateClient) {
+                    navigate('/settings/billing');
+                  } else {
+                    navigate('/clients');
+                  }
+                }}
+                className={`w-full flex items-center justify-between p-3 rounded-lg transition-colors group border ${
+                  canCreateClient
+                    ? 'bg-slate-800 hover:bg-slate-700 border-slate-700'
+                    : 'bg-slate-800/50 border-amber-500/30 opacity-75'
+                }`}
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-400 group-hover:text-emerald-300">
-                    <Briefcase className="w-4 h-4" />
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                    canCreateClient
+                      ? 'bg-emerald-500/20 text-emerald-400 group-hover:text-emerald-300'
+                      : 'bg-amber-500/20 text-amber-400'
+                  }`}>
+                    {canCreateClient ? (
+                      <Briefcase className="w-4 h-4" />
+                    ) : (
+                      <Crown className="w-4 h-4" />
+                    )}
                   </div>
                   <div className="text-left">
-                    <p className="text-sm font-medium text-slate-200 group-hover:text-white">Add Client</p>
+                    <p className={`text-sm font-medium ${
+                      canCreateClient
+                        ? 'text-slate-200 group-hover:text-white'
+                        : 'text-amber-200'
+                    }`}>
+                      {canCreateClient ? 'Add Client' : 'Upgrade for More Clients'}
+                    </p>
                   </div>
                 </div>
-                <ArrowUpRight className="w-4 h-4 text-slate-500 group-hover:text-white transition-colors" />
+                <ArrowUpRight className={`w-4 h-4 transition-colors ${
+                  canCreateClient
+                    ? 'text-slate-500 group-hover:text-white'
+                    : 'text-amber-500/50'
+                }`} />
               </button>
             </div>
           </div>

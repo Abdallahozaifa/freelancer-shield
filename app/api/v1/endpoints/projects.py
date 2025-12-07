@@ -56,9 +56,14 @@ async def get_project_or_404(
     return project
 
 
-async def get_project_stats(project_id: UUID, db: AsyncSession) -> dict:
-    """Calculate project statistics from scope items and client requests."""
-    # Count scope items
+async def get_project_stats(project_id: UUID, user_id: UUID, db: AsyncSession) -> dict:
+    """
+    Calculate project statistics from scope items and client requests.
+    
+    Note: This function assumes project ownership has already been verified.
+    The user_id parameter is included for explicit security and potential future use.
+    """
+    # Count scope items (already scoped to project, which is verified to belong to user)
     scope_count_result = await db.execute(
         select(func.count()).select_from(ScopeItem).where(ScopeItem.project_id == project_id)
     )
@@ -73,6 +78,7 @@ async def get_project_stats(project_id: UUID, db: AsyncSession) -> dict:
     completed_scope_count = completed_count_result.scalar() or 0
     
     # Count out-of-scope requests
+    # Note: ClientRequests are already scoped to project_id, which belongs to user_id
     out_of_scope_count = 0
     try:
         out_of_scope_result = await db.execute(
@@ -163,7 +169,7 @@ async def list_projects(
     # Get stats for each project
     projects_with_stats = []
     for project in projects:
-        stats = await get_project_stats(project.id, db)
+        stats = await get_project_stats(project.id, current_user.id, db)
         projects_with_stats.append(project_to_response(project, stats))
     
     return ProjectList(
@@ -251,7 +257,7 @@ async def get_project(
     project = await get_project_or_404(project_id, current_user, db)
     
     # Calculate actual stats from database
-    stats = await get_project_stats(project.id, db)
+    stats = await get_project_stats(project.id, current_user.id, db)
     
     return project_to_response(project, stats)
 
@@ -266,7 +272,7 @@ async def get_project_detail(
     project = await get_project_or_404(project_id, current_user, db)
     
     # Calculate actual stats from database
-    stats = await get_project_stats(project.id, db)
+    stats = await get_project_stats(project.id, current_user.id, db)
     
     response = project_to_response(project, stats)
     
@@ -296,7 +302,7 @@ async def update_project(
     await db.refresh(project)
     
     # Get updated stats
-    stats = await get_project_stats(project.id, db)
+    stats = await get_project_stats(project.id, current_user.id, db)
     
     return project_to_response(project, stats)
 

@@ -11,7 +11,6 @@ import {
   Briefcase,
   Mail,
   ArrowUpRight,
-  Lock,
   AlertTriangle,
   Info,
   Crown
@@ -59,7 +58,7 @@ const getAvatarColor = (name: string) => {
 export const ClientsPage: React.FC = () => {
   const navigate = useNavigate();
   const toast = useToast();
-  const { canCreateClient, currentUsage, limits, isPro, clientsRemaining } = useFeatureGate();
+  const { limits, isPro } = useFeatureGate();
   const { data, isLoading } = useClients();
 
   const [searchQuery, setSearchQuery] = useState('');
@@ -71,6 +70,13 @@ export const ClientsPage: React.FC = () => {
     if (!data || !Array.isArray(data.items)) return [];
     return data.items;
   }, [data]);
+
+  // Calculate actual client count from data (more reliable than subscription data)
+  const actualClientCount = clients.length;
+  
+  // Calculate if user can create client based on actual count
+  const canCreateClient = isPro || actualClientCount < limits.maxClients;
+  const clientsRemaining = isPro ? Infinity : Math.max(0, limits.maxClients - actualClientCount);
 
   // Calculate summary stats
   const stats = useMemo(() => {
@@ -218,7 +224,7 @@ export const ClientsPage: React.FC = () => {
   return (
     <div className="max-w-7xl mx-auto space-y-8 animate-fade-in">
       {/* Limit Reached Banner - Show prominently when at limit */}
-      {!isPro && currentUsage.clients >= limits.maxClients && (
+      {!isPro && actualClientCount >= limits.maxClients && (
         <div className="bg-amber-50 border-2 border-amber-300 rounded-xl p-5 mb-6 shadow-sm">
           <div className="flex items-start gap-4">
             <div className="w-12 h-12 bg-amber-100 rounded-lg flex items-center justify-center shrink-0">
@@ -244,7 +250,7 @@ export const ClientsPage: React.FC = () => {
       )}
 
       {/* Warning if approaching limit */}
-      {!isPro && currentUsage.clients === limits.maxClients - 1 && (
+      {!isPro && actualClientCount === limits.maxClients - 1 && (
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
           <div className="flex items-start gap-3">
             <Info className="w-5 h-5 text-blue-600 mt-0.5 shrink-0" />
@@ -270,7 +276,7 @@ export const ClientsPage: React.FC = () => {
           <h1 className="text-3xl font-bold text-slate-900 tracking-tight">Clients</h1>
           <p className="mt-2 text-slate-600 max-w-2xl">
             Manage your client roster. You are currently working with <span className="font-semibold text-indigo-600">{stats.total} clients</span> across <span className="font-semibold text-slate-900">{stats.activeProjects} active projects</span>.
-            {!isPro && currentUsage.clients < limits.maxClients && (
+            {!isPro && actualClientCount < limits.maxClients && (
               <span className="block mt-1 text-sm text-slate-500">
                 {clientsRemaining} {clientsRemaining === 1 ? 'client' : 'clients'} remaining on Free plan
               </span>
@@ -292,7 +298,7 @@ export const ClientsPage: React.FC = () => {
               variant="outline"
               onClick={() => navigate('/settings/billing')}
               className="border-amber-300 text-amber-700 hover:bg-amber-50 hover:border-amber-400"
-              leftIcon={<Lock className="h-4 w-4" />}
+              leftIcon={<Crown className="h-4 w-4" />}
             >
               Upgrade to Add More
             </Button>

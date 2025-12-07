@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Plus, MoreHorizontal, Trash2, Edit, Users, DollarSign, Clock, Lock, AlertTriangle, Info, Crown } from 'lucide-react';
+import { Plus, MoreHorizontal, Trash2, Edit, Users, DollarSign, Clock, AlertTriangle, Info, Crown } from 'lucide-react';
 import { Button, Dropdown, EmptyState, ConfirmDialog, useToast } from '../../components/ui';
 import { useProjects, useDeleteProject } from '../../hooks/useProjects';
 import { useClients } from '../../hooks/useClients';
@@ -164,7 +164,7 @@ const ProjectCardSkeleton: React.FC = () => (
 export const ProjectsPage: React.FC = () => {
   const navigate = useNavigate();
   const toast = useToast();
-  const { canCreateProject, limits, isPro, projectsRemaining } = useFeatureGate();
+  const { limits, isPro } = useFeatureGate();
   const [activeFilter, setActiveFilter] = useState<FilterTab>('active');
   const [selectedClient, setSelectedClient] = useState<string>('all');
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -178,10 +178,14 @@ export const ProjectsPage: React.FC = () => {
   const projects = projectsData?.items ?? [];
   const clients = clientsData?.items ?? [];
   
-  // Count active projects for limit checking
+  // Count active projects for limit checking (use actual data, not subscription data)
   const activeProjectsCount = useMemo(() => {
     return projects.filter(p => p.status === 'active').length;
   }, [projects]);
+
+  // Calculate if user can create project based on actual count
+  const canCreateProject = isPro || activeProjectsCount < limits.maxProjects;
+  const projectsRemaining = isPro ? Infinity : Math.max(0, limits.maxProjects - activeProjectsCount);
 
   // Filter projects
   const filteredProjects = useMemo(() => {
@@ -289,7 +293,7 @@ export const ProjectsPage: React.FC = () => {
             variant="outline"
             onClick={() => navigate('/settings/billing')}
             className="border-amber-300 text-amber-700 hover:bg-amber-50 hover:border-amber-400"
-            leftIcon={<Lock className="w-4 h-4" />}
+            leftIcon={<Crown className="w-4 h-4" />}
           >
             Upgrade to Add More
           </Button>
