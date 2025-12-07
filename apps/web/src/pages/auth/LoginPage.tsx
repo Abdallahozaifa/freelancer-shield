@@ -26,7 +26,7 @@ import { Input } from '../../components/ui/Input';
 import { Alert } from '../../components/ui/Alert';
 import { authApi } from '../../api/auth';
 import { useAuthStore } from '../../stores/authStore';
-import { GoogleSignInButton } from '../../components/auth/GoogleSignInButton';
+import { CustomGoogleButton } from '../../components/auth/CustomGoogleButton';
 
 const loginSchema = z.object({
   email: z.string().email('Please enter a valid email address'),
@@ -48,6 +48,7 @@ export function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const navigate = useNavigate();
   const setAuth = useAuthStore((state) => state.setAuth);
 
@@ -249,11 +250,17 @@ export function LoginPage() {
             </div>
           </div>
 
-          {/* Social Login - Inline */}
-          <div className="flex justify-center gap-3">
-            <GoogleSignInButton
+          {/* Social Login - Mobile */}
+          <div className="mt-6 px-6">
+            <div className="relative mb-4">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-slate-200" />
+              </div>
+            </div>
+
+            <CustomGoogleButton
               mode="signin"
-              variant="icon-only"
+              isLoading={isGoogleLoading}
               onSuccess={(isNewUser) => {
                 if (isNewUser) {
                   console.log('New user signed in via Google');
@@ -261,18 +268,10 @@ export function LoginPage() {
               }}
               onError={(error) => {
                 setError(error);
+                setIsGoogleLoading(false);
               }}
+              className="w-full flex items-center justify-center gap-3 px-4 py-3.5 bg-white border border-slate-200 rounded-xl text-slate-700 font-medium active:bg-slate-100 transition-all shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
             />
-            <button className="w-14 h-14 bg-slate-50 border border-slate-200 rounded-2xl flex items-center justify-center hover:bg-slate-100 transition-colors">
-              <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
-              </svg>
-            </button>
-            <button className="w-14 h-14 bg-slate-50 border border-slate-200 rounded-2xl flex items-center justify-center hover:bg-slate-100 transition-colors">
-              <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
-              </svg>
-            </button>
           </div>
 
           {/* Sign Up Link */}
@@ -535,8 +534,8 @@ export function LoginPage() {
           </form>
 
             {/* Social Login Options - Desktop only */}
-            <div className="mt-6">
-              <div className="relative mb-6">
+            <div className="mt-4">
+              <div className="relative mb-4">
                 <div className="absolute inset-0 flex items-center">
                   <div className="w-full border-t border-slate-200" />
                 </div>
@@ -545,28 +544,20 @@ export function LoginPage() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
-                <GoogleSignInButton
-                  mode="signin"
-                  onSuccess={(isNewUser) => {
-                    if (isNewUser) {
-                      console.log('New user signed in via Google');
-                    }
-                  }}
-                  onError={(error) => {
-                    setError(error);
-                  }}
-                />
-                <button
-                  type="button"
-                  className="flex items-center justify-center gap-2 px-4 py-2.5 border border-slate-300 rounded-xl text-slate-700 font-medium hover:bg-slate-50 transition-colors"
-                >
-                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
-                  </svg>
-                  <span className="text-sm">GitHub</span>
-                </button>
-              </div>
+              <CustomGoogleButton
+                mode="signin"
+                isLoading={isGoogleLoading}
+                onSuccess={(isNewUser) => {
+                  if (isNewUser) {
+                    console.log('New user signed in via Google');
+                  }
+                }}
+                onError={(error) => {
+                  setError(error);
+                  setIsGoogleLoading(false);
+                }}
+                className="w-full flex items-center justify-center gap-3 px-4 py-3 bg-white border border-slate-300 rounded-xl text-slate-700 font-medium hover:bg-slate-50 hover:border-slate-400 hover:shadow-md transition-all shadow-sm disabled:opacity-50 disabled:cursor-not-allowed group"
+              />
             </div>
 
             {/* Sign Up Link - Inside card */}
