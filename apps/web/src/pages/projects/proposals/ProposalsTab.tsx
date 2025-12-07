@@ -1,9 +1,10 @@
 import React, { useState, useMemo } from 'react';
 import { 
-  Plus, Search, FileText, CheckCircle2, Send, 
-  DollarSign, Archive
+  Plus, Search, FileText, Sparkles
 } from 'lucide-react';
-import { Button, Spinner, Badge } from '../../../components/ui';
+import { Button, Spinner, useToast } from '../../../components/ui';
+import { useFeatureGate } from '../../../hooks/useFeatureGate';
+import { UpgradePrompt } from '../../../components/ui';
 import { ProposalRow } from './ProposalRow';
 import { ProposalFormModal } from './ProposalFormModal';
 import { SendProposalModal } from './SendProposalModal';
@@ -23,6 +24,7 @@ interface ProposalsTabProps {
 type TabFilter = 'all' | 'draft' | 'sent' | 'accepted';
 
 export const ProposalsTab: React.FC<ProposalsTabProps> = ({ projectId }) => {
+  const { isPro } = useFeatureGate();
   const [activeTab, setActiveTab] = useState<TabFilter>('all');
   const [searchQuery, setSearchQuery] = useState('');
   
@@ -36,6 +38,7 @@ export const ProposalsTab: React.FC<ProposalsTabProps> = ({ projectId }) => {
   // Queries
   const { data, isLoading, refetch } = useProposals(projectId);
   const proposals = data?.items ?? [];
+  const toast = useToast();
 
   // Mutations
   const createProposal = useCreateProposal(projectId);
@@ -81,21 +84,127 @@ export const ProposalsTab: React.FC<ProposalsTabProps> = ({ projectId }) => {
   }, [filteredProposals]);
 
   // Handlers
-  const handleCreate = () => { setSelectedProposal(null); setIsFormModalOpen(true); };
-  const handleEdit = (p: Proposal) => { setSelectedProposal(p); setIsFormModalOpen(true); };
-  const handleSend = (p: Proposal) => { setSelectedProposal(p); setIsSendModalOpen(true); };
-  const handleDelete = async (p: Proposal) => { 
-    if (window.confirm(`Delete "${p.title}"?`)) await deleteProposal.mutateAsync(p.id); 
+  const handleCreate = () => { 
+    setSelectedProposal(null); 
+    setIsFormModalOpen(true); 
   };
+
+  const handleEdit = (p: Proposal) => { 
+    if (p.status === 'accepted') {
+      toast.warning('Editing accepted proposals is not recommended. Consider creating a new proposal.');
+    }
+    setSelectedProposal(p); 
+    setIsFormModalOpen(true); 
+  };
+
+  const handleSend = (p: Proposal) => { 
+    if (p.status !== 'draft') {
+      toast.error('Only draft proposals can be sent');
+      return;
+    }
+    setSelectedProposal(p); 
+    setIsSendModalOpen(true); 
+  };
+
+  const handleDelete = async (p: Proposal) => { 
+    if (p.status !== 'draft') {
+      toast.error('Only draft proposals can be deleted');
+      return;
+    }
+    if (window.confirm(`Delete "${p.title}"? This action cannot be undone.`)) {
+      try {
+        await deleteProposal.mutateAsync(p.id);
+        toast.success('Proposal deleted successfully');
+        refetch();
+      } catch (error) {
+        toast.error('Failed to delete proposal');
+      }
+    }
+  };
+
+  const handleDuplicate = async (p: Proposal) => {
+    try {
+      const duplicateData: ProposalCreate = {
+        title: `${p.title} (Copy)`,
+        description: p.description,
+        amount: p.amount,
+        estimated_hours: p.estimated_hours,
+        source_request_id: p.source_request_id || undefined,
+      };
+      await createProposal.mutateAsync(duplicateData);
+      toast.success('Proposal duplicated successfully');
+      refetch();
+    } catch (error) {
+      toast.error('Failed to duplicate proposal');
+    }
+  };
+
   const handleMarkResponse = (p: Proposal, type: 'accept' | 'decline') => { 
+    if (p.status !== 'sent') {
+      toast.error('Only sent proposals can be marked as accepted or declined');
+      return;
+    }
     setSelectedProposal(p); 
     setResponseType(type); 
     setIsResponseModalOpen(true); 
   };
 
   const handleFormSubmit = async (data: ProposalCreate | ProposalUpdate) => {
-    if (selectedProposal) await updateProposal.mutateAsync({ id: selectedProposal.id, data });
-    else await createProposal.mutateAsync(data as ProposalCreate);
+    try {
+      if (selectedProposal) {
+        await updateProposal.mutateAsync({ id: selectedProposal.id, data });
+        toast.success('Proposal updated successfully');
+      } else {
+        await createProposal.mutateAsync(data as ProposalCreate);
+        toast.success('Proposal created successfully');
+      }
+      setIsFormModalOpen(false);
+      setSelectedProposal(null);
+      refetch();
+    } catch (error) {
+      toast.error(selectedProposal ? 'Failed to update proposal' : 'Failed to create proposal');
+    }
+  };
+
+  const handleSendConfirm = async () => {
+    if (!selectedProposal) return;
+    try {
+      await sendProposal.mutateAsync(selectedProposal.id);
+      toast.success('Proposal sent successfully');
+      setIsSendModalOpen(false);
+      setSelectedProposal(null);
+      refetch();
+    } catch (error) {
+      toast.error('Failed to send proposal');
+    }
+  };
+
+  const handleAccept = async () => {
+    if (!selectedProposal) return;
+    try {
+      await acceptProposal.mutateAsync(selectedProposal.id);
+      toast.success('Proposal marked as accepted');
+      setIsResponseModalOpen(false);
+      setSelectedProposal(null);
+      setResponseType(undefined);
+      refetch();
+    } catch (error) {
+      toast.error('Failed to mark proposal as accepted');
+    }
+  };
+
+  const handleDecline = async () => {
+    if (!selectedProposal) return;
+    try {
+      await declineProposal.mutateAsync(selectedProposal.id);
+      toast.success('Proposal marked as declined');
+      setIsResponseModalOpen(false);
+      setSelectedProposal(null);
+      setResponseType(undefined);
+      refetch();
+    } catch (error) {
+      toast.error('Failed to mark proposal as declined');
+    }
   };
 
   return (
@@ -128,6 +237,43 @@ export const ProposalsTab: React.FC<ProposalsTabProps> = ({ projectId }) => {
               Create Proposal
             </Button>
           </div>
+
+          {/* One-Click Proposal Generator Section */}
+          {activeTab === 'all' && (
+            <div className="mt-4 mb-4">
+              {isPro ? (
+                <div className="p-4 bg-indigo-50 rounded-lg border border-indigo-200">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Sparkles className="w-5 h-5 text-indigo-600" />
+                      <h3 className="font-semibold text-indigo-900 text-sm">One-Click Proposal Generator</h3>
+                    </div>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => {
+                        // TODO: Implement proposal generator
+                        toast.success('Proposal generator feature coming soon!');
+                      }}
+                      className="border-indigo-300 text-indigo-700 hover:bg-indigo-100"
+                    >
+                      <Sparkles className="w-4 h-4 mr-2" />
+                      Generate Proposal
+                    </Button>
+                  </div>
+                  <p className="text-xs text-indigo-700 mt-2">
+                    Automatically generate professional proposals from out-of-scope requests.
+                  </p>
+                </div>
+              ) : (
+                <UpgradePrompt
+                  feature="One-Click Proposal Generator"
+                  description="Automatically generate professional proposals from out-of-scope requests."
+                  variant="banner"
+                />
+              )}
+            </div>
+          )}
 
           {/* Simplified Filter Tabs */}
           <div className="flex items-center gap-1 mt-6 -mb-4 overflow-x-auto no-scrollbar">
@@ -176,6 +322,7 @@ export const ProposalsTab: React.FC<ProposalsTabProps> = ({ projectId }) => {
                   onDelete={() => handleDelete(proposal)}
                   onAccept={() => handleMarkResponse(proposal, 'accept')}
                   onDecline={() => handleMarkResponse(proposal, 'decline')}
+                  onDuplicate={() => handleDuplicate(proposal)}
                 />
               ))}
             </div>
@@ -199,14 +346,14 @@ export const ProposalsTab: React.FC<ProposalsTabProps> = ({ projectId }) => {
       <SendProposalModal
         isOpen={isSendModalOpen}
         onClose={() => { setIsSendModalOpen(false); setSelectedProposal(null); }}
-        onConfirm={async () => { if(selectedProposal) await sendProposal.mutateAsync(selectedProposal.id); }}
+        onConfirm={handleSendConfirm}
         proposal={selectedProposal}
       />
       <ProposalResponseModal
         isOpen={isResponseModalOpen}
         onClose={() => { setIsResponseModalOpen(false); setSelectedProposal(null); setResponseType(undefined); }}
-        onAccept={async () => { if(selectedProposal) await acceptProposal.mutateAsync(selectedProposal.id); }}
-        onDecline={async () => { if(selectedProposal) await declineProposal.mutateAsync(selectedProposal.id); }}
+        onAccept={handleAccept}
+        onDecline={handleDecline}
         proposal={selectedProposal}
         initialResponse={responseType}
       />

@@ -11,13 +11,12 @@ import {
   DollarSign,
   Target,
   FileText,
-  ChevronRight,
   Plus,
   Briefcase,
   PieChart
 } from 'lucide-react';
 import { useQueryClient } from '@tanstack/react-query';
-import { Card, Button, Tabs, Dropdown, Skeleton, Badge } from '../../components/ui';
+import { Card, Button, Tabs, Dropdown, useToast } from '../../components/ui';
 import { ConfirmDialog } from '../../components/ui/ConfirmDialog';
 import { useProject, useDeleteProject, projectKeys } from '../../hooks/useProjects';
 import { useScopeProgress } from '../../hooks/useScope';
@@ -27,7 +26,6 @@ import { ProjectFormModal } from './ProjectFormModal';
 import { ScopeTab } from './scope';
 import { RequestsTab } from './requests';
 import { ProposalsTab } from './proposals';
-import { cn } from '../../utils/cn';
 import { formatCurrency, formatRelative } from '../../utils/format';
 import type { Project } from '../../types';
 
@@ -56,6 +54,7 @@ export const ProjectDetailPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<TabId>(initialTab);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const toast = useToast();
 
   const { data: project, isLoading, error } = useProject(id!);
   const deleteProject = useDeleteProject();
@@ -64,8 +63,11 @@ export const ProjectDetailPage: React.FC = () => {
     const tabParam = searchParams.get('tab');
     if (isValidTab(tabParam) && tabParam !== activeTab) {
       setActiveTab(tabParam);
+    } else if (!isValidTab(tabParam) && activeTab !== 'overview') {
+      // Fallback to overview if invalid tab param
+      setActiveTab('overview');
     }
-  }, [searchParams]);
+  }, [searchParams, activeTab]);
 
   const handleTabChange = (tabId: string) => {
     const newTab = tabId as TabId;
@@ -87,9 +89,10 @@ export const ProjectDetailPage: React.FC = () => {
     if (!project) return;
     try {
       await deleteProject.mutateAsync(project.id);
+      toast.success('Project deleted successfully');
       navigate('/projects');
     } catch (error) {
-      console.error('Failed to delete project:', error);
+      toast.error('Failed to delete project');
     }
   };
 
@@ -180,7 +183,6 @@ export const ProjectDetailPage: React.FC = () => {
             tabs={tabs}
             activeTab={activeTab}
             onChange={handleTabChange}
-            className="w-full"
           />
         </div>
       </div>
@@ -197,6 +199,10 @@ export const ProjectDetailPage: React.FC = () => {
         isOpen={isEditModalOpen}
         onClose={() => setIsEditModalOpen(false)}
         project={project}
+        onSuccess={() => {
+          toast.success('Project updated successfully');
+          queryClient.invalidateQueries({ queryKey: projectKeys.detail(id!) });
+        }}
       />
 
       <ConfirmDialog

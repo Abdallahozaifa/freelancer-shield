@@ -1,15 +1,21 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { User, Building2, Mail, FileText, AlignLeft } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { User, Building2, Mail, AlignLeft, Crown } from 'lucide-react';
 import { Modal, Button, Input, Textarea, useToast } from '../../components/ui';
 import { useCreateClient, useUpdateClient } from '../../hooks/useClients';
+import { useFeatureGate } from '../../hooks/useFeatureGate';
+import { cn } from '../../utils/cn';
 import type { Client } from '../../types';
 
 const clientSchema = z.object({
   name: z.string().min(1, 'Name is required').max(100, 'Name is too long'),
-  email: z.string().email('Invalid email').optional().or(z.literal('')),
+  email: z.string().refine(
+    (val) => !val || z.string().email().safeParse(val).success,
+    { message: 'Invalid email format' }
+  ).optional().or(z.literal('')),
   company: z.string().max(100, 'Company name is too long').optional().or(z.literal('')),
   notes: z.string().max(1000, 'Notes are too long').optional().or(z.literal('')),
 });
@@ -20,19 +26,27 @@ interface ClientFormModalProps {
   isOpen: boolean;
   onClose: () => void;
   client?: Client | null;
+  onSuccess?: () => void;
 }
 
 export const ClientFormModal: React.FC<ClientFormModalProps> = ({
   isOpen,
   onClose,
   client,
+  onSuccess,
 }) => {
+  const navigate = useNavigate();
   const toast = useToast();
+  const { canCreateClient, limits } = useFeatureGate();
   const createMutation = useCreateClient();
   const updateMutation = useUpdateClient();
+  const nameInputRef = useRef<HTMLInputElement | null>(null);
 
   const isEditing = !!client;
   const isSubmitting = createMutation.isPending || updateMutation.isPending;
+  
+  // If creating (not editing) and at limit, show upgrade prompt instead of form
+  const showUpgradePrompt = !isEditing && !canCreateClient;
 
   const {
     register,
@@ -48,6 +62,8 @@ export const ClientFormModal: React.FC<ClientFormModalProps> = ({
       notes: '',
     },
   });
+
+  const { ref: nameRef, ...nameRegister } = register('name');
 
   useEffect(() => {
     if (isOpen) {
@@ -66,6 +82,10 @@ export const ClientFormModal: React.FC<ClientFormModalProps> = ({
           notes: '',
         });
       }
+      // Focus first input after modal animation
+      setTimeout(() => {
+        nameInputRef.current?.focus();
+      }, 100);
     }
   }, [isOpen, client, reset]);
 
@@ -80,25 +100,70 @@ export const ClientFormModal: React.FC<ClientFormModalProps> = ({
 
       if (isEditing && client) {
         await updateMutation.mutateAsync({ id: client.id, data: payload });
-        toast.success(`${data.name} has been updated.`);
+        toast.success('Client updated successfully');
       } else {
         await createMutation.mutateAsync(payload);
-        toast.success(`${data.name} added to clients.`);
+        toast.success('Client added successfully');
       }
 
+      // Reset form before closing
+      reset({ name: '', email: '', company: '', notes: '' });
+      onSuccess?.();
       onClose();
     } catch (error) {
       toast.error(
-        error instanceof Error ? error.message : 'An error occurred'
+        isEditing ? 'Failed to update client' : 'Failed to create client'
       );
     }
   };
 
   const handleClose = () => {
     if (!isSubmitting) {
+      // Reset form when closing
+      reset({ name: '', email: '', company: '', notes: '' });
       onClose();
     }
   };
+
+  // If creating (not editing) and at limit, show upgrade prompt instead of form
+  if (showUpgradePrompt) {
+    return (
+      <Modal
+        isOpen={isOpen}
+        onClose={handleClose}
+        title="Client Limit Reached"
+        size="md"
+      >
+        <div className="text-center py-6">
+          <div className="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <Crown className="w-8 h-8 text-amber-600" />
+          </div>
+          <h3 className="text-lg font-bold text-slate-900 mb-2">
+            Upgrade to Add More Clients
+          </h3>
+          <p className="text-slate-600 mb-6">
+            You've reached the maximum of {limits.maxClients} clients on the Free plan.
+            Upgrade to Pro for unlimited clients.
+          </p>
+          <div className="flex gap-3 justify-center">
+            <Button variant="outline" onClick={handleClose}>
+              Maybe Later
+            </Button>
+            <Button 
+              onClick={() => {
+                handleClose();
+                navigate('/settings/billing');
+              }}
+              className="bg-indigo-600 hover:bg-indigo-700"
+            >
+              <Crown className="w-4 h-4 mr-2" />
+              Upgrade to Pro — $29/mo
+            </Button>
+          </div>
+        </div>
+      </Modal>
+    );
+  }
 
   return (
     <Modal
@@ -121,11 +186,23 @@ export const ClientFormModal: React.FC<ClientFormModalProps> = ({
                 <User className="w-4 h-4" />
               </div>
               <Input
+                {...nameRegister}
+                ref={(e) => {
+                  nameRef(e);
+                  nameInputRef.current = e as HTMLInputElement | null;
+                }}
                 placeholder="e.g. John Doe"
                 error={errors.name?.message}
-                {...register('name')}
-                className="pl-9"
+                disabled={isSubmitting}
+                aria-invalid={!!errors.name}
+                aria-describedby={errors.name ? 'name-error' : undefined}
+                className={cn('pl-9', isSubmitting && 'opacity-50 cursor-not-allowed')}
               />
+              {errors.name && (
+                <p id="name-error" role="alert" className="text-red-500 text-sm mt-1">
+                  {errors.name.message}
+                </p>
+              )}
             </div>
           </div>
 
@@ -142,8 +219,16 @@ export const ClientFormModal: React.FC<ClientFormModalProps> = ({
                 placeholder="e.g. Acme Corp"
                 error={errors.company?.message}
                 {...register('company')}
-                className="pl-9"
+                disabled={isSubmitting}
+                aria-invalid={!!errors.company}
+                aria-describedby={errors.company ? 'company-error' : undefined}
+                className={cn('pl-9', isSubmitting && 'opacity-50 cursor-not-allowed')}
               />
+              {errors.company && (
+                <p id="company-error" role="alert" className="text-red-500 text-sm mt-1">
+                  {errors.company.message}
+                </p>
+              )}
             </div>
           </div>
         </div>
@@ -162,8 +247,16 @@ export const ClientFormModal: React.FC<ClientFormModalProps> = ({
               placeholder="contact@example.com"
               error={errors.email?.message}
               {...register('email')}
-              className="pl-9"
+              disabled={isSubmitting}
+              aria-invalid={!!errors.email}
+              aria-describedby={errors.email ? 'email-error' : undefined}
+              className={cn('pl-9', isSubmitting && 'opacity-50 cursor-not-allowed')}
             />
+            {errors.email && (
+              <p id="email-error" role="alert" className="text-red-500 text-sm mt-1">
+                {errors.email.message}
+              </p>
+            )}
           </div>
         </div>
 
@@ -178,8 +271,16 @@ export const ClientFormModal: React.FC<ClientFormModalProps> = ({
             rows={4}
             error={errors.notes?.message}
             {...register('notes')}
-            className="resize-none"
+            disabled={isSubmitting}
+            aria-invalid={!!errors.notes}
+            aria-describedby={errors.notes ? 'notes-error' : undefined}
+            className={cn('resize-none', isSubmitting && 'opacity-50 cursor-not-allowed')}
           />
+          {errors.notes && (
+            <p id="notes-error" role="alert" className="text-red-500 text-sm mt-1">
+              {errors.notes.message}
+            </p>
+          )}
         </div>
 
         {/* --- Footer Actions --- */}

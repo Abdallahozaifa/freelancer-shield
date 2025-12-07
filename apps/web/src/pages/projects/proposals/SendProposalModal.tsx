@@ -25,10 +25,9 @@ export const SendProposalModal: React.FC<SendProposalModalProps> = ({
     setIsSending(true);
     try {
       await onConfirm();
-      onClose();
+      // onClose is called in parent after successful send
     } catch (error) {
-      console.error('Failed to send proposal:', error);
-    } finally {
+      // Error handling is done in parent component
       setIsSending(false);
     }
   };

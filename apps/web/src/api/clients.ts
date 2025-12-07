@@ -24,7 +24,7 @@ export const clientsApi = {
   },
 
   update: async (id: string, data: ClientUpdate): Promise<Client> => {
-    const response = await apiClient.patch<Client>(`/clients/${id}`, data);
+    const response = await apiClient.put<Client>(`/clients/${id}`, data);
     return response.data;
   },
 

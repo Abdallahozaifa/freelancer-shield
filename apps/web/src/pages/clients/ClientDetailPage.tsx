@@ -9,21 +9,18 @@ import {
   Pencil,
   Trash2,
   FolderOpen,
-  ChevronRight,
   Plus,
   Briefcase,
-  AlertTriangle,
-  CheckCircle2
+  AlertTriangle
 } from 'lucide-react';
-import { useClient } from '../../hooks/useClients';
+import { useClient, clientKeys } from '../../hooks/useClients';
 import { useProjects } from '../../hooks/useProjects';
+import { useQueryClient } from '@tanstack/react-query';
 import {
   Button,
   Card,
   Loading,
   EmptyState,
-  Badge,
-  Skeleton,
 } from '../../components/ui';
 import { formatDate } from '../../utils/format';
 import { ClientFormModal } from './ClientFormModal';
@@ -32,8 +29,11 @@ import type { ProjectStatus } from '../../types';
 
 // Helper for avatar initials
 const getInitials = (name: string) => {
+  if (!name || name.trim() === '') return '?';
   return name
+    .trim()
     .split(' ')
+    .filter(n => n.length > 0)
     .map((n) => n[0])
     .slice(0, 2)
     .join('')
@@ -50,7 +50,8 @@ const statusConfig: Record<ProjectStatus, { label: string; className: string }> 
 export const ClientDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { data: client, isLoading, error } = useClient(id!);
+  const queryClient = useQueryClient();
+  const { data: client, isLoading, error, refetch } = useClient(id!);
   const { data: projectsData, isLoading: projectsLoading } = useProjects({ client_id: id });
 
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -180,9 +181,11 @@ export const ClientDetailPage: React.FC = () => {
 
                 <div>
                   <label className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1 block">Company</label>
-                  <p className="text-slate-900 font-medium">
-                    {client.company || <span className="text-slate-400 italic">No company listed</span>}
-                  </p>
+                  {client.company ? (
+                    <p className="text-slate-900 font-medium">{client.company}</p>
+                  ) : (
+                    <span className="text-slate-400 italic">No company listed</span>
+                  )}
                 </div>
 
                 <div className="pt-6 border-t border-slate-100">
@@ -267,8 +270,16 @@ export const ClientDetailPage: React.FC = () => {
                   return (
                     <div
                       key={project.id}
-                      className="grid grid-cols-12 gap-4 px-6 py-4 hover:bg-slate-50 cursor-pointer transition-all group items-center"
+                      role="button"
+                      tabIndex={0}
+                      className="grid grid-cols-12 gap-4 px-6 py-4 hover:bg-slate-50 cursor-pointer transition-all group items-center focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-inset"
                       onClick={() => navigate(`/projects/${project.id}`)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault();
+                          navigate(`/projects/${project.id}`);
+                        }
+                      }}
                     >
                       <div className="col-span-5 min-w-0">
                         <p className="font-semibold text-slate-900 truncate group-hover:text-indigo-600 transition-colors">
@@ -325,6 +336,10 @@ export const ClientDetailPage: React.FC = () => {
         isOpen={isEditModalOpen}
         onClose={() => setIsEditModalOpen(false)}
         client={client}
+        onSuccess={() => {
+          queryClient.invalidateQueries({ queryKey: clientKeys.detail(id!) });
+          refetch();
+        }}
       />
 
       {/* Delete Modal */}

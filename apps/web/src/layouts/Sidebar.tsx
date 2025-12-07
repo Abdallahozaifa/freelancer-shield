@@ -1,5 +1,5 @@
 import React from 'react';
-import { NavLink, useLocation } from 'react-router-dom';
+import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard,
   Users,
@@ -8,7 +8,10 @@ import {
   ShieldCheck,
   BarChart3,
   CreditCard,
+  Crown,
+  Zap,
 } from 'lucide-react';
+import { useProStatus } from '../hooks/useProStatus';
 
 interface NavItem {
   icon: React.ElementType;
@@ -44,6 +47,8 @@ interface SidebarProps {
 
 export const Sidebar: React.FC<SidebarProps> = ({ collapsed }) => {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { isPro, isLoading: isSubscriptionLoading } = useProStatus();
 
   const isActive = (path: string) => {
     if (path === '/dashboard') {
@@ -165,12 +170,29 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed }) => {
         </ul>
       </nav>
 
-      {/* Bottom section - version info */}
-      {!collapsed && (
+      {/* Bottom section - Pro status or upgrade prompt */}
+      {!collapsed && !isSubscriptionLoading && (
         <div className="absolute bottom-6 left-0 right-0 px-6">
-          <div className="text-xs text-slate-500">
-            <p>Version 1.0.0</p>
-          </div>
+          {isPro ? (
+            <div className="p-3 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 rounded-lg border border-indigo-200">
+              <div className="flex items-center gap-2">
+                <Crown className="w-4 h-4 text-indigo-600" />
+                <span className="text-sm font-semibold text-indigo-900">Pro Plan</span>
+              </div>
+              <p className="text-xs text-indigo-600 mt-1">All features unlocked</p>
+            </div>
+          ) : (
+            <button 
+              onClick={() => navigate('/settings/billing')}
+              className="w-full p-3 bg-slate-50 rounded-lg border border-slate-200 hover:border-indigo-300 hover:bg-indigo-50 transition-all group text-left"
+            >
+              <div className="flex items-center gap-2">
+                <Zap className="w-4 h-4 text-slate-400 group-hover:text-indigo-600" />
+                <span className="text-sm font-medium text-slate-700 group-hover:text-indigo-900">Upgrade to Pro</span>
+              </div>
+              <p className="text-xs text-slate-500 mt-1">Unlock unlimited projects</p>
+            </button>
+          )}
         </div>
       )}
     </aside>

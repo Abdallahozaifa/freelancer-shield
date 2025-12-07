@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react';
-import { Plus, ListChecks, CheckCircle2, Target, AlertCircle } from 'lucide-react';
-import { Button, Card, EmptyState, Skeleton } from '../../../components/ui';
+import { Plus, ListChecks, Target, AlertCircle } from 'lucide-react';
+import { Button, EmptyState, Skeleton, useToast } from '../../../components/ui';
 import { ScopeProgressCard } from './ScopeProgressCard';
 import { ScopeDragDrop } from './ScopeDragDrop';
 import { ScopeItemForm } from './ScopeItemForm';
@@ -23,9 +23,10 @@ export const ScopeTab: React.FC<ScopeTabProps> = ({ projectId }) => {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<ScopeItem | null>(null);
   const [deletingItem, setDeletingItem] = useState<ScopeItem | null>(null);
+  const toast = useToast();
 
   // Queries
-  const { data: items, isLoading, error } = useScopeItems(projectId);
+  const { data: items, isLoading, error, refetch } = useScopeItems(projectId);
   const { data: progress } = useScopeProgress(projectId);
 
   // Mutations
@@ -59,19 +60,22 @@ export const ScopeTab: React.FC<ScopeTabProps> = ({ projectId }) => {
             itemId: editingItem.id,
             data,
           });
+          toast.success('Deliverable updated');
         } else {
           const order = items?.length ?? 0;
           await createItem.mutateAsync({
             projectId,
             data: { ...data, order } as ScopeItemCreate,
           });
+          toast.success('Deliverable added successfully');
         }
         handleCloseForm();
+        refetch();
       } catch (error) {
-        console.error('Failed to save scope item:', error);
+        toast.error(editingItem ? 'Failed to update deliverable' : 'Failed to add deliverable');
       }
     },
-    [projectId, editingItem, items?.length, createItem, updateItem, handleCloseForm]
+    [projectId, editingItem, items?.length, createItem, updateItem, handleCloseForm, toast, refetch]
   );
 
   const handleToggleComplete = useCallback(
@@ -82,11 +86,13 @@ export const ScopeTab: React.FC<ScopeTabProps> = ({ projectId }) => {
           itemId: item.id,
           data: { is_completed: !item.is_completed },
         });
+        toast.success(item.is_completed ? 'Marked as incomplete' : 'Marked as complete');
+        refetch();
       } catch (error) {
-        console.error('Failed to toggle completion:', error);
+        toast.error('Failed to update deliverable status');
       }
     },
-    [projectId, updateItem]
+    [projectId, updateItem, toast, refetch]
   );
 
   const handleDeleteClick = useCallback((item: ScopeItem) => {
@@ -100,21 +106,24 @@ export const ScopeTab: React.FC<ScopeTabProps> = ({ projectId }) => {
         projectId,
         itemId: deletingItem.id,
       });
+      toast.success('Deliverable removed');
       setDeletingItem(null);
+      refetch();
     } catch (error) {
-      console.error('Failed to delete scope item:', error);
+      toast.error('Failed to delete deliverable');
     }
-  }, [projectId, deletingItem, deleteItem]);
+  }, [projectId, deletingItem, deleteItem, toast, refetch]);
 
   const handleReorder = useCallback(
     async (itemIds: string[]) => {
       try {
         await reorderItems.mutateAsync({ projectId, itemIds });
+        // Silent success - UI already shows the new order
       } catch (error) {
-        console.error('Failed to reorder items:', error);
+        toast.error('Failed to reorder items. Please try again.');
       }
     },
-    [projectId, reorderItems]
+    [projectId, reorderItems, toast]
   );
 
   if (isLoading) {

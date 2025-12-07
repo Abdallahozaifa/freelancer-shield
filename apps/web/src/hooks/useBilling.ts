@@ -4,8 +4,16 @@ import { billingApi, Subscription, PlanLimits } from '../api/billing';
 export function useSubscription() {
   return useQuery<Subscription>({
     queryKey: ['subscription'],
-    queryFn: billingApi.getSubscription,
-    staleTime: 1000 * 60 * 5, // 5 minutes
+    queryFn: async () => {
+      const data = await billingApi.getSubscription();
+      // Debug logging (commented out for production - uncomment for debugging)
+      // console.log('useSubscription - Fetched subscription:', data);
+      // console.log('useSubscription - Is Pro:', data?.is_pro);
+      return data;
+    },
+    staleTime: 0, // Always refetch to get latest status
+    refetchOnWindowFocus: true, // Refetch when user returns to tab
+    refetchOnMount: true, // Refetch when component mounts
   });
 }
 

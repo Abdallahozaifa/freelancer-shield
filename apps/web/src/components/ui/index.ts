@@ -59,3 +59,9 @@ export type { TabsProps, Tab } from './Tabs';
 
 export { Dropdown } from './Dropdown';
 export type { DropdownProps, DropdownItem } from './Dropdown';
+
+export { ProBadge } from './ProBadge';
+export type { ProBadgeProps } from './ProBadge';
+
+export { UpgradePrompt, LimitReachedBanner, ProFeatureBadge } from './UpgradePrompt';
+export type { UpgradePromptProps, LimitReachedBannerProps, ProFeatureBadgeProps } from './UpgradePrompt';

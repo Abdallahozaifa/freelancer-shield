@@ -9,11 +9,14 @@ import {
   Clock, 
   Hash, 
   ArrowLeft,
-  Activity
+  Activity,
+  Crown,
+  AlertTriangle
 } from 'lucide-react';
-import { Card, Button, Input, Select, Textarea } from '../../components/ui';
+import { Card, Button, Input, Select, Textarea, useToast } from '../../components/ui';
 import { useClients } from '../../hooks/useClients';
 import { useCreateProject } from '../../hooks/useProjects';
+import { useFeatureGate } from '../../hooks/useFeatureGate';
 import type { ProjectCreate, ProjectStatus } from '../../types';
 
 interface FormData {
@@ -45,11 +48,21 @@ const getDefaultValues = (clientId: string = ''): FormData => ({
 
 export const ProjectNewPage: React.FC = () => {
   const navigate = useNavigate();
+  const toast = useToast();
   const [searchParams] = useSearchParams();
   const preselectedClientId = searchParams.get('client') || '';
   
+  const { canCreateProject, limits, isPro } = useFeatureGate();
   const { data: clientsData } = useClients();
   const createProject = useCreateProject();
+  
+  // Redirect if at limit
+  useEffect(() => {
+    if (!isPro && !canCreateProject) {
+      toast.error('Project limit reached. Upgrade to Pro for unlimited projects!');
+      navigate('/settings/billing');
+    }
+  }, [canCreateProject, isPro, navigate, toast]);
 
   const {
     register,
@@ -91,6 +104,54 @@ export const ProjectNewPage: React.FC = () => {
       label: client.name,
     })) ?? []),
   ];
+
+  // Show upgrade prompt if at limit (safety check in case redirect didn't happen)
+  if (!isPro && !canCreateProject) {
+    return (
+      <div className="max-w-3xl mx-auto space-y-6 animate-fade-in pb-12">
+        {/* Header with Back Button */}
+        <div className="flex items-center gap-4 mb-6">
+          <button 
+            onClick={() => navigate(-1)}
+            className="p-2 hover:bg-slate-100 rounded-full transition-colors text-slate-500"
+          >
+            <ArrowLeft className="w-5 h-5" />
+          </button>
+          <div>
+            <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Create New Project</h1>
+            <p className="text-slate-500 text-sm">Set up the details and scope for your new engagement.</p>
+          </div>
+        </div>
+
+        <Card className="overflow-hidden border-slate-200 shadow-sm p-12">
+          <div className="text-center">
+            <div className="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <AlertTriangle className="w-8 h-8 text-amber-600" />
+            </div>
+            <h3 className="text-lg font-bold text-slate-900 mb-2">
+              Project Limit Reached
+            </h3>
+            <p className="text-slate-600 mb-6">
+              You've reached the maximum of {limits.maxProjects} active projects on the Free plan.
+              Upgrade to Pro for unlimited projects.
+            </p>
+            <div className="flex gap-3 justify-center">
+              <Button variant="outline" onClick={() => navigate(-1)}>
+                Go Back
+              </Button>
+              <Button 
+                onClick={() => navigate('/settings/billing')}
+                className="bg-indigo-600 hover:bg-indigo-700"
+              >
+                <Crown className="w-4 h-4 mr-2" />
+                Upgrade to Pro — $29/mo
+              </Button>
+            </div>
+          </div>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-3xl mx-auto space-y-6 animate-fade-in pb-12">

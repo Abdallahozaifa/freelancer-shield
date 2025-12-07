@@ -202,8 +202,21 @@ async def stripe_webhook(
     stripe_signature: str = Header(None, alias="Stripe-Signature"),
 ):
     """Handle Stripe webhook events."""
+    import logging
+    logger = logging.getLogger(__name__)
+    
+    logger.info("=" * 50)
+    logger.info("STRIPE WEBHOOK RECEIVED")
+    logger.info("=" * 50)
+    
     payload = await request.body()
     webhook_secret = os.getenv("STRIPE_WEBHOOK_SECRET", "")
+    
+    logger.info(f"Signature header present: {bool(stripe_signature)}")
+    logger.info(f"Payload length: {len(payload)} bytes")
+    logger.info(f"Webhook secret configured: {bool(webhook_secret)}")
+    if webhook_secret:
+        logger.info(f"Secret starts with: {webhook_secret[:10]}...")
     
     try:
         event = stripe.Webhook.construct_event(
@@ -211,25 +224,63 @@ async def stripe_webhook(
             stripe_signature,
             webhook_secret,
         )
-    except ValueError:
+        event_type = event.get("type")
+        event_id = event.get("id")
+        logger.info(f"Webhook event verified: {event_type} (id: {event_id})")
+    except ValueError as e:
+        logger.error(f"Invalid payload: {e}")
         raise HTTPException(status_code=400, detail="Invalid payload")
-    except stripe.error.SignatureVerificationError:
+    except stripe.error.SignatureVerificationError as e:
+        logger.error(f"Invalid signature: {e}")
+        logger.error(f"Expected secret: {webhook_secret[:10] if webhook_secret else 'NONE'}...")
         raise HTTPException(status_code=400, detail="Invalid signature")
 
     # Handle the event
     event_type = event["type"]
     event_data = event["data"]["object"]
+    
+    logger.info(f"Processing event: {event_type}")
+    logger.info(f"Event data keys: {list(event_data.keys())}")
 
-    if event_type == "checkout.session.completed":
-        await StripeService.handle_checkout_completed(db, event_data)
-    
-    elif event_type == "customer.subscription.updated":
-        await StripeService.handle_subscription_updated(db, event_data)
-    
-    elif event_type == "customer.subscription.deleted":
-        await StripeService.handle_subscription_deleted(db, event_data)
-    
-    elif event_type == "invoice.payment_failed":
-        await StripeService.handle_invoice_payment_failed(db, event_data)
+    try:
+        if event_type == "checkout.session.completed":
+            logger.info("=" * 30)
+            logger.info("HANDLING checkout.session.completed")
+            logger.info("=" * 30)
+            logger.info(f"Session ID: {event_data.get('id')}")
+            logger.info(f"Customer ID: {event_data.get('customer')}")
+            logger.info(f"Subscription ID: {event_data.get('subscription')}")
+            logger.info(f"Metadata: {event_data.get('metadata')}")
+            logger.info(f"Success URL: {event_data.get('success_url')}")
+            
+            await StripeService.handle_checkout_completed(db, event_data)
+            logger.info("✓ Successfully handled checkout.session.completed")
+        
+        elif event_type == "customer.subscription.updated":
+            logger.info("Handling customer.subscription.updated")
+            logger.info(f"Subscription ID: {event_data.get('id')}")
+            logger.info(f"Status: {event_data.get('status')}")
+            await StripeService.handle_subscription_updated(db, event_data)
+            logger.info("✓ Successfully handled customer.subscription.updated")
+        
+        elif event_type == "customer.subscription.deleted":
+            logger.info("Handling customer.subscription.deleted")
+            await StripeService.handle_subscription_deleted(db, event_data)
+            logger.info("✓ Successfully handled customer.subscription.deleted")
+        
+        elif event_type == "invoice.payment_failed":
+            logger.info("Handling invoice.payment_failed")
+            await StripeService.handle_invoice_payment_failed(db, event_data)
+            logger.info("✓ Successfully handled invoice.payment_failed")
+        else:
+            logger.info(f"Unhandled event type: {event_type} (no action taken)")
+    except Exception as e:
+        logger.error(f"✗ ERROR handling webhook event {event_type}: {e}", exc_info=True)
+        # Don't raise - return success to Stripe so it doesn't retry
+        # But log the error for debugging
+        return {"status": "error", "message": str(e)}
 
+    logger.info("=" * 50)
+    logger.info("WEBHOOK PROCESSING COMPLETE")
+    logger.info("=" * 50)
     return {"status": "success"}

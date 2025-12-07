@@ -78,7 +78,22 @@ async def create_client(
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ) -> ClientResponse:
-    """Create a new client."""
+    """
+    Create a new client.
+    
+    Enforces subscription limits for free users.
+    """
+    from app.services.subscription_service import can_create_client, get_client_limit
+    
+    # Check subscription limits
+    if not await can_create_client(db, current_user.id):
+        limit = await get_client_limit(db, current_user.id)
+        limit_text = "unlimited" if limit == float('inf') else f"{limit}"
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=f"Client limit reached. Upgrade to Pro for unlimited clients. (Free plan: {limit_text} clients max)",
+        )
+    
     client = Client(
         user_id=current_user.id,
         name=client_in.name,

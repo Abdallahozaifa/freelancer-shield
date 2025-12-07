@@ -182,7 +182,20 @@ async def create_project(
     Create a new project.
     
     The client_id must belong to the current user.
+    Enforces subscription limits for free users.
     """
+    from app.services.subscription_service import can_create_project
+    
+    # Check subscription limits
+    if not await can_create_project(db, current_user.id):
+        from app.services.subscription_service import get_project_limit
+        limit = await get_project_limit(db, current_user.id)
+        limit_text = "unlimited" if limit == float('inf') else f"{limit}"
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=f"Project limit reached. Upgrade to Pro for unlimited projects. (Free plan: {limit_text} projects max)",
+        )
+    
     # Verify client exists and belongs to user
     try:
         client_uuid = UUID(project_in.client_id)

@@ -15,6 +15,7 @@ interface ScopeItemCardProps {
 const formatHours = (hours: number | null): string => {
   if (hours === null || hours === undefined) return '—';
   const num = Number(hours);
+  if (num === 0) return '0h';
   return num % 1 === 0 ? num.toFixed(0) + 'h' : num.toFixed(1) + 'h';
 };
 

@@ -10,15 +10,21 @@ import {
   Building2, 
   Briefcase,
   Mail,
-  ArrowUpRight
+  ArrowUpRight,
+  Lock,
+  AlertTriangle,
+  Info,
+  Crown
 } from 'lucide-react';
 import { useClients } from '../../hooks/useClients';
+import { useFeatureGate } from '../../hooks/useFeatureGate';
 import {
   Button,
   Input,
   Table,
   EmptyState,
   Dropdown,
+  useToast,
   type Column,
   type DropdownItem,
 } from '../../components/ui';
@@ -52,6 +58,8 @@ const getAvatarColor = (name: string) => {
 
 export const ClientsPage: React.FC = () => {
   const navigate = useNavigate();
+  const toast = useToast();
+  const { canCreateClient, currentUsage, limits, isPro, clientsRemaining } = useFeatureGate();
   const { data, isLoading } = useClients();
 
   const [searchQuery, setSearchQuery] = useState('');
@@ -86,6 +94,15 @@ export const ClientsPage: React.FC = () => {
 
   const handleRowClick = (client: Client) => {
     navigate(`/clients/${client.id}`);
+  };
+
+  const handleCreateClient = () => {
+    if (!canCreateClient) {
+      toast.error('Client limit reached. Upgrade to Pro for unlimited clients!');
+      navigate('/settings/billing');
+      return;
+    }
+    setIsCreateModalOpen(true);
   };
 
   const getDropdownItems = (client: Client): DropdownItem[] => [
@@ -200,23 +217,86 @@ export const ClientsPage: React.FC = () => {
 
   return (
     <div className="max-w-7xl mx-auto space-y-8 animate-fade-in">
+      {/* Limit Reached Banner - Show prominently when at limit */}
+      {!isPro && currentUsage.clients >= limits.maxClients && (
+        <div className="bg-amber-50 border-2 border-amber-300 rounded-xl p-5 mb-6 shadow-sm">
+          <div className="flex items-start gap-4">
+            <div className="w-12 h-12 bg-amber-100 rounded-lg flex items-center justify-center shrink-0">
+              <AlertTriangle className="w-6 h-6 text-amber-600" />
+            </div>
+            <div className="flex-1">
+              <h4 className="font-bold text-amber-900 text-lg mb-1">Client limit reached</h4>
+              <p className="text-sm text-amber-800 mb-4">
+                You've reached the maximum of {limits.maxClients} clients on the Free plan.{' '}
+                Upgrade to Pro for unlimited clients.
+              </p>
+              <Button
+                size="sm"
+                onClick={() => navigate('/settings/billing')}
+                className="bg-amber-600 hover:bg-amber-700 text-white"
+              >
+                <Crown className="w-4 h-4 mr-2" />
+                Upgrade to Pro
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Warning if approaching limit */}
+      {!isPro && currentUsage.clients === limits.maxClients - 1 && (
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+          <div className="flex items-start gap-3">
+            <Info className="w-5 h-5 text-blue-600 mt-0.5 shrink-0" />
+            <div className="flex-1">
+              <p className="text-sm text-blue-800 font-medium">
+                You have 1 client slot remaining on the Free plan.{' '}
+                <button
+                  onClick={() => navigate('/settings/billing')}
+                  className="underline font-semibold hover:text-blue-900"
+                >
+                  Upgrade to Pro
+                </button>
+                {' '}for unlimited clients.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Header Section */}
       <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold text-slate-900 tracking-tight">Clients</h1>
           <p className="mt-2 text-slate-600 max-w-2xl">
             Manage your client roster. You are currently working with <span className="font-semibold text-indigo-600">{stats.total} clients</span> across <span className="font-semibold text-slate-900">{stats.activeProjects} active projects</span>.
+            {!isPro && currentUsage.clients < limits.maxClients && (
+              <span className="block mt-1 text-sm text-slate-500">
+                {clientsRemaining} {clientsRemaining === 1 ? 'client' : 'clients'} remaining on Free plan
+              </span>
+            )}
           </p>
         </div>
         <div className="flex gap-3">
-          <Button
-            variant="primary"
-            className="shadow-lg shadow-indigo-500/20"
-            leftIcon={<Plus className="h-4 w-4" />}
-            onClick={() => setIsCreateModalOpen(true)}
-          >
-            Add Client
-          </Button>
+          {canCreateClient ? (
+            <Button
+              variant="primary"
+              className="shadow-lg shadow-indigo-500/20"
+              leftIcon={<Plus className="h-4 w-4" />}
+              onClick={handleCreateClient}
+            >
+              Add Client
+            </Button>
+          ) : (
+            <Button
+              variant="outline"
+              onClick={() => navigate('/settings/billing')}
+              className="border-amber-300 text-amber-700 hover:bg-amber-50 hover:border-amber-400"
+              leftIcon={<Lock className="h-4 w-4" />}
+            >
+              Upgrade to Add More
+            </Button>
+          )}
         </div>
       </div>
 
@@ -227,10 +307,17 @@ export const ClientsPage: React.FC = () => {
             icon={<Users className="h-12 w-12 text-indigo-100" />}
             title="Build your client list"
             description="Add your first client to start tracking projects, proposals, and scope requests."
-            action={{
-              label: 'Add First Client',
-              onClick: () => setIsCreateModalOpen(true),
-            }}
+            action={
+              canCreateClient
+                ? {
+                    label: 'Add First Client',
+                    onClick: handleCreateClient,
+                  }
+                : {
+                    label: 'Upgrade to Pro',
+                    onClick: () => navigate('/settings/billing'),
+                  }
+            }
           />
         </div>
       ) : (
@@ -257,20 +344,7 @@ export const ClientsPage: React.FC = () => {
               columns={columns}
               isLoading={false}
               onRowClick={handleRowClick}
-              emptyMessage={
-                <div className="py-12 text-center">
-                  <div className="w-12 h-12 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-3">
-                    <Search className="w-6 h-6 text-slate-300" />
-                  </div>
-                  <p className="text-slate-500">No clients found matching "{searchQuery}"</p>
-                  <button 
-                    onClick={() => setSearchQuery('')}
-                    className="text-indigo-600 font-medium text-sm mt-2 hover:underline"
-                  >
-                    Clear search
-                  </button>
-                </div>
-              }
+              emptyMessage={`No clients found matching "${searchQuery}"`}
             />
           </div>
           
@@ -282,15 +356,17 @@ export const ClientsPage: React.FC = () => {
         </div>
       )}
 
-      {/* Modals */}
-      <ClientFormModal
-        isOpen={isCreateModalOpen || !!editingClient}
-        onClose={() => {
-          setIsCreateModalOpen(false);
-          setEditingClient(null);
-        }}
-        client={editingClient}
-      />
+      {/* Modals - Only render create modal if allowed */}
+      {(canCreateClient || editingClient) && (
+        <ClientFormModal
+          isOpen={isCreateModalOpen || !!editingClient}
+          onClose={() => {
+            setIsCreateModalOpen(false);
+            setEditingClient(null);
+          }}
+          client={editingClient}
+        />
+      )}
 
       <DeleteClientModal
         isOpen={!!deletingClient}

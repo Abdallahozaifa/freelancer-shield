@@ -1,9 +1,10 @@
 import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Plus, MoreHorizontal, Trash2, Edit, Users, DollarSign, Clock } from 'lucide-react';
-import { Button, Dropdown, EmptyState, ConfirmDialog } from '../../components/ui';
+import { Plus, MoreHorizontal, Trash2, Edit, Users, DollarSign, Clock, Lock, AlertTriangle, Info, Crown } from 'lucide-react';
+import { Button, Dropdown, EmptyState, ConfirmDialog, useToast } from '../../components/ui';
 import { useProjects, useDeleteProject } from '../../hooks/useProjects';
 import { useClients } from '../../hooks/useClients';
+import { useFeatureGate } from '../../hooks/useFeatureGate';
 import { ProjectFormModal } from './ProjectFormModal';
 import { cn } from '../../utils/cn';
 import { formatCurrency, formatRelative } from '../../utils/format';
@@ -162,6 +163,8 @@ const ProjectCardSkeleton: React.FC = () => (
 
 export const ProjectsPage: React.FC = () => {
   const navigate = useNavigate();
+  const toast = useToast();
+  const { canCreateProject, limits, isPro, projectsRemaining } = useFeatureGate();
   const [activeFilter, setActiveFilter] = useState<FilterTab>('active');
   const [selectedClient, setSelectedClient] = useState<string>('all');
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -174,6 +177,11 @@ export const ProjectsPage: React.FC = () => {
 
   const projects = projectsData?.items ?? [];
   const clients = clientsData?.items ?? [];
+  
+  // Count active projects for limit checking
+  const activeProjectsCount = useMemo(() => {
+    return projects.filter(p => p.status === 'active').length;
+  }, [projects]);
 
   // Filter projects
   const filteredProjects = useMemo(() => {
@@ -200,14 +208,92 @@ export const ProjectsPage: React.FC = () => {
     }
   };
 
+  const handleCreateProject = () => {
+    if (!canCreateProject) {
+      toast.error('Project limit reached. Upgrade to Pro for unlimited projects!');
+      navigate('/settings/billing');
+      return;
+    }
+    navigate('/projects/new');
+  };
+
   return (
     <div className="space-y-6 animate-fade-in">
+      {/* Limit Reached Banner - Show prominently when at limit */}
+      {!isPro && activeProjectsCount >= limits.maxProjects && (
+        <div className="bg-amber-50 border-2 border-amber-300 rounded-xl p-5 mb-6 shadow-sm">
+          <div className="flex items-start gap-4">
+            <div className="w-12 h-12 bg-amber-100 rounded-lg flex items-center justify-center shrink-0">
+              <AlertTriangle className="w-6 h-6 text-amber-600" />
+            </div>
+            <div className="flex-1">
+              <h4 className="font-bold text-amber-900 text-lg mb-1">Project limit reached</h4>
+              <p className="text-sm text-amber-800 mb-4">
+                You've reached the maximum of {limits.maxProjects} active projects on the Free plan.{' '}
+                Upgrade to Pro for unlimited projects.
+              </p>
+              <Button
+                size="sm"
+                onClick={() => navigate('/settings/billing')}
+                className="bg-amber-600 hover:bg-amber-700 text-white"
+              >
+                <Crown className="w-4 h-4 mr-2" />
+                Upgrade to Pro
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Warning if approaching limit */}
+      {!isPro && activeProjectsCount === limits.maxProjects - 1 && (
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+          <div className="flex items-start gap-3">
+            <Info className="w-5 h-5 text-blue-600 mt-0.5 shrink-0" />
+            <div className="flex-1">
+              <p className="text-sm text-blue-800 font-medium">
+                You have 1 project slot remaining on the Free plan.{' '}
+                <button
+                  onClick={() => navigate('/settings/billing')}
+                  className="underline font-semibold hover:text-blue-900"
+                >
+                  Upgrade to Pro
+                </button>
+                {' '}for unlimited projects.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-extrabold text-slate-900">Projects</h1>
-        <Button onClick={() => setIsCreateModalOpen(true)} leftIcon={<Plus className="w-4 h-4" />}>
-          New Project
-        </Button>
+        <div>
+          <h1 className="text-3xl font-extrabold text-slate-900">Projects</h1>
+          {!isPro && activeProjectsCount < limits.maxProjects && (
+            <p className="text-sm text-slate-500 mt-1">
+              {projectsRemaining} {projectsRemaining === 1 ? 'project' : 'projects'} remaining on Free plan
+            </p>
+          )}
+        </div>
+        {canCreateProject ? (
+          <Button
+            onClick={handleCreateProject}
+            leftIcon={<Plus className="w-4 h-4" />}
+            className="shadow-lg shadow-indigo-500/20"
+          >
+            New Project
+          </Button>
+        ) : (
+          <Button
+            variant="outline"
+            onClick={() => navigate('/settings/billing')}
+            className="border-amber-300 text-amber-700 hover:bg-amber-50 hover:border-amber-400"
+            leftIcon={<Lock className="w-4 h-4" />}
+          >
+            Upgrade to Add More
+          </Button>
+        )}
       </div>
 
       {/* Filters */}
@@ -263,10 +349,15 @@ export const ProjectsPage: React.FC = () => {
               : `You don't have any projects with "${activeFilter.replace('_', ' ')}" status.`
           }
           action={
-            activeFilter === 'all'
+            activeFilter === 'all' && canCreateProject
               ? {
                   label: 'Create Project',
-                  onClick: () => setIsCreateModalOpen(true),
+                  onClick: handleCreateProject,
+                }
+              : activeFilter === 'all' && !canCreateProject
+              ? {
+                  label: 'Upgrade to Pro',
+                  onClick: () => navigate('/settings/billing'),
                 }
               : undefined
           }

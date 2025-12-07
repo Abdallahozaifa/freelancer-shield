@@ -2,7 +2,7 @@ import React, { useState, useMemo } from 'react';
 import {
   Mail, MessageCircle, Phone, Users, FileText,
   CheckCircle2, XCircle, MoreHorizontal,
-  Clock, Sparkles, DollarSign, ChevronDown, ChevronUp
+  Sparkles, RotateCcw, ChevronDown, ChevronUp
 } from 'lucide-react';
 import { Button, Dropdown, Badge } from '../../../components/ui';
 import { cn } from '../../../utils/cn';
@@ -50,8 +50,11 @@ export const RequestCard: React.FC<RequestCardProps> = ({
   const isInScope = request.classification === 'in_scope';
   const isPending = !request.classification || request.classification === 'pending';
   const isClarification = request.classification === 'clarification_needed';
-  const isArchived = request.status === 'declined' || request.status === 'archived';
+  const isAddressed = request.status === 'addressed';
+  const isDeclined = request.status === 'declined';
   const isProposalSent = request.status === 'proposal_sent';
+  const isArchived = isAddressed || isDeclined || isProposalSent; // History tab items
+  const isActive = request.status === 'new' || request.status === 'analyzed'; // Active (not in history)
 
   const estimatedHours = useMemo(() => isOutOfScope || isPending ? estimateHours(request.content) : null, [isOutOfScope, isPending, request.content]);
   const suggestedAmount = hourlyRate && estimatedHours ? hourlyRate * estimatedHours : undefined;
@@ -121,13 +124,13 @@ export const RequestCard: React.FC<RequestCardProps> = ({
              {!isArchived && (
                <Dropdown
                  trigger={
-                   <Button size="xs" variant="ghost" className="h-7 w-7 p-0 hover:bg-slate-200 rounded-md">
+                   <Button size="sm" variant="ghost" className="h-7 w-7 p-0 hover:bg-slate-200 rounded-md">
                      <MoreHorizontal className="w-4 h-4 text-slate-500" />
                    </Button>
                  }
                  items={[
-                   { label: 'Mark Processed', icon: <CheckCircle2 className="w-4 h-4" />, onClick: () => handleAction(() => actions.markAddressed(request)) },
-                   { label: 'Archive/Dismiss', icon: <XCircle className="w-4 h-4" />, onClick: () => handleAction(() => actions.dismiss(request)), danger: true }
+                   { label: 'Mark Addressed', icon: <CheckCircle2 className="w-4 h-4" />, onClick: () => handleAction(() => actions.markAddressed(request)) },
+                   { label: 'Dismiss', icon: <XCircle className="w-4 h-4" />, onClick: () => handleAction(() => actions.dismiss(request)), danger: true }
                  ]}
                  align="right"
                />
@@ -167,54 +170,112 @@ export const RequestCard: React.FC<RequestCardProps> = ({
 
               {/* Right: Primary Actions */}
               <div className="flex items-center gap-2">
-                {!isArchived && !isProposalSent && (
-                  <>
-                    <div className="flex rounded-md shadow-sm" role="group">
-                      <button
-                        onClick={e(() => handleAction(() => actions.classifyOut(request)))}
-                        className={cn(
-                          "px-3 py-1.5 text-xs font-medium border rounded-l-md transition-colors",
-                          isOutOfScope 
-                            ? "bg-red-50 text-red-700 border-red-200" 
-                            : "bg-white text-slate-600 border-slate-200 hover:bg-slate-50"
-                        )}
-                      >
-                        Out of Scope
-                      </button>
-                      <button
-                        onClick={e(() => handleAction(() => actions.classifyInfo(request)))}
-                        className={cn(
-                          "px-3 py-1.5 text-xs font-medium border-t border-b border-r transition-colors",
-                          isClarification 
-                            ? "bg-blue-50 text-blue-700 border-blue-200" 
-                            : "bg-white text-slate-600 border-slate-200 hover:bg-slate-50"
-                        )}
-                      >
-                        Needs Info
-                      </button>
-                      <button
-                        onClick={e(() => handleAction(() => actions.classifyIn(request)))}
-                        className={cn(
-                          "px-3 py-1.5 text-xs font-medium border-t border-b border-r rounded-r-md transition-colors",
-                          isInScope 
-                            ? "bg-emerald-50 text-emerald-700 border-emerald-200" 
-                            : "bg-white text-slate-600 border-slate-200 hover:bg-slate-50"
-                        )}
-                      >
-                        In Scope
-                      </button>
-                    </div>
-                  </>
+                {/* History Tab: Show Restore button only */}
+                {isArchived && (
+                  <Button
+                    size="sm"
+                    variant="secondary"
+                    onClick={e(() => handleAction(() => actions.restore(request)))}
+                    leftIcon={<RotateCcw className="w-4 h-4" />}
+                  >
+                    Restore
+                  </Button>
                 )}
 
-                {isOutOfScope && !isProposalSent && (
-                  <Button 
-                    size="sm" 
-                    className="ml-2 bg-slate-900 text-white hover:bg-slate-800 h-8"
-                    onClick={e(onCreateProposal)}
-                  >
-                    Generate Proposal
-                  </Button>
+                {/* Active Requests: Show appropriate actions based on state */}
+                {isActive && !isProposalSent && (
+                  <>
+                    {/* Triage buttons: Show for unclassified or clarification_needed requests (All tab) */}
+                    {(isPending || isClarification) && (
+                      <div className="flex rounded-md shadow-sm" role="group">
+                        <button
+                          onClick={e(() => handleAction(() => actions.classifyOut(request)))}
+                          className={cn(
+                            "px-3 py-1.5 text-xs font-medium border rounded-l-md transition-colors",
+                            isOutOfScope 
+                              ? "bg-red-50 text-red-700 border-red-200" 
+                              : "bg-white text-slate-600 border-slate-200 hover:bg-slate-50"
+                          )}
+                        >
+                          Out of Scope
+                        </button>
+                        <button
+                          onClick={e(() => handleAction(() => actions.classifyInfo(request)))}
+                          className={cn(
+                            "px-3 py-1.5 text-xs font-medium border-t border-b border-r transition-colors",
+                            isClarification 
+                              ? "bg-blue-50 text-blue-700 border-blue-200" 
+                              : "bg-white text-slate-600 border-slate-200 hover:bg-slate-50"
+                          )}
+                        >
+                          Needs Info
+                        </button>
+                        <button
+                          onClick={e(() => handleAction(() => actions.classifyIn(request)))}
+                          className={cn(
+                            "px-3 py-1.5 text-xs font-medium border-t border-b border-r rounded-r-md transition-colors",
+                            isInScope 
+                              ? "bg-emerald-50 text-emerald-700 border-emerald-200" 
+                              : "bg-white text-slate-600 border-slate-200 hover:bg-slate-50"
+                          )}
+                        >
+                          In Scope
+                        </button>
+                      </div>
+                    )}
+
+                    {/* Out of Scope tab: Show Generate Proposal and action buttons */}
+                    {isOutOfScope && (
+                      <>
+                        <Button 
+                          size="sm" 
+                          variant="primary"
+                          className="bg-slate-900 text-white hover:bg-slate-800 h-8"
+                          onClick={e(onCreateProposal)}
+                        >
+                          Generate Proposal
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="secondary"
+                          onClick={e(() => handleAction(() => actions.markAddressed(request)))}
+                          leftIcon={<CheckCircle2 className="w-4 h-4" />}
+                        >
+                          Mark Addressed
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="secondary"
+                          onClick={e(() => handleAction(() => actions.dismiss(request)))}
+                          leftIcon={<XCircle className="w-4 h-4" />}
+                        >
+                          Dismiss
+                        </Button>
+                      </>
+                    )}
+
+                    {/* Processed tab (In Scope): Show action buttons only */}
+                    {isInScope && (
+                      <>
+                        <Button
+                          size="sm"
+                          variant="secondary"
+                          onClick={e(() => handleAction(() => actions.markAddressed(request)))}
+                          leftIcon={<CheckCircle2 className="w-4 h-4" />}
+                        >
+                          Mark Addressed
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="secondary"
+                          onClick={e(() => handleAction(() => actions.dismiss(request)))}
+                          leftIcon={<XCircle className="w-4 h-4" />}
+                        >
+                          Dismiss
+                        </Button>
+                      </>
+                    )}
+                  </>
                 )}
               </div>
             </div>
@@ -231,7 +292,7 @@ const StatusBadge = ({ status, classification, isProposalSent }: any) => {
     return <Badge variant="success" size="sm" className="bg-emerald-100 text-emerald-800 border-emerald-200">Proposal Sent</Badge>;
   }
   if (status === 'addressed' || classification === 'in_scope') {
-    return <Badge variant="neutral" size="sm" className="bg-slate-100 text-slate-600 border-slate-200">Processed</Badge>;
+    return <Badge variant="default" size="sm" className="bg-slate-100 text-slate-600 border-slate-200">Processed</Badge>;
   }
   if (classification === 'out_of_scope') {
     return <Badge variant="danger" size="sm" className="bg-red-100 text-red-800 border-red-200 font-medium">Out of Scope</Badge>;

@@ -1,40 +1,34 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 import {
   ShieldCheck,
   CheckCircle2,
   FileText,
-  BarChart3,
   ArrowRight,
-  Users,
-  Layout,
   AlertTriangle,
   Clock,
-  DollarSign,
-  Zap,
-  Lock,
   Menu,
   X,
-  Search,
-  Bell,
-  MoreHorizontal,
-  ArrowUpRight,
-  FolderKanban,
   Check,
   MessageSquare,
-  Plug
+  Target,
+  LayoutDashboard,
+  TrendingDown,
+  ArrowDown,
+  ChevronDown,
+  Shield,
 } from 'lucide-react';
-import { useState } from 'react';
 import { Button } from '../../components/ui/Button';
 
 export function LandingPage() {
+  const navigate = useNavigate();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-slate-50 font-sans selection:bg-indigo-100 selection:text-indigo-900">
-      
+    <div className="min-h-screen bg-white font-sans">
       {/* Navigation */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-xl border-b border-slate-200">
-        <div className="max-w-7xl mx-auto px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
             <Link to="/" className="flex items-center gap-2 group">
@@ -46,9 +40,9 @@ export function LandingPage() {
 
             {/* Desktop Nav */}
             <div className="hidden md:flex items-center gap-8">
-              <a href="#features" className="text-sm font-medium text-slate-500 hover:text-indigo-600 transition-colors">Features</a>
-              <a href="#how-it-works" className="text-sm font-medium text-slate-500 hover:text-indigo-600 transition-colors">How it Works</a>
-              <a href="#pricing" className="text-sm font-medium text-slate-500 hover:text-indigo-600 transition-colors">Pricing</a>
+              <a href="#features" className="text-sm font-medium text-slate-600 hover:text-indigo-600 transition-colors">Features</a>
+              <a href="#pricing" className="text-sm font-medium text-slate-600 hover:text-indigo-600 transition-colors">Pricing</a>
+              <a href="#faq" className="text-sm font-medium text-slate-600 hover:text-indigo-600 transition-colors">FAQ</a>
             </div>
 
             {/* Auth Buttons */}
@@ -57,7 +51,7 @@ export function LandingPage() {
                 <Button variant="ghost" size="sm" className="text-slate-600 hover:text-indigo-600">Sign in</Button>
               </Link>
               <Link to="/register">
-                <Button size="sm" className="bg-slate-900 hover:bg-slate-800 text-white shadow-lg shadow-slate-900/20">
+                <Button size="sm" className="bg-indigo-600 hover:bg-indigo-700 text-white">
                   Get Started
                 </Button>
               </Link>
@@ -77,8 +71,8 @@ export function LandingPage() {
         {isMobileMenuOpen && (
           <div className="md:hidden absolute top-16 left-0 right-0 bg-white border-b border-slate-200 p-4 flex flex-col gap-4 shadow-xl">
             <a href="#features" className="text-sm font-medium text-slate-600 py-2" onClick={() => setIsMobileMenuOpen(false)}>Features</a>
-            <a href="#how-it-works" className="text-sm font-medium text-slate-600 py-2" onClick={() => setIsMobileMenuOpen(false)}>How it Works</a>
             <a href="#pricing" className="text-sm font-medium text-slate-600 py-2" onClick={() => setIsMobileMenuOpen(false)}>Pricing</a>
+            <a href="#faq" className="text-sm font-medium text-slate-600 py-2" onClick={() => setIsMobileMenuOpen(false)}>FAQ</a>
             <hr className="border-slate-100" />
             <Link to="/login" onClick={() => setIsMobileMenuOpen(false)}>
               <Button variant="ghost" className="w-full justify-start">Sign in</Button>
@@ -90,622 +84,797 @@ export function LandingPage() {
         )}
       </nav>
 
-      {/* Hero Section */}
-      <section className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden">
-        {/* Background Gradients */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full max-w-7xl pointer-events-none">
-          <div className="absolute top-20 left-10 w-[500px] h-[500px] bg-indigo-400/10 rounded-full blur-[100px]" />
-          <div className="absolute top-40 right-10 w-[400px] h-[400px] bg-purple-400/10 rounded-full blur-[100px]" />
+      {/* 1. Hero Section */}
+      <section className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 text-white pt-32 pb-20 md:pt-40 md:pb-32">
+        {/* Background pattern */}
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute inset-0" style={{
+            backgroundImage: `radial-gradient(circle at 2px 2px, white 1px, transparent 0)`,
+            backgroundSize: '40px 40px'
+          }} />
         </div>
 
-        <div className="max-w-7xl mx-auto px-6 lg:px-8 relative z-10 text-center">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-50 border border-indigo-100 text-indigo-600 text-xs font-semibold uppercase tracking-wide mb-8 animate-fade-in-up">
-            <Zap className="w-3 h-3" />
-            New: Project Profitability Tracking
-          </div>
-          
-          <h1 className="text-5xl sm:text-6xl lg:text-7xl font-extrabold text-slate-900 leading-[1.1] mb-6 tracking-tight max-w-4xl mx-auto">
-            Stop losing money to <br className="hidden sm:block" />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-600 animate-gradient-x">
-              scope creep.
-            </span>
-          </h1>
-          
-          <p className="text-xl text-slate-600 mb-10 max-w-2xl mx-auto leading-relaxed">
-            The all-in-one tool for freelancers to track deliverables, detect unbilled requests, 
-            and generate proposals instantly.
-          </p>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-32 relative z-10">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            {/* Left: Copy */}
+            <div>
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6">
+                Stop Scope Creep.
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">
+                  {' '}Protect Your Revenue.
+                </span>
+              </h1>
 
-          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
-            <Link to="/register">
-              <Button size="lg" className="w-full sm:w-auto h-12 px-8 text-base bg-slate-900 hover:bg-slate-800 shadow-xl shadow-indigo-500/20">
-                Start Free Trial
-                <ArrowRight className="w-4 h-4 ml-2" />
-              </Button>
-            </Link>
-            <Link to="/#how-it-works">
-              <Button variant="outline" size="lg" className="w-full sm:w-auto h-12 px-8 text-base bg-white">
-                How it Works
-              </Button>
-            </Link>
-          </div>
+              <p className="text-xl text-slate-300 mb-8 max-w-lg">
+                ScopeGuard helps freelancers track project scope, identify out-of-scope requests, 
+                and generate professional proposals — all in one place.
+              </p>
 
-          {/* Product Visualization (High-Fidelity CSS Mockup) */}
-          <div className="relative max-w-6xl mx-auto mt-12 perspective-1000 group">
-            {/* Main Window */}
-            <div className="relative bg-slate-50 rounded-2xl shadow-2xl shadow-indigo-900/10 border border-slate-200/60 overflow-hidden transform rotate-x-6 transition-transform duration-700 hover:rotate-x-0 hover:-translate-y-2 origin-top">
+              <div className="flex flex-col sm:flex-row gap-4">
+                <Button 
+                  size="lg" 
+                  onClick={() => navigate('/register')}
+                  className="bg-white text-indigo-600 hover:bg-indigo-50"
+                >
+                  Get Started Free
+                  <ArrowRight className="w-5 h-5 ml-2" />
+                </Button>
+              </div>
+
+              <p className="text-sm text-slate-400 mt-4">
+                No credit card required • Free plan available forever
+              </p>
+            </div>
+
+            {/* Right: Dashboard Preview */}
+            <div className="relative">
+              <div className="absolute -inset-4 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-2xl blur-2xl opacity-20" />
               
-              {/* Browser Bar */}
-              <div className="h-12 bg-white border-b border-slate-200 flex items-center px-4 justify-between">
-                <div className="flex gap-2">
-                  <div className="w-3 h-3 rounded-full bg-red-400/20 border border-red-400/50" />
-                  <div className="w-3 h-3 rounded-full bg-amber-400/20 border border-amber-400/50" />
-                  <div className="w-3 h-3 rounded-full bg-emerald-400/20 border border-emerald-400/50" />
-                </div>
-                <div className="flex-1 max-w-md mx-auto h-8 bg-slate-50 rounded-lg border border-slate-100 flex items-center justify-center text-xs text-slate-400 font-medium">
-                  <Lock className="w-3 h-3 mr-2" /> app.scopeguard.io
-                </div>
-                <div className="w-16" />
-              </div>
-
-              <div className="flex h-[600px] bg-slate-50 text-left">
-                {/* Sidebar */}
-                <div className="w-64 bg-slate-900 text-slate-300 hidden md:flex flex-col p-4 border-r border-slate-800">
-                  <div className="flex items-center gap-3 mb-8 px-2 mt-2">
-                    <div className="w-8 h-8 rounded-lg bg-indigo-500 flex items-center justify-center text-white">
-                      <ShieldCheck className="w-5 h-5" />
-                    </div>
-                    <span className="font-bold text-white tracking-tight">ScopeGuard</span>
+              {/* Mockup Container */}
+              <div className="relative bg-slate-800 rounded-xl shadow-2xl border border-slate-700 overflow-hidden">
+                {/* Browser Chrome */}
+                <div className="flex items-center gap-2 px-4 py-3 bg-slate-900 border-b border-slate-700">
+                  <div className="flex gap-1.5">
+                    <div className="w-3 h-3 rounded-full bg-red-500" />
+                    <div className="w-3 h-3 rounded-full bg-yellow-500" />
+                    <div className="w-3 h-3 rounded-full bg-green-500" />
                   </div>
-                  
-                  <div className="space-y-1">
-                    {[
-                      { icon: Layout, label: 'Dashboard', active: true },
-                      { icon: FolderKanban, label: 'Projects', active: false },
-                      { icon: Users, label: 'Clients', active: false },
-                      { icon: FileText, label: 'Proposals', active: false },
-                    ].map((item, i) => (
-                      <div key={i} className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${item.active ? 'bg-indigo-500/10 text-indigo-400 border border-indigo-500/20' : 'hover:bg-slate-800 hover:text-white'}`}>
-                        <item.icon className="w-4 h-4" />
-                        {item.label}
-                      </div>
-                    ))}
-                  </div>
-
-                  <div className="mt-auto pt-6 border-t border-slate-800">
-                    <div className="flex items-center gap-3 px-2">
-                      <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-500" />
-                      <div>
-                        <p className="text-xs font-medium text-white">Alex Freeman</p>
-                        <p className="text-[10px] text-slate-500">Pro Plan</p>
-                      </div>
+                  <div className="flex-1 mx-4">
+                    <div className="bg-slate-700 rounded-md px-3 py-1 text-xs text-slate-400 max-w-xs">
+                      app.scopeguard.com/dashboard
                     </div>
                   </div>
-                </div>
-
-                {/* Main Content */}
-                <div className="flex-1 overflow-hidden flex flex-col">
-                  {/* Top Bar */}
-                  <header className="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-8">
-                    <h2 className="font-bold text-slate-900 text-lg">Dashboard</h2>
-                    <div className="flex items-center gap-4">
-                      <div className="relative">
-                        <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-                        <div className="w-64 h-9 bg-slate-50 border border-slate-200 rounded-lg" />
-                      </div>
-                      <div className="w-px h-6 bg-slate-200" />
-                      <button className="relative p-2 text-slate-400 hover:bg-slate-50 rounded-full">
-                        <Bell className="w-5 h-5" />
-                        <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-white" />
-                      </button>
-                    </div>
-                  </header>
-
-                  <main className="flex-1 p-8 overflow-y-auto">
-                    {/* Stats Row */}
-                    <div className="grid grid-cols-3 gap-6 mb-8">
-                      {[
-                        { label: 'Revenue Protected', value: '$12,450', change: '+12%', icon: DollarSign, color: 'bg-emerald-500' },
-                        { label: 'Pending Proposals', value: '3', change: '$4,200', icon: FileText, color: 'bg-amber-500' },
-                        { label: 'Active Projects', value: '8', change: '2 new', icon: FolderKanban, color: 'bg-indigo-500' },
-                      ].map((stat, i) => (
-                        <div key={i} className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
-                          <div className="flex items-start justify-between mb-4">
-                            <div className={`w-10 h-10 rounded-lg ${stat.color} bg-opacity-10 flex items-center justify-center`}>
-                              <stat.icon className={`w-5 h-5 ${stat.color.replace('bg-', 'text-')}`} />
-                            </div>
-                            <span className="text-xs font-medium text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full flex items-center">
-                              <ArrowUpRight className="w-3 h-3 mr-1" /> {stat.change}
-                            </span>
-                          </div>
-                          <div>
-                            <p className="text-sm font-medium text-slate-500">{stat.label}</p>
-                            <p className="text-2xl font-bold text-slate-900 mt-1">{stat.value}</p>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-
-                    {/* Content Columns */}
-                    <div className="grid grid-cols-3 gap-8">
-                      {/* Project List */}
-                      <div className="col-span-2 bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-                        <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
-                          <h3 className="font-bold text-slate-900">Active Projects</h3>
-                          <button className="text-slate-400 hover:text-slate-600"><MoreHorizontal className="w-5 h-5" /></button>
-                        </div>
-                        <div className="divide-y divide-slate-50">
-                          {[
-                            { name: 'Website Redesign', client: 'Acme Corp', status: 'On Track', progress: 75 },
-                            { name: 'Mobile App MVP', client: 'TechStart', status: 'Scope Creep', progress: 45 },
-                            { name: 'Brand Identity', client: 'Studio 54', status: 'On Track', progress: 90 },
-                            { name: 'Q4 Marketing', client: 'Global Inc', status: 'On Track', progress: 20 },
-                          ].map((project, i) => (
-                            <div key={i} className="px-6 py-4 flex items-center justify-between hover:bg-slate-50 transition-colors">
-                              <div className="flex items-center gap-4">
-                                <div className="w-10 h-10 rounded-lg bg-slate-100 flex items-center justify-center text-slate-500 font-bold">
-                                  {project.name.charAt(0)}
-                                </div>
-                                <div>
-                                  <p className="font-semibold text-slate-900 text-sm">{project.name}</p>
-                                  <p className="text-xs text-slate-500">{project.client}</p>
-                                </div>
-                              </div>
-                              <div className="flex items-center gap-6">
-                                <div className="hidden sm:block">
-                                  <div className="flex justify-between text-xs mb-1.5">
-                                    <span className="font-medium text-slate-700">{project.progress}%</span>
-                                  </div>
-                                  <div className="w-24 h-1.5 bg-slate-100 rounded-full overflow-hidden">
-                                    <div className="h-full bg-indigo-500 rounded-full" style={{ width: `${project.progress}%` }} />
-                                  </div>
-                                </div>
-                                {project.status === 'Scope Creep' ? (
-                                  <span className="px-2.5 py-1 rounded-full bg-red-50 text-red-700 text-xs font-semibold border border-red-100">
-                                    Scope Creep
-                                  </span>
-                                ) : (
-                                  <span className="px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-semibold border border-emerald-100">
-                                    Active
-                                  </span>
-                                )}
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-
-                      {/* Alerts Panel */}
-                      <div className="space-y-4">
-                        <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
-                          <h3 className="font-bold text-slate-900 mb-4">Action Required</h3>
-                          <div className="space-y-3">
-                            <div className="p-3 rounded-lg bg-red-50 border border-red-100">
-                              <div className="flex gap-3">
-                                <AlertTriangle className="w-5 h-5 text-red-600 shrink-0" />
-                                <div>
-                                  <p className="text-sm font-bold text-red-900">Scope Creep Detected</p>
-                                  <p className="text-xs text-red-700 mt-1">Mobile App MVP has 2 unbilled requests.</p>
-                                  <button className="mt-2 text-xs font-semibold text-white bg-red-600 px-3 py-1.5 rounded-md hover:bg-red-700 transition-colors shadow-sm">
-                                    Review & Bill
-                                  </button>
-                                </div>
-                              </div>
-                            </div>
-                            <div className="p-3 rounded-lg bg-indigo-50 border border-indigo-100 flex gap-3 items-center">
-                              <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center text-indigo-600 shadow-sm">
-                                <FileText className="w-4 h-4" />
-                              </div>
-                              <div>
-                                <p className="text-sm font-semibold text-indigo-900">Proposal Accepted</p>
-                                <p className="text-xs text-indigo-600">+$1,200 secured</p>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </main>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Trusted By Strip */}
-      <section className="py-10 border-y border-slate-200 bg-white">
-        <div className="max-w-7xl mx-auto px-6 text-center">
-          <p className="text-sm font-semibold text-slate-500 uppercase tracking-widest mb-6">Trusted by freelancers at</p>
-          <div className="flex flex-wrap justify-center gap-x-12 gap-y-8 grayscale opacity-60">
-            {['Acme Corp', 'Global Design', 'TechFlow', 'Studio 44', 'Indie Devs'].map((logo) => (
-              <span key={logo} className="text-xl font-bold text-slate-300">{logo}</span>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Features Grid (With Visual Diagrams) */}
-      <section id="features" className="py-24 px-6 lg:px-8 bg-slate-50">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center max-w-2xl mx-auto mb-16">
-            <h2 className="text-3xl font-bold text-slate-900 mb-4">Everything you need to scale</h2>
-            <p className="text-slate-600">Stop managing scope in spreadsheets. Use visual tools built for growth.</p>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-6">
-            {/* Feature 1: Scope Matching Diagram */}
-            <div className="md:col-span-2 bg-white p-8 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow group overflow-hidden">
-              <div className="flex flex-col md:flex-row gap-8 items-center">
-                <div className="flex-1">
-                  <div className="w-12 h-12 rounded-xl bg-indigo-50 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                    <ShieldCheck className="w-6 h-6 text-indigo-600" />
-                  </div>
-                  <h3 className="text-xl font-bold text-slate-900 mb-3">Scope Boundary Protection</h3>
-                  <p className="text-slate-500 leading-relaxed">
-                    Compare incoming client requests against your agreed deliverables. ScopeGuard highlights requests that don't match your contract, helping you identify billable work instantly.
-                  </p>
                 </div>
                 
-                {/* CSS Diagram: Scope Comparison */}
-                <div className="w-full md:w-1/2 bg-slate-50 rounded-xl p-4 border border-slate-100 relative">
-                  <div className="absolute top-0 right-0 left-0 h-px bg-gradient-to-r from-transparent via-slate-300 to-transparent" />
-                  
-                  {/* Left: Contract */}
-                  <div className="bg-white p-3 rounded-lg border border-slate-200 shadow-sm mb-3">
-                    <div className="text-xs font-bold text-slate-400 uppercase mb-2">Agreed Scope</div>
-                    <div className="space-y-2">
-                      <div className="flex items-center gap-2">
-                        <Check className="w-3 h-3 text-emerald-500" />
-                        <div className="h-2 w-24 bg-slate-100 rounded" />
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Check className="w-3 h-3 text-emerald-500" />
-                        <div className="h-2 w-32 bg-slate-100 rounded" />
-                      </div>
+                {/* Dashboard Content */}
+                <div className="p-4 bg-slate-50">
+                  {/* Header */}
+                  <div className="flex items-center justify-between mb-4">
+                    <div>
+                      <div className="h-6 w-48 bg-slate-300 rounded mb-2" />
+                      <div className="h-4 w-32 bg-slate-200 rounded" />
                     </div>
-                  </div>
-
-                  {/* Arrow Logic */}
-                  <div className="flex justify-center -my-2 relative z-10">
-                    <div className="bg-slate-200 text-slate-500 text-[10px] px-2 py-0.5 rounded-full border border-white">vs</div>
-                  </div>
-
-                  {/* Right: New Request */}
-                  <div className="bg-white p-3 rounded-lg border border-red-200 shadow-sm mt-3 relative overflow-hidden">
-                    <div className="absolute left-0 top-0 bottom-0 w-1 bg-red-500" />
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <div className="text-xs font-bold text-slate-700 mb-1">New Request</div>
-                        <div className="text-[10px] text-slate-500">"Add mobile dark mode"</div>
-                      </div>
-                      <AlertTriangle className="w-4 h-4 text-red-500" />
-                    </div>
-                    <div className="mt-2 inline-block bg-red-50 text-red-700 text-[10px] px-2 py-0.5 rounded font-medium border border-red-100">
-                      Out of Scope
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Feature 2: Proposal Diagram */}
-            <div className="md:row-span-2 bg-slate-900 p-8 rounded-2xl shadow-xl flex flex-col relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/20 rounded-full blur-[80px]" />
-              <div className="relative z-10 flex-1 flex flex-col">
-                <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center mb-6">
-                  <FileText className="w-6 h-6 text-white" />
-                </div>
-                <h3 className="text-xl font-bold text-white mb-3">Instant Proposals</h3>
-                <p className="text-slate-300 leading-relaxed mb-8">
-                  Convert out-of-scope requests into professional change orders with one click.
-                </p>
-                
-                {/* CSS Diagram: Proposal Flow */}
-                <div className="mt-auto space-y-3">
-                  {/* Step 1: Alert */}
-                  <div className="flex items-center gap-3 opacity-50">
-                    <div className="w-8 h-8 rounded-full bg-red-500/20 flex items-center justify-center border border-red-500/30">
-                      <AlertTriangle className="w-4 h-4 text-red-400" />
-                    </div>
-                    <div className="h-1 flex-1 bg-white/10 rounded-full" />
+                    <div className="h-8 w-24 bg-indigo-500 rounded-lg" />
                   </div>
                   
-                  {/* Step 2: Generation */}
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-indigo-500 flex items-center justify-center shadow-lg shadow-indigo-500/50">
-                      <Zap className="w-4 h-4 text-white" />
+                  {/* Stats Grid */}
+                  <div className="grid grid-cols-4 gap-3 mb-4">
+                    <div className="bg-white rounded-lg p-3 border border-slate-200">
+                      <div className="h-3 w-16 bg-slate-200 rounded mb-2" />
+                      <div className="h-6 w-12 bg-emerald-500 rounded" />
                     </div>
-                    <div className="flex-1 bg-white/10 rounded px-3 py-2 text-xs text-white">
-                      Generating Proposal...
+                    <div className="bg-white rounded-lg p-3 border border-slate-200">
+                      <div className="h-3 w-16 bg-slate-200 rounded mb-2" />
+                      <div className="h-6 w-8 bg-indigo-500 rounded" />
+                    </div>
+                    <div className="bg-white rounded-lg p-3 border border-slate-200">
+                      <div className="h-3 w-16 bg-slate-200 rounded mb-2" />
+                      <div className="h-6 w-10 bg-amber-500 rounded" />
+                    </div>
+                    <div className="bg-white rounded-lg p-3 border border-slate-200">
+                      <div className="h-3 w-16 bg-slate-200 rounded mb-2" />
+                      <div className="h-6 w-14 bg-purple-500 rounded" />
                     </div>
                   </div>
-
-                  {/* Step 3: Profit */}
-                  <div className="flex items-center gap-3 mt-4">
-                    <div className="w-full bg-emerald-500/20 border border-emerald-500/30 rounded-lg p-3 flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                        <span className="text-xs text-emerald-100">Sent & Approved</span>
+                  
+                  {/* Content Area */}
+                  <div className="grid grid-cols-3 gap-3">
+                    <div className="col-span-2 bg-white rounded-lg p-3 border border-slate-200">
+                      <div className="h-4 w-24 bg-slate-300 rounded mb-3" />
+                      <div className="space-y-2">
+                        <div className="flex items-center gap-2">
+                          <div className="w-2 h-2 rounded-full bg-emerald-500" />
+                          <div className="h-3 flex-1 bg-slate-100 rounded" />
+                          <div className="h-3 w-8 bg-slate-200 rounded" />
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <div className="w-2 h-2 rounded-full bg-amber-500" />
+                          <div className="h-3 flex-1 bg-slate-100 rounded" />
+                          <div className="h-3 w-8 bg-slate-200 rounded" />
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <div className="w-2 h-2 rounded-full bg-indigo-500" />
+                          <div className="h-3 flex-1 bg-slate-100 rounded" />
+                          <div className="h-3 w-8 bg-slate-200 rounded" />
+                        </div>
                       </div>
-                      <span className="text-sm font-bold text-white">+$450</span>
+                    </div>
+                    <div className="bg-white rounded-lg p-3 border border-slate-200">
+                      <div className="h-4 w-20 bg-slate-300 rounded mb-3" />
+                      <div className="h-24 bg-gradient-to-t from-indigo-100 to-transparent rounded" />
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
-
-            {/* Feature 3 */}
-            <div className="bg-white p-8 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow group">
-              <div className="w-12 h-12 rounded-xl bg-emerald-50 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                <BarChart3 className="w-6 h-6 text-emerald-600" />
-              </div>
-              <h3 className="text-xl font-bold text-slate-900 mb-3">Revenue Dashboard</h3>
-              <p className="text-slate-500">
-                Visualize how much "free work" you've saved. Track pending proposals and accepted change orders in real-time.
-              </p>
-            </div>
-
-            {/* Feature 4 */}
-            <div className="bg-white p-8 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow group">
-              <div className="w-12 h-12 rounded-xl bg-amber-50 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                <Layout className="w-6 h-6 text-amber-600" />
-              </div>
-              <h3 className="text-xl font-bold text-slate-900 mb-3">Centralized Requests</h3>
-              <p className="text-slate-500">
-                Consolidate emails, Slack messages, and meeting notes into a single "Inbox" for your project.
-              </p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Integrations Preview */}
-      <section className="py-24 px-6 lg:px-8 bg-white border-t border-slate-200">
-        <div className="max-w-7xl mx-auto text-center">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 border border-slate-200 text-slate-600 text-xs font-semibold uppercase tracking-wide mb-6">
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-indigo-500"></span>
-            </span>
-            Coming Soon
-          </div>
-          
-          <h2 className="text-3xl font-bold text-slate-900 mb-4">Connect your ecosystem</h2>
-          <p className="text-lg text-slate-600 max-w-2xl mx-auto mb-12">
-            We are building direct integrations with major freelance platforms to automatically sync your contracts and communications.
-          </p>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto">
-            {/* Upwork */}
-            <div className="p-6 rounded-2xl border border-slate-200 bg-slate-50 flex flex-col items-center justify-center gap-3 opacity-75 hover:opacity-100 transition-opacity">
-              <div className="w-12 h-12 rounded-full bg-[#14a800] flex items-center justify-center text-white font-bold text-xl">Up</div>
-              <span className="font-semibold text-slate-700">Upwork</span>
-            </div>
-            
-            {/* Fiverr */}
-            <div className="p-6 rounded-2xl border border-slate-200 bg-slate-50 flex flex-col items-center justify-center gap-3 opacity-75 hover:opacity-100 transition-opacity">
-              <div className="w-12 h-12 rounded-full bg-[#1dbf73] flex items-center justify-center text-white font-bold text-xl">fi</div>
-              <span className="font-semibold text-slate-700">Fiverr</span>
-            </div>
-
-            {/* Slack */}
-            <div className="p-6 rounded-2xl border border-slate-200 bg-slate-50 flex flex-col items-center justify-center gap-3 opacity-75 hover:opacity-100 transition-opacity">
-              <div className="w-12 h-12 rounded-full bg-[#4a154b] flex items-center justify-center text-white font-bold text-xl">#</div>
-              <span className="font-semibold text-slate-700">Slack</span>
-            </div>
-
-            {/* Trello */}
-            <div className="p-6 rounded-2xl border border-slate-200 bg-slate-50 flex flex-col items-center justify-center gap-3 opacity-75 hover:opacity-100 transition-opacity">
-              <div className="w-12 h-12 rounded-full bg-[#0079bf] flex items-center justify-center text-white font-bold text-xl">Tr</div>
-              <span className="font-semibold text-slate-700">Trello</span>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* How It Works Section (Flow Diagram) */}
-      <section id="how-it-works" className="py-24 px-6 lg:px-8 bg-slate-50">
-        <div className="max-w-7xl mx-auto">
+      {/* 3. Problem/Solution Section */}
+      <section className="py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-4">
-              A simple workflow for complex projects
+            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
+              Scope Creep is Killing Your Profits
             </h2>
-            <p className="text-lg text-slate-600 max-w-2xl mx-auto">
-              Protect your time without damaging client relationships.
+            <p className="text-xl text-slate-600 max-w-2xl mx-auto">
+              Small "quick changes" add up. Before you know it, you've done extra work without extra pay.
+              ScopeGuard helps you capture every request and turn them into billable work.
             </p>
           </div>
 
-          <div className="relative grid md:grid-cols-3 gap-8">
-            {/* Connecting Line (Desktop) */}
-            <div className="hidden md:block absolute top-12 left-[16%] right-[16%] h-0.5 bg-slate-200 z-0" />
+          <div className="grid md:grid-cols-3 gap-8 mb-12">
+            {/* Problem 1 */}
+            <div className="bg-red-50 rounded-xl p-6 border border-red-100">
+              <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center mb-4">
+                <AlertTriangle className="w-6 h-6 text-red-600" />
+              </div>
+              <h3 className="font-bold text-slate-900 mb-2">Untracked Requests</h3>
+              <p className="text-slate-600">
+                Client asks pile up in emails, Slack, and calls. You forget to bill for half of them.
+              </p>
+            </div>
 
-            {[
-              {
-                step: '1',
-                title: 'Define Scope',
-                desc: 'Upload your contract deliverables.',
-                icon: FolderKanban,
-                color: 'indigo'
-              },
-              {
-                step: '2',
-                title: 'Log Requests',
-                desc: 'Input client emails or messages.',
-                icon: MessageSquare,
-                color: 'amber'
-              },
-              {
-                step: '3',
-                title: 'Get Paid',
-                desc: 'Convert extras into paid proposals.',
-                icon: DollarSign,
-                color: 'emerald'
-              },
-            ].map((item, i) => (
-              <div key={i} className="relative z-10 flex flex-col items-center text-center">
-                <div className={`w-24 h-24 rounded-2xl bg-white border-4 border-${item.color}-50 shadow-lg flex items-center justify-center mb-6`}>
-                  <div className={`w-16 h-16 rounded-xl bg-${item.color}-100 flex items-center justify-center`}>
-                    <item.icon className={`w-8 h-8 text-${item.color}-600`} />
+            {/* Problem 2 */}
+            <div className="bg-red-50 rounded-xl p-6 border border-red-100">
+              <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center mb-4">
+                <TrendingDown className="w-6 h-6 text-red-600" />
+              </div>
+              <h3 className="font-bold text-slate-900 mb-2">Lost Revenue</h3>
+              <p className="text-slate-600">
+                "Quick changes" add up. Before you know it, you've done 30% more work for free.
+              </p>
+            </div>
+
+            {/* Problem 3 */}
+            <div className="bg-red-50 rounded-xl p-6 border border-red-100">
+              <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center mb-4">
+                <Clock className="w-6 h-6 text-red-600" />
+              </div>
+              <h3 className="font-bold text-slate-900 mb-2">Awkward Conversations</h3>
+              <p className="text-slate-600">
+                Bringing up extra charges feels uncomfortable. So you just... don't.
+              </p>
+            </div>
+          </div>
+
+          {/* Arrow down */}
+          <div className="flex justify-center my-12">
+            <ArrowDown className="w-8 h-8 text-slate-300" />
+          </div>
+
+          {/* Solution */}
+          <div className="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl p-8 md:p-12 border border-indigo-100">
+            <div className="grid md:grid-cols-2 gap-8 items-center">
+              <div>
+                <h3 className="text-2xl font-bold text-slate-900 mb-4">
+                  ScopeGuard Makes It Easy
+                </h3>
+                <ul className="space-y-4">
+                  <li className="flex items-start gap-3">
+                    <CheckCircle2 className="w-6 h-6 text-emerald-500 shrink-0" />
+                    <span className="text-slate-700">Log every client request in seconds</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                  <CheckCircle2 className="w-6 h-6 text-emerald-500 shrink-0" />
+                  <span className="text-slate-700">Identify out-of-scope work instantly</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <CheckCircle2 className="w-6 h-6 text-emerald-500 shrink-0" />
+                    <span className="text-slate-700">Generate professional change order proposals</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                  <CheckCircle2 className="w-6 h-6 text-emerald-500 shrink-0" />
+                  <span className="text-slate-700">Track your protected revenue over time</span>
+                  </li>
+                </ul>
+              </div>
+              <div>
+                {/* Scope Detection Mockup */}
+                <div className="relative bg-white rounded-xl shadow-lg border border-slate-200 overflow-hidden">
+                  {/* Header */}
+                  <div className="px-4 py-3 border-b border-slate-100 flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 bg-indigo-100 rounded-lg flex items-center justify-center">
+                        <AlertTriangle className="w-4 h-4 text-indigo-600" />
+                      </div>
+                      <span className="font-semibold text-slate-900">Client Requests</span>
+                    </div>
+                    <div className="flex gap-2">
+                      <span className="px-2 py-1 bg-amber-100 text-amber-700 text-xs font-medium rounded-full">
+                        3 Out of Scope
+                      </span>
+                    </div>
+                  </div>
+                  
+                  {/* Request Items */}
+                  <div className="p-4 space-y-3">
+                    <div className="flex items-start gap-3 p-3 bg-amber-50 border border-amber-200 rounded-lg">
+                      <div className="w-6 h-6 bg-amber-100 rounded-full flex items-center justify-center shrink-0">
+                        <AlertTriangle className="w-3 h-3 text-amber-600" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-slate-900">Add user authentication system</p>
+                        <p className="text-xs text-slate-500 mt-1">Not in original scope • Est. 8 hours</p>
+                      </div>
+                      <button className="px-3 py-1 bg-indigo-600 text-white text-xs font-medium rounded-lg shrink-0">
+                        Create Proposal
+                      </button>
+                    </div>
+                    
+                    <div className="flex items-start gap-3 p-3 bg-emerald-50 border border-emerald-200 rounded-lg">
+                      <div className="w-6 h-6 bg-emerald-100 rounded-full flex items-center justify-center shrink-0">
+                        <Check className="w-3 h-3 text-emerald-600" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-slate-900">Update homepage hero section</p>
+                        <p className="text-xs text-slate-500 mt-1">In scope • Marked complete</p>
+                      </div>
+                      <span className="px-2 py-1 bg-emerald-100 text-emerald-700 text-xs font-medium rounded-full shrink-0">
+                        Done
+                      </span>
+                    </div>
+                    
+                    <div className="flex items-start gap-3 p-3 bg-amber-50 border border-amber-200 rounded-lg">
+                      <div className="w-6 h-6 bg-amber-100 rounded-full flex items-center justify-center shrink-0">
+                        <AlertTriangle className="w-3 h-3 text-amber-600" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-slate-900">Build mobile app version</p>
+                        <p className="text-xs text-slate-500 mt-1">Not in original scope • Est. 40 hours</p>
+                      </div>
+                      <button className="px-3 py-1 bg-indigo-600 text-white text-xs font-medium rounded-lg shrink-0">
+                        Create Proposal
+                      </button>
+                    </div>
                   </div>
                 </div>
-                <h3 className="text-xl font-bold text-slate-900 mb-2">{item.title}</h3>
-                <p className="text-slate-500 max-w-xs">{item.desc}</p>
               </div>
-            ))}
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Pricing Section */}
-      <section id="pricing" className="py-24 px-6 lg:px-8 bg-white">
-        <div className="max-w-7xl mx-auto">
+      {/* 4. Features Section */}
+      <section id="features" className="py-20 bg-slate-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold text-slate-900 mb-4">Simple, transparent pricing</h2>
-            <p className="text-slate-600">No hidden fees. Cancel anytime.</p>
+            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
+              Everything You Need to Protect Your Projects
+            </h2>
+            <p className="text-xl text-slate-600">
+              Powerful features designed specifically for freelancers
+            </p>
+          </div>
+
+          {/* Feature 1: Dashboard */}
+          <div className="grid lg:grid-cols-2 gap-12 items-center mb-20">
+            <div>
+              <div className="inline-flex items-center gap-2 px-3 py-1 bg-indigo-100 text-indigo-700 rounded-full text-sm font-medium mb-4">
+                <LayoutDashboard className="w-4 h-4" />
+                Dashboard
+              </div>
+              <h3 className="text-2xl font-bold text-slate-900 mb-4">
+                Your Command Center
+              </h3>
+              <p className="text-slate-600 mb-6">
+                See all your projects, clients, and scope status at a glance. 
+                Track revenue protected, monitor project health, and catch scope creep early.
+              </p>
+              <ul className="space-y-3">
+                <li className="flex items-center gap-2 text-slate-700">
+                  <Check className="w-5 h-5 text-emerald-500" />
+                  Real-time project status
+                </li>
+                <li className="flex items-center gap-2 text-slate-700">
+                  <Check className="w-5 h-5 text-emerald-500" />
+                  Revenue protection tracking
+                </li>
+                <li className="flex items-center gap-2 text-slate-700">
+                  <Check className="w-5 h-5 text-emerald-500" />
+                  Scope creep alerts
+                </li>
+              </ul>
+            </div>
+            <div className="relative">
+              <div className="absolute -inset-4 bg-gradient-to-r from-indigo-200 to-purple-200 rounded-2xl blur-xl opacity-50" />
+              <div className="relative bg-white rounded-xl shadow-xl border border-slate-200 overflow-hidden">
+                <div className="p-4">
+                  <div className="flex items-center gap-2 mb-4">
+                    <div className="w-8 h-8 bg-indigo-100 rounded-lg" />
+                    <div className="h-4 w-32 bg-slate-200 rounded" />
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="bg-emerald-50 rounded-lg p-3">
+                      <div className="text-2xl font-bold text-emerald-600">$4,200</div>
+                      <div className="text-xs text-slate-500">Revenue Protected</div>
+                    </div>
+                    <div className="bg-indigo-50 rounded-lg p-3">
+                      <div className="text-2xl font-bold text-indigo-600">12</div>
+                      <div className="text-xs text-slate-500">Active Projects</div>
+                    </div>
+                    <div className="bg-amber-50 rounded-lg p-3">
+                      <div className="text-2xl font-bold text-amber-600">5</div>
+                      <div className="text-xs text-slate-500">Scope Alerts</div>
+                    </div>
+                    <div className="bg-purple-50 rounded-lg p-3">
+                      <div className="text-2xl font-bold text-purple-600">89%</div>
+                      <div className="text-xs text-slate-500">Proposal Rate</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Feature 2: Scope Tracking (reversed) */}
+          <div className="grid lg:grid-cols-2 gap-12 items-center mb-20">
+            <div className="order-2 lg:order-1 relative">
+              <div className="absolute -inset-4 bg-gradient-to-r from-emerald-200 to-teal-200 rounded-2xl blur-xl opacity-50" />
+              <div className="relative bg-white rounded-xl shadow-xl border border-slate-200 overflow-hidden">
+                <div className="px-4 py-3 border-b border-slate-100">
+                  <span className="font-semibold text-slate-900">Project Scope</span>
+                </div>
+                <div className="p-4 space-y-3">
+                  {[
+                    { name: 'Homepage Design', status: 'complete', hours: 8 },
+                    { name: 'About Page', status: 'complete', hours: 4 },
+                    { name: 'Contact Form', status: 'in-progress', hours: 3 },
+                    { name: 'Blog Integration', status: 'pending', hours: 12 },
+                  ].map((item, i) => (
+                    <div key={i} className="flex items-center gap-3">
+                      <div className={`w-5 h-5 rounded-full flex items-center justify-center ${
+                        item.status === 'complete' ? 'bg-emerald-100' :
+                        item.status === 'in-progress' ? 'bg-indigo-100' : 'bg-slate-100'
+                      }`}>
+                        {item.status === 'complete' && <Check className="w-3 h-3 text-emerald-600" />}
+                      </div>
+                      <span className="flex-1 text-sm text-slate-700">{item.name}</span>
+                      <span className="text-xs text-slate-400">{item.hours}h</span>
+                    </div>
+                  ))}
+                </div>
+                <div className="px-4 py-3 bg-slate-50 border-t border-slate-100">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-slate-500">Progress</span>
+                    <span className="font-medium text-slate-900">45%</span>
+                  </div>
+                  <div className="mt-2 h-2 bg-slate-200 rounded-full overflow-hidden">
+                    <div className="h-full w-[45%] bg-indigo-500 rounded-full" />
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="order-1 lg:order-2">
+              <div className="inline-flex items-center gap-2 px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-sm font-medium mb-4">
+                <Target className="w-4 h-4" />
+                Scope Tracking
+              </div>
+              <h3 className="text-2xl font-bold text-slate-900 mb-4">
+                Define & Protect Your Scope
+              </h3>
+              <p className="text-slate-600 mb-6">
+                Clearly define project deliverables and track completion. 
+                When clients request changes, you'll know exactly what's in scope and what isn't.
+              </p>
+              <ul className="space-y-3">
+                <li className="flex items-center gap-2 text-slate-700">
+                  <Check className="w-5 h-5 text-emerald-500" />
+                  Deliverable checklists
+                </li>
+                <li className="flex items-center gap-2 text-slate-700">
+                  <Check className="w-5 h-5 text-emerald-500" />
+                  Hour estimates
+                </li>
+                <li className="flex items-center gap-2 text-slate-700">
+                  <Check className="w-5 h-5 text-emerald-500" />
+                  Progress tracking
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          {/* Feature 3: Request Management */}
+          <div className="grid lg:grid-cols-2 gap-12 items-center mb-20">
+            <div>
+              <div className="inline-flex items-center gap-2 px-3 py-1 bg-amber-100 text-amber-700 rounded-full text-sm font-medium mb-4">
+                <MessageSquare className="w-4 h-4" />
+                Request Management
+              </div>
+              <h3 className="text-2xl font-bold text-slate-900 mb-4">
+                Capture Every Client Request
+              </h3>
+              <p className="text-slate-600 mb-6">
+                Log requests as they come in. Classify them as in-scope or out-of-scope. 
+                Never let a billable request slip through the cracks again.
+              </p>
+              <ul className="space-y-3">
+                <li className="flex items-center gap-2 text-slate-700">
+                  <Check className="w-5 h-5 text-emerald-500" />
+                  Quick request logging
+                </li>
+                <li className="flex items-center gap-2 text-slate-700">
+                  <Check className="w-5 h-5 text-emerald-500" />
+                  In-scope vs out-of-scope classification
+                </li>
+                <li className="flex items-center gap-2 text-slate-700">
+                  <Check className="w-5 h-5 text-emerald-500" />
+                  Full audit trail
+                </li>
+              </ul>
+            </div>
+            <div className="relative">
+              <div className="absolute -inset-4 bg-gradient-to-r from-amber-200 to-orange-200 rounded-2xl blur-xl opacity-50" />
+              <div className="relative bg-white rounded-xl shadow-xl border border-slate-200 overflow-hidden">
+                <div className="px-4 py-3 border-b border-slate-100 flex items-center justify-between">
+                  <span className="font-semibold text-slate-900">Recent Requests</span>
+                  <span className="px-2 py-1 bg-amber-100 text-amber-700 text-xs font-medium rounded-full">
+                    2 Need Review
+                  </span>
+                </div>
+                <div className="divide-y divide-slate-100">
+                  {[
+                    { text: 'Add dark mode toggle', type: 'out', time: '2h ago' },
+                    { text: 'Fix mobile nav bug', type: 'in', time: '5h ago' },
+                    { text: 'New payment gateway', type: 'out', time: '1d ago' },
+                  ].map((req, i) => (
+                    <div key={i} className="px-4 py-3 flex items-center gap-3">
+                      <div className={`w-2 h-2 rounded-full ${
+                        req.type === 'out' ? 'bg-amber-500' : 'bg-emerald-500'
+                      }`} />
+                      <span className="flex-1 text-sm text-slate-700">{req.text}</span>
+                      <span className="text-xs text-slate-400">{req.time}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Feature 4: Proposals (Pro) */}
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <div className="order-2 lg:order-1 relative">
+              <div className="absolute -inset-4 bg-gradient-to-r from-purple-200 to-pink-200 rounded-2xl blur-xl opacity-50" />
+              <div className="relative bg-white rounded-xl shadow-xl border border-slate-200 overflow-hidden">
+                <div className="px-4 py-3 border-b border-slate-100 flex items-center justify-between">
+                  <span className="font-semibold text-slate-900">Change Order Proposal</span>
+                  <span className="px-2 py-1 bg-indigo-100 text-indigo-700 text-xs font-medium rounded-full">
+                    Draft
+                  </span>
+                </div>
+                <div className="p-4">
+                  <div className="mb-4">
+                    <div className="text-xs text-slate-500 mb-1">Requested Work</div>
+                    <div className="text-sm font-medium text-slate-900">User Authentication System</div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4 mb-4">
+                    <div>
+                      <div className="text-xs text-slate-500 mb-1">Estimated Hours</div>
+                      <div className="text-lg font-bold text-slate-900">8 hours</div>
+                    </div>
+                    <div>
+                      <div className="text-xs text-slate-500 mb-1">Proposed Cost</div>
+                      <div className="text-lg font-bold text-emerald-600">$800</div>
+                    </div>
+                  </div>
+                  <button className="w-full py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg">
+                    Send to Client
+                  </button>
+                </div>
+              </div>
+              {/* Pro badge overlay */}
+              <div className="absolute top-4 right-4 bg-gradient-to-r from-indigo-500 to-purple-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">
+                PRO
+              </div>
+            </div>
+            <div className="order-1 lg:order-2">
+              <div className="inline-flex items-center gap-2 px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm font-medium mb-4">
+                <FileText className="w-4 h-4" />
+                Proposal Generator
+              </div>
+              <h3 className="text-2xl font-bold text-slate-900 mb-4">
+                One-Click Professional Proposals
+              </h3>
+              <p className="text-slate-600 mb-6">
+                Turn out-of-scope requests into professional change order proposals instantly. 
+                Stop leaving money on the table.
+              </p>
+              <ul className="space-y-3">
+                <li className="flex items-center gap-2 text-slate-700">
+                  <Check className="w-5 h-5 text-emerald-500" />
+                  Auto-generated proposals
+                </li>
+                <li className="flex items-center gap-2 text-slate-700">
+                  <Check className="w-5 h-5 text-emerald-500" />
+                  Professional templates
+                </li>
+                <li className="flex items-center gap-2 text-slate-700">
+                  <Check className="w-5 h-5 text-emerald-500" />
+                  Track client responses
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 5. Pricing Section */}
+      <section id="pricing" className="py-20 bg-white">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
+              Simple, Transparent Pricing
+            </h2>
+            <p className="text-xl text-slate-600">
+              Start free, upgrade when you're ready
+            </p>
           </div>
 
           <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
             {/* Free Plan */}
-            <div className="p-8 rounded-3xl bg-white border border-slate-200 hover:border-slate-300 transition-colors">
-              <h3 className="text-lg font-semibold text-slate-900 mb-2">Starter</h3>
-              <div className="flex items-baseline gap-1 mb-6">
+            <div className="bg-white rounded-2xl border border-slate-200 p-8 hover:border-slate-300 transition-colors">
+              <h3 className="text-xl font-bold text-slate-900 mb-2">Free</h3>
+              <p className="text-slate-500 mb-6">For freelancers just starting out</p>
+
+              <div className="mb-6">
                 <span className="text-4xl font-bold text-slate-900">$0</span>
-                <span className="text-slate-500">/mo</span>
+                <span className="text-slate-500">/month</span>
               </div>
-              <p className="text-slate-600 mb-8 text-sm">Perfect for freelancers just getting started.</p>
-              
-              <Link to="/register">
-                <Button variant="outline" className="w-full mb-8 h-11 border-slate-200">Get Started Free</Button>
-              </Link>
+
+              <Button 
+                variant="outline" 
+                className="w-full mb-8"
+                onClick={() => navigate('/register')}
+              >
+                Get Started Free
+              </Button>
 
               <ul className="space-y-4">
-                {[
-                  'Up to 3 Active Projects',
-                  'Basic Scope Tracking',
-                  '5 Proposals / month',
-                  'Email Support'
-                ].map((feature, i) => (
-                  <li key={i} className="flex items-center gap-3 text-sm text-slate-600">
-                    <CheckCircle2 className="w-5 h-5 text-slate-400 flex-shrink-0" />
-                    {feature}
-                  </li>
-                ))}
+                <li className="flex items-center gap-3 text-slate-600">
+                  <Check className="w-5 h-5 text-slate-400" />
+                  Up to 3 active projects
+                </li>
+                <li className="flex items-center gap-3 text-slate-600">
+                  <Check className="w-5 h-5 text-slate-400" />
+                  Up to 2 clients
+                </li>
+                <li className="flex items-center gap-3 text-slate-600">
+                  <Check className="w-5 h-5 text-slate-400" />
+                  Basic scope tracking
+                </li>
+                <li className="flex items-center gap-3 text-slate-600">
+                  <Check className="w-5 h-5 text-slate-400" />
+                  Request logging
+                </li>
+                <li className="flex items-center gap-3 text-slate-600">
+                  <Check className="w-5 h-5 text-slate-400" />
+                  Email support
+                </li>
               </ul>
             </div>
 
             {/* Pro Plan */}
-            <div className="relative p-8 rounded-3xl bg-slate-900 text-white shadow-2xl transform md:-translate-y-4">
-              <div className="absolute top-0 right-0 p-6">
-                <span className="bg-indigo-500 text-white text-xs font-bold px-3 py-1 rounded-full">
-                  MOST POPULAR
-                </span>
+            <div className="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl border-2 border-indigo-200 p-8 relative">
+              {/* Popular badge */}
+              <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white text-sm font-bold px-4 py-1 rounded-full">
+                RECOMMENDED
               </div>
-              <h3 className="text-lg font-semibold text-white mb-2">Pro</h3>
-              <div className="flex items-baseline gap-1 mb-6">
-                <span className="text-4xl font-bold text-white">$19</span>
-                <span className="text-slate-400">/mo</span>
+
+              <h3 className="text-xl font-bold text-indigo-900 mb-2">Pro</h3>
+              <p className="text-indigo-600 mb-6">For growing freelancers</p>
+
+              <div className="mb-2">
+                <span className="text-lg text-slate-400 line-through mr-2">$39</span>
+                <span className="text-4xl font-bold text-indigo-900">$29</span>
+                <span className="text-slate-500">/month</span>
               </div>
-              <p className="text-slate-400 mb-8 text-sm">For professionals scaling their business.</p>
-              
-              <Link to="/register">
-                <Button className="w-full mb-8 h-11 bg-white text-slate-900 hover:bg-slate-100 border-none">
-                  Start Free Trial
-                </Button>
-              </Link>
+              <p className="text-emerald-600 text-sm font-medium mb-6">
+                Save $10/month
+              </p>
+
+              <Button 
+                className="w-full mb-8 bg-indigo-600 hover:bg-indigo-700"
+                onClick={() => navigate('/register')}
+              >
+                Get Started
+              </Button>
 
               <ul className="space-y-4">
-                {[
-                  'Unlimited Projects',
-                  'Advanced Scope Analysis',
-                  'Unlimited Proposals',
-                  'Priority Support',
-                  'Client Portal (Coming Soon)',
-                  'Custom Branding'
-                ].map((feature, i) => (
-                  <li key={i} className="flex items-center gap-3 text-sm text-slate-300">
-                    <CheckCircle2 className="w-5 h-5 text-indigo-400 flex-shrink-0" />
-                    {feature}
-                  </li>
-                ))}
+                <li className="flex items-center gap-3 text-slate-700 font-medium">
+                  <Check className="w-5 h-5 text-indigo-600" />
+                  Unlimited projects
+                </li>
+                <li className="flex items-center gap-3 text-slate-700 font-medium">
+                  <Check className="w-5 h-5 text-indigo-600" />
+                  Unlimited clients
+                </li>
+                <li className="flex items-center gap-3 text-slate-700 font-medium">
+                  <Check className="w-5 h-5 text-indigo-600" />
+                  Smart scope creep detection
+                </li>
+                <li className="flex items-center gap-3 text-slate-700 font-medium">
+                  <Check className="w-5 h-5 text-indigo-600" />
+                  One-click proposal generator
+                </li>
+                <li className="flex items-center gap-3 text-slate-700 font-medium">
+                  <Check className="w-5 h-5 text-indigo-600" />
+                  Advanced analytics
+                </li>
+                <li className="flex items-center gap-3 text-slate-700 font-medium">
+                  <Check className="w-5 h-5 text-indigo-600" />
+                  Priority support
+                </li>
               </ul>
             </div>
           </div>
-        </div>
-      </section>
 
-      {/* CTA Section */}
-      <section className="py-24 px-6 relative overflow-hidden bg-indigo-600">
-        <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20"></div>
-        <div className="max-w-4xl mx-auto text-center relative z-10">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
-            Ready to stop working for free?
-          </h2>
-          <p className="text-indigo-100 text-lg mb-10 max-w-2xl mx-auto">
-            Join thousands of freelancers who use ScopeGuard to protect their time and increase their revenue by an average of 20%.
+          {/* Money-back guarantee */}
+          <p className="text-center text-slate-500 mt-8">
+            <ShieldCheck className="w-5 h-5 inline mr-2" />
+            14-day money-back guarantee. No questions asked.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link to="/register">
-              <Button size="lg" className="h-14 px-8 bg-white text-indigo-600 hover:bg-indigo-50 border-none text-lg">
-                Get Started Now
-              </Button>
-            </Link>
-          </div>
-          <p className="mt-6 text-sm text-indigo-200">No credit card required • Cancel anytime</p>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="bg-slate-50 border-t border-slate-200 pt-16 pb-8 px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
-            <div className="col-span-2 md:col-span-1">
-              <div className="flex items-center gap-2 mb-4">
-                <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-indigo-600 text-white">
-                  <ShieldCheck className="w-5 h-5" />
-                </div>
-                <span className="font-bold text-lg text-slate-900">ScopeGuard</span>
+      {/* 5. FAQ Section */}
+      <section id="faq" className="py-20 bg-slate-50">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
+              Frequently Asked Questions
+            </h2>
+          </div>
+
+          <div className="space-y-4">
+            <details className="group bg-white rounded-xl border border-slate-200 overflow-hidden">
+              <summary className="flex items-center justify-between p-6 cursor-pointer font-medium text-slate-900 hover:bg-slate-50">
+                What is scope creep?
+                <ChevronDown className="w-5 h-5 text-slate-400 group-open:rotate-180 transition-transform" />
+              </summary>
+              <div className="px-6 pb-6 text-slate-600">
+                Scope creep happens when clients request work beyond the original project agreement. 
+                Small "quick changes" add up, and you end up doing extra work without additional pay.
               </div>
-              <p className="text-sm text-slate-500">
-                Empowering freelancers to build sustainable, profitable businesses by managing scope effectively.
+            </details>
+
+            <details className="group bg-white rounded-xl border border-slate-200 overflow-hidden">
+              <summary className="flex items-center justify-between p-6 cursor-pointer font-medium text-slate-900 hover:bg-slate-50">
+                Is there really a free plan?
+                <ChevronDown className="w-5 h-5 text-slate-400 group-open:rotate-180 transition-transform" />
+              </summary>
+              <div className="px-6 pb-6 text-slate-600">
+                Yes! The free plan is free forever with no credit card required. 
+                It includes up to 3 projects and 2 clients. Upgrade to Pro anytime for unlimited access.
+              </div>
+            </details>
+
+            <details className="group bg-white rounded-xl border border-slate-200 overflow-hidden">
+              <summary className="flex items-center justify-between p-6 cursor-pointer font-medium text-slate-900 hover:bg-slate-50">
+                How does the proposal generator work?
+                <ChevronDown className="w-5 h-5 text-slate-400 group-open:rotate-180 transition-transform" />
+              </summary>
+              <div className="px-6 pb-6 text-slate-600">
+                When you identify an out-of-scope request, click "Generate Proposal" and we'll create 
+                a professional change order document with your pricing that you can send directly to your client.
+              </div>
+            </details>
+
+            <details className="group bg-white rounded-xl border border-slate-200 overflow-hidden">
+              <summary className="flex items-center justify-between p-6 cursor-pointer font-medium text-slate-900 hover:bg-slate-50">
+                Can I cancel anytime?
+                <ChevronDown className="w-5 h-5 text-slate-400 group-open:rotate-180 transition-transform" />
+              </summary>
+              <div className="px-6 pb-6 text-slate-600">
+                Absolutely. No contracts, no commitments. Cancel with one click anytime, 
+                and you'll keep access until the end of your billing period.
+              </div>
+            </details>
+
+            <details className="group bg-white rounded-xl border border-slate-200 overflow-hidden">
+              <summary className="flex items-center justify-between p-6 cursor-pointer font-medium text-slate-900 hover:bg-slate-50">
+                What payment methods do you accept?
+                <ChevronDown className="w-5 h-5 text-slate-400 group-open:rotate-180 transition-transform" />
+              </summary>
+              <div className="px-6 pb-6 text-slate-600">
+                We accept all major credit cards through Stripe. Your payment information is securely 
+                processed and we never store your card details.
+              </div>
+            </details>
+          </div>
+        </div>
+      </section>
+
+      {/* 6. Final CTA Section */}
+      <section className="py-20 bg-gradient-to-br from-indigo-600 to-purple-700 text-white">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">
+            Ready to Protect Your Projects?
+          </h2>
+          <p className="text-xl text-indigo-100 mb-8 max-w-2xl mx-auto">
+            Stop losing money to scope creep. Start tracking your project scope today.
+          </p>
+          <Button 
+            size="lg" 
+            variant="outline"
+            className="bg-white text-indigo-600 hover:bg-indigo-50 border-white"
+            onClick={() => navigate('/register')}
+          >
+            Get Started Free
+            <ArrowRight className="w-5 h-5 ml-2" />
+          </Button>
+          <p className="text-indigo-200 mt-6 text-sm">
+            No credit card required • Free plan available forever
+          </p>
+        </div>
+      </section>
+
+      {/* 7. Footer */}
+      <footer className="bg-slate-900 text-slate-400 py-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid md:grid-cols-4 gap-8 mb-8">
+            <div>
+              <div className="flex items-center gap-2 mb-4">
+                <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center">
+                  <Shield className="w-5 h-5 text-white" />
+                </div>
+                <span className="font-bold text-white">ScopeGuard</span>
+              </div>
+              <p className="text-sm">
+                Protect your freelance projects from scope creep.
               </p>
             </div>
-            
+
             <div>
-              <h4 className="font-semibold text-slate-900 mb-4">Product</h4>
-              <ul className="space-y-2 text-sm text-slate-500">
-                <li><a href="#" className="hover:text-indigo-600 transition-colors">Features</a></li>
-                <li><a href="#" className="hover:text-indigo-600 transition-colors">Pricing</a></li>
-                <li><a href="#" className="hover:text-indigo-600 transition-colors">Integrations</a></li>
-                <li><a href="#" className="hover:text-indigo-600 transition-colors">Changelog</a></li>
+              <h4 className="font-semibold text-white mb-4">Product</h4>
+              <ul className="space-y-2 text-sm">
+                <li><a href="#features" className="hover:text-white transition-colors">Features</a></li>
+                <li><a href="#pricing" className="hover:text-white transition-colors">Pricing</a></li>
+                <li><Link to="/login" className="hover:text-white transition-colors">Login</Link></li>
+                <li><Link to="/register" className="hover:text-white transition-colors">Sign Up</Link></li>
               </ul>
             </div>
 
             <div>
-              <h4 className="font-semibold text-slate-900 mb-4">Resources</h4>
-              <ul className="space-y-2 text-sm text-slate-500">
-                <li><a href="#" className="hover:text-indigo-600 transition-colors">Blog</a></li>
-                <li><a href="#" className="hover:text-indigo-600 transition-colors">Freelance Guide</a></li>
-                <li><a href="#" className="hover:text-indigo-600 transition-colors">Scope Templates</a></li>
-                <li><a href="#" className="hover:text-indigo-600 transition-colors">Community</a></li>
+              <h4 className="font-semibold text-white mb-4">Support</h4>
+              <ul className="space-y-2 text-sm">
+                <li><a href="mailto:support@scopeguard.app" className="hover:text-white transition-colors">Contact</a></li>
+                <li><a href="#faq" className="hover:text-white transition-colors">FAQ</a></li>
               </ul>
             </div>
 
             <div>
-              <h4 className="font-semibold text-slate-900 mb-4">Legal</h4>
-              <ul className="space-y-2 text-sm text-slate-500">
-                <li><Link to="/privacy" className="hover:text-indigo-600 transition-colors">Privacy</Link></li>
-                <li><Link to="/terms" className="hover:text-indigo-600 transition-colors">Terms</Link></li>
-                <li><a href="#" className="hover:text-indigo-600 transition-colors">Security</a></li>
+              <h4 className="font-semibold text-white mb-4">Legal</h4>
+              <ul className="space-y-2 text-sm">
+                <li><a href="/privacy" className="hover:text-white transition-colors">Privacy Policy</a></li>
+                <li><a href="/terms" className="hover:text-white transition-colors">Terms of Service</a></li>
               </ul>
             </div>
           </div>
-          
-          <div className="pt-8 border-t border-slate-200 flex flex-col md:flex-row justify-between items-center gap-4">
-            <p className="text-sm text-slate-400">© 2025 ScopeGuard Inc. All rights reserved.</p>
-            <div className="flex gap-4">
-              {/* Social icons would go here */}
-            </div>
+
+          <div className="border-t border-slate-800 pt-8 text-sm text-center">
+            © {new Date().getFullYear()} ScopeGuard. All rights reserved.
           </div>
         </div>
       </footer>

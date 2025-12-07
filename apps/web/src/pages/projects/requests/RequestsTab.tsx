@@ -2,9 +2,12 @@ import React, { useState, useMemo } from 'react';
 import { 
   Plus, 
   Search, 
-  Inbox
+  Inbox,
+  Sparkles
 } from 'lucide-react';
-import { Button, Spinner } from '../../../components/ui';
+import { Button, Spinner, useToast } from '../../../components/ui';
+import { useFeatureGate } from '../../../hooks/useFeatureGate';
+import { UpgradePrompt, ProFeatureBadge } from '../../../components/ui';
 import { RequestCard } from './RequestCard';
 import { RequestFormModal, RequestFormData } from './RequestFormModal';
 import { CreateProposalFromRequest } from './CreateProposalFromRequest';
@@ -34,12 +37,14 @@ export const RequestsTab: React.FC<RequestsTabProps> = ({ projectId }) => {
   const [selectedRequest, setSelectedRequest] = useState<ClientRequest | null>(null);
 
   const { data: project } = useProject(projectId);
+  const { isPro } = useFeatureGate();
   const {
     data: requestsData,
     isLoading: requestsLoading,
     refetch: refetchRequests,
   } = useRequests(projectId); // Fetch all requests, not just active ones
 
+  const toast = useToast();
   const createRequest = useCreateRequest();
   const updateRequest = useUpdateRequest();
   const classifyRequest = useClassifyRequest();
@@ -137,20 +142,138 @@ export const RequestsTab: React.FC<RequestsTabProps> = ({ projectId }) => {
   }, [filteredRequests]);
 
   // --- Handlers ---
-  const handleCreateRequest = async (data: RequestFormData) => await createRequest.mutateAsync({ projectId, data });
+  const handleCreateRequest = async (data: RequestFormData) => {
+    try {
+      const result = await createRequest.mutateAsync({ projectId, data });
+      toast.success('Request logged successfully');
+      refetchRequests();
+      return result;
+    } catch (error) {
+      toast.error('Failed to log request. Please try again.');
+      throw error;
+    }
+  };
+
   const handleSubmitProposal = async (data: ProposalCreate) => {
-    await createProposal.mutateAsync({ projectId, data });
-    if (selectedRequest) await updateRequest.mutateAsync({ projectId, requestId: selectedRequest.id, data: { status: 'proposal_sent' } });
-    refetchRequests();
+    try {
+      await createProposal.mutateAsync({ projectId, data });
+      if (selectedRequest) {
+        await updateRequest.mutateAsync({ 
+          projectId, 
+          requestId: selectedRequest.id, 
+          data: { status: 'proposal_sent' } 
+        });
+      }
+      toast.success('Proposal created and sent successfully');
+      refetchRequests();
+    } catch (error) {
+      toast.error('Failed to create proposal. Please try again.');
+    }
   };
 
   const actions = {
-    markAddressed: async (r: ClientRequest) => { await updateRequest.mutateAsync({ projectId, requestId: r.id, data: { status: 'addressed' } }); refetchRequests(); },
-    dismiss: async (r: ClientRequest) => { await updateRequest.mutateAsync({ projectId, requestId: r.id, data: { status: 'declined' } }); refetchRequests(); },
-    restore: async (r: ClientRequest) => { await updateRequest.mutateAsync({ projectId, requestId: r.id, data: { status: 'new', classification: null } }); refetchRequests(); },
-    classifyOut: async (r: ClientRequest) => { await classifyRequest.mutateAsync({ projectId, requestId: r.id, classification: 'out_of_scope' }); refetchRequests(); },
-    classifyIn: async (r: ClientRequest) => { await classifyRequest.mutateAsync({ projectId, requestId: r.id, classification: 'in_scope' }); refetchRequests(); },
-    classifyInfo: async (r: ClientRequest) => { await classifyRequest.mutateAsync({ projectId, requestId: r.id, classification: 'clarification_needed' }); refetchRequests(); },
+    markAddressed: async (r: ClientRequest) => {
+      if (r.status === 'addressed') {
+        toast.info('Request is already addressed');
+        return;
+      }
+      try {
+        await updateRequest.mutateAsync({ 
+          projectId, 
+          requestId: r.id, 
+          data: { status: 'addressed' } 
+        });
+        toast.success('Request marked as addressed');
+        refetchRequests();
+      } catch (error) {
+        toast.error('Failed to mark request as addressed');
+      }
+    },
+    dismiss: async (r: ClientRequest) => {
+      if (r.status === 'declined') {
+        toast.info('Request is already declined');
+        return;
+      }
+      try {
+        await updateRequest.mutateAsync({ 
+          projectId, 
+          requestId: r.id, 
+          data: { status: 'declined' } 
+        });
+        toast.success('Request dismissed');
+        refetchRequests();
+      } catch (error) {
+        toast.error('Failed to dismiss request');
+      }
+    },
+    restore: async (r: ClientRequest) => {
+      if (r.status === 'new' && !r.classification) {
+        toast.info('Request is already active');
+        return;
+      }
+      try {
+        await updateRequest.mutateAsync({ 
+          projectId, 
+          requestId: r.id, 
+          data: { status: 'new', classification: null } 
+        });
+        toast.success('Request restored');
+        refetchRequests();
+      } catch (error) {
+        toast.error('Failed to restore request');
+      }
+    },
+    classifyOut: async (r: ClientRequest) => {
+      if (r.classification === 'out_of_scope') {
+        toast.info('Request is already classified as out of scope');
+        return;
+      }
+      try {
+        await classifyRequest.mutateAsync({ 
+          projectId, 
+          requestId: r.id, 
+          classification: 'out_of_scope' 
+        });
+        toast.success('Request classified as out of scope');
+        refetchRequests();
+      } catch (error) {
+        toast.error('Failed to classify request');
+      }
+    },
+    classifyIn: async (r: ClientRequest) => {
+      if (r.classification === 'in_scope') {
+        toast.info('Request is already classified as in scope');
+        return;
+      }
+      try {
+        await classifyRequest.mutateAsync({ 
+          projectId, 
+          requestId: r.id, 
+          classification: 'in_scope' 
+        });
+        toast.success('Request classified as in scope');
+        refetchRequests();
+      } catch (error) {
+        toast.error('Failed to classify request');
+      }
+    },
+    classifyInfo: async (r: ClientRequest) => {
+      if (r.classification === 'clarification_needed') {
+        toast.info('Request already needs clarification');
+        return;
+      }
+      try {
+        await classifyRequest.mutateAsync({ 
+          projectId, 
+          requestId: r.id, 
+          classification: 'clarification_needed' 
+        });
+        toast.success('Request marked as needs clarification');
+        refetchRequests();
+      } catch (error) {
+        toast.error('Failed to classify request');
+      }
+    },
   };
 
   return (
@@ -183,6 +306,38 @@ export const RequestsTab: React.FC<RequestsTabProps> = ({ projectId }) => {
               Log Request
             </Button>
           </div>
+
+          {/* Smart Scope Detection Section */}
+          {activeTab === 'all' && (
+            <div className="mt-4 mb-4 p-4 bg-slate-50 rounded-lg border border-slate-200">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <h3 className="font-semibold text-slate-900 text-sm">Smart Scope Detection</h3>
+                  {!isPro && <ProFeatureBadge />}
+                </div>
+                {isPro ? (
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => {
+                      // TODO: Implement AI analysis for all requests
+                      toast.success('AI analysis feature coming soon!');
+                    }}
+                    leftIcon={<Sparkles className="w-4 h-4" />}
+                  >
+                    Analyze All Requests
+                  </Button>
+                ) : (
+                  <UpgradePrompt
+                    feature="Smart Scope Detection"
+                    description="Let AI automatically detect scope creep in client requests."
+                    variant="inline"
+                    className="mt-0"
+                  />
+                )}
+              </div>
+            </div>
+          )}
 
           {/* Filter Tabs - Clean Text Style */}
           <div className="flex items-center gap-1 mt-6 -mb-4 overflow-x-auto no-scrollbar">

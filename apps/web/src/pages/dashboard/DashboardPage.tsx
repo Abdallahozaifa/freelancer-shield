@@ -6,7 +6,6 @@ import {
   AlertTriangle,
   ChevronRight,
   TrendingUp,
-  Clock,
   Plus,
   ArrowUpRight,
   CheckCircle2,
@@ -15,13 +14,18 @@ import {
 } from 'lucide-react';
 import { useDashboard } from '../../hooks/useDashboard';
 import { useAuthStore } from '../../stores/authStore';
-import { Card, StatCard, Button, Badge } from '../../components/ui';
+import { useProStatus } from '../../hooks/useProStatus';
+import { useFeatureGate } from '../../hooks/useFeatureGate';
+import { Card, StatCard, Button, Badge, ProBadge, ProFeatureBadge } from '../../components/ui';
 import { formatCurrency, formatRelative } from '../../utils/format';
+import { Crown } from 'lucide-react';
 
 export const DashboardPage: React.FC = () => {
   const navigate = useNavigate();
   const { user } = useAuthStore();
-  const { summary, alerts, project_health: projects, isLoading } = useDashboard();
+  const { summary, alerts, project_health: projects, isLoading, error, refresh } = useDashboard();
+  const { isPro, isLoading: isSubscriptionLoading } = useProStatus();
+  const { projectsRemaining, clientsRemaining } = useFeatureGate();
 
   const getGreeting = () => {
     const hour = new Date().getHours();
@@ -56,27 +60,67 @@ export const DashboardPage: React.FC = () => {
     return true;
   });
 
-  const getSeverityVariant = (severity: string) => {
-    const s = severity.toLowerCase();
-    if (s === 'high') return 'danger';
-    if (s === 'medium') return 'warning';
-    return 'info';
-  };
-
   const revenueProtected = summary?.revenue_protected ?? summary?.total_revenue_protected ?? 0;
   const proposalsAccepted = summary?.proposals_accepted ?? summary?.accepted_proposals ?? 0;
+  const totalProposals = summary?.total_proposals ?? 0;
   const completedScopeItems = summary?.completed_scope_items ?? 
     projects.reduce((sum, p) => sum + (p.scope_items_completed ?? 0), 0);
+  
+  // Calculate acceptance rate safely
+  const acceptanceRate = totalProposals > 0 
+    ? Math.round((proposalsAccepted / totalProposals) * 100)
+    : 0;
+
+  // Error state
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[400px] max-w-7xl mx-auto">
+        <AlertTriangle className="w-12 h-12 text-red-500 mb-4" />
+        <h2 className="text-xl font-bold text-slate-900 mb-2">Failed to load dashboard</h2>
+        <p className="text-slate-500 mb-6">Please try again or contact support if the problem persists.</p>
+        <Button variant="outline" onClick={() => refresh()}>
+          Retry
+        </Button>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-8 animate-fade-in max-w-7xl mx-auto">
+      {/* Usage Summary for Free Users */}
+      {!isPro && !isSubscriptionLoading && (
+        <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-slate-600">
+                <span className="font-semibold text-slate-900">{projectsRemaining}</span> projects and{' '}
+                <span className="font-semibold text-slate-900">{clientsRemaining}</span> clients remaining on Free plan
+              </p>
+            </div>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => navigate('/settings/billing')}
+            >
+              <Crown className="w-3 h-3 mr-1" />
+              Upgrade
+            </Button>
+          </div>
+        </div>
+      )}
+
       {/* Header Section */}
       <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 border-b border-slate-200 pb-6">
         <div>
           <p className="text-sm font-medium text-slate-500 mb-1">{currentDate}</p>
-          <h1 className="text-3xl font-bold text-slate-900 tracking-tight">
-            {getGreeting()}, {firstName}
-          </h1>
+          <div className="flex items-center gap-3 flex-wrap">
+            <h1 className="text-3xl font-bold text-slate-900 tracking-tight">
+              {getGreeting()}, {firstName}
+            </h1>
+            {!isSubscriptionLoading && isPro && (
+              <ProBadge size="md" variant="gradient" />
+            )}
+          </div>
           <p className="text-slate-600 mt-2 max-w-2xl">
             You have <span className="font-semibold text-indigo-600">{summary?.active_projects ?? 0} active projects</span> and <span className="font-semibold text-emerald-600">{realTotalOutOfScope} potential scope items</span> to review.
           </p>
@@ -115,6 +159,11 @@ export const DashboardPage: React.FC = () => {
                 <div className="flex items-center gap-2 text-indigo-100 text-sm font-medium mb-1">
                   <DollarSign className="w-4 h-4" />
                   <span>Revenue Protected</span>
+                  {!isPro && (
+                    <span className="ml-auto">
+                      <ProFeatureBadge className="bg-white/20 text-white border-white/30" />
+                    </span>
+                  )}
                 </div>
                 <div className="text-3xl font-bold mb-1 tracking-tight">
                   {formatCurrency(revenueProtected)}
@@ -136,18 +185,27 @@ export const DashboardPage: React.FC = () => {
               iconVariant="primary"
             />
             
-            <StatCard
-              title="Scope Creep"
-              value={realTotalOutOfScope}
-              subtitle="Items needing approval"
-              icon={<AlertTriangle className="w-5 h-5" />}
-              iconVariant="danger"
-            />
+            <div 
+              onClick={() => {
+                if (realTotalOutOfScope > 0) {
+                  navigate('/projects');
+                }
+              }}
+              className={realTotalOutOfScope > 0 ? 'cursor-pointer' : ''}
+            >
+              <StatCard
+                title="Scope Creep"
+                value={realTotalOutOfScope}
+                subtitle="Items needing approval"
+                icon={<AlertTriangle className="w-5 h-5" />}
+                iconVariant="danger"
+              />
+            </div>
 
             <StatCard
               title="Acceptance Rate"
-              value={`${summary?.total_proposals ? Math.round((proposalsAccepted / summary.total_proposals) * 100) : 0}%`}
-              subtitle={`${summary?.total_proposals ?? 0} total proposals`}
+              value={`${acceptanceRate}%`}
+              subtitle={`${totalProposals} total proposals`}
               icon={<Activity className="w-5 h-5" />}
               iconVariant="success"
             />
@@ -196,6 +254,18 @@ export const DashboardPage: React.FC = () => {
                   </div>
                 ))}
               </div>
+              {validAlerts.length > 3 && (
+                <div className="px-5 py-3 border-t border-orange-100">
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    onClick={() => navigate('/projects')}
+                    className="w-full text-orange-600 hover:text-orange-700 hover:bg-orange-50"
+                  >
+                    View all {validAlerts.length} alerts
+                  </Button>
+                </div>
+              )}
             </div>
           )}
 
@@ -265,8 +335,8 @@ export const DashboardPage: React.FC = () => {
                         </div>
 
                         <div className="col-span-3 flex justify-center">
-                          <Badge variant={project.status === 'Active' ? 'success' : 'neutral'} size="sm">
-                            {project.status}
+                          <Badge variant={project.status === 'active' ? 'success' : 'default'} size="sm">
+                            {project.status === 'active' ? 'Active' : project.status === 'completed' ? 'Completed' : project.status === 'on_hold' ? 'On Hold' : 'Cancelled'}
                           </Badge>
                         </div>
 
@@ -322,48 +392,54 @@ export const DashboardPage: React.FC = () => {
               </div>
             </div>
             
-            <div className="space-y-5">
-              <div className="group">
-                <div className="flex items-center justify-between mb-1.5">
-                  <span className="text-sm font-medium text-slate-600">Proposals Sent</span>
-                  <span className="text-sm font-bold text-slate-900">{summary?.total_proposals ?? 0}</span>
-                </div>
-                <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
-                   {/* Decorative bar since we don't have a max value for proposals, just show activity */}
-                  <div className="h-full bg-indigo-200 rounded-full w-2/3" />
-                </div>
+            {isLoading ? (
+              <div className="space-y-5 animate-pulse">
+                <div className="h-16 bg-slate-100 rounded" />
+                <div className="h-16 bg-slate-100 rounded" />
+                <div className="h-20 bg-slate-100 rounded" />
               </div>
-
-              <div className="group">
-                <div className="flex items-center justify-between mb-1.5">
-                  <span className="text-sm font-medium text-slate-600">Acceptance Rate</span>
-                  <span className="text-sm font-bold text-emerald-600">
-                    {summary?.total_proposals
-                      ? Math.round((proposalsAccepted / summary.total_proposals) * 100)
-                      : 0}%
-                  </span>
-                </div>
-                <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
-                  <div 
-                    className="h-full bg-emerald-500 rounded-full transition-all" 
-                    style={{ width: `${summary?.total_proposals ? (proposalsAccepted / summary.total_proposals) * 100 : 0}%` }}
-                  />
-                </div>
-              </div>
-
-              <div className="pt-4 border-t border-slate-100">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-xs text-slate-500 uppercase tracking-wide font-semibold">Total Delivered</p>
-                    <p className="text-lg font-bold text-slate-900 mt-1">{completedScopeItems}</p>
+            ) : (
+              <div className="space-y-5">
+                <div className="group">
+                  <div className="flex items-center justify-between mb-1.5">
+                    <span className="text-sm font-medium text-slate-600">Proposals Sent</span>
+                    <span className="text-sm font-bold text-slate-900">{totalProposals}</span>
                   </div>
-                  <div className="text-right">
-                    <p className="text-xs text-slate-500 uppercase tracking-wide font-semibold">Pending Review</p>
-                    <p className="text-lg font-bold text-amber-600 mt-1">{summary?.pending_requests ?? 0}</p>
+                  <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
+                     {/* Decorative bar since we don't have a max value for proposals, just show activity */}
+                    <div className="h-full bg-indigo-200 rounded-full w-2/3" />
                   </div>
                 </div>
+
+                <div className="group">
+                  <div className="flex items-center justify-between mb-1.5">
+                    <span className="text-sm font-medium text-slate-600">Acceptance Rate</span>
+                    <span className="text-sm font-bold text-emerald-600">
+                      {acceptanceRate}%
+                    </span>
+                  </div>
+                  <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
+                    <div 
+                      className="h-full bg-emerald-500 rounded-full transition-all" 
+                      style={{ width: `${acceptanceRate}%` }}
+                    />
+                  </div>
+                </div>
+
+                <div className="pt-4 border-t border-slate-100">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-xs text-slate-500 uppercase tracking-wide font-semibold">Total Delivered</p>
+                      <p className="text-lg font-bold text-slate-900 mt-1">{completedScopeItems}</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-xs text-slate-500 uppercase tracking-wide font-semibold">Pending Review</p>
+                      <p className="text-lg font-bold text-amber-600 mt-1">{summary?.pending_requests ?? 0}</p>
+                    </div>
+                  </div>
+                </div>
               </div>
-            </div>
+            )}
           </Card>
 
           {/* Quick Actions Panel */}

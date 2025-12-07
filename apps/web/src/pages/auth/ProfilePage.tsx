@@ -16,11 +16,14 @@ import {
   Lock
 } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
+import { useProStatus } from '../../hooks/useProStatus';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
 import { Card } from '../../components/ui/Card';
 import { Alert } from '../../components/ui/Alert';
 import { useToast } from '../../components/ui/Toast';
+import { Crown, Zap } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const profileSchema = z.object({
   full_name: z.string().min(1, 'Full name is required'),
@@ -30,7 +33,9 @@ const profileSchema = z.object({
 type ProfileFormData = z.infer<typeof profileSchema>;
 
 export function ProfilePage() {
+  const navigate = useNavigate();
   const { user, isLoading, updateProfile, logout } = useAuth();
+  const { isPro, isLoading: isSubscriptionLoading } = useProStatus();
   const [isEditing, setIsEditing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const toast = useToast();
@@ -290,6 +295,34 @@ export function ProfilePage() {
       {/* Bottom Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         
+        {/* Subscription Card */}
+        {!isSubscriptionLoading && (
+          <Card className="p-6">
+            <h3 className="font-semibold text-slate-900 mb-4">Subscription</h3>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
+                  isPro ? 'bg-indigo-100 text-indigo-600' : 'bg-slate-100 text-slate-500'
+                }`}>
+                  {isPro ? <Crown className="w-5 h-5" /> : <Zap className="w-5 h-5" />}
+                </div>
+                <div>
+                  <p className="font-medium text-slate-900">{isPro ? 'Pro Plan' : 'Free Plan'}</p>
+                  <p className="text-sm text-slate-500">{isPro ? '$29/month' : 'Limited features'}</p>
+                </div>
+              </div>
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={() => navigate('/settings/billing')}
+                className="whitespace-nowrap"
+              >
+                {isPro ? 'Manage' : 'Upgrade'}
+              </Button>
+            </div>
+          </Card>
+        )}
+
         {/* Security Card */}
         <div className="bg-white rounded-2xl border border-slate-200 p-6 flex items-center justify-between gap-4 shadow-sm hover:shadow-md transition-shadow">
           <div className="flex items-center gap-4">

@@ -7,8 +7,11 @@ import {
   LogOut,
   HelpCircle,
   CreditCard,
+  Crown,
 } from 'lucide-react';
 import { useAuthStore } from '../stores/authStore';
+import { useProStatus } from '../hooks/useProStatus';
+import { ProBadge } from '../components/ui/ProBadge';
 
 interface HeaderProps {
   onMenuClick: () => void;
@@ -18,6 +21,7 @@ interface HeaderProps {
 export const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
   const navigate = useNavigate();
   const { user, logout } = useAuthStore();
+  const { isPro, isLoading: isSubscriptionLoading } = useProStatus();
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const userMenuRef = useRef<HTMLDivElement>(null);
 
@@ -79,7 +83,14 @@ export const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
         </div>
 
         {/* Right side */}
-        <div className="flex items-center">
+        <div className="flex items-center gap-3">
+          {/* Pro Badge - only show when loaded and isPro */}
+          {!isSubscriptionLoading && isPro && (
+            <div className="hidden md:block">
+              <ProBadge size="sm" variant="gradient" />
+            </div>
+          )}
+          
           {/* User Menu */}
           <div className="relative" ref={userMenuRef}>
             <button
@@ -87,8 +98,15 @@ export const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
               className="flex items-center gap-3 p-1.5 hover:bg-slate-100 rounded-xl transition-all duration-150"
               aria-label="User menu"
             >
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-semibold text-sm shadow-sm">
-                {getInitials(user?.full_name)}
+              <div className="relative">
+                <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-semibold text-sm shadow-sm">
+                  {getInitials(user?.full_name)}
+                </div>
+                {!isSubscriptionLoading && isPro && (
+                  <div className="absolute -top-1 -right-1 w-4 h-4 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full flex items-center justify-center border-2 border-white shadow-sm">
+                    <Crown className="w-2.5 h-2.5 text-white" />
+                  </div>
+                )}
               </div>
               <div className="hidden md:block text-left">
                 <p className="text-sm font-medium text-slate-700 leading-tight">
@@ -112,6 +130,11 @@ export const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
                   <p className="text-sm text-slate-500 truncate">
                     {user?.email || ''}
                   </p>
+                  {!isSubscriptionLoading && isPro && (
+                    <div className="mt-2">
+                      <ProBadge size="sm" variant="subtle" />
+                    </div>
+                  )}
                 </div>
 
                 {/* Menu Items */}

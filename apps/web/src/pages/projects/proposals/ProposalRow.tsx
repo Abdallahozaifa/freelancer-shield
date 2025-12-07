@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { 
   FileText, MoreHorizontal, Edit, Send, Trash2, 
-  CheckCircle2, XCircle, ChevronDown, ChevronUp, Copy, Clock, Link as LinkIcon
+  CheckCircle2, XCircle, ChevronDown, ChevronUp, Copy, Clock
 } from 'lucide-react';
 import { Button, Dropdown, Badge } from '../../../components/ui';
 import { cn } from '../../../utils/cn';
@@ -15,10 +15,11 @@ interface ProposalRowProps {
   onDelete: () => void;
   onAccept: () => void;
   onDecline: () => void;
+  onDuplicate: () => void;
 }
 
 export const ProposalRow: React.FC<ProposalRowProps> = ({
-  proposal, onEdit, onSend, onDelete, onAccept, onDecline
+  proposal, onEdit, onSend, onDelete, onAccept, onDecline, onDuplicate
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -153,12 +154,20 @@ export const ProposalRow: React.FC<ProposalRowProps> = ({
                     <CheckCircle2 className="w-4 h-4" /> Client accepted this proposal
                   </span>
                 )}
+                {isDeclined && (
+                  <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-md bg-red-50 text-red-700 text-sm font-medium border border-red-100">
+                    <XCircle className="w-4 h-4" /> Client declined this proposal
+                  </span>
+                )}
               </div>
 
               <div className="flex gap-2">
-                <Button size="sm" variant="outline" onClick={e(onEdit)} className="hover:bg-slate-50">
-                  <Edit className="w-3.5 h-3.5 mr-2" /> Edit
-                </Button>
+                {/* Edit button - show for all except accepted (with warning) */}
+                {!isAccepted && (
+                  <Button size="sm" variant="outline" onClick={e(onEdit)} className="hover:bg-slate-50">
+                    <Edit className="w-3.5 h-3.5 mr-2" /> Edit
+                  </Button>
+                )}
                 
                 <Dropdown
                   trigger={
@@ -167,8 +176,9 @@ export const ProposalRow: React.FC<ProposalRowProps> = ({
                     </Button>
                   }
                   items={[
-                    { label: 'Duplicate', icon: <Copy className="w-4 h-4" />, onClick: () => console.log('Dup') },
-                    { label: 'Delete', icon: <Trash2 className="w-4 h-4" />, onClick: onDelete, danger: true }
+                    { label: 'Duplicate', icon: <Copy className="w-4 h-4" />, onClick: onDuplicate },
+                    // Only show delete for draft proposals (backend enforces this)
+                    ...(isDraft ? [{ label: 'Delete', icon: <Trash2 className="w-4 h-4" />, onClick: onDelete, danger: true }] : [])
                   ]}
                   align="right"
                 />
@@ -185,7 +195,7 @@ export const ProposalRow: React.FC<ProposalRowProps> = ({
 const StatusBadge = ({ status }: { status: ProposalStatus }) => {
   switch (status) {
     case 'draft': 
-      return <Badge variant="neutral" size="sm" className="bg-slate-200 text-slate-700 border-slate-300 font-medium">Draft</Badge>;
+      return <Badge variant="default" size="sm" className="bg-slate-200 text-slate-700 border-slate-300 font-medium">Draft</Badge>;
     case 'sent': 
       return <Badge variant="info" size="sm" className="bg-blue-100 text-blue-700 border-blue-200 font-medium">Sent</Badge>;
     case 'accepted': 
@@ -193,6 +203,6 @@ const StatusBadge = ({ status }: { status: ProposalStatus }) => {
     case 'declined': 
       return <Badge variant="danger" size="sm" className="bg-red-100 text-red-800 border-red-200 font-medium">Declined</Badge>;
     default: 
-      return <Badge variant="neutral" size="sm">{status}</Badge>;
+      return <Badge variant="default" size="sm">{status}</Badge>;
   }
 };

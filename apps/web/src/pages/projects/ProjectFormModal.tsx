@@ -10,7 +10,7 @@ import {
   Hash,
   Calculator
 } from 'lucide-react';
-import { Modal, Input, Select, Textarea, Button } from '../../components/ui';
+import { Modal, Input, Select, Textarea, Button, useToast } from '../../components/ui';
 import { useClients } from '../../hooks/useClients';
 import { useCreateProject, useUpdateProject } from '../../hooks/useProjects';
 import type { Project, ProjectCreate, ProjectStatus } from '../../types';
@@ -19,6 +19,7 @@ interface ProjectFormModalProps {
   isOpen: boolean;
   onClose: () => void;
   project?: Project | null;
+  onSuccess?: () => void;
 }
 
 interface FormData {
@@ -52,11 +53,13 @@ export const ProjectFormModal: React.FC<ProjectFormModalProps> = ({
   isOpen,
   onClose,
   project,
+  onSuccess,
 }) => {
   const isEditing = !!project;
   const { data: clientsData } = useClients();
   const createProject = useCreateProject();
   const updateProject = useUpdateProject();
+  const toast = useToast();
 
   const {
     register,
@@ -101,11 +104,13 @@ export const ProjectFormModal: React.FC<ProjectFormModalProps> = ({
         await updateProject.mutateAsync({ id: project.id, data: payload });
       } else {
         await createProject.mutateAsync(payload);
+        toast.success('Project created successfully');
       }
       reset(getDefaultValues());
       onClose();
+      onSuccess?.();
     } catch (error) {
-      console.error('Failed to save project:', error);
+      toast.error(isEditing ? 'Failed to update project' : 'Failed to create project');
     }
   };
 

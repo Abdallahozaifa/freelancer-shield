@@ -25,13 +25,11 @@ export const DeleteClientModal: React.FC<DeleteClientModalProps> = ({
 
     try {
       await deleteMutation.mutateAsync(client.id);
-      toast.success(`${client.name} has been removed.`);
+      toast.success('Client deleted successfully');
       onClose();
       onDeleted?.();
     } catch (error) {
-      toast.error(
-        error instanceof Error ? error.message : 'An error occurred'
-      );
+      toast.error('Failed to delete client');
     }
   };
 
