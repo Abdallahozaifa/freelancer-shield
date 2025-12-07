@@ -1,5 +1,6 @@
 import React, { useState, useCallback, useRef } from 'react';
 import { ScopeItemCard } from './ScopeItemCard';
+import { cn } from '../../../utils/cn';
 import type { ScopeItem } from '../../../types';
 
 interface ScopeDragDropProps {
@@ -104,7 +105,7 @@ export const ScopeDragDrop: React.FC<ScopeDragDropProps> = ({
   );
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-0 lg:space-y-0">
       {items.map((item) => (
         <div
           key={item.id}
@@ -114,11 +115,11 @@ export const ScopeDragDrop: React.FC<ScopeDragDropProps> = ({
           onDragOver={(e) => handleDragOver(e, item.id)}
           onDragLeave={handleDragLeave}
           onDrop={(e) => handleDrop(e, item.id)}
-          className={
+          className={cn(
             dragOverId === item.id && draggedId !== item.id
-              ? 'border-t-2 border-blue-400 pt-2'
+              ? 'border-t-2 border-blue-400'
               : ''
-          }
+          )}
         >
           <ScopeItemCard
             item={item}

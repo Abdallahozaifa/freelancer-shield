@@ -147,41 +147,52 @@ export const ScopeTab: React.FC<ScopeTabProps> = ({ projectId }) => {
   return (
     <div className="space-y-8 animate-fade-in">
       {/* Header Section */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-slate-200 pb-6">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between border-b border-slate-200 pb-4 sm:pb-6">
         <div>
-          <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
-            <Target className="w-5 h-5 text-indigo-600" />
+          <h2 className="text-lg sm:text-xl font-bold text-slate-900 flex items-center gap-2">
+            <Target className="w-4 h-4 sm:w-5 sm:h-5 text-indigo-600" />
             Scope Definition
           </h2>
-          <p className="text-slate-500 mt-1 max-w-2xl">
+          <p className="text-sm text-slate-500 mt-1 max-w-2xl">
             Define the specific deliverables agreed upon. Clear scope prevents creep.
           </p>
         </div>
         {hasItems && (
-           <Button variant="primary" onClick={handleOpenCreateForm} className="shadow-lg shadow-indigo-500/20">
-             <Plus className="w-4 h-4 mr-2" />
-             Add Deliverable
-           </Button>
+          <Button 
+            variant="primary" 
+            onClick={handleOpenCreateForm} 
+            className="w-full sm:w-auto shadow-lg shadow-indigo-500/20"
+          >
+            <Plus className="w-4 h-4 mr-2" />
+            Add Deliverable
+          </Button>
         )}
       </div>
 
       {/* Progress Overview */}
       {hasItems && progress && (
-        <div className="mb-8">
+        <div className="mb-6 sm:mb-8">
           <ScopeProgressCard progress={progress} />
         </div>
       )}
 
       {/* Main Content */}
-      <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden min-h-[400px]">
+      <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden min-h-[300px] sm:min-h-[400px]">
         {hasItems ? (
           <div className="p-1">
-             {/* List Header */}
-            <div className="grid grid-cols-12 gap-4 px-6 py-3 bg-slate-50/80 border-b border-slate-100 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+            {/* List Header - Hide on mobile, show on desktop */}
+            <div className="hidden lg:grid grid-cols-12 gap-4 px-6 py-3 bg-slate-50/80 border-b border-slate-100 text-xs font-semibold text-slate-500 uppercase tracking-wider">
               <div className="col-span-1">Status</div>
-              <div className="col-span-6 md:col-span-7">Deliverable</div>
-              <div className="col-span-3 md:col-span-2 text-right">Estimate</div>
+              <div className="col-span-7">Deliverable</div>
+              <div className="col-span-2 text-right">Estimate</div>
               <div className="col-span-2 text-right">Actions</div>
+            </div>
+            
+            {/* Mobile Header - Simple */}
+            <div className="lg:hidden px-4 py-2 bg-slate-50/80 border-b border-slate-100">
+              <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                {items.length} Deliverable{items.length !== 1 ? 's' : ''}
+              </span>
             </div>
             
             {/* Draggable List */}
@@ -196,11 +207,11 @@ export const ScopeTab: React.FC<ScopeTabProps> = ({ projectId }) => {
             </div>
           </div>
         ) : (
-          <div className="py-16 px-6">
+          <div className="py-12 sm:py-16 px-4 sm:px-6">
             <EmptyState
-              icon={<ListChecks className="w-12 h-12 text-slate-300" />}
+              icon={<ListChecks className="w-10 h-10 sm:w-12 sm:h-12 text-slate-300" />}
               title="No deliverables defined yet"
-              description="Start by adding the first item to the project scope. This will serve as the baseline for detecting scope creep."
+              description="Start by adding the first item to the project scope."
               action={{
                 label: 'Add First Item',
                 onClick: handleOpenCreateForm,
