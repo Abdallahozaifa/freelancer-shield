@@ -157,49 +157,59 @@ export function LoginPage() {
             )}
 
             {/* Email */}
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Mail className="w-4 h-4 text-slate-400" />
+            <div>
+              <div className="flex items-center justify-between mb-1">
+                <label htmlFor="email" className="text-sm font-medium text-slate-700">Email</label>
+                {errors.email && (
+                  <span className="text-xs text-red-500 font-medium">{errors.email.message}</span>
+                )}
               </div>
-              <Input
-                id="email"
-                type="email"
-                autoComplete="email"
-                placeholder="Email address"
-                disabled={isSubmitting}
-                {...register('email')}
-                className={`pl-10 pr-4 py-3 bg-indigo-50/50 border border-indigo-100 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent focus:bg-white transition-all text-sm ${errors.email ? 'border-red-500 focus:ring-red-500' : ''}`}
-              />
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <Mail className="w-4 h-4 text-slate-400" />
+                </div>
+                <Input
+                  id="email"
+                  type="email"
+                  autoComplete="email"
+                  placeholder="Email address"
+                  disabled={isSubmitting}
+                  {...register('email')}
+                  className={`pl-10 pr-4 py-3 border rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all text-sm ${errors.email ? 'border-red-500 bg-red-50/50 focus:ring-red-500' : 'border-indigo-100 bg-indigo-50/50 focus:bg-white'}`}
+                />
+              </div>
             </div>
-            {errors.email && (
-              <p className="text-sm text-red-600 -mt-1">{errors.email.message}</p>
-            )}
 
             {/* Password */}
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Lock className="w-4 h-4 text-slate-400" />
+            <div>
+              <div className="flex items-center justify-between mb-1">
+                <label htmlFor="password" className="text-sm font-medium text-slate-700">Password</label>
+                {errors.password && (
+                  <span className="text-xs text-red-500 font-medium">{errors.password.message}</span>
+                )}
               </div>
-              <Input
-                id="password"
-                type={showPassword ? 'text' : 'password'}
-                autoComplete="current-password"
-                placeholder="Password"
-                disabled={isSubmitting}
-                {...register('password')}
-                className={`pl-10 pr-10 py-3 bg-indigo-50/50 border border-indigo-100 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent focus:bg-white transition-all text-sm ${errors.password ? 'border-red-500 focus:ring-red-500' : ''}`}
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute inset-y-0 right-0 pr-3 flex items-center"
-              >
-                {showPassword ? <EyeOff className="w-4 h-4 text-slate-400" /> : <Eye className="w-4 h-4 text-slate-400" />}
-              </button>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <Lock className="w-4 h-4 text-slate-400" />
+                </div>
+                <Input
+                  id="password"
+                  type={showPassword ? 'text' : 'password'}
+                  autoComplete="current-password"
+                  placeholder="Password"
+                  disabled={isSubmitting}
+                  {...register('password')}
+                  className={`pl-10 pr-10 py-3 border rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all text-sm ${errors.password ? 'border-red-500 bg-red-50/50 focus:ring-red-500' : 'border-indigo-100 bg-indigo-50/50 focus:bg-white'}`}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                >
+                  {showPassword ? <EyeOff className="w-4 h-4 text-slate-400" /> : <Eye className="w-4 h-4 text-slate-400" />}
+                </button>
+              </div>
             </div>
-            {errors.password && (
-              <p className="text-sm text-red-600 -mt-1">{errors.password.message}</p>
-            )}
 
             {/* Forgot Password */}
             <div className="flex justify-end">
@@ -420,9 +430,14 @@ export function LoginPage() {
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
               {/* Email Field - With icon */}
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-slate-700 mb-1.5">
-                  Email
-                </label>
+                <div className="flex items-center justify-between mb-1.5">
+                  <label htmlFor="email" className="text-sm font-medium text-slate-700">
+                    Email
+                  </label>
+                  {errors.email && (
+                    <span className="text-xs text-red-500 font-medium">{errors.email.message}</span>
+                  )}
+                </div>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
                     <Mail className="h-5 w-5 text-slate-400" />
@@ -434,26 +449,28 @@ export function LoginPage() {
                   placeholder="name@company.com"
                   disabled={isSubmitting}
                   {...register('email')}
-                    className={`pl-11 h-12 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 ${errors.email ? 'border-red-500 focus:ring-red-500' : ''}`}
+                    className={`pl-11 h-12 border rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 ${errors.email ? 'border-red-500 bg-red-50/50 focus:ring-red-500' : 'border-slate-200 bg-slate-50 focus:bg-white'}`}
                 />
                 </div>
-                {errors.email && (
-                  <p className="text-sm text-red-600 mt-1.5">{errors.email.message}</p>
-                )}
               </div>
 
               {/* Password Field - With icon */}
               <div>
                 <div className="flex items-center justify-between mb-1.5">
-                  <label htmlFor="password" className="block text-sm font-medium text-slate-700">
+                  <label htmlFor="password" className="text-sm font-medium text-slate-700">
                     Password
                   </label>
-                  <Link 
-                    to="/forgot-password" 
-                    className="text-sm font-medium text-indigo-600 hover:text-indigo-500 transition-colors"
-                  >
-                    Forgot password?
-                  </Link>
+                  <div className="flex items-center gap-3">
+                    {errors.password && (
+                      <span className="text-xs text-red-500 font-medium">{errors.password.message}</span>
+                    )}
+                    <Link 
+                      to="/forgot-password" 
+                      className="text-sm font-medium text-indigo-600 hover:text-indigo-500 transition-colors"
+                    >
+                      Forgot password?
+                    </Link>
+                  </div>
                 </div>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
@@ -466,7 +483,7 @@ export function LoginPage() {
                     placeholder="Enter your password"
                     disabled={isSubmitting}
                     {...register('password')}
-                    className={`pl-11 pr-12 h-12 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 ${errors.password ? 'border-red-500 focus:ring-red-500' : ''}`}
+                    className={`pl-11 pr-12 h-12 border rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 ${errors.password ? 'border-red-500 bg-red-50/50 focus:ring-red-500' : 'border-slate-200 bg-slate-50 focus:bg-white'}`}
                   />
                   <button
                     type="button"
@@ -477,9 +494,6 @@ export function LoginPage() {
                     {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                   </button>
                 </div>
-                {errors.password && (
-                  <p className="text-sm text-red-600 mt-1.5">{errors.password.message}</p>
-                )}
             </div>
 
               {/* Remember Me */}

@@ -223,128 +223,152 @@ export function RegisterPage() {
             )}
 
             {/* Full Name */}
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <User className="w-4 h-4 text-slate-400" />
+            <div>
+              <div className="flex items-center justify-between mb-1">
+                <label htmlFor="full_name" className="text-sm font-medium text-slate-700">Full Name</label>
+                {errors.full_name && (
+                  <span className="text-xs text-red-500 font-medium">{errors.full_name.message}</span>
+                )}
               </div>
-              <Input
-                id="full_name"
-                type="text"
-                autoComplete="name"
-                placeholder="Full Name"
-                disabled={isSubmitting}
-                {...register('full_name')}
-                className={`pl-10 pr-4 py-2.5 bg-indigo-50/50 border border-indigo-100 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent focus:bg-white transition-all text-sm ${errors.full_name ? 'border-red-500 focus:ring-red-500' : ''}`}
-              />
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <User className="w-4 h-4 text-slate-400" />
+                </div>
+                <Input
+                  id="full_name"
+                  type="text"
+                  autoComplete="name"
+                  placeholder="Full Name"
+                  disabled={isSubmitting}
+                  {...register('full_name')}
+                  className={`pl-10 pr-4 py-2.5 border rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all text-sm ${errors.full_name ? 'border-red-500 bg-red-50/50 focus:ring-red-500' : 'border-indigo-100 bg-indigo-50/50 focus:bg-white'}`}
+                />
+              </div>
             </div>
-            {errors.full_name && (
-              <p className="text-sm text-red-600 -mt-1">{errors.full_name.message}</p>
-            )}
 
             {/* Email */}
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Mail className="w-4 h-4 text-slate-400" />
+            <div>
+              <div className="flex items-center justify-between mb-1">
+                <label htmlFor="email" className="text-sm font-medium text-slate-700">Email</label>
+                {errors.email && (
+                  <span className="text-xs text-red-500 font-medium">{errors.email.message}</span>
+                )}
               </div>
-              <Input
-                id="email"
-                type="email"
-                autoComplete="email"
-                placeholder="Email address"
-                disabled={isSubmitting}
-                {...register('email')}
-                className={`pl-10 pr-4 py-2.5 bg-indigo-50/50 border border-indigo-100 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent focus:bg-white transition-all text-sm ${errors.email ? 'border-red-500 focus:ring-red-500' : ''}`}
-              />
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <Mail className="w-4 h-4 text-slate-400" />
+                </div>
+                <Input
+                  id="email"
+                  type="email"
+                  autoComplete="email"
+                  placeholder="Email address"
+                  disabled={isSubmitting}
+                  {...register('email')}
+                  className={`pl-10 pr-4 py-2.5 border rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all text-sm ${errors.email ? 'border-red-500 bg-red-50/50 focus:ring-red-500' : 'border-indigo-100 bg-indigo-50/50 focus:bg-white'}`}
+                />
+              </div>
             </div>
-            {errors.email && (
-              <p className="text-sm text-red-600 -mt-1">{errors.email.message}</p>
-            )}
 
             {/* Business Name (Optional) */}
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Building2 className="w-4 h-4 text-slate-400" />
+            <div>
+              <div className="flex items-center justify-between mb-1">
+                <label htmlFor="business_name" className="text-sm font-medium text-slate-700">Business Name <span className="text-slate-400 font-normal">(Optional)</span></label>
               </div>
-              <Input
-                id="business_name"
-                type="text"
-                autoComplete="organization"
-                placeholder="Business Name (Optional)"
-                disabled={isSubmitting}
-                {...register('business_name')}
-                className="pl-10 pr-4 py-2.5 bg-indigo-50/50 border border-indigo-100 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent focus:bg-white transition-all text-sm"
-              />
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <Building2 className="w-4 h-4 text-slate-400" />
+                </div>
+                <Input
+                  id="business_name"
+                  type="text"
+                  autoComplete="organization"
+                  placeholder="Business Name (Optional)"
+                  disabled={isSubmitting}
+                  {...register('business_name')}
+                  className="pl-10 pr-4 py-2.5 border border-indigo-100 bg-indigo-50/50 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent focus:bg-white transition-all text-sm"
+                />
+              </div>
             </div>
 
             {/* Password */}
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Lock className="w-4 h-4 text-slate-400" />
+            <div>
+              <div className="flex items-center justify-between mb-1">
+                <label htmlFor="password" className="text-sm font-medium text-slate-700">Password</label>
+                {errors.password && (
+                  <span className="text-xs text-red-500 font-medium">{errors.password.message}</span>
+                )}
               </div>
-              <Input
-                id="password"
-                type={showPassword ? 'text' : 'password'}
-                autoComplete="new-password"
-                placeholder="Password"
-                disabled={isSubmitting}
-                {...register('password')}
-                className={`pl-10 pr-10 py-2.5 bg-indigo-50/50 border border-indigo-100 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent focus:bg-white transition-all text-sm ${errors.password ? 'border-red-500 focus:ring-red-500' : ''}`}
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute inset-y-0 right-0 pr-3 flex items-center"
-              >
-                {showPassword ? <EyeOff className="w-4 h-4 text-slate-400" /> : <Eye className="w-4 h-4 text-slate-400" />}
-              </button>
-            </div>
-            {errors.password && (
-              <p className="text-sm text-red-600 -mt-1">{errors.password.message}</p>
-            )}
-
-            {/* Password Requirements - Inline, compact */}
-            <div className="grid grid-cols-2 gap-x-3 gap-y-1 px-1">
-              {passwordRequirements.map((req) => {
-                const isMet = req.regex.test(password);
-                return (
-                  <div
-                    key={req.label}
-                    className={`flex items-center gap-1 text-[10px] ${isMet ? 'text-emerald-600' : 'text-slate-400'}`}
-                  >
-                    <div className={`w-3 h-3 rounded-full flex items-center justify-center shrink-0 ${isMet ? 'bg-emerald-500' : 'border border-slate-300'}`}>
-                      {isMet && <Check className="w-1.5 h-1.5 text-white" />}
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <Lock className="w-4 h-4 text-slate-400" />
+                </div>
+                <Input
+                  id="password"
+                  type={showPassword ? 'text' : 'password'}
+                  autoComplete="new-password"
+                  placeholder="Password"
+                  disabled={isSubmitting}
+                  {...register('password')}
+                  className={`pl-10 pr-10 py-2.5 border rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all text-sm ${errors.password ? 'border-red-500 bg-red-50/50 focus:ring-red-500' : 'border-indigo-100 bg-indigo-50/50 focus:bg-white'}`}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                >
+                  {showPassword ? <EyeOff className="w-4 h-4 text-slate-400" /> : <Eye className="w-4 h-4 text-slate-400" />}
+                </button>
+              </div>
+              {/* Password Requirements - Inline, compact */}
+              <div className="grid grid-cols-2 gap-x-3 gap-y-1 px-1 mt-1">
+                {passwordRequirements.map((req) => {
+                  const isMet = req.regex.test(password);
+                  return (
+                    <div
+                      key={req.label}
+                      className={`flex items-center gap-1 text-[10px] ${isMet ? 'text-emerald-600' : 'text-slate-400'}`}
+                    >
+                      <div className={`w-3 h-3 rounded-full flex items-center justify-center shrink-0 ${isMet ? 'bg-emerald-500' : 'border border-slate-300'}`}>
+                        {isMet && <Check className="w-1.5 h-1.5 text-white" />}
+                      </div>
+                      {req.label}
                     </div>
-                    {req.label}
-                  </div>
-                );
-              })}
+                  );
+                })}
+              </div>
             </div>
 
             {/* Confirm Password */}
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Lock className="w-4 h-4 text-slate-400" />
+            <div>
+              <div className="flex items-center justify-between mb-1">
+                <label htmlFor="confirmPassword" className="text-sm font-medium text-slate-700">Confirm Password</label>
+                {errors.confirmPassword && (
+                  <span className="text-xs text-red-500 font-medium">{errors.confirmPassword.message}</span>
+                )}
               </div>
-              <Input
-                id="confirmPassword"
-                type={showConfirmPassword ? 'text' : 'password'}
-                autoComplete="new-password"
-                placeholder="Confirm Password"
-                disabled={isSubmitting}
-                {...register('confirmPassword')}
-                className={`pl-10 pr-10 py-2.5 bg-indigo-50/50 border border-indigo-100 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent focus:bg-white transition-all text-sm ${errors.confirmPassword ? 'border-red-500 focus:ring-red-500' : ''}`}
-              />
-              <button
-                type="button"
-                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                className="absolute inset-y-0 right-0 pr-3 flex items-center"
-              >
-                {showConfirmPassword ? <EyeOff className="w-4 h-4 text-slate-400" /> : <Eye className="w-4 h-4 text-slate-400" />}
-              </button>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <Lock className="w-4 h-4 text-slate-400" />
+                </div>
+                <Input
+                  id="confirmPassword"
+                  type={showConfirmPassword ? 'text' : 'password'}
+                  autoComplete="new-password"
+                  placeholder="Confirm Password"
+                  disabled={isSubmitting}
+                  {...register('confirmPassword')}
+                  className={`pl-10 pr-10 py-2.5 border rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all text-sm ${errors.confirmPassword ? 'border-red-500 bg-red-50/50 focus:ring-red-500' : 'border-indigo-100 bg-indigo-50/50 focus:bg-white'}`}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                >
+                  {showConfirmPassword ? <EyeOff className="w-4 h-4 text-slate-400" /> : <Eye className="w-4 h-4 text-slate-400" />}
+                </button>
+              </div>
             </div>
-            {errors.confirmPassword && (
-              <p className="text-sm text-red-600 -mt-1">{errors.confirmPassword.message}</p>
-            )}
 
             {/* Submit Button */}
             <button
@@ -497,7 +521,7 @@ export function RegisterPage() {
       </div>
 
       {/* --- Right Panel: Registration Form --- */}
-      <div className="hidden lg:flex w-1/2 items-start justify-center relative overflow-y-auto pt-6 pb-6">
+      <div className="hidden lg:flex w-1/2 items-center justify-center relative overflow-y-auto">
         {/* Professional gradient background */}
         <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-white to-indigo-50/30" />
         
@@ -508,11 +532,11 @@ export function RegisterPage() {
         {/* Subtle top accent line */}
         <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-indigo-300/50 to-transparent" />
         
-        {/* Scrollable form container */}
-        <div className="relative w-full max-w-lg mx-auto px-6 py-4 max-h-[85vh] overflow-y-auto scrollbar-hide">
+        {/* Centered form container */}
+        <div className="relative w-full max-w-lg mx-auto px-6 py-4 my-auto">
           
           {/* Desktop Logo - Centered above form */}
-          <div className="flex justify-center mb-4">
+          <div className="flex justify-center mb-3">
             <Link to="/" className="inline-flex items-center gap-2.5">
               <div className="w-10 h-10 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-500/25">
                 <Shield className="w-5 h-5 text-white" />
@@ -522,10 +546,10 @@ export function RegisterPage() {
           </div>
 
           {/* Form Card - Enhanced styling with better definition */}
-          <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl shadow-slate-200/50 border border-slate-200/50 p-8">
+          <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl shadow-slate-200/50 border border-slate-200/50 p-5">
             {/* Desktop Header - Centered inside card */}
-            <div className="text-center mb-4">
-              <h1 className="text-2xl font-bold text-slate-900 mb-1 tracking-tight">Create your account</h1>
+            <div className="text-center mb-3">
+              <h1 className="text-xl font-bold text-slate-900 mb-1 tracking-tight">Create your account</h1>
               <p className="text-slate-500 text-sm">
                 Start managing your project scope effectively
             </p>
@@ -550,11 +574,16 @@ export function RegisterPage() {
             </Alert>
           )}
 
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-2.5">
             <div>
-              <label htmlFor="full_name" className="block text-sm font-medium text-slate-700 mb-1.5">
-                Full Name <span className="text-red-500">*</span>
-              </label>
+              <div className="flex items-center justify-between mb-1">
+                <label htmlFor="full_name" className="text-sm font-medium text-slate-700">
+                  Full Name <span className="text-red-500">*</span>
+                </label>
+                {errors.full_name && (
+                  <span className="text-xs text-red-500 font-medium">{errors.full_name.message}</span>
+                )}
+              </div>
               <div className="relative">
                 {/* Icon - Desktop only */}
                 <div className="hidden lg:flex absolute inset-y-0 left-0 pl-3.5 items-center pointer-events-none">
@@ -567,21 +596,20 @@ export function RegisterPage() {
                 placeholder="e.g. Jane Smith"
                 disabled={isSubmitting}
                 {...register('full_name')}
-                  className={`lg:pl-11 px-4 py-3 h-12 bg-slate-50 border rounded-xl text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200 ${errors.full_name ? 'border-red-500 bg-red-50/50 focus:ring-red-500' : 'border-slate-200 focus:ring-indigo-500'}`}
+                  className={`lg:pl-11 px-4 py-2 h-10 border rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200 ${errors.full_name ? 'border-red-500 bg-red-50/50 focus:ring-red-500' : 'border-slate-200 bg-slate-50 focus:bg-white focus:ring-indigo-500'}`}
               />
-              </div>
-              {/* Reserved error space */}
-              <div className="h-4 mt-1">
-              {errors.full_name && (
-                  <p className="text-xs text-red-600">{errors.full_name.message}</p>
-              )}
               </div>
             </div>
 
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-slate-700 mb-1.5">
-                Work Email <span className="text-red-500">*</span>
-              </label>
+              <div className="flex items-center justify-between mb-1">
+                <label htmlFor="email" className="text-sm font-medium text-slate-700">
+                  Work Email <span className="text-red-500">*</span>
+                </label>
+                {errors.email && (
+                  <span className="text-xs text-red-500 font-medium">{errors.email.message}</span>
+                )}
+              </div>
               <div className="relative">
                 {/* Icon - Desktop only */}
                 <div className="hidden lg:flex absolute inset-y-0 left-0 pl-3.5 items-center pointer-events-none">
@@ -594,21 +622,17 @@ export function RegisterPage() {
                 placeholder="name@company.com"
                 disabled={isSubmitting}
                 {...register('email')}
-                  className={`lg:pl-11 px-4 py-3 h-12 bg-slate-50 border rounded-xl text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200 ${errors.email ? 'border-red-500 bg-red-50/50 focus:ring-red-500' : 'border-slate-200 focus:ring-indigo-500'}`}
+                  className={`lg:pl-11 px-4 py-2 h-10 border rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200 ${errors.email ? 'border-red-500 bg-red-50/50 focus:ring-red-500' : 'border-slate-200 bg-slate-50 focus:bg-white focus:ring-indigo-500'}`}
               />
-              </div>
-              {/* Reserved error space */}
-              <div className="h-4 mt-1">
-              {errors.email && (
-                  <p className="text-xs text-red-600">{errors.email.message}</p>
-              )}
               </div>
             </div>
 
-            <div className="space-y-1.5">
-              <label htmlFor="business_name" className="block text-sm font-medium text-slate-700 mb-1">
-                Business Name <span className="text-slate-400 font-normal">(Optional)</span>
-              </label>
+            <div>
+              <div className="flex items-center justify-between mb-1">
+                <label htmlFor="business_name" className="text-sm font-medium text-slate-700">
+                  Business Name <span className="text-slate-400 font-normal">(Optional)</span>
+                </label>
+              </div>
               <div className="relative">
                 {/* Icon - Desktop only */}
                 <div className="hidden lg:flex absolute inset-y-0 left-0 pl-3.5 items-center pointer-events-none">
@@ -621,15 +645,20 @@ export function RegisterPage() {
                 placeholder="e.g. Acme Design Studio"
                 disabled={isSubmitting}
                 {...register('business_name')}
-                  className="lg:pl-11 px-4 py-3 h-12 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200"
+                  className="lg:pl-11 px-4 py-2 h-10 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200"
               />
               </div>
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-slate-700 mb-1.5">
+              <div className="flex items-center justify-between mb-1">
+                <label htmlFor="password" className="text-sm font-medium text-slate-700">
                   Password <span className="text-red-500">*</span>
                 </label>
+                {errors.password && (
+                  <span className="text-xs text-red-500 font-medium">{errors.password.message}</span>
+                )}
+              </div>
                 <div className="relative">
                 {/* Icon - Desktop only */}
                 <div className="hidden lg:flex absolute inset-y-0 left-0 pl-3.5 items-center pointer-events-none">
@@ -642,7 +671,7 @@ export function RegisterPage() {
                     placeholder="Create a strong password"
                     disabled={isSubmitting}
                     {...register('password')}
-                  className={`lg:pl-11 px-4 pr-12 py-3 h-12 bg-slate-50 border rounded-xl text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200 ${errors.password ? 'border-red-500 bg-red-50/50 focus:ring-red-500' : 'border-slate-200 focus:ring-indigo-500'}`}
+                  className={`lg:pl-11 px-4 pr-12 py-2 h-10 border rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200 ${errors.password ? 'border-red-500 bg-red-50/50 focus:ring-red-500' : 'border-slate-200 bg-slate-50 focus:bg-white focus:ring-indigo-500'}`}
                   />
                   <button
                     type="button"
@@ -653,15 +682,9 @@ export function RegisterPage() {
                   {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                   </button>
                 </div>
-              {/* Reserved error space */}
-              <div className="h-4 mt-1">
-                {errors.password && (
-                  <p className="text-xs text-red-600">{errors.password.message}</p>
-                )}
-              </div>
 
               {/* Password Strength Indicators - Always visible */}
-              <div className="mt-2.5 grid grid-cols-2 gap-x-4 gap-y-1.5">
+              <div className="mt-1 grid grid-cols-2 gap-x-2 gap-y-0.5">
                 {passwordRequirements.map((req) => {
                   const isMet = req.regex.test(password);
                   return (
@@ -681,12 +704,17 @@ export function RegisterPage() {
                   );
                 })}
               </div>
-              </div>
+            </div>
 
             <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-medium text-slate-700 mb-1.5">
+              <div className="flex items-center justify-between mb-1">
+                <label htmlFor="confirmPassword" className="text-sm font-medium text-slate-700">
                   Confirm Password <span className="text-red-500">*</span>
                 </label>
+                {errors.confirmPassword && (
+                  <span className="text-xs text-red-500 font-medium">{errors.confirmPassword.message}</span>
+                )}
+              </div>
                 <div className="relative">
                 {/* Icon - Desktop only */}
                 <div className="hidden lg:flex absolute inset-y-0 left-0 pl-3.5 items-center pointer-events-none">
@@ -699,7 +727,7 @@ export function RegisterPage() {
                     placeholder="Confirm your password"
                     disabled={isSubmitting}
                     {...register('confirmPassword')}
-                  className={`lg:pl-11 px-4 pr-12 py-3 h-12 bg-slate-50 border rounded-xl text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200 ${errors.confirmPassword ? 'border-red-500 bg-red-50/50 focus:ring-red-500' : 'border-slate-200 focus:ring-indigo-500'}`}
+                  className={`lg:pl-11 px-4 pr-12 py-2 h-10 border rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200 ${errors.confirmPassword ? 'border-red-500 bg-red-50/50 focus:ring-red-500' : 'border-slate-200 bg-slate-50 focus:bg-white focus:ring-indigo-500'}`}
                   />
                   <button
                     type="button"
@@ -710,12 +738,6 @@ export function RegisterPage() {
                   {showConfirmPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                   </button>
                 </div>
-              {/* Reserved error space */}
-              <div className="h-4 mt-1">
-                {errors.confirmPassword && (
-                  <p className="text-xs text-red-600">{errors.confirmPassword.message}</p>
-                )}
-              </div>
             </div>
 
             <Button
@@ -738,8 +760,8 @@ export function RegisterPage() {
           </form>
 
             {/* Social Signup Options - Desktop only */}
-            <div className="mt-4">
-              <div className="relative mb-4">
+            <div className="mt-2">
+              <div className="relative mb-2">
                 <div className="absolute inset-0 flex items-center">
                   <div className="w-full border-t border-slate-200" />
                 </div>
@@ -774,7 +796,7 @@ export function RegisterPage() {
             </div>
 
             {/* Sign In Link - Inside card */}
-            <div className="pt-4 border-t border-slate-100 text-center mt-4">
+            <div className="pt-2 border-t border-slate-100 text-center mt-2">
             <p className="text-sm text-slate-600">
               Already have an account?{' '}
               <Link 
@@ -788,7 +810,7 @@ export function RegisterPage() {
           </div>
 
           {/* Security Badges - Centered below card */}
-          <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-xs text-slate-400 mt-4 pb-4 px-4">
+          <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-xs text-slate-400 mt-3 pb-2 px-4">
             <span className="flex items-center gap-1">
                <Lock className="w-3 h-3" />
                Secure Encryption
