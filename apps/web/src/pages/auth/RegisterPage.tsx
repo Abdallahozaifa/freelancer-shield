@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { 
   Eye, 
   EyeOff, 
@@ -17,13 +17,15 @@ import {
   Search,
   Menu,
   Lock,
-  CheckCircle2
+  CheckCircle2,
+  Crown,
 } from 'lucide-react';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
 import { Alert } from '../../components/ui/Alert';
 import { authApi } from '../../api/auth';
 import { useAuthStore } from '../../stores/authStore';
+import { useUpgrade } from '../../hooks/useBilling';
 
 const registerSchema = z
   .object({
@@ -66,7 +68,10 @@ export function RegisterPage() {
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const planParam = searchParams.get('plan'); // 'pro' or null
   const setAuth = useAuthStore((state) => state.setAuth);
+  const { upgrade } = useUpgrade();
 
   const {
     register,
@@ -107,7 +112,15 @@ export function RegisterPage() {
       useAuthStore.setState({ token: tokenResponse.access_token });
       const userData = await authApi.getMe();
       setAuth(userData, tokenResponse.access_token);
-      navigate('/dashboard');
+      
+      // If user came from pricing page with pro plan intent
+      if (planParam === 'pro') {
+        // Redirect to Stripe checkout after successful signup
+        upgrade();
+      } else {
+        // Normal signup flow - go to dashboard
+        navigate('/dashboard');
+      }
     } catch (err: any) {
       const message = getErrorMessage(err);
       if (message.toLowerCase().includes('email') && 
@@ -234,6 +247,19 @@ export function RegisterPage() {
               Start managing your project scope effectively.
             </p>
           </div>
+
+          {/* Show Pro plan indicator if coming from pricing */}
+          {planParam === 'pro' && (
+            <div className="mb-6 p-4 bg-indigo-50 border border-indigo-200 rounded-lg animate-fade-in">
+              <div className="flex items-center gap-2 text-indigo-900 mb-1">
+                <Crown className="w-5 h-5 text-indigo-600" />
+                <span className="font-medium">You're signing up for the Pro plan</span>
+              </div>
+              <p className="text-sm text-indigo-700">
+                After creating your account, you'll be redirected to complete your subscription.
+              </p>
+            </div>
+          )}
 
           {error && (
             <Alert type="error" className="animate-fade-in">
