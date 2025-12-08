@@ -282,10 +282,10 @@ export const RequestsTab: React.FC<RequestsTabProps> = ({ projectId }) => {
       <div className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden flex flex-col min-h-[600px]">
         
         {/* 1. Header Toolbar */}
-        <div className="border-b border-slate-200 bg-white p-4">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="border-b border-slate-200 bg-white p-4 sm:p-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
             {/* Search */}
-            <div className="relative w-full md:w-72">
+            <div className="relative w-full sm:w-72">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
               <input
                 type="text"
@@ -299,7 +299,7 @@ export const RequestsTab: React.FC<RequestsTabProps> = ({ projectId }) => {
             {/* Action */}
             <Button 
               onClick={() => setIsFormModalOpen(true)} 
-              className="shadow-sm whitespace-nowrap h-9"
+              className="shadow-sm whitespace-nowrap h-9 w-full sm:w-auto"
               size="sm"
               leftIcon={<Plus className="w-4 h-4" />}
             >
@@ -309,10 +309,10 @@ export const RequestsTab: React.FC<RequestsTabProps> = ({ projectId }) => {
 
           {/* Smart Scope Detection Section */}
           {activeTab === 'all' && (
-            <div className="mt-4 mb-4 p-4 bg-slate-50 rounded-lg border border-slate-200">
-              <div className="flex items-center justify-between">
+            <div className="mt-3 sm:mt-4 mb-3 sm:mb-4 p-3 sm:p-4 bg-slate-50 rounded-lg border border-slate-200">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div className="flex items-center gap-2">
-                  <h3 className="font-semibold text-slate-900 text-sm">Smart Scope Detection</h3>
+                  <h3 className="font-semibold text-slate-900 text-xs sm:text-sm">Smart Scope Detection</h3>
                   {!isPro && <ProFeatureBadge />}
                 </div>
                 {isPro ? (
@@ -324,8 +324,10 @@ export const RequestsTab: React.FC<RequestsTabProps> = ({ projectId }) => {
                       toast.success('AI analysis feature coming soon!');
                     }}
                     leftIcon={<Sparkles className="w-4 h-4" />}
+                    className="w-full sm:w-auto text-xs sm:text-sm"
                   >
-                    Analyze All Requests
+                    <span className="hidden sm:inline">Analyze All Requests</span>
+                    <span className="sm:hidden">Analyze All</span>
                   </Button>
                 ) : (
                   <UpgradePrompt
@@ -339,8 +341,8 @@ export const RequestsTab: React.FC<RequestsTabProps> = ({ projectId }) => {
             </div>
           )}
 
-          {/* Filter Tabs - Clean Text Style */}
-          <div className="flex items-center gap-1 mt-6 -mb-4 overflow-x-auto no-scrollbar">
+          {/* Filter Tabs - Scrollable on mobile */}
+          <div className="flex items-center gap-1 mt-4 sm:mt-6 -mb-4 overflow-x-auto scrollbar-hide">
             <TabButton 
               active={activeTab === 'all'} 
               onClick={() => setActiveTab('all')} 
@@ -369,12 +371,12 @@ export const RequestsTab: React.FC<RequestsTabProps> = ({ projectId }) => {
           </div>
         </div>
 
-        {/* 2. List Header - Bold & Distinct */}
-        <div className="grid grid-cols-12 gap-4 px-6 py-3 bg-slate-50 border-b border-slate-200 text-xs font-bold text-slate-500 uppercase tracking-wider">
+        {/* 2. List Header - Hidden on mobile, shown on desktop */}
+        <div className="hidden md:grid grid-cols-12 gap-4 px-6 py-3 bg-slate-50 border-b border-slate-200 text-xs font-bold text-slate-500 uppercase tracking-wider">
           <div className="col-span-5">Request Details</div>
-          <div className="col-span-2 hidden md:block">Source</div>
-          <div className="col-span-2 hidden md:block">Status</div>
-          <div className="col-span-2 hidden md:block text-right">Received</div>
+          <div className="col-span-2">Source</div>
+          <div className="col-span-2">Status</div>
+          <div className="col-span-2 text-right">Received</div>
           <div className="col-span-1 text-center"></div> {/* Actions placeholder */}
         </div>
 
@@ -385,14 +387,14 @@ export const RequestsTab: React.FC<RequestsTabProps> = ({ projectId }) => {
               <Spinner size="lg" />
             </div>
           ) : sortedRequests.length === 0 ? (
-            <div className="flex flex-col items-center justify-center h-80 text-center px-4">
-              <div className="w-14 h-14 bg-slate-50 rounded-full flex items-center justify-center mb-3 border border-slate-100">
-                <Inbox className="w-7 h-7 text-slate-300" />
+            <div className="flex flex-col items-center justify-center h-64 sm:h-80 text-center px-4">
+              <div className="w-12 h-12 sm:w-14 sm:h-14 bg-slate-50 rounded-full flex items-center justify-center mb-3 border border-slate-100">
+                <Inbox className="w-6 h-6 sm:w-7 sm:h-7 text-slate-300" />
               </div>
-              <h3 className="text-slate-900 font-medium mb-1">
+              <h3 className="text-slate-900 font-medium mb-1 text-sm sm:text-base">
                 {searchQuery ? 'No matching requests' : 'No requests here'}
               </h3>
-              <p className="text-slate-500 text-sm max-w-xs">
+              <p className="text-slate-500 text-xs sm:text-sm max-w-xs">
                 {activeTab === 'all' 
                   ? "Log a new client request to get started." 
                   : "Check other tabs or log a new request."}
@@ -415,7 +417,7 @@ export const RequestsTab: React.FC<RequestsTabProps> = ({ projectId }) => {
         
         {/* Footer */}
         {sortedRequests.length > 0 && (
-          <div className="bg-slate-50/50 border-t border-slate-200 p-2 text-center text-xs text-slate-400 font-medium">
+          <div className="bg-slate-50/50 border-t border-slate-200 p-2 sm:p-2 text-center text-xs text-slate-400 font-medium">
             Showing {sortedRequests.length} item{sortedRequests.length !== 1 && 's'}
           </div>
         )}
@@ -452,7 +454,7 @@ const TabButton = ({ active, onClick, label, count, variant }: {
     <button
       onClick={onClick}
       className={cn(
-        "flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-all whitespace-nowrap hover:bg-slate-50",
+        "flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2.5 sm:py-3 text-xs sm:text-sm font-medium border-b-2 transition-all whitespace-nowrap hover:bg-slate-50",
         active 
           ? variant === 'danger' 
             ? "border-red-500 text-red-700 bg-red-50/30" 

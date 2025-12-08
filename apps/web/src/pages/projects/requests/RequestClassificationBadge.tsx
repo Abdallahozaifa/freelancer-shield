@@ -5,7 +5,7 @@ import type { ScopeClassification } from '../../../types';
 
 interface RequestClassificationBadgeProps {
   classification: ScopeClassification | null;
-  size?: 'sm' | 'md' | 'lg';
+  size?: 'xs' | 'sm' | 'md' | 'lg';
   showIcon?: boolean;
 }
 
@@ -45,12 +45,14 @@ const classificationConfig: Record<
 };
 
 const sizeClasses = {
+  xs: 'px-1.5 py-0.5 text-[10px]',
   sm: 'px-2 py-0.5 text-xs',
   md: 'px-2.5 py-1 text-xs',
   lg: 'px-3 py-1.5 text-sm',
 };
 
 const iconSizes = {
+  xs: 'w-2.5 h-2.5',
   sm: 'w-3 h-3',
   md: 'w-3.5 h-3.5',
   lg: 'w-4 h-4',

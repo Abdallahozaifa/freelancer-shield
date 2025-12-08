@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { 
-  Loader2, CheckCircle2, AlertTriangle, 
+  CheckCircle2, AlertTriangle, 
   MessageSquare, AlignLeft, Link as LinkIcon 
 } from 'lucide-react';
 import { Modal, Button, Input, Textarea, Select } from '../../../components/ui';
@@ -96,9 +96,9 @@ export const RequestFormModal: React.FC<RequestFormModalProps> = ({
       
       {/* --- FORM STATE --- */}
       {submitState !== 'complete' ? (
-        <form onSubmit={handleSubmit(onFormSubmit)} className="flex flex-col gap-6">
+        <form onSubmit={handleSubmit(onFormSubmit)} className="flex flex-col gap-4 sm:gap-6">
           
-          <div className="space-y-5">
+          <div className="space-y-4 sm:space-y-5">
             {/* Title */}
             <div className="space-y-1.5 relative">
               <label className="text-sm font-semibold text-slate-700 flex items-center gap-1">
@@ -130,17 +130,17 @@ export const RequestFormModal: React.FC<RequestFormModalProps> = ({
                 <Textarea
                   {...contentRegister}
                   onBlur={(e) => { contentRegister.onBlur(e); handleContentBlur(e); }}
-                  placeholder="Paste the client's email, Slack message, or transcript here..."
-                  rows={6}
+                  placeholder="Paste the client's message here..."
+                  rows={4}
                   disabled={submitState === 'submitting'}
                   error={errors.content?.message}
-                  className="pl-9 resize-none leading-relaxed"
+                  className="pl-9 resize-none leading-relaxed text-sm"
                 />
               </div>
             </div>
 
-            {/* Source Selection */}
-            <div className="space-y-1.5 relative w-1/2">
+            {/* Source Selection - Full width on mobile */}
+            <div className="space-y-1.5 relative w-full sm:w-1/2">
               <label className="text-sm font-semibold text-slate-700">Source</label>
               <div className="relative group">
                 <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none group-focus-within:text-indigo-500 transition-colors">
@@ -156,31 +156,36 @@ export const RequestFormModal: React.FC<RequestFormModalProps> = ({
             </div>
           </div>
 
-          {/* Scope Creep Warning (Dynamic) */}
+          {/* Scope Creep Warning */}
           {detectedIndicators.length > 0 && (
-            <div className="flex items-start gap-3 p-4 bg-amber-50 border border-amber-100 rounded-lg animate-fade-in-up">
-              <div className="p-1 bg-amber-100 rounded text-amber-600">
-                <AlertTriangle className="w-4 h-4" />
+            <div className="flex items-start gap-2 sm:gap-3 p-3 sm:p-4 bg-amber-50 border border-amber-100 rounded-lg">
+              <div className="p-1 bg-amber-100 rounded text-amber-600 shrink-0">
+                <AlertTriangle className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
               </div>
               <div>
-                <p className="text-sm font-bold text-amber-800">Potential Scope Creep Detected</p>
-                <p className="text-xs text-amber-700 mt-1 leading-relaxed">
-                  We found phrases like <span className="font-semibold">"{detectedIndicators[0]}"</span>. 
-                  This request likely falls outside the agreed scope.
+                <p className="text-xs sm:text-sm font-bold text-amber-800">Potential Scope Creep</p>
+                <p className="text-[10px] sm:text-xs text-amber-700 mt-0.5 sm:mt-1 leading-relaxed">
+                  Found phrases like <span className="font-semibold">"{detectedIndicators[0]}"</span>.
                 </p>
               </div>
             </div>
           )}
 
-          {/* Footer */}
-          <div className="flex justify-end gap-3 pt-4 border-t border-slate-100">
-            <Button type="button" variant="ghost" onClick={onClose} disabled={submitState === 'submitting'}>
+          {/* Footer - Stack on mobile */}
+          <div className="flex flex-col-reverse sm:flex-row justify-end gap-2 sm:gap-3 pt-3 sm:pt-4 border-t border-slate-100">
+            <Button 
+              type="button" 
+              variant="ghost" 
+              onClick={onClose} 
+              disabled={submitState === 'submitting'}
+              className="w-full sm:w-auto"
+            >
               Cancel
             </Button>
             <Button 
               type="submit" 
               isLoading={submitState === 'submitting' || externalSubmitting}
-              className="shadow-lg shadow-indigo-500/20"
+              className="w-full sm:w-auto shadow-lg shadow-indigo-500/20"
             >
               Log Request
             </Button>
@@ -189,38 +194,32 @@ export const RequestFormModal: React.FC<RequestFormModalProps> = ({
       ) : (
         
         /* --- SUCCESS STATE --- */
-        <div className="flex flex-col items-center justify-center py-8 space-y-6 animate-fade-in">
-          <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center text-emerald-600 mb-2">
-            <CheckCircle2 className="w-8 h-8" />
+        <div className="flex flex-col items-center justify-center py-6 sm:py-8 space-y-4 sm:space-y-6 animate-fade-in">
+          <div className="w-12 h-12 sm:w-16 sm:h-16 bg-emerald-100 rounded-full flex items-center justify-center text-emerald-600">
+            <CheckCircle2 className="w-6 h-6 sm:w-8 sm:h-8" />
           </div>
           
-          <div className="text-center space-y-2">
-            <h3 className="text-xl font-bold text-slate-900">Request Logged</h3>
-            <p className="text-slate-500 text-sm max-w-xs mx-auto">
-              The request has been added to your inbox for triage.
+          <div className="text-center space-y-1 sm:space-y-2">
+            <h3 className="text-lg sm:text-xl font-bold text-slate-900">Request Logged</h3>
+            <p className="text-slate-500 text-xs sm:text-sm max-w-xs mx-auto">
+              The request has been added for triage.
             </p>
           </div>
 
           {/* Mini Summary Card */}
           {createdRequest && (
-            <div className="w-full bg-slate-50 rounded-xl border border-slate-200 p-4 text-left">
-              <div className="flex items-start justify-between gap-4">
-                <div>
-                  <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1">Title</p>
-                  <p className="font-medium text-slate-900 truncate">{createdRequest.title}</p>
+            <div className="w-full bg-slate-50 rounded-xl border border-slate-200 p-3 sm:p-4 text-left">
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0 flex-1">
+                  <p className="text-[10px] sm:text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1">Title</p>
+                  <p className="font-medium text-slate-900 text-sm truncate">{createdRequest.title}</p>
                 </div>
-                <RequestClassificationBadge classification={createdRequest.classification} />
+                <RequestClassificationBadge classification={createdRequest.classification} size="sm" />
               </div>
-              {detectedIndicators.length > 0 && (
-                <div className="mt-3 pt-3 border-t border-slate-200 flex items-center gap-2 text-xs text-amber-700 font-medium">
-                  <AlertTriangle className="w-3.5 h-3.5" />
-                  Flags detected for review
-                </div>
-              )}
             </div>
           )}
 
-          <div className="flex gap-3 w-full pt-4">
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 w-full pt-2 sm:pt-4">
             <Button variant="outline" onClick={onClose} className="flex-1">
               Close
             </Button>

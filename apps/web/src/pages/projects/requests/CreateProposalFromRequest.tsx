@@ -94,15 +94,15 @@ export const CreateProposalFromRequest: React.FC<CreateProposalFromRequestProps>
   const effectiveRate = estimatedHoursNum > 0 ? amountNum / estimatedHoursNum : (hourlyRate || 0);
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="Create Proposal from Request" size="lg">
-      <form onSubmit={handleSubmit} className="space-y-4">
+    <Modal isOpen={isOpen} onClose={onClose} title="Create Proposal" size="lg">
+      <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
         {/* Source Request Info */}
-        <div className="p-3 bg-gray-50 rounded-lg border border-gray-200">
-          <div className="flex items-center gap-2 text-sm text-gray-600 mb-2">
-            <FileText className="w-4 h-4" />
+        <div className="p-2.5 sm:p-3 bg-gray-50 rounded-lg border border-gray-200">
+          <div className="flex items-center gap-2 text-xs sm:text-sm text-gray-600 mb-1 sm:mb-2">
+            <FileText className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             <span>From Request:</span>
           </div>
-          <p className="font-medium text-gray-900">{request.title}</p>
+          <p className="font-medium text-gray-900 text-sm truncate">{request.title}</p>
         </div>
 
         <Input
@@ -120,11 +120,13 @@ export const CreateProposalFromRequest: React.FC<CreateProposalFromRequestProps>
           value={formData.description}
           onChange={handleChange}
           placeholder="Describe the work to be done..."
-          rows={5}
+          rows={4}
           required
+          className="text-sm"
         />
 
-        <div className="grid grid-cols-2 gap-4">
+        {/* Hours & Amount - Stack on mobile */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Estimated Hours
@@ -141,11 +143,11 @@ export const CreateProposalFromRequest: React.FC<CreateProposalFromRequestProps>
                 placeholder="0"
                 min="0"
                 step="0.5"
-                className="pl-10 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                className="pl-10 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm"
               />
             </div>
             {hourlyRate && (
-              <p className="mt-1 text-xs text-gray-500">
+              <p className="mt-1 text-[10px] sm:text-xs text-gray-500">
                 @ ${Number(hourlyRate).toFixed(2)}/hr
               </p>
             )}
@@ -168,58 +170,58 @@ export const CreateProposalFromRequest: React.FC<CreateProposalFromRequestProps>
                 min="0"
                 step="0.01"
                 required
-                className="pl-10 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                className="pl-10 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm"
               />
             </div>
           </div>
         </div>
 
         {/* Summary Box */}
-        <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
-          <h4 className="text-sm font-medium text-green-800 mb-2">Proposal Summary</h4>
-          <div className="grid grid-cols-3 gap-4 text-sm">
+        <div className="p-3 sm:p-4 bg-green-50 border border-green-200 rounded-lg">
+          <h4 className="text-xs sm:text-sm font-medium text-green-800 mb-2">Proposal Summary</h4>
+          <div className="grid grid-cols-3 gap-2 sm:gap-4 text-xs sm:text-sm">
             <div>
               <p className="text-green-600">Hours</p>
               <p className="font-bold text-green-900">{estimatedHoursNum || '—'}</p>
             </div>
             <div>
               <p className="text-green-600">Rate</p>
-              <p className="font-bold text-green-900">
-                ${Number(effectiveRate).toFixed(2)}/hr
+              <p className="font-bold text-green-900 text-xs sm:text-sm">
+                ${Number(effectiveRate).toFixed(0)}/hr
               </p>
             </div>
             <div>
               <p className="text-green-600">Total</p>
-              <p className="font-bold text-green-900 text-lg">
-                ${amountNum.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+              <p className="font-bold text-green-900 text-sm sm:text-lg">
+                ${amountNum.toLocaleString()}
               </p>
             </div>
           </div>
         </div>
 
         {/* Revenue Protection Message */}
-        <div className="flex items-center gap-2 p-3 bg-indigo-50 border border-indigo-200 rounded-lg">
-          <DollarSign className="w-5 h-5 text-indigo-600 flex-shrink-0" />
-          <p className="text-sm text-indigo-700">
-            Creating this proposal helps protect your earnings from scope creep and ensures you're
-            compensated for additional work.
+        <div className="flex items-start gap-2 p-2.5 sm:p-3 bg-indigo-50 border border-indigo-200 rounded-lg">
+          <DollarSign className="w-4 h-4 sm:w-5 sm:h-5 text-indigo-600 shrink-0 mt-0.5" />
+          <p className="text-xs sm:text-sm text-indigo-700">
+            This proposal protects your earnings from scope creep.
           </p>
         </div>
 
         {error && (
-          <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">
+          <div className="p-2.5 sm:p-3 bg-red-50 border border-red-200 rounded-lg text-xs sm:text-sm text-red-700">
             {error}
           </div>
         )}
 
-        <div className="flex justify-end gap-3 pt-4 border-t">
-          <Button type="button" variant="outline" onClick={onClose}>
+        {/* Footer - Stack on mobile */}
+        <div className="flex flex-col-reverse sm:flex-row justify-end gap-2 sm:gap-3 pt-3 sm:pt-4 border-t">
+          <Button type="button" variant="outline" onClick={onClose} className="w-full sm:w-auto">
             Cancel
           </Button>
           <Button
             type="submit"
             isLoading={isSubmitting}
-            className="bg-green-600 hover:bg-green-700"
+            className="w-full sm:w-auto bg-green-600 hover:bg-green-700"
           >
             <DollarSign className="w-4 h-4 mr-1" />
             Create ${amountNum.toLocaleString()} Proposal
