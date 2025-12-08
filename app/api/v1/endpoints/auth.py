@@ -9,18 +9,32 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.deps import CurrentUser
-from app.core.security import create_access_token, hash_password, verify_password
+from app.core.security import (
+    create_access_token,
+    hash_password,
+    verify_password,
+    create_password_reset_token,
+    verify_password_reset_token,
+)
+from app.core.config import settings
 from app.db.session import get_db
 from app.models import User
 from app.schemas.auth import (
-    Token, 
-    UserLogin, 
-    UserRegister, 
+    Token,
+    UserLogin,
+    UserRegister,
     UserResponse,
     GoogleAuthRequest,
     GoogleAuthResponse,
+    ForgotPasswordRequest,
+    ForgotPasswordResponse,
+    ResetPasswordRequest,
+    ResetPasswordResponse,
+    VerifyResetTokenRequest,
+    VerifyResetTokenResponse,
 )
 from app.services.google_auth import google_auth_service
+from app.services.email_service import email_service
 
 router = APIRouter()
 
@@ -193,3 +207,110 @@ async def google_auth(
 async def get_current_user_info(current_user: CurrentUser) -> User:
     """Get the current authenticated user's info."""
     return current_user
+
+
+@router.post("/forgot-password", response_model=ForgotPasswordResponse)
+async def forgot_password(
+    request: ForgotPasswordRequest,
+    db: Annotated[AsyncSession, Depends(get_db)],
+) -> ForgotPasswordResponse:
+    """
+    Request a password reset email.
+
+    Always returns success to prevent email enumeration attacks.
+    """
+    # Find user by email
+    result = await db.execute(
+        select(User).where(User.email == request.email)
+    )
+    user = result.scalar_one_or_none()
+
+    if user and user.hashed_password:
+        # Only generate token for users with password auth (not Google-only)
+        reset_token = create_password_reset_token(user.email)
+        reset_link = f"{settings.frontend_url}/reset-password?token={reset_token}"
+
+        # Send password reset email
+        email_sent = await email_service.send_password_reset_email(
+            to_email=user.email,
+            reset_link=reset_link,
+            expires_minutes=settings.password_reset_token_expire_minutes,
+        )
+
+        # Log for debugging (remove in production if not needed)
+        if not email_sent:
+            # If email is disabled or failed, log the link for development
+            print(f"Password reset link for {user.email}: {reset_link}")
+
+    # Always return success to prevent email enumeration
+    return ForgotPasswordResponse()
+
+
+@router.post("/reset-password", response_model=ResetPasswordResponse)
+async def reset_password(
+    request: ResetPasswordRequest,
+    db: Annotated[AsyncSession, Depends(get_db)],
+) -> ResetPasswordResponse:
+    """
+    Reset password using a valid reset token.
+    """
+    # Verify token and get email
+    email = verify_password_reset_token(request.token)
+    if not email:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid or expired reset token",
+        )
+
+    # Find user by email
+    result = await db.execute(
+        select(User).where(User.email == email)
+    )
+    user = result.scalar_one_or_none()
+
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid or expired reset token",
+        )
+
+    if not user.is_active:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="User account is deactivated",
+        )
+
+    # Update password
+    user.hashed_password = hash_password(request.new_password)
+    await db.commit()
+
+    return ResetPasswordResponse()
+
+
+@router.post("/verify-reset-token", response_model=VerifyResetTokenResponse)
+async def verify_reset_token(
+    request: VerifyResetTokenRequest,
+    db: Annotated[AsyncSession, Depends(get_db)],
+) -> VerifyResetTokenResponse:
+    """
+    Verify if a password reset token is valid.
+    Used by frontend to check token before showing reset form.
+    """
+    email = verify_password_reset_token(request.token)
+    if not email:
+        return VerifyResetTokenResponse(valid=False)
+
+    # Check if user exists
+    result = await db.execute(
+        select(User).where(User.email == email)
+    )
+    user = result.scalar_one_or_none()
+
+    if not user or not user.is_active:
+        return VerifyResetTokenResponse(valid=False)
+
+    # Mask email for privacy (show first 2 chars and domain)
+    parts = email.split('@')
+    masked_email = f"{parts[0][:2]}***@{parts[1]}" if len(parts) == 2 else email
+
+    return VerifyResetTokenResponse(valid=True, email=masked_email)

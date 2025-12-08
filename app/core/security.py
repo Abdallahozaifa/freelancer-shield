@@ -63,3 +63,40 @@ def decode_access_token(token: str) -> dict[str, Any] | None:
         return payload
     except JWTError:
         return None
+
+
+def create_password_reset_token(email: str) -> str:
+    """Create a password reset token with short expiry."""
+    expire = datetime.now(timezone.utc) + timedelta(
+        minutes=settings.password_reset_token_expire_minutes
+    )
+    to_encode = {
+        "sub": email,
+        "exp": expire,
+        "type": "password_reset",
+    }
+    return jwt.encode(
+        to_encode,
+        settings.secret_key,
+        algorithm=settings.algorithm,
+    )
+
+
+def verify_password_reset_token(token: str) -> str | None:
+    """
+    Verify a password reset token and return the email if valid.
+    Returns None if invalid or expired.
+    """
+    try:
+        payload = jwt.decode(
+            token,
+            settings.secret_key,
+            algorithms=[settings.algorithm],
+        )
+        # Check token type
+        if payload.get("type") != "password_reset":
+            return None
+        email: str | None = payload.get("sub")
+        return email
+    except JWTError:
+        return None

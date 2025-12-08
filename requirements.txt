@@ -24,6 +24,9 @@ email-validator==2.1.0.post1
 # HTTP Client (for AI API calls)
 httpx==0.26.0
 
+# Email
+aiosmtplib==3.0.1
+
 # Payments
 stripe==7.0.0
 

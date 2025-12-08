@@ -288,3 +288,17 @@ export interface GoogleAuthResponse {
   user: User;
   is_new_user: boolean;
 }
+
+// Password Reset types
+export interface ForgotPasswordResponse {
+  message: string;
+}
+
+export interface ResetPasswordResponse {
+  message: string;
+}
+
+export interface VerifyResetTokenResponse {
+  valid: boolean;
+  email?: string;
+}

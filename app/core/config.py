@@ -75,6 +75,20 @@ class Settings(BaseSettings):
     algorithm: str = "HS256"
     access_token_expire_days: int = 7
     bcrypt_rounds: int = 12
+    password_reset_token_expire_minutes: int = 30
+
+    # Frontend URL for password reset links
+    frontend_url: str = "http://localhost:3000"
+
+    # Email Configuration (SMTP)
+    smtp_host: str = ""
+    smtp_port: int = 587
+    smtp_user: str = ""
+    smtp_password: str = ""
+    smtp_from_email: str = ""
+    smtp_from_name: str = "ScopeGuard"
+    smtp_use_tls: bool = True
+    email_enabled: bool = False  # Set True when SMTP is configured
     
     # AI / Scope Analyzer
     openai_api_key: str = ""

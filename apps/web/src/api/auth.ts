@@ -1,11 +1,14 @@
 import { apiClient } from './client';
-import type { 
-  User, 
-  LoginRequest, 
-  RegisterRequest, 
+import type {
+  User,
+  LoginRequest,
+  RegisterRequest,
   TokenResponse,
   GoogleAuthRequest,
   GoogleAuthResponse,
+  ForgotPasswordResponse,
+  ResetPasswordResponse,
+  VerifyResetTokenResponse,
 } from '../types';
 
 export const authApi = {
@@ -32,6 +35,35 @@ export const authApi = {
 
   getMe: async (): Promise<User> => {
     const response = await apiClient.get<User>('/auth/me');
+    return response.data;
+  },
+
+  forgotPassword: async (email: string): Promise<ForgotPasswordResponse> => {
+    const response = await apiClient.post<ForgotPasswordResponse>(
+      '/auth/forgot-password',
+      { email }
+    );
+    return response.data;
+  },
+
+  resetPassword: async (
+    token: string,
+    newPassword: string
+  ): Promise<ResetPasswordResponse> => {
+    const response = await apiClient.post<ResetPasswordResponse>(
+      '/auth/reset-password',
+      { token, new_password: newPassword }
+    );
+    return response.data;
+  },
+
+  verifyResetToken: async (
+    token: string
+  ): Promise<VerifyResetTokenResponse> => {
+    const response = await apiClient.post<VerifyResetTokenResponse>(
+      '/auth/verify-reset-token',
+      { token }
+    );
     return response.data;
   },
 };

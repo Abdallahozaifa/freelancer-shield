@@ -4,7 +4,7 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { useAuthStore } from './stores/authStore';
 import { AuthInitializer } from './components/AuthInitializer';
 import { Loading, ToastContainer } from './components/ui';
-import { LoginPage, RegisterPage, ProfilePage, ClientsPage, ClientDetailPage, DashboardPage } from './pages';
+import { LoginPage, RegisterPage, ProfilePage, ClientsPage, ClientDetailPage, DashboardPage, ForgotPasswordPage, ResetPasswordPage } from './pages';
 import { ProjectsPage, ProjectDetailPage, ProjectNewPage } from './pages/projects';
 import { RequestsPage } from './pages/projects/requests';
 import { ScopeItemsPage } from './pages/projects/scope';
@@ -92,6 +92,22 @@ export default function App() {
               element={
                 <PublicRoute>
                   <RegisterPage />
+                </PublicRoute>
+              }
+            />
+            <Route
+              path="/forgot-password"
+              element={
+                <PublicRoute>
+                  <ForgotPasswordPage />
+                </PublicRoute>
+              }
+            />
+            <Route
+              path="/reset-password"
+              element={
+                <PublicRoute>
+                  <ResetPasswordPage />
                 </PublicRoute>
               }
             />
