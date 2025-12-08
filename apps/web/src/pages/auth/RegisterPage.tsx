@@ -84,6 +84,7 @@ export function RegisterPage() {
     register,
     handleSubmit,
     watch,
+    setValue,
     formState: { errors },
   } = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
@@ -97,6 +98,7 @@ export function RegisterPage() {
   });
 
   const password = watch('password', '');
+  const confirmPassword = watch('confirmPassword', '');
 
   const onSubmit = async (data: RegisterFormData) => {
     if (isSubmitting) return;
@@ -672,7 +674,9 @@ export function RegisterPage() {
                     autoComplete="new-password"
                     placeholder="Create a strong password"
                     disabled={isSubmitting}
-                    {...register('password')}
+                    value={password}
+                    onChange={(e) => setValue('password', e.target.value, { shouldValidate: true })}
+                    onBlur={() => {}}
                   className={`lg:pl-11 px-4 pr-12 py-2 h-10 border rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200 relative z-10 touch-manipulation ${errors.password ? 'border-red-500 bg-red-50/50 focus:ring-red-500' : 'border-slate-200 bg-slate-50 focus:bg-white focus:ring-indigo-500'}`}
                   />
                   <button
@@ -728,7 +732,9 @@ export function RegisterPage() {
                     autoComplete="new-password"
                     placeholder="Confirm your password"
                     disabled={isSubmitting}
-                    {...register('confirmPassword')}
+                    value={confirmPassword}
+                    onChange={(e) => setValue('confirmPassword', e.target.value, { shouldValidate: true })}
+                    onBlur={() => {}}
                   className={`lg:pl-11 px-4 pr-12 py-2 h-10 border rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200 relative z-10 touch-manipulation ${errors.confirmPassword ? 'border-red-500 bg-red-50/50 focus:ring-red-500' : 'border-slate-200 bg-slate-50 focus:bg-white focus:ring-indigo-500'}`}
                   />
                   <button
