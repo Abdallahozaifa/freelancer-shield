@@ -33,6 +33,13 @@ export const authApi = {
     return response.data;
   },
 
+  googleAuthWithAccessToken: async (accessToken: string): Promise<GoogleAuthResponse> => {
+    const response = await apiClient.post<GoogleAuthResponse>('/auth/google/token', {
+      access_token: accessToken,
+    });
+    return response.data;
+  },
+
   getMe: async (): Promise<User> => {
     const response = await apiClient.get<User>('/auth/me');
     return response.data;

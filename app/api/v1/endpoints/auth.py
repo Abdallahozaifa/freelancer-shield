@@ -25,6 +25,7 @@ from app.schemas.auth import (
     UserRegister,
     UserResponse,
     GoogleAuthRequest,
+    GoogleAccessTokenRequest,
     GoogleAuthResponse,
     ForgotPasswordRequest,
     ForgotPasswordResponse,
@@ -195,6 +196,88 @@ async def google_auth(
     # Convert user to UserResponse
     user_response = UserResponse.model_validate(user)
     
+    return GoogleAuthResponse(
+        access_token=access_token,
+        token_type="bearer",
+        user=user_response,
+        is_new_user=is_new_user,
+    )
+
+
+@router.post("/google/token", response_model=GoogleAuthResponse)
+async def google_auth_with_access_token(
+    request: GoogleAccessTokenRequest,
+    db: Annotated[AsyncSession, Depends(get_db)],
+):
+    """
+    Authenticate user with Google OAuth access token (implicit flow).
+    This endpoint is used for mobile-friendly OAuth flow.
+
+    - If user exists with this Google ID, log them in
+    - If user exists with this email (but no Google ID), link accounts and log in
+    - If user doesn't exist, create new account and log in
+    """
+    # Verify Google access token and get user info
+    google_user = await google_auth_service.verify_access_token(request.access_token)
+
+    is_new_user = False
+
+    # Check if user exists with this Google ID
+    result = await db.execute(
+        select(User).where(User.google_id == google_user.google_id)
+    )
+    user = result.scalar_one_or_none()
+
+    if not user:
+        # Check if user exists with this email
+        result = await db.execute(
+            select(User).where(User.email == google_user.email)
+        )
+        user = result.scalar_one_or_none()
+
+        if user:
+            # Link Google account to existing user
+            user.google_id = google_user.google_id
+            if google_user.picture:
+                user.picture = google_user.picture
+            if not user.hashed_password:
+                user.auth_provider = "google"
+            await db.commit()
+            await db.refresh(user)
+        else:
+            # Create new user
+            user = User(
+                email=google_user.email,
+                full_name=google_user.full_name,
+                google_id=google_user.google_id,
+                picture=google_user.picture,
+                auth_provider="google",
+                hashed_password=None,
+                is_active=True,
+            )
+            db.add(user)
+            await db.commit()
+            await db.refresh(user)
+            is_new_user = True
+    else:
+        # Update picture if available and different
+        if google_user.picture and user.picture != google_user.picture:
+            user.picture = google_user.picture
+            await db.commit()
+            await db.refresh(user)
+
+    if not user.is_active:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="User account is deactivated",
+        )
+
+    # Create access token
+    access_token = create_access_token(data={"sub": str(user.id)})
+
+    # Convert user to UserResponse
+    user_response = UserResponse.model_validate(user)
+
     return GoogleAuthResponse(
         access_token=access_token,
         token_type="bearer",

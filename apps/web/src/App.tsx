@@ -11,6 +11,7 @@ import { ScopeItemsPage } from './pages/projects/scope';
 import { ProposalsPage } from './pages/projects/proposals';
 import { LandingPage } from './pages/landing';
 import { BillingPage } from './pages/settings';
+import { PrivacyPage, SupportPage } from './pages/legal';
 import { AppLayout } from './layouts';
 
 // Create query client
@@ -111,6 +112,10 @@ export default function App() {
                 </PublicRoute>
               }
             />
+
+            {/* Legal pages - accessible to everyone */}
+            <Route path="/privacy" element={<PrivacyPage />} />
+            <Route path="/support" element={<SupportPage />} />
 
             {/* Protected routes with AppLayout */}
             <Route element={<ProtectedRoute />}>

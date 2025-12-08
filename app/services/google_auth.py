@@ -2,6 +2,7 @@
 Google OAuth authentication service.
 """
 import logging
+import httpx
 from google.oauth2 import id_token
 from google.auth.transport import requests
 from fastapi import HTTPException, status
@@ -13,10 +14,55 @@ logger = logging.getLogger(__name__)
 
 class GoogleAuthService:
     """Service for handling Google OAuth authentication."""
-    
+
     def __init__(self):
         self.client_id = settings.google_client_id
-    
+
+    async def verify_access_token(self, access_token: str) -> GoogleUserInfo:
+        """
+        Verify Google access token by fetching user info from Google's userinfo endpoint.
+        This is used for the implicit OAuth flow (mobile-friendly).
+
+        Args:
+            access_token: The access token from Google OAuth
+
+        Returns:
+            GoogleUserInfo with user details
+
+        Raises:
+            HTTPException if token is invalid
+        """
+        try:
+            async with httpx.AsyncClient() as client:
+                response = await client.get(
+                    "https://www.googleapis.com/oauth2/v3/userinfo",
+                    headers={"Authorization": f"Bearer {access_token}"}
+                )
+
+                if response.status_code != 200:
+                    logger.error(f"Google userinfo request failed: {response.status_code}")
+                    raise HTTPException(
+                        status_code=status.HTTP_401_UNAUTHORIZED,
+                        detail="Invalid Google access token"
+                    )
+
+                userinfo = response.json()
+
+                return GoogleUserInfo(
+                    google_id=userinfo['sub'],
+                    email=userinfo['email'],
+                    full_name=userinfo.get('name', ''),
+                    picture=userinfo.get('picture'),
+                    email_verified=userinfo.get('email_verified', False)
+                )
+
+        except httpx.HTTPError as e:
+            logger.error(f"Google access token verification failed: {e}")
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Failed to verify Google access token"
+            )
+
     async def verify_google_token(self, credential: str) -> GoogleUserInfo:
         """
         Verify the Google ID token and extract user information.

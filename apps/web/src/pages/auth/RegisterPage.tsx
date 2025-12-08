@@ -141,12 +141,12 @@ export function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-white overflow-x-hidden overscroll-none">
       
       {/* ============================================ */}
       {/* MOBILE LAYOUT - Only visible below lg */}
       {/* ============================================ */}
-      <div className="lg:hidden min-h-screen flex flex-col bg-white">
+      <div className="lg:hidden min-h-screen flex flex-col bg-white overflow-x-hidden">
         
         {/* Top Section - Gradient - SMALLER for signup */}
         <div className="relative h-[20vh] min-h-[140px] max-h-[160px] bg-gradient-to-br from-indigo-600 via-purple-600 to-indigo-700 overflow-visible">
@@ -171,7 +171,7 @@ export function RegisterPage() {
           </div>
           
           {/* Decorative orbs - Positioned safely */}
-          <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/4 pointer-events-none" />
+          <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -translate-y-1/2 pointer-events-none" />
           <div className="absolute bottom-16 left-8 w-20 h-20 bg-purple-400/20 rounded-full blur-2xl pointer-events-none" />
           
           {/* Grid pattern */}
@@ -233,7 +233,7 @@ export function RegisterPage() {
                 )}
               </div>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none z-0">
                   <User className="w-4 h-4 text-slate-400" />
                 </div>
                 <Input
@@ -243,7 +243,7 @@ export function RegisterPage() {
                   placeholder="Full Name"
                   disabled={isSubmitting}
                   {...register('full_name')}
-                  className={`pl-10 pr-4 py-2.5 border rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all text-sm ${errors.full_name ? 'border-red-500 bg-red-50/50 focus:ring-red-500' : 'border-indigo-100 bg-indigo-50/50 focus:bg-white'}`}
+                  className={`pl-10 pr-4 py-3 sm:py-2.5 border rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all text-sm relative z-10 touch-manipulation min-h-[44px] ${errors.full_name ? 'border-red-500 bg-red-50/50 focus:ring-red-500' : 'border-indigo-100 bg-indigo-50/50 focus:bg-white'}`}
                 />
               </div>
             </div>
@@ -257,7 +257,7 @@ export function RegisterPage() {
                 )}
               </div>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none z-0">
                   <Mail className="w-4 h-4 text-slate-400" />
                 </div>
                 <Input
@@ -267,7 +267,7 @@ export function RegisterPage() {
                   placeholder="Email address"
                   disabled={isSubmitting}
                   {...register('email')}
-                  className={`pl-10 pr-4 py-2.5 border rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all text-sm ${errors.email ? 'border-red-500 bg-red-50/50 focus:ring-red-500' : 'border-indigo-100 bg-indigo-50/50 focus:bg-white'}`}
+                  className={`pl-10 pr-4 py-3 sm:py-2.5 border rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all text-sm relative z-10 touch-manipulation min-h-[44px] ${errors.email ? 'border-red-500 bg-red-50/50 focus:ring-red-500' : 'border-indigo-100 bg-indigo-50/50 focus:bg-white'}`}
                 />
               </div>
             </div>
@@ -278,7 +278,7 @@ export function RegisterPage() {
                 <label htmlFor="business_name" className="text-sm font-medium text-slate-700">Business Name <span className="text-slate-400 font-normal">(Optional)</span></label>
               </div>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none z-0">
                   <Building2 className="w-4 h-4 text-slate-400" />
                 </div>
                 <Input
@@ -288,7 +288,7 @@ export function RegisterPage() {
                   placeholder="Business Name (Optional)"
                   disabled={isSubmitting}
                   {...register('business_name')}
-                  className="pl-10 pr-4 py-2.5 border border-indigo-100 bg-indigo-50/50 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent focus:bg-white transition-all text-sm"
+                  className="pl-10 pr-4 py-3 sm:py-2.5 border border-indigo-100 bg-indigo-50/50 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent focus:bg-white transition-all text-sm relative z-10 touch-manipulation min-h-[44px]"
                 />
               </div>
             </div>
@@ -296,28 +296,29 @@ export function RegisterPage() {
             {/* Password */}
             <div>
               <div className="flex items-center justify-between mb-1">
-                <label htmlFor="password" className="text-sm font-medium text-slate-700">Password</label>
+                <label htmlFor="mobile-password" className="text-sm font-medium text-slate-700">Password</label>
                 {errors.password && (
                   <span className="text-xs text-red-500 font-medium">{errors.password.message}</span>
                 )}
               </div>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none z-0">
                   <Lock className="w-4 h-4 text-slate-400" />
                 </div>
                 <Input
-                  id="password"
+                  id="mobile-password"
                   type={showPassword ? 'text' : 'password'}
                   autoComplete="new-password"
                   placeholder="Password"
                   disabled={isSubmitting}
                   {...register('password')}
-                  className={`pl-10 pr-10 py-2.5 border rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all text-sm ${errors.password ? 'border-red-500 bg-red-50/50 focus:ring-red-500' : 'border-indigo-100 bg-indigo-50/50 focus:bg-white'}`}
+                  className={`pl-10 pr-12 py-3 sm:py-2.5 border rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all text-sm relative z-10 touch-manipulation min-h-[44px] ${errors.password ? 'border-red-500 bg-red-50/50 focus:ring-red-500' : 'border-indigo-100 bg-indigo-50/50 focus:bg-white'}`}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center z-20 touch-manipulation"
+                  tabIndex={-1}
                 >
                   {showPassword ? <EyeOff className="w-4 h-4 text-slate-400" /> : <Eye className="w-4 h-4 text-slate-400" />}
                 </button>
@@ -344,28 +345,29 @@ export function RegisterPage() {
             {/* Confirm Password */}
             <div>
               <div className="flex items-center justify-between mb-1">
-                <label htmlFor="confirmPassword" className="text-sm font-medium text-slate-700">Confirm Password</label>
+                <label htmlFor="mobile-confirmPassword" className="text-sm font-medium text-slate-700">Confirm Password</label>
                 {errors.confirmPassword && (
                   <span className="text-xs text-red-500 font-medium">{errors.confirmPassword.message}</span>
                 )}
               </div>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none z-0">
                   <Lock className="w-4 h-4 text-slate-400" />
                 </div>
                 <Input
-                  id="confirmPassword"
+                  id="mobile-confirmPassword"
                   type={showConfirmPassword ? 'text' : 'password'}
                   autoComplete="new-password"
                   placeholder="Confirm Password"
                   disabled={isSubmitting}
                   {...register('confirmPassword')}
-                  className={`pl-10 pr-10 py-2.5 border rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all text-sm ${errors.confirmPassword ? 'border-red-500 bg-red-50/50 focus:ring-red-500' : 'border-indigo-100 bg-indigo-50/50 focus:bg-white'}`}
+                  className={`pl-10 pr-12 py-3 sm:py-2.5 border rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all text-sm relative z-10 touch-manipulation min-h-[44px] ${errors.confirmPassword ? 'border-red-500 bg-red-50/50 focus:ring-red-500' : 'border-indigo-100 bg-indigo-50/50 focus:bg-white'}`}
                 />
                 <button
                   type="button"
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center z-20 touch-manipulation"
+                  tabIndex={-1}
                 >
                   {showConfirmPassword ? <EyeOff className="w-4 h-4 text-slate-400" /> : <Eye className="w-4 h-4 text-slate-400" />}
                 </button>
@@ -586,7 +588,7 @@ export function RegisterPage() {
               </div>
               <div className="relative">
                 {/* Icon - Desktop only */}
-                <div className="hidden lg:flex absolute inset-y-0 left-0 pl-3.5 items-center pointer-events-none">
+                <div className="hidden lg:flex absolute inset-y-0 left-0 pl-3.5 items-center pointer-events-none z-0">
                   <User className="h-5 w-5 text-slate-400" />
                 </div>
               <Input
@@ -596,7 +598,7 @@ export function RegisterPage() {
                 placeholder="e.g. Jane Smith"
                 disabled={isSubmitting}
                 {...register('full_name')}
-                  className={`lg:pl-11 px-4 py-2 h-10 border rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200 ${errors.full_name ? 'border-red-500 bg-red-50/50 focus:ring-red-500' : 'border-slate-200 bg-slate-50 focus:bg-white focus:ring-indigo-500'}`}
+                  className={`lg:pl-11 px-4 py-2 h-10 border rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200 relative z-10 touch-manipulation ${errors.full_name ? 'border-red-500 bg-red-50/50 focus:ring-red-500' : 'border-slate-200 bg-slate-50 focus:bg-white focus:ring-indigo-500'}`}
               />
               </div>
             </div>
@@ -612,7 +614,7 @@ export function RegisterPage() {
               </div>
               <div className="relative">
                 {/* Icon - Desktop only */}
-                <div className="hidden lg:flex absolute inset-y-0 left-0 pl-3.5 items-center pointer-events-none">
+                <div className="hidden lg:flex absolute inset-y-0 left-0 pl-3.5 items-center pointer-events-none z-0">
                   <Mail className="h-5 w-5 text-slate-400" />
                 </div>
               <Input
@@ -622,7 +624,7 @@ export function RegisterPage() {
                 placeholder="name@company.com"
                 disabled={isSubmitting}
                 {...register('email')}
-                  className={`lg:pl-11 px-4 py-2 h-10 border rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200 ${errors.email ? 'border-red-500 bg-red-50/50 focus:ring-red-500' : 'border-slate-200 bg-slate-50 focus:bg-white focus:ring-indigo-500'}`}
+                  className={`lg:pl-11 px-4 py-2 h-10 border rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200 relative z-10 touch-manipulation ${errors.email ? 'border-red-500 bg-red-50/50 focus:ring-red-500' : 'border-slate-200 bg-slate-50 focus:bg-white focus:ring-indigo-500'}`}
               />
               </div>
             </div>
@@ -635,7 +637,7 @@ export function RegisterPage() {
               </div>
               <div className="relative">
                 {/* Icon - Desktop only */}
-                <div className="hidden lg:flex absolute inset-y-0 left-0 pl-3.5 items-center pointer-events-none">
+                <div className="hidden lg:flex absolute inset-y-0 left-0 pl-3.5 items-center pointer-events-none z-0">
                   <Building2 className="h-5 w-5 text-slate-400" />
                 </div>
               <Input
@@ -645,7 +647,7 @@ export function RegisterPage() {
                 placeholder="e.g. Acme Design Studio"
                 disabled={isSubmitting}
                 {...register('business_name')}
-                  className="lg:pl-11 px-4 py-2 h-10 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200"
+                  className="lg:pl-11 px-4 py-2 h-10 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 relative z-10 touch-manipulation"
               />
               </div>
             </div>
@@ -661,7 +663,7 @@ export function RegisterPage() {
               </div>
                 <div className="relative">
                 {/* Icon - Desktop only */}
-                <div className="hidden lg:flex absolute inset-y-0 left-0 pl-3.5 items-center pointer-events-none">
+                <div className="hidden lg:flex absolute inset-y-0 left-0 pl-3.5 items-center pointer-events-none z-0">
                   <Lock className="h-5 w-5 text-slate-400" />
                 </div>
                   <Input
@@ -671,12 +673,12 @@ export function RegisterPage() {
                     placeholder="Create a strong password"
                     disabled={isSubmitting}
                     {...register('password')}
-                  className={`lg:pl-11 px-4 pr-12 py-2 h-10 border rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200 ${errors.password ? 'border-red-500 bg-red-50/50 focus:ring-red-500' : 'border-slate-200 bg-slate-50 focus:bg-white focus:ring-indigo-500'}`}
+                  className={`lg:pl-11 px-4 pr-12 py-2 h-10 border rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200 relative z-10 touch-manipulation ${errors.password ? 'border-red-500 bg-red-50/50 focus:ring-red-500' : 'border-slate-200 bg-slate-50 focus:bg-white focus:ring-indigo-500'}`}
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-slate-600 transition-colors focus:outline-none"
+                  className="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-slate-600 transition-colors focus:outline-none z-20 touch-manipulation"
                     tabIndex={-1}
                   >
                   {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
@@ -717,7 +719,7 @@ export function RegisterPage() {
               </div>
                 <div className="relative">
                 {/* Icon - Desktop only */}
-                <div className="hidden lg:flex absolute inset-y-0 left-0 pl-3.5 items-center pointer-events-none">
+                <div className="hidden lg:flex absolute inset-y-0 left-0 pl-3.5 items-center pointer-events-none z-0">
                   <Lock className="h-5 w-5 text-slate-400" />
                 </div>
                   <Input
@@ -727,12 +729,12 @@ export function RegisterPage() {
                     placeholder="Confirm your password"
                     disabled={isSubmitting}
                     {...register('confirmPassword')}
-                  className={`lg:pl-11 px-4 pr-12 py-2 h-10 border rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200 ${errors.confirmPassword ? 'border-red-500 bg-red-50/50 focus:ring-red-500' : 'border-slate-200 bg-slate-50 focus:bg-white focus:ring-indigo-500'}`}
+                  className={`lg:pl-11 px-4 pr-12 py-2 h-10 border rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200 relative z-10 touch-manipulation ${errors.confirmPassword ? 'border-red-500 bg-red-50/50 focus:ring-red-500' : 'border-slate-200 bg-slate-50 focus:bg-white focus:ring-indigo-500'}`}
                   />
                   <button
                     type="button"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  className="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-slate-600 transition-colors focus:outline-none"
+                  className="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-slate-600 transition-colors focus:outline-none z-20 touch-manipulation"
                     tabIndex={-1}
                   >
                   {showConfirmPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}

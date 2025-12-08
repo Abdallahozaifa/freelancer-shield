@@ -1,10 +1,12 @@
 import React, { useState, useMemo } from 'react';
-import { 
-  Plus, Search, FileText, Sparkles
+import {
+  Plus, Search, FileText, Sparkles, DollarSign, Send as SendIcon,
+  CheckCircle2, XCircle, MoreVertical, Edit, Trash2, Copy
 } from 'lucide-react';
-import { Button, Spinner, useToast } from '../../../components/ui';
+import { Button, Spinner, useToast, Badge, Dropdown } from '../../../components/ui';
 import { useFeatureGate } from '../../../hooks/useFeatureGate';
 import { UpgradePrompt } from '../../../components/ui';
+import { formatCurrency, formatRelative } from '../../../utils/format';
 import { ProposalRow } from './ProposalRow';
 import { ProposalFormModal } from './ProposalFormModal';
 import { SendProposalModal } from './SendProposalModal';
@@ -209,9 +211,134 @@ export const ProposalsTab: React.FC<ProposalsTabProps> = ({ projectId }) => {
 
   return (
     <div className="w-full space-y-6 animate-fade-in -mt-4">
+      {/* ============================================ */}
+      {/* MOBILE LAYOUT - Only visible below lg */}
+      {/* ============================================ */}
+      <div className="lg:hidden space-y-4">
+        {/* Mobile Header with Search & Create */}
+        <div className="flex items-center gap-3">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+            <input
+              type="text"
+              placeholder="Search..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-9 pr-3 py-2.5 bg-white border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all placeholder:text-slate-400"
+            />
+          </div>
+          <Button
+            onClick={handleCreate}
+            className="h-10 px-3 bg-indigo-600 hover:bg-indigo-700 rounded-xl shadow-sm"
+            size="sm"
+          >
+            <Plus className="w-5 h-5" />
+          </Button>
+        </div>
+
+        {/* Mobile Filter Pills */}
+        <div className="flex gap-2 overflow-x-auto pb-1 no-scrollbar">
+          <MobileFilterPill
+            active={activeTab === 'all'}
+            onClick={() => setActiveTab('all')}
+            label="All"
+            count={stats.total}
+          />
+          <MobileFilterPill
+            active={activeTab === 'draft'}
+            onClick={() => setActiveTab('draft')}
+            label="Drafts"
+            count={stats.draft}
+          />
+          <MobileFilterPill
+            active={activeTab === 'sent'}
+            onClick={() => setActiveTab('sent')}
+            label="Sent"
+            count={stats.sent}
+            variant="info"
+          />
+          <MobileFilterPill
+            active={activeTab === 'accepted'}
+            onClick={() => setActiveTab('accepted')}
+            label="Accepted"
+            count={stats.accepted}
+            variant="success"
+          />
+        </div>
+
+        {/* Mobile Proposal Generator Banner */}
+        {activeTab === 'all' && (
+          <div className="mb-2">
+            {isPro ? (
+              <button
+                onClick={() => toast.success('Proposal generator feature coming soon!')}
+                className="w-full p-3 bg-indigo-50 rounded-xl border border-indigo-200 flex items-center gap-3 active:bg-indigo-100 transition-colors"
+              >
+                <div className="w-9 h-9 bg-indigo-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <Sparkles className="w-5 h-5 text-indigo-600" />
+                </div>
+                <div className="text-left flex-1">
+                  <p className="font-medium text-indigo-900 text-sm">Generate Proposal</p>
+                  <p className="text-xs text-indigo-600">AI-powered from requests</p>
+                </div>
+              </button>
+            ) : (
+              <UpgradePrompt
+                feature="Proposal Generator"
+                description="Auto-generate proposals from requests."
+                variant="banner"
+              />
+            )}
+          </div>
+        )}
+
+        {/* Mobile Proposals List */}
+        {isLoading ? (
+          <div className="flex items-center justify-center py-12">
+            <Spinner size="lg" />
+          </div>
+        ) : sortedProposals.length === 0 ? (
+          <div className="bg-white rounded-xl border border-slate-200 p-8 text-center">
+            <div className="w-14 h-14 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-3">
+              <FileText className="w-7 h-7 text-slate-400" />
+            </div>
+            <h3 className="text-slate-900 font-medium mb-1">No proposals found</h3>
+            <p className="text-slate-500 text-sm">
+              {activeTab === 'all'
+                ? "Create a proposal to bill for extra work."
+                : `No ${activeTab.toLowerCase()} proposals.`}
+            </p>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {sortedProposals.map((proposal) => (
+              <MobileProposalCard
+                key={proposal.id}
+                proposal={proposal}
+                onEdit={() => handleEdit(proposal)}
+                onSend={() => handleSend(proposal)}
+                onDelete={() => handleDelete(proposal)}
+                onAccept={() => handleMarkResponse(proposal, 'accept')}
+                onDecline={() => handleMarkResponse(proposal, 'decline')}
+                onDuplicate={() => handleDuplicate(proposal)}
+              />
+            ))}
+          </div>
+        )}
+
+        {sortedProposals.length > 0 && (
+          <p className="text-center text-xs text-slate-400 py-2">
+            {sortedProposals.length} proposal{sortedProposals.length !== 1 && 's'}
+          </p>
+        )}
+      </div>
+
+      {/* ============================================ */}
+      {/* DESKTOP LAYOUT - Only visible at lg and above */}
+      {/* ============================================ */}
       {/* Main Unified Card */}
-      <div className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden flex flex-col min-h-[600px]">
-        
+      <div className="hidden lg:flex bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden flex-col min-h-[600px]">
+
         {/* 1. Header Toolbar */}
         <div className="border-b border-slate-200 bg-white p-4">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -228,7 +355,7 @@ export const ProposalsTab: React.FC<ProposalsTabProps> = ({ projectId }) => {
             </div>
 
             {/* Action */}
-            <Button 
+            <Button
               onClick={handleCreate}
               className="shadow-sm whitespace-nowrap h-9"
               size="sm"
@@ -306,8 +433,8 @@ export const ProposalsTab: React.FC<ProposalsTabProps> = ({ projectId }) => {
               </div>
               <h3 className="text-slate-900 font-medium mb-1">No proposals found</h3>
               <p className="text-slate-500 text-sm max-w-xs">
-                {activeTab === 'all' 
-                  ? "Create a proposal to bill for extra work." 
+                {activeTab === 'all'
+                  ? "Create a proposal to bill for extra work."
                   : `No ${activeTab.toLowerCase()} proposals.`}
               </p>
             </div>
@@ -328,7 +455,7 @@ export const ProposalsTab: React.FC<ProposalsTabProps> = ({ projectId }) => {
             </div>
           )}
         </div>
-        
+
         {sortedProposals.length > 0 && (
           <div className="bg-slate-50/50 border-t border-slate-200 p-2 text-center text-xs text-slate-400 font-medium">
             Showing {sortedProposals.length} item{sortedProposals.length !== 1 && 's'}
@@ -361,13 +488,13 @@ export const ProposalsTab: React.FC<ProposalsTabProps> = ({ projectId }) => {
   );
 };
 
-// Tab Button Component
+// Tab Button Component (Desktop)
 const TabButton = ({ active, onClick, label, count, variant }: any) => (
   <button
     onClick={onClick}
     className={cn(
       "flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-all whitespace-nowrap hover:bg-slate-50",
-      active 
+      active
         ? variant === 'success' ? "border-emerald-500 text-emerald-700 bg-emerald-50/30"
         : variant === 'info' ? "border-blue-500 text-blue-700 bg-blue-50/30"
         : "border-indigo-500 text-indigo-700 bg-indigo-50/30"
@@ -385,5 +512,184 @@ const TabButton = ({ active, onClick, label, count, variant }: any) => (
     )}
   </button>
 );
+
+// Mobile Filter Pill Component
+const MobileFilterPill = ({ active, onClick, label, count, variant }: any) => (
+  <button
+    onClick={onClick}
+    className={cn(
+      "flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium whitespace-nowrap transition-all",
+      active
+        ? variant === 'success' ? "bg-emerald-100 text-emerald-700 border border-emerald-200"
+        : variant === 'info' ? "bg-blue-100 text-blue-700 border border-blue-200"
+        : "bg-indigo-100 text-indigo-700 border border-indigo-200"
+        : "bg-white text-slate-600 border border-slate-200"
+    )}
+  >
+    {label}
+    {count > 0 && (
+      <span className={cn(
+        "min-w-[18px] h-[18px] flex items-center justify-center rounded-full text-[10px] font-bold",
+        active ? "bg-white/80" : "bg-slate-100"
+      )}>
+        {count}
+      </span>
+    )}
+  </button>
+);
+
+// Mobile Proposal Card Component
+interface MobileProposalCardProps {
+  proposal: Proposal;
+  onEdit: () => void;
+  onSend: () => void;
+  onDelete: () => void;
+  onAccept: () => void;
+  onDecline: () => void;
+  onDuplicate: () => void;
+}
+
+const MobileProposalCard: React.FC<MobileProposalCardProps> = ({
+  proposal, onEdit, onSend, onDelete, onAccept, onDecline, onDuplicate
+}) => {
+  const isDraft = proposal.status === 'draft';
+  const isSent = proposal.status === 'sent';
+  const isAccepted = proposal.status === 'accepted';
+  const isDeclined = proposal.status === 'declined';
+
+  const statusColors = {
+    draft: 'bg-slate-100 text-slate-700 border-slate-200',
+    sent: 'bg-blue-100 text-blue-700 border-blue-200',
+    accepted: 'bg-emerald-100 text-emerald-700 border-emerald-200',
+    declined: 'bg-red-100 text-red-700 border-red-200',
+    expired: 'bg-orange-100 text-orange-700 border-orange-200',
+  };
+
+  return (
+    <div className={cn(
+      "bg-white rounded-xl border shadow-sm overflow-hidden",
+      isAccepted ? "border-emerald-200 ring-1 ring-emerald-100" : "border-slate-200"
+    )}>
+      {/* Card Header */}
+      <div className="p-4">
+        <div className="flex items-start justify-between gap-3 mb-3">
+          <div className="flex-1 min-w-0">
+            <h3 className={cn(
+              "font-semibold text-slate-900 truncate",
+              isDeclined && "line-through text-slate-500"
+            )}>
+              {proposal.title}
+            </h3>
+            <p className="text-xs text-slate-500 mt-0.5">
+              {formatRelative(proposal.created_at)}
+            </p>
+          </div>
+          <div className="flex items-center gap-2">
+            <Badge
+              className={cn("text-xs border", statusColors[proposal.status])}
+              size="sm"
+            >
+              {proposal.status.charAt(0).toUpperCase() + proposal.status.slice(1)}
+            </Badge>
+            <Dropdown
+              trigger={
+                <button className="p-1.5 rounded-lg hover:bg-slate-100 transition-colors">
+                  <MoreVertical className="w-4 h-4 text-slate-500" />
+                </button>
+              }
+              items={[
+                ...(!isAccepted ? [{ label: 'Edit', icon: <Edit className="w-4 h-4" />, onClick: onEdit }] : []),
+                { label: 'Duplicate', icon: <Copy className="w-4 h-4" />, onClick: onDuplicate },
+                ...(isDraft ? [{ label: 'Delete', icon: <Trash2 className="w-4 h-4" />, onClick: onDelete, danger: true }] : []),
+              ]}
+              align="right"
+            />
+          </div>
+        </div>
+
+        {/* Description */}
+        {proposal.description && (
+          <p className="text-sm text-slate-600 line-clamp-2 mb-3">
+            {proposal.description}
+          </p>
+        )}
+
+        {/* Amount */}
+        <div className={cn(
+          "flex items-center gap-2 p-3 rounded-lg",
+          isAccepted ? "bg-emerald-50" : "bg-slate-50"
+        )}>
+          <DollarSign className={cn(
+            "w-5 h-5",
+            isAccepted ? "text-emerald-600" : "text-slate-400"
+          )} />
+          <span className={cn(
+            "text-lg font-bold",
+            isAccepted ? "text-emerald-700" : "text-slate-900"
+          )}>
+            {formatCurrency(proposal.amount)}
+          </span>
+          {isAccepted && (
+            <span className="ml-auto text-xs font-medium text-emerald-600 flex items-center gap-1">
+              <CheckCircle2 className="w-3.5 h-3.5" />
+              Protected
+            </span>
+          )}
+        </div>
+      </div>
+
+      {/* Action Bar */}
+      {(isDraft || isSent) && (
+        <div className="px-4 pb-4 pt-1 flex gap-2">
+          {isDraft && (
+            <button
+              onClick={onSend}
+              className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-indigo-600 text-white text-sm font-medium rounded-lg active:bg-indigo-700 transition-colors"
+            >
+              <SendIcon className="w-4 h-4" />
+              Send to Client
+            </button>
+          )}
+          {isSent && (
+            <>
+              <button
+                onClick={onAccept}
+                className="flex-1 flex items-center justify-center gap-1.5 py-2.5 bg-emerald-600 text-white text-sm font-medium rounded-lg active:bg-emerald-700 transition-colors"
+              >
+                <CheckCircle2 className="w-4 h-4" />
+                Accept
+              </button>
+              <button
+                onClick={onDecline}
+                className="flex-1 flex items-center justify-center gap-1.5 py-2.5 bg-white text-red-600 text-sm font-medium rounded-lg border border-red-200 active:bg-red-50 transition-colors"
+              >
+                <XCircle className="w-4 h-4" />
+                Decline
+              </button>
+            </>
+          )}
+        </div>
+      )}
+
+      {/* Accepted/Declined Message */}
+      {isAccepted && (
+        <div className="px-4 pb-4">
+          <div className="flex items-center gap-2 p-2.5 bg-emerald-50 rounded-lg border border-emerald-100">
+            <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+            <span className="text-sm font-medium text-emerald-700">Client accepted this proposal</span>
+          </div>
+        </div>
+      )}
+      {isDeclined && (
+        <div className="px-4 pb-4">
+          <div className="flex items-center gap-2 p-2.5 bg-red-50 rounded-lg border border-red-100">
+            <XCircle className="w-4 h-4 text-red-600" />
+            <span className="text-sm font-medium text-red-700">Client declined this proposal</span>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
 
 export default ProposalsTab;

@@ -49,8 +49,14 @@ class UserResponse(BaseModel):
 # Google OAuth schemas
 class GoogleAuthRequest(BaseModel):
     """Request body for Google OAuth token verification."""
-    
+
     credential: str  # The ID token from Google Sign-In
+
+
+class GoogleAccessTokenRequest(BaseModel):
+    """Request body for Google OAuth access token verification (implicit flow)."""
+
+    access_token: str  # The access token from Google OAuth implicit flow
 
 
 class GoogleUserInfo(BaseModel):

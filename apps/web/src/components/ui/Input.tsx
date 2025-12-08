@@ -31,7 +31,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         )}
         <div className="relative">
           {leftIcon && (
-            <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">
+            <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none z-0">
               {leftIcon}
             </div>
           )}
@@ -43,10 +43,11 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
               error ? errorId : helperText ? helperId : undefined
             }
             className={cn(
-              'block w-full rounded-md border px-3 py-2 text-sm',
+              'block w-full rounded-md border px-3 py-3 sm:py-2 text-sm',
               'placeholder:text-gray-400',
               'focus:outline-none focus:ring-2 focus:ring-offset-0',
               'transition-all duration-200',
+              'relative z-10 touch-manipulation min-h-[44px]',
               error
                 ? 'border-red-500 focus:border-red-500 focus:ring-red-500/20'
                 : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500/20',
@@ -58,7 +59,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             {...props}
           />
           {rightIcon && (
-            <div className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">
+            <div className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 cursor-pointer z-20">
               {rightIcon}
             </div>
           )}

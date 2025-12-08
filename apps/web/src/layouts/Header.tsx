@@ -62,7 +62,7 @@ export const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
   const userMenuItems = [
     { icon: Settings, label: 'Settings', onClick: () => navigate('/profile') },
     { icon: CreditCard, label: 'Billing', onClick: () => navigate('/settings/billing') },
-    { icon: HelpCircle, label: 'Help & Support', onClick: () => {} },
+    { icon: HelpCircle, label: 'Help & Support', onClick: () => navigate('/support') },
     { divider: true },
     { icon: LogOut, label: 'Sign out', onClick: handleLogout, danger: true },
   ];
