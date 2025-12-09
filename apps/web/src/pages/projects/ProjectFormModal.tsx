@@ -127,43 +127,14 @@ export const ProjectFormModal: React.FC<ProjectFormModalProps> = ({
       isOpen={isOpen}
       onClose={onClose}
       title={isEditing ? 'Edit Project Details' : 'Create New Project'}
+      size="full"
     >
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4 sm:gap-6">
-        
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5 sm:gap-6">
+
         {/* --- Section 1: Core Details --- */}
-        <div className="space-y-4 sm:space-y-5">
-          {/* Client & Status - Stack on mobile */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
-            {/* Client Selection */}
-            <div className="space-y-1.5">
-              <label className="text-sm font-semibold text-slate-700 flex items-center gap-2">
-                <User className="w-4 h-4 text-slate-400" />
-                Client <span className="text-red-500">*</span>
-              </label>
-              <Select
-                {...register('client_id', { required: 'Please select a client' })}
-                options={clientOptions}
-                error={errors.client_id?.message}
-                className="w-full"
-              />
-            </div>
-
-            {/* Status Selection */}
-            <div className="space-y-1.5">
-              <label className="text-sm font-semibold text-slate-700 flex items-center gap-2">
-                <Activity className="w-4 h-4 text-slate-400" />
-                Project Status
-              </label>
-              <Select
-                {...register('status')}
-                options={statusOptions}
-                className="w-full"
-              />
-            </div>
-          </div>
-
-          {/* Project Name */}
-          <div className="space-y-1.5">
+        <div className="space-y-5">
+          {/* Project Name - First on mobile for better UX */}
+          <div className="space-y-2">
             <label className="text-sm font-semibold text-slate-700 flex items-center gap-2">
               <Briefcase className="w-4 h-4 text-slate-400" />
               Project Name <span className="text-red-500">*</span>
@@ -175,12 +146,42 @@ export const ProjectFormModal: React.FC<ProjectFormModalProps> = ({
               })}
               placeholder="e.g., Q4 Marketing Campaign"
               error={errors.name?.message}
-              className="w-full"
+              className="w-full text-base"
             />
           </div>
 
+          {/* Client & Status - Stack on mobile */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
+            {/* Client Selection */}
+            <div className="space-y-2">
+              <label className="text-sm font-semibold text-slate-700 flex items-center gap-2">
+                <User className="w-4 h-4 text-slate-400" />
+                Client <span className="text-red-500">*</span>
+              </label>
+              <Select
+                {...register('client_id', { required: 'Please select a client' })}
+                options={clientOptions}
+                error={errors.client_id?.message}
+                className="w-full text-base"
+              />
+            </div>
+
+            {/* Status Selection */}
+            <div className="space-y-2">
+              <label className="text-sm font-semibold text-slate-700 flex items-center gap-2">
+                <Activity className="w-4 h-4 text-slate-400" />
+                Project Status
+              </label>
+              <Select
+                {...register('status')}
+                options={statusOptions}
+                className="w-full text-base"
+              />
+            </div>
+          </div>
+
           {/* Description */}
-          <div className="space-y-1.5">
+          <div className="space-y-2">
             <label className="text-sm font-semibold text-slate-700 flex items-center gap-2">
               <AlignLeft className="w-4 h-4 text-slate-400" />
               Description
@@ -189,97 +190,102 @@ export const ProjectFormModal: React.FC<ProjectFormModalProps> = ({
               {...register('description')}
               placeholder="Outline the main goals and deliverables..."
               rows={3}
-              className="resize-none text-sm sm:text-base"
+              className="resize-none text-base"
             />
           </div>
         </div>
 
         {/* --- Section 2: Financials & Scope --- */}
-        <div className="bg-slate-50 rounded-xl p-4 sm:p-5 border border-slate-100 space-y-3 sm:space-y-4">
+        <div className="bg-slate-50 rounded-xl p-4 sm:p-5 border border-slate-100 space-y-4">
           <div className="flex items-center gap-2 pb-2 border-b border-slate-200/60">
             <Calculator className="w-4 h-4 text-indigo-500" />
-            <h3 className="text-xs sm:text-sm font-bold text-slate-800 uppercase tracking-wide">
+            <h3 className="text-sm font-bold text-slate-800 uppercase tracking-wide">
               Financials & Scope
             </h3>
           </div>
-          
-          {/* Financial inputs - Stack on mobile, 3 columns on desktop */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
-            {/* Total Budget */}
-            <div className="space-y-1.5 relative">
-              <label className="text-xs font-semibold text-slate-500 uppercase">
-                Total Budget
-              </label>
-              <div className="relative group">
-                <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none group-focus-within:text-indigo-500 transition-colors">
-                  <DollarSign className="w-4 h-4" />
+
+          {/* Financial inputs - 2 columns on mobile for Budget/Rate, full width for Hours */}
+          <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-3 sm:gap-4">
+              {/* Total Budget */}
+              <div className="space-y-2">
+                <label className="text-xs font-semibold text-slate-500 uppercase">
+                  Total Budget
+                </label>
+                <div className="relative group">
+                  <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none group-focus-within:text-indigo-500 transition-colors z-0">
+                    <DollarSign className="w-4 h-4" />
+                  </div>
+                  <Input
+                    type="number"
+                    step="0.01"
+                    inputMode="decimal"
+                    {...register('budget', { min: { value: 0, message: 'Must be positive' } })}
+                    placeholder="0.00"
+                    error={errors.budget?.message}
+                    className="pl-9 bg-white text-base"
+                  />
                 </div>
-                <Input
-                  type="number"
-                  step="0.01"
-                  {...register('budget', { min: { value: 0, message: 'Must be positive' } })}
-                  placeholder="0.00"
-                  error={errors.budget?.message}
-                  className="pl-9 bg-white"
-                />
+              </div>
+
+              {/* Hourly Rate */}
+              <div className="space-y-2">
+                <label className="text-xs font-semibold text-slate-500 uppercase">
+                  Hourly Rate
+                </label>
+                <div className="relative group">
+                  <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none group-focus-within:text-indigo-500 transition-colors z-0">
+                    <DollarSign className="w-4 h-4" />
+                  </div>
+                  <Input
+                    type="number"
+                    step="0.01"
+                    inputMode="decimal"
+                    {...register('hourly_rate', { min: { value: 0, message: 'Must be positive' } })}
+                    placeholder="0.00"
+                    error={errors.hourly_rate?.message}
+                    className="pl-9 bg-white text-base"
+                  />
+                </div>
               </div>
             </div>
 
-            {/* Hourly Rate */}
-            <div className="space-y-1.5 relative">
+            {/* Estimated Hours - Full width */}
+            <div className="space-y-2">
               <label className="text-xs font-semibold text-slate-500 uppercase">
-                Hourly Rate
+                Estimated Hours
               </label>
               <div className="relative group">
-                <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none group-focus-within:text-indigo-500 transition-colors">
-                  <Hash className="w-4 h-4" />
-                </div>
-                <Input
-                  type="number"
-                  step="0.01"
-                  {...register('hourly_rate', { min: { value: 0, message: 'Must be positive' } })}
-                  placeholder="0.00"
-                  error={errors.hourly_rate?.message}
-                  className="pl-9 bg-white"
-                />
-              </div>
-            </div>
-
-            {/* Estimated Hours */}
-            <div className="space-y-1.5 relative">
-              <label className="text-xs font-semibold text-slate-500 uppercase">
-                Est. Hours
-              </label>
-              <div className="relative group">
-                <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none group-focus-within:text-indigo-500 transition-colors">
+                <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none group-focus-within:text-indigo-500 transition-colors z-0">
                   <Clock className="w-4 h-4" />
                 </div>
                 <Input
                   type="number"
                   step="0.5"
+                  inputMode="decimal"
                   {...register('estimated_hours', { min: { value: 0, message: 'Must be positive' } })}
                   placeholder="0.0"
                   error={errors.estimated_hours?.message}
-                  className="pl-9 bg-white"
+                  className="pl-9 bg-white text-base"
                 />
               </div>
             </div>
           </div>
         </div>
 
-        {/* --- Footer - Stack buttons on mobile --- */}
-        <div className="flex flex-col-reverse sm:flex-row items-center justify-end gap-2 sm:gap-3 pt-3 sm:pt-4 border-t border-slate-100">
-          <Button 
-            type="button" 
-            variant="ghost" 
+        {/* --- Footer - Stack buttons on mobile with safe area padding --- */}
+        <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-3 pt-4 pb-safe border-t border-slate-100">
+          <Button
+            type="button"
+            variant="ghost"
             onClick={onClose}
-            className="w-full sm:w-auto text-slate-500 hover:text-slate-800"
+            className="w-full sm:w-auto text-slate-500 hover:text-slate-800 h-12 sm:h-10 text-base sm:text-sm"
           >
             Cancel
           </Button>
           <Button
             type="submit"
-            className="w-full sm:w-auto px-6 shadow-lg shadow-indigo-500/20"
+            className="w-full sm:w-auto px-6 h-12 sm:h-10 text-base sm:text-sm shadow-lg shadow-indigo-500/20"
             isLoading={isSubmitting || createProject.isPending || updateProject.isPending}
           >
             {isEditing ? 'Save Changes' : 'Create Project'}
