@@ -1,4 +1,5 @@
 import React, { useState, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Plus, ListChecks, Target, AlertCircle } from 'lucide-react';
 import { Button, EmptyState, Skeleton, useToast } from '../../../components/ui';
 import { ScopeProgressCard } from './ScopeProgressCard';
@@ -23,7 +24,11 @@ export const ScopeTab: React.FC<ScopeTabProps> = ({ projectId }) => {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<ScopeItem | null>(null);
   const [deletingItem, setDeletingItem] = useState<ScopeItem | null>(null);
+  const navigate = useNavigate();
   const toast = useToast();
+
+  // Check if on mobile (< 640px)
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 640;
 
   // Queries
   const { data: items, isLoading, error, refetch } = useScopeItems(projectId);
@@ -37,14 +42,24 @@ export const ScopeTab: React.FC<ScopeTabProps> = ({ projectId }) => {
 
   // Handlers
   const handleOpenCreateForm = useCallback(() => {
+    // On mobile, navigate to dedicated page
+    if (isMobile) {
+      navigate(`/projects/${projectId}/scope/new`);
+      return;
+    }
     setEditingItem(null);
     setIsFormOpen(true);
-  }, []);
+  }, [isMobile, navigate, projectId]);
 
   const handleOpenEditForm = useCallback((item: ScopeItem) => {
+    // On mobile, navigate to dedicated page
+    if (isMobile) {
+      navigate(`/projects/${projectId}/scope/edit?item=${item.id}`);
+      return;
+    }
     setEditingItem(item);
     setIsFormOpen(true);
-  }, []);
+  }, [isMobile, navigate, projectId]);
 
   const handleCloseForm = useCallback(() => {
     setIsFormOpen(false);

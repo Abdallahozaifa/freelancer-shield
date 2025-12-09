@@ -6,3 +6,4 @@ export { ProposalStatusBadge } from './ProposalStatusBadge';
 export { ProposalFormModal } from './ProposalFormModal';
 export { SendProposalModal } from './SendProposalModal';
 export { ProposalResponseModal } from './ProposalResponseModal';
+export { ProposalEditPage } from './ProposalEditPage';

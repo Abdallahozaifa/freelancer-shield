@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Plus, Search, FileText, Sparkles, DollarSign, Send as SendIcon,
   CheckCircle2, XCircle, MoreVertical, Edit, Trash2, Copy
@@ -29,13 +30,18 @@ export const ProposalsTab: React.FC<ProposalsTabProps> = ({ projectId }) => {
   const { isPro } = useFeatureGate();
   const [activeTab, setActiveTab] = useState<TabFilter>('all');
   const [searchQuery, setSearchQuery] = useState('');
-  
+
   // Modals
   const [isFormModalOpen, setIsFormModalOpen] = useState(false);
   const [isSendModalOpen, setIsSendModalOpen] = useState(false);
   const [isResponseModalOpen, setIsResponseModalOpen] = useState(false);
   const [selectedProposal, setSelectedProposal] = useState<Proposal | null>(null);
   const [responseType, setResponseType] = useState<'accept' | 'decline' | undefined>();
+
+  const navigate = useNavigate();
+
+  // Check if on mobile (< 1024px for lg breakpoint)
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 1024;
 
   // Queries
   const { data, isLoading, refetch } = useProposals(projectId);
@@ -86,17 +92,25 @@ export const ProposalsTab: React.FC<ProposalsTabProps> = ({ projectId }) => {
   }, [filteredProposals]);
 
   // Handlers
-  const handleCreate = () => { 
-    setSelectedProposal(null); 
-    setIsFormModalOpen(true); 
+  const handleCreate = () => {
+    if (isMobile) {
+      navigate(`/projects/${projectId}/proposals/new`);
+    } else {
+      setSelectedProposal(null);
+      setIsFormModalOpen(true);
+    }
   };
 
-  const handleEdit = (p: Proposal) => { 
+  const handleEdit = (p: Proposal) => {
     if (p.status === 'accepted') {
       toast.warning('Editing accepted proposals is not recommended. Consider creating a new proposal.');
     }
-    setSelectedProposal(p); 
-    setIsFormModalOpen(true); 
+    if (isMobile) {
+      navigate(`/projects/${projectId}/proposals/edit?proposal=${p.id}`);
+    } else {
+      setSelectedProposal(p);
+      setIsFormModalOpen(true);
+    }
   };
 
   const handleSend = (p: Proposal) => { 

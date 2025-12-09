@@ -5,3 +5,4 @@ export { ScopeItemForm } from './ScopeItemForm';
 export { ScopeDragDrop } from './ScopeDragDrop';
 export { DeleteScopeItemModal } from './DeleteScopeItemModal';
 export { ScopeItemsPage } from './ScopeItemsPage';
+export { ScopeItemEditPage } from './ScopeItemEditPage';

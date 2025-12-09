@@ -162,12 +162,23 @@ export const ProjectDetailPage: React.FC = () => {
 
             {/* Actions - Full width on mobile */}
             <div className="flex items-center gap-2 sm:gap-3">
+              {/* Mobile: Navigate to edit page */}
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => navigate(`/projects/${id}/edit`)}
+                leftIcon={<Edit className="h-4 w-4" />}
+                className="flex-1 sm:hidden justify-center text-xs"
+              >
+                Edit
+              </Button>
+              {/* Desktop: Open modal */}
               <Button
                 variant="outline"
                 size="sm"
                 onClick={() => setIsEditModalOpen(true)}
                 leftIcon={<Edit className="h-4 w-4" />}
-                className="flex-1 sm:flex-none justify-center text-xs sm:text-sm"
+                className="hidden sm:flex justify-center text-sm"
               >
                 Edit
               </Button>

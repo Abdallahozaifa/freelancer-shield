@@ -7,3 +7,4 @@ export { RequestFormModal } from './RequestFormModal';
 export { CreateProposalFromRequest } from './CreateProposalFromRequest';
 export { ScopeCreepAlert } from './ScopeCreepAlert';
 export { RequestsPage } from './RequestsPage';
+export { RequestEditPage } from './RequestEditPage';

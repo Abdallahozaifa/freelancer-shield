@@ -5,10 +5,10 @@ import { useAuthStore } from './stores/authStore';
 import { AuthInitializer } from './components/AuthInitializer';
 import { Loading, ToastContainer } from './components/ui';
 import { LoginPage, RegisterPage, ProfilePage, ClientsPage, ClientDetailPage, DashboardPage, ForgotPasswordPage, ResetPasswordPage } from './pages';
-import { ProjectsPage, ProjectDetailPage, ProjectNewPage } from './pages/projects';
-import { RequestsPage } from './pages/projects/requests';
-import { ScopeItemsPage } from './pages/projects/scope';
-import { ProposalsPage } from './pages/projects/proposals';
+import { ProjectsPage, ProjectDetailPage, ProjectNewPage, ProjectEditPage } from './pages/projects';
+import { RequestsPage, RequestEditPage } from './pages/projects/requests';
+import { ScopeItemsPage, ScopeItemEditPage } from './pages/projects/scope';
+import { ProposalsPage, ProposalEditPage } from './pages/projects/proposals';
 import { LandingPage } from './pages/landing';
 import { BillingPage } from './pages/settings';
 import { PrivacyPage, SupportPage } from './pages/legal';
@@ -127,6 +127,12 @@ export default function App() {
                 <Route path="/projects" element={<ProjectsPage />} />
                 <Route path="/projects/new" element={<ProjectNewPage />} />
                 <Route path="/projects/:id" element={<ProjectDetailPage />} />
+                <Route path="/projects/:id/edit" element={<ProjectEditPage />} />
+                <Route path="/projects/:id/scope/new" element={<ScopeItemEditPage />} />
+                <Route path="/projects/:id/scope/edit" element={<ScopeItemEditPage />} />
+                <Route path="/projects/:id/requests/new" element={<RequestEditPage />} />
+                <Route path="/projects/:id/proposals/new" element={<ProposalEditPage />} />
+                <Route path="/projects/:id/proposals/edit" element={<ProposalEditPage />} />
                 <Route path="/scope-items" element={<ScopeItemsPage />} />
                 <Route path="/requests" element={<RequestsPage />} />
                 <Route path="/proposals" element={<ProposalsPage />} />

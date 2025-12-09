@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Plus,
   Search,
@@ -42,13 +43,25 @@ type TabFilter = 'all' | 'out_of_scope' | 'processed' | 'archived';
 export const RequestsTab: React.FC<RequestsTabProps> = ({ projectId }) => {
   const [activeTab, setActiveTab] = useState<TabFilter>('all');
   const [searchQuery, setSearchQuery] = useState('');
-  
+
   const [isFormModalOpen, setIsFormModalOpen] = useState(false);
   const [isProposalModalOpen, setIsProposalModalOpen] = useState(false);
   const [selectedRequest, setSelectedRequest] = useState<ClientRequest | null>(null);
 
+  const navigate = useNavigate();
   const { data: project } = useProject(projectId);
   const { isPro } = useFeatureGate();
+
+  // Check if on mobile (< 1024px for lg breakpoint)
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 1024;
+
+  const handleOpenForm = () => {
+    if (isMobile) {
+      navigate(`/projects/${projectId}/requests/new`);
+    } else {
+      setIsFormModalOpen(true);
+    }
+  };
   const {
     data: requestsData,
     isLoading: requestsLoading,
@@ -306,7 +319,7 @@ export const RequestsTab: React.FC<RequestsTabProps> = ({ projectId }) => {
             />
           </div>
           <Button
-            onClick={() => setIsFormModalOpen(true)}
+            onClick={handleOpenForm}
             className="h-10 px-3 bg-indigo-600 hover:bg-indigo-700 rounded-xl shadow-sm"
             size="sm"
           >
@@ -432,7 +445,7 @@ export const RequestsTab: React.FC<RequestsTabProps> = ({ projectId }) => {
 
             {/* Action */}
             <Button
-              onClick={() => setIsFormModalOpen(true)}
+              onClick={handleOpenForm}
               className="shadow-sm whitespace-nowrap h-9 w-full sm:w-auto"
               size="sm"
               leftIcon={<Plus className="w-4 h-4" />}
