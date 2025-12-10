@@ -1,0 +1,298 @@
+import React, { useState, useEffect } from 'react';
+import {
+  CheckCircle2,
+  AlertTriangle,
+  MessageSquare,
+  AlignLeft,
+  Link as LinkIcon,
+  Mail,
+  MessageCircle,
+  Phone,
+  Users,
+  FileText,
+} from 'lucide-react';
+import { Modal, Button, Input, Textarea, Select, useToast } from '../../../components/ui';
+import { RequestClassificationBadge } from './RequestClassificationBadge';
+import { useUpdateRequest } from '../../../hooks/useRequests';
+import type { RequestSource, ClientRequest } from '../../../types';
+
+interface RequestEditModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  request: ClientRequest | null;
+  projectId: string;
+  onSuccess?: () => void;
+}
+
+interface FormData {
+  title: string;
+  content: string;
+  source: RequestSource;
+}
+
+const sourceOptions = [
+  { value: 'email', label: 'Email', icon: Mail },
+  { value: 'chat', label: 'Chat / Slack', icon: MessageCircle },
+  { value: 'call', label: 'Phone Call', icon: Phone },
+  { value: 'meeting', label: 'Meeting', icon: Users },
+  { value: 'other', label: 'Other', icon: FileText },
+];
+
+const scopeCreepPhrases = [
+  'also', 'as well', 'additionally', "shouldn't take long", "won't take long",
+  'quick addition', 'just a small', "while you're at it", 'one more thing',
+  'can you also', 'easy change', 'simple update', 'real quick', "shouldn't be hard"
+];
+
+const detectScopeCreepIndicators = (content: string): string[] => {
+  const lowerContent = content.toLowerCase();
+  return scopeCreepPhrases.filter(phrase =>
+    lowerContent.includes(phrase.toLowerCase())
+  ).slice(0, 3);
+};
+
+type SubmitState = 'idle' | 'submitting' | 'complete';
+
+export const RequestEditModal: React.FC<RequestEditModalProps> = ({
+  isOpen,
+  onClose,
+  request,
+  projectId,
+  onSuccess,
+}) => {
+  const [submitState, setSubmitState] = useState<SubmitState>('idle');
+  const [updatedRequest, setUpdatedRequest] = useState<ClientRequest | null>(null);
+  const [detectedIndicators, setDetectedIndicators] = useState<string[]>([]);
+  const [formData, setFormData] = useState<FormData>({
+    title: '',
+    content: '',
+    source: 'email',
+  });
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const toast = useToast();
+  const updateRequest = useUpdateRequest();
+
+  // Load request data when modal opens
+  useEffect(() => {
+    if (isOpen && request) {
+      setFormData({
+        title: request.title,
+        content: request.content,
+        source: request.source,
+      });
+      setDetectedIndicators(detectScopeCreepIndicators(request.content));
+      setSubmitState('idle');
+      setUpdatedRequest(null);
+      setErrors({});
+    }
+  }, [isOpen, request]);
+
+  // Reset state when modal closes
+  useEffect(() => {
+    if (!isOpen) {
+      setSubmitState('idle');
+      setUpdatedRequest(null);
+      setDetectedIndicators([]);
+      setErrors({});
+    }
+  }, [isOpen]);
+
+  const validate = (): boolean => {
+    const newErrors: Record<string, string> = {};
+    if (!formData.title.trim()) newErrors.title = 'Title is required';
+    if (!formData.content.trim()) newErrors.content = 'Content is required';
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleChange = (field: keyof FormData) => (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) => {
+    setFormData(prev => ({ ...prev, [field]: e.target.value }));
+    if (errors[field]) setErrors(prev => ({ ...prev, [field]: '' }));
+  };
+
+  const handleContentBlur = () => {
+    setDetectedIndicators(formData.content ? detectScopeCreepIndicators(formData.content) : []);
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!validate() || !request) return;
+
+    setDetectedIndicators(detectScopeCreepIndicators(formData.content));
+    setSubmitState('submitting');
+
+    try {
+      await updateRequest.mutateAsync({
+        projectId,
+        requestId: request.id,
+        data: formData,
+      });
+
+      // Create updated request object for success state
+      setUpdatedRequest({
+        ...request,
+        ...formData,
+      });
+      setSubmitState('complete');
+      toast.success('Request updated successfully');
+    } catch (error) {
+      toast.error('Failed to update request');
+      setSubmitState('idle');
+    }
+  };
+
+  const handleClose = () => {
+    if (submitState === 'complete') {
+      onSuccess?.();
+    }
+    onClose();
+  };
+
+  if (!request) return null;
+
+  return (
+    <Modal isOpen={isOpen} onClose={handleClose} title="Edit Request" size="lg">
+
+      {/* --- FORM STATE --- */}
+      {submitState !== 'complete' ? (
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4 sm:gap-6">
+
+          <div className="space-y-4 sm:space-y-5">
+            {/* Title */}
+            <div className="space-y-1.5 relative">
+              <label className="text-sm font-semibold text-slate-700 flex items-center gap-1">
+                Request Summary <span className="text-red-500">*</span>
+              </label>
+              <div className="relative group">
+                <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none group-focus-within:text-indigo-500 transition-colors">
+                  <MessageSquare className="w-4 h-4" />
+                </div>
+                <Input
+                  value={formData.title}
+                  onChange={handleChange('title')}
+                  placeholder="e.g., Change login button color"
+                  disabled={submitState === 'submitting'}
+                  error={errors.title}
+                  className="pl-9"
+                />
+              </div>
+            </div>
+
+            {/* Content */}
+            <div className="space-y-1.5 relative">
+              <label className="text-sm font-semibold text-slate-700 flex items-center gap-1">
+                Original Message <span className="text-red-500">*</span>
+              </label>
+              <div className="relative group">
+                <div className="absolute left-3 top-3 text-slate-400 pointer-events-none group-focus-within:text-indigo-500 transition-colors">
+                  <AlignLeft className="w-4 h-4" />
+                </div>
+                <Textarea
+                  value={formData.content}
+                  onChange={handleChange('content')}
+                  onBlur={handleContentBlur}
+                  placeholder="Paste the client's message here..."
+                  rows={4}
+                  disabled={submitState === 'submitting'}
+                  error={errors.content}
+                  className="pl-9 resize-none leading-relaxed text-sm"
+                />
+              </div>
+            </div>
+
+            {/* Source Selection - Full width on mobile */}
+            <div className="space-y-1.5 relative w-full sm:w-1/2">
+              <label className="text-sm font-semibold text-slate-700">Source</label>
+              <div className="relative group">
+                <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none group-focus-within:text-indigo-500 transition-colors">
+                  <LinkIcon className="w-4 h-4" />
+                </div>
+                <Select
+                  value={formData.source}
+                  onChange={handleChange('source')}
+                  options={sourceOptions.map(o => ({ value: o.value, label: o.label }))}
+                  disabled={submitState === 'submitting'}
+                  className="pl-9"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Scope Creep Warning */}
+          {detectedIndicators.length > 0 && (
+            <div className="flex items-start gap-2 sm:gap-3 p-3 sm:p-4 bg-amber-50 border border-amber-100 rounded-lg">
+              <div className="p-1 bg-amber-100 rounded text-amber-600 shrink-0">
+                <AlertTriangle className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+              </div>
+              <div>
+                <p className="text-xs sm:text-sm font-bold text-amber-800">Potential Scope Creep</p>
+                <p className="text-[10px] sm:text-xs text-amber-700 mt-0.5 sm:mt-1 leading-relaxed">
+                  Found phrases like <span className="font-semibold">"{detectedIndicators[0]}"</span>.
+                </p>
+              </div>
+            </div>
+          )}
+
+          {/* Footer - Stack on mobile */}
+          <div className="flex flex-col-reverse sm:flex-row justify-end gap-2 sm:gap-3 pt-3 sm:pt-4 border-t border-slate-100">
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={handleClose}
+              disabled={submitState === 'submitting'}
+              className="w-full sm:w-auto"
+            >
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              isLoading={submitState === 'submitting'}
+              className="w-full sm:w-auto shadow-lg shadow-indigo-500/20"
+            >
+              Save Changes
+            </Button>
+          </div>
+        </form>
+      ) : (
+
+        /* --- SUCCESS STATE --- */
+        <div className="flex flex-col items-center justify-center py-6 sm:py-8 space-y-4 sm:space-y-6 animate-fade-in">
+          <div className="w-12 h-12 sm:w-16 sm:h-16 bg-emerald-100 rounded-full flex items-center justify-center text-emerald-600">
+            <CheckCircle2 className="w-6 h-6 sm:w-8 sm:h-8" />
+          </div>
+
+          <div className="text-center space-y-1 sm:space-y-2">
+            <h3 className="text-lg sm:text-xl font-bold text-slate-900">Request Updated</h3>
+            <p className="text-slate-500 text-xs sm:text-sm max-w-xs mx-auto">
+              The request has been updated successfully.
+            </p>
+          </div>
+
+          {/* Mini Summary Card */}
+          {updatedRequest && (
+            <div className="w-full bg-slate-50 rounded-xl border border-slate-200 p-3 sm:p-4 text-left">
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0 flex-1">
+                  <p className="text-[10px] sm:text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1">Title</p>
+                  <p className="font-medium text-slate-900 text-sm truncate">{updatedRequest.title}</p>
+                </div>
+                <RequestClassificationBadge classification={updatedRequest.classification} size="sm" />
+              </div>
+            </div>
+          )}
+
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 w-full pt-2 sm:pt-4">
+            <Button variant="outline" onClick={handleClose} className="flex-1">
+              Close
+            </Button>
+          </div>
+        </div>
+      )}
+    </Modal>
+  );
+};
+
+export default RequestEditModal;

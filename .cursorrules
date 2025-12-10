@@ -1,0 +1,142 @@
+# Cursor Rules - ScopeGuard Project
+
+## Context Files (Read First)
+Before making ANY changes, read these files:
+- `.claude/task.md` - Current task from Claude Chat
+- `.claude/codebase.md` - Auto-generated codebase context
+- `.claude/INSTRUCTIONS.md` - Project conventions
+
+## Your Role in the Pipeline
+You are the IMPLEMENTATION layer with full codebase awareness:
+1. Claude Chat diagnosed the problem and created the task
+2. YOU implement using your codebase-wide understanding
+3. Claude CLI will test and verify after you
+
+## Implementation Rules
+
+### Always
+- Use existing components from `apps/web/src/components/ui/` - don't recreate
+- Follow import patterns from similar files in the codebase
+- Match the code style of surrounding files
+- Use TypeScript strictly - no `any` types without justification
+- Add proper error handling
+
+### Forms
+- Use existing Input, Textarea, Select from `components/ui/`
+- Use react-hook-form for complex forms
+- Single form per page (no duplicate mobile/desktop forms)
+- Add proper validation with clear error messages
+
+### Responsive Design
+- Mobile-first: base styles for mobile, then sm:, md:, lg:
+- Add `touch-manipulation` class to all clickable mobile elements
+- Add `onTouchEnd={(e) => e.stopPropagation()}` for mobile dropdown triggers
+- Test at 375px width mentally
+- Never use `overflow-hidden` on containers with dropdowns
+
+### Mobile/Desktop Split Pattern
+```typescript
+// For tabs with modals on desktop, pages on mobile:
+const isMobile = typeof window !== 'undefined' && window.innerWidth < 1024;
+
+const handleOpenForm = () => {
+  if (isMobile) {
+    navigate(`/projects/${projectId}/resource/new`);
+  } else {
+    setIsModalOpen(true);
+  }
+};
+```
+
+### API Calls
+- Use existing hooks from `apps/web/src/hooks/`
+- Examples: `useRequests`, `useProjects`, `useCreateRequest`
+- Use TanStack Query patterns (useQuery, useMutation)
+- Handle loading and error states
+
+## After Implementation
+When you complete a task:
+1. Ensure no TypeScript errors (red squiggles)
+2. Check imports are resolved
+3. Save all modified files
+4. The human will run Claude CLI for testing
+
+## File Patterns
+
+### New Component
+```typescript
+// apps/web/src/components/MyComponent.tsx
+import React from 'react';
+import { Button } from './ui';
+import { cn } from '../utils/cn';
+
+interface MyComponentProps {
+  // Explicit props interface
+}
+
+export const MyComponent: React.FC<MyComponentProps> = ({ }) => {
+  // Implementation
+};
+```
+
+### New Page with Edit Support
+```typescript
+// apps/web/src/pages/resource/ResourceEditPage.tsx
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
+
+export const ResourceEditPage: React.FC = () => {
+  const { id: projectId } = useParams<{ id: string }>();
+  const [searchParams] = useSearchParams();
+  const resourceId = searchParams.get('resource');
+  const isEditing = !!resourceId;
+
+  // Load data if editing, handle create/update
+};
+```
+
+### New API Route (Backend)
+```python
+# app/api/v1/endpoints/resource.py
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.ext.asyncio import AsyncSession
+from app.api.deps import get_current_user, get_db
+from app.schemas.resource import ResourceCreate, ResourceResponse
+
+router = APIRouter()
+
+@router.post("/", response_model=ResourceResponse)
+async def create_resource(
+    data: ResourceCreate,
+    db: AsyncSession = Depends(get_db),
+    current_user = Depends(get_current_user)
+):
+    # Implementation
+```
+
+## Quick Reference
+
+### Common Tailwind Patterns (from this project)
+- Container: `max-w-2xl mx-auto px-4 sm:px-6`
+- Card: `bg-white rounded-xl border border-slate-200 shadow-sm`
+- Button: Use `<Button>` component from `components/ui`
+- Input: Use `<Input>` component from `components/ui`
+- Mobile header: `bg-white border-b border-slate-200 sticky top-0 z-10`
+
+### State Management
+- Auth: `useAuthStore()` from `stores/authStore`
+- API data: TanStack Query hooks from `hooks/`
+- Toast: `useToast()` from `components/ui`
+
+### Imports
+```typescript
+import { Button, Input, Textarea, Select, useToast } from '../../../components/ui';
+import { cn } from '../../../utils/cn';
+import { formatRelative } from '../../../utils/format';
+```
+
+## Errors to Avoid
+- Creating duplicate components that already exist
+- Using `any` type without comment explaining why
+- Hardcoding values that should come from env/config
+- Missing loading states on async operations
+- Forgetting `touch-manipulation` on mobile clickable elements

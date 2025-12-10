@@ -43,11 +43,12 @@ class ClientRequestResponse(BaseModel):
     id: UUID
     project_id: UUID
     linked_scope_item_id: Optional[UUID] = None
+    linked_scope_item_title: Optional[str] = None
     title: str
     content: str
     source: RequestSource
     status: RequestStatus
-    classification: ScopeClassification
+    classification: Optional[ScopeClassification] = None
     confidence: Optional[Decimal] = None
     analysis_reasoning: Optional[str] = None
     suggested_action: Optional[str] = None

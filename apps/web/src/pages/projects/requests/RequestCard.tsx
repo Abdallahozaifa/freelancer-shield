@@ -1,5 +1,4 @@
 import React, { useState, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
 import {
   Mail, MessageCircle, Phone, Users, FileText,
   CheckCircle2, XCircle, MoreHorizontal,
@@ -23,6 +22,7 @@ interface RequestCardProps {
   request: ClientRequest;
   projectId: string;
   onCreateProposal: () => void;
+  onEdit: () => void;
   actions: RequestActions;
   hourlyRate?: number | string | null;
 }
@@ -40,9 +40,9 @@ const estimateHours = (content: string) => {
 };
 
 export const RequestCard: React.FC<RequestCardProps> = ({
-  request, projectId, onCreateProposal, actions, hourlyRate: hourlyRateProp
+  request, projectId: _projectId, onCreateProposal, onEdit, actions, hourlyRate: hourlyRateProp
 }) => {
-  const navigate = useNavigate();
+  void _projectId; // Keep for interface compatibility
   const [isExpanded, setIsExpanded] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   
@@ -65,10 +65,6 @@ export const RequestCard: React.FC<RequestCardProps> = ({
   const handleAction = async (action: () => Promise<void>) => {
     setIsProcessing(true);
     try { await action(); } finally { setIsProcessing(false); }
-  };
-
-  const handleEdit = () => {
-    navigate(`/projects/${projectId}/requests/edit?request=${request.id}`);
   };
 
   const e = (fn: () => any) => (ev: React.MouseEvent) => {
@@ -134,7 +130,7 @@ export const RequestCard: React.FC<RequestCardProps> = ({
                 </Button>
               }
               items={[
-                { label: 'Edit', icon: <Pencil className="w-4 h-4" />, onClick: handleEdit },
+                { label: 'Edit', icon: <Pencil className="w-4 h-4" />, onClick: onEdit },
                 ...(!isArchived ? [
                   { label: 'Mark Addressed', icon: <CheckCircle2 className="w-4 h-4" />, onClick: () => handleAction(() => actions.markAddressed(request)) },
                   { label: 'Dismiss', icon: <XCircle className="w-4 h-4" />, onClick: () => handleAction(() => actions.dismiss(request)), danger: true }
@@ -195,7 +191,7 @@ export const RequestCard: React.FC<RequestCardProps> = ({
                 </button>
               }
               items={[
-                { label: 'Edit', icon: <Pencil className="w-4 h-4" />, onClick: handleEdit },
+                { label: 'Edit', icon: <Pencil className="w-4 h-4" />, onClick: onEdit },
                 ...(!isArchived ? [
                   { label: 'Mark Addressed', icon: <CheckCircle2 className="w-4 h-4" />, onClick: () => handleAction(() => actions.markAddressed(request)) },
                   { label: 'Dismiss', icon: <XCircle className="w-4 h-4" />, onClick: () => handleAction(() => actions.dismiss(request)), danger: true }

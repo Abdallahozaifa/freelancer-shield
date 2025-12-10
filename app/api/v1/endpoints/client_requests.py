@@ -211,7 +211,11 @@ async def update_client_request_endpoint(
     
     # Update fields that were provided
     update_data = request_data.model_dump(exclude_unset=True)
-    
+
+    # Handle null classification - database doesn't allow NULL, so convert to PENDING
+    if "classification" in update_data and update_data["classification"] is None:
+        update_data["classification"] = ScopeClassification.PENDING
+
     # Validate linked_scope_item_id if provided
     if "linked_scope_item_id" in update_data and update_data["linked_scope_item_id"]:
         scope_item_result = await db.execute(

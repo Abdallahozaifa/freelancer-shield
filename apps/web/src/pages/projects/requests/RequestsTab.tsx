@@ -23,6 +23,7 @@ import { UpgradePrompt, ProFeatureBadge } from '../../../components/ui';
 import { formatRelative } from '../../../utils/format';
 import { RequestCard } from './RequestCard';
 import { RequestFormModal, RequestFormData } from './RequestFormModal';
+import { RequestEditModal } from './RequestEditModal';
 import { CreateProposalFromRequest } from './CreateProposalFromRequest';
 import {
   useRequests,
@@ -46,8 +47,10 @@ export const RequestsTab: React.FC<RequestsTabProps> = ({ projectId }) => {
   const [searchQuery, setSearchQuery] = useState('');
 
   const [isFormModalOpen, setIsFormModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isProposalModalOpen, setIsProposalModalOpen] = useState(false);
   const [selectedRequest, setSelectedRequest] = useState<ClientRequest | null>(null);
+  const [editingRequest, setEditingRequest] = useState<ClientRequest | null>(null);
 
   const navigate = useNavigate();
   const { data: project } = useProject(projectId);
@@ -61,6 +64,15 @@ export const RequestsTab: React.FC<RequestsTabProps> = ({ projectId }) => {
       navigate(`/projects/${projectId}/requests/new`);
     } else {
       setIsFormModalOpen(true);
+    }
+  };
+
+  const handleEdit = (request: ClientRequest) => {
+    if (isMobile) {
+      navigate(`/projects/${projectId}/requests/edit?request=${request.id}`);
+    } else {
+      setEditingRequest(request);
+      setIsEditModalOpen(true);
     }
   };
   const {
@@ -410,6 +422,7 @@ export const RequestsTab: React.FC<RequestsTabProps> = ({ projectId }) => {
                 request={request}
                 projectId={projectId}
                 onCreateProposal={() => { setSelectedRequest(request); setIsProposalModalOpen(true); }}
+                onEdit={() => handleEdit(request)}
                 actions={actions}
                 hourlyRate={project?.hourly_rate}
               />
@@ -557,6 +570,7 @@ export const RequestsTab: React.FC<RequestsTabProps> = ({ projectId }) => {
                   request={request}
                   projectId={projectId}
                   onCreateProposal={() => { setSelectedRequest(request); setIsProposalModalOpen(true); }}
+                  onEdit={() => handleEdit(request)}
                   actions={actions}
                   hourlyRate={project?.hourly_rate}
                 />
@@ -579,6 +593,13 @@ export const RequestsTab: React.FC<RequestsTabProps> = ({ projectId }) => {
         onClose={() => { setIsFormModalOpen(false); refetchRequests(); }}
         onSubmit={handleCreateRequest}
         isSubmitting={createRequest.isPending}
+      />
+      <RequestEditModal
+        isOpen={isEditModalOpen}
+        onClose={() => { setIsEditModalOpen(false); setEditingRequest(null); }}
+        request={editingRequest}
+        projectId={projectId}
+        onSuccess={refetchRequests}
       />
       <CreateProposalFromRequest
         isOpen={isProposalModalOpen}
@@ -667,6 +688,7 @@ interface MobileRequestCardProps {
   request: ClientRequest;
   projectId: string;
   onCreateProposal: () => void;
+  onEdit: () => void;
   actions: {
     markAddressed: (r: ClientRequest) => Promise<void>;
     dismiss: (r: ClientRequest) => Promise<void>;
@@ -679,9 +701,10 @@ interface MobileRequestCardProps {
 }
 
 const MobileRequestCard: React.FC<MobileRequestCardProps> = ({
-  request, projectId, onCreateProposal, actions, hourlyRate: hourlyRateProp
+  request, projectId: _projectId, onCreateProposal, onEdit, actions, hourlyRate: _hourlyRateProp
 }) => {
-  const navigate = useNavigate();
+  void _projectId; // Keep for interface compatibility
+  void _hourlyRateProp; // Keep for interface compatibility
   const [isExpanded, setIsExpanded] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
 
@@ -700,10 +723,6 @@ const MobileRequestCard: React.FC<MobileRequestCardProps> = ({
   const handleAction = async (action: () => Promise<void>) => {
     setIsProcessing(true);
     try { await action(); } finally { setIsProcessing(false); }
-  };
-
-  const handleEdit = () => {
-    navigate(`/projects/${projectId}/requests/edit?request=${request.id}`);
   };
 
   const getStatusBadge = () => {
@@ -784,7 +803,7 @@ const MobileRequestCard: React.FC<MobileRequestCardProps> = ({
                 </button>
               }
               items={[
-                { label: 'Edit', icon: <Pencil className="w-4 h-4" />, onClick: handleEdit },
+                { label: 'Edit', icon: <Pencil className="w-4 h-4" />, onClick: onEdit },
                 ...(!isArchived ? [
                   { label: 'Mark Addressed', icon: <CheckCircle2 className="w-4 h-4" />, onClick: () => handleAction(() => actions.markAddressed(request)) },
                   { label: 'Dismiss', icon: <XCircle className="w-4 h-4" />, onClick: () => handleAction(() => actions.dismiss(request)), danger: true }
