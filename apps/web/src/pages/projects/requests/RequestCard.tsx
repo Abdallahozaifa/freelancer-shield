@@ -1,8 +1,9 @@
 import React, { useState, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Mail, MessageCircle, Phone, Users, FileText,
   CheckCircle2, XCircle, MoreHorizontal,
-  Sparkles, RotateCcw, ChevronDown, ChevronUp
+  Sparkles, RotateCcw, ChevronDown, ChevronUp, Pencil
 } from 'lucide-react';
 import { Button, Dropdown, Badge } from '../../../components/ui';
 import { cn } from '../../../utils/cn';
@@ -20,6 +21,7 @@ interface RequestActions {
 
 interface RequestCardProps {
   request: ClientRequest;
+  projectId: string;
   onCreateProposal: () => void;
   actions: RequestActions;
   hourlyRate?: number | string | null;
@@ -38,8 +40,9 @@ const estimateHours = (content: string) => {
 };
 
 export const RequestCard: React.FC<RequestCardProps> = ({
-  request, onCreateProposal, actions, hourlyRate: hourlyRateProp
+  request, projectId, onCreateProposal, actions, hourlyRate: hourlyRateProp
 }) => {
+  const navigate = useNavigate();
   const [isExpanded, setIsExpanded] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   
@@ -62,6 +65,10 @@ export const RequestCard: React.FC<RequestCardProps> = ({
   const handleAction = async (action: () => Promise<void>) => {
     setIsProcessing(true);
     try { await action(); } finally { setIsProcessing(false); }
+  };
+
+  const handleEdit = () => {
+    navigate(`/projects/${projectId}/requests/edit?request=${request.id}`);
   };
 
   const e = (fn: () => any) => (ev: React.MouseEvent) => {
@@ -120,20 +127,21 @@ export const RequestCard: React.FC<RequestCardProps> = ({
         {/* Col 12: Actions */}
         <div className="col-span-1 flex items-center justify-end gap-1">
           <div className="flex items-center opacity-0 group-hover:opacity-100 transition-opacity mr-2">
-             {!isArchived && (
-               <Dropdown
-                 trigger={
-                   <Button size="sm" variant="ghost" className="h-7 w-7 p-0 hover:bg-slate-200 rounded-md">
-                     <MoreHorizontal className="w-4 h-4 text-slate-500" />
-                   </Button>
-                 }
-                 items={[
-                   { label: 'Mark Addressed', icon: <CheckCircle2 className="w-4 h-4" />, onClick: () => handleAction(() => actions.markAddressed(request)) },
-                   { label: 'Dismiss', icon: <XCircle className="w-4 h-4" />, onClick: () => handleAction(() => actions.dismiss(request)), danger: true }
-                 ]}
-                 align="right"
-               />
-             )}
+            <Dropdown
+              trigger={
+                <Button size="sm" variant="ghost" className="h-7 w-7 p-0 hover:bg-slate-200 rounded-md">
+                  <MoreHorizontal className="w-4 h-4 text-slate-500" />
+                </Button>
+              }
+              items={[
+                { label: 'Edit', icon: <Pencil className="w-4 h-4" />, onClick: handleEdit },
+                ...(!isArchived ? [
+                  { label: 'Mark Addressed', icon: <CheckCircle2 className="w-4 h-4" />, onClick: () => handleAction(() => actions.markAddressed(request)) },
+                  { label: 'Dismiss', icon: <XCircle className="w-4 h-4" />, onClick: () => handleAction(() => actions.dismiss(request)), danger: true }
+                ] : [])
+              ]}
+              align="right"
+            />
           </div>
           <div className="text-slate-300">
             {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
@@ -175,24 +183,26 @@ export const RequestCard: React.FC<RequestCardProps> = ({
           </div>
 
           {/* Right: Expand icon & actions */}
-          <div className="flex items-center gap-1 shrink-0">
-            {!isArchived && (
-              <Dropdown
-                trigger={
-                  <button 
-                    className="p-2 rounded-md text-slate-400 hover:bg-slate-100"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    <MoreHorizontal className="w-4 h-4" />
-                  </button>
-                }
-                items={[
+          <div className="flex items-center gap-1 shrink-0 relative">
+            <Dropdown
+              trigger={
+                <button
+                  className="p-2 rounded-md text-slate-400 hover:bg-slate-100 touch-manipulation"
+                  onClick={(e) => e.stopPropagation()}
+                  onTouchEnd={(e) => e.stopPropagation()}
+                >
+                  <MoreHorizontal className="w-4 h-4" />
+                </button>
+              }
+              items={[
+                { label: 'Edit', icon: <Pencil className="w-4 h-4" />, onClick: handleEdit },
+                ...(!isArchived ? [
                   { label: 'Mark Addressed', icon: <CheckCircle2 className="w-4 h-4" />, onClick: () => handleAction(() => actions.markAddressed(request)) },
                   { label: 'Dismiss', icon: <XCircle className="w-4 h-4" />, onClick: () => handleAction(() => actions.dismiss(request)), danger: true }
-                ]}
-                align="right"
-              />
-            )}
+                ] : [])
+              ]}
+              align="right"
+            />
             <div className="text-slate-300 p-1">
               {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
             </div>

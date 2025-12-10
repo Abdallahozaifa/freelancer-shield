@@ -131,6 +131,7 @@ export default function App() {
                 <Route path="/projects/:id/scope/new" element={<ScopeItemEditPage />} />
                 <Route path="/projects/:id/scope/edit" element={<ScopeItemEditPage />} />
                 <Route path="/projects/:id/requests/new" element={<RequestEditPage />} />
+                <Route path="/projects/:id/requests/edit" element={<RequestEditPage />} />
                 <Route path="/projects/:id/proposals/new" element={<ProposalEditPage />} />
                 <Route path="/projects/:id/proposals/edit" element={<ProposalEditPage />} />
                 <Route path="/scope-items" element={<ScopeItemsPage />} />

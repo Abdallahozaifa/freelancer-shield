@@ -15,6 +15,7 @@ import {
   MoreVertical,
   AlertTriangle,
   RotateCcw,
+  Pencil,
 } from 'lucide-react';
 import { Button, Spinner, useToast, Badge, Dropdown } from '../../../components/ui';
 import { useFeatureGate } from '../../../hooks/useFeatureGate';
@@ -407,6 +408,7 @@ export const RequestsTab: React.FC<RequestsTabProps> = ({ projectId }) => {
               <MobileRequestCard
                 key={request.id}
                 request={request}
+                projectId={projectId}
                 onCreateProposal={() => { setSelectedRequest(request); setIsProposalModalOpen(true); }}
                 actions={actions}
                 hourlyRate={project?.hourly_rate}
@@ -553,6 +555,7 @@ export const RequestsTab: React.FC<RequestsTabProps> = ({ projectId }) => {
                 <RequestCard
                   key={request.id}
                   request={request}
+                  projectId={projectId}
                   onCreateProposal={() => { setSelectedRequest(request); setIsProposalModalOpen(true); }}
                   actions={actions}
                   hourlyRate={project?.hourly_rate}
@@ -662,6 +665,7 @@ const mobileSourceIcons: Record<RequestSource, React.ElementType> = {
 
 interface MobileRequestCardProps {
   request: ClientRequest;
+  projectId: string;
   onCreateProposal: () => void;
   actions: {
     markAddressed: (r: ClientRequest) => Promise<void>;
@@ -675,8 +679,9 @@ interface MobileRequestCardProps {
 }
 
 const MobileRequestCard: React.FC<MobileRequestCardProps> = ({
-  request, onCreateProposal, actions, hourlyRate: hourlyRateProp
+  request, projectId, onCreateProposal, actions, hourlyRate: hourlyRateProp
 }) => {
+  const navigate = useNavigate();
   const [isExpanded, setIsExpanded] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
 
@@ -695,6 +700,10 @@ const MobileRequestCard: React.FC<MobileRequestCardProps> = ({
   const handleAction = async (action: () => Promise<void>) => {
     setIsProcessing(true);
     try { await action(); } finally { setIsProcessing(false); }
+  };
+
+  const handleEdit = () => {
+    navigate(`/projects/${projectId}/requests/edit?request=${request.id}`);
   };
 
   const getStatusBadge = () => {
@@ -765,23 +774,24 @@ const MobileRequestCard: React.FC<MobileRequestCardProps> = ({
 
           {/* Actions */}
           <div className="flex items-center gap-1 flex-shrink-0">
-            {!isArchived && (
-              <Dropdown
-                trigger={
-                  <button
-                    className="p-2 rounded-lg hover:bg-slate-100 transition-colors"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    <MoreVertical className="w-4 h-4 text-slate-500" />
-                  </button>
-                }
-                items={[
+            <Dropdown
+              trigger={
+                <button
+                  className="p-2 rounded-lg hover:bg-slate-100 transition-colors"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <MoreVertical className="w-4 h-4 text-slate-500" />
+                </button>
+              }
+              items={[
+                { label: 'Edit', icon: <Pencil className="w-4 h-4" />, onClick: handleEdit },
+                ...(!isArchived ? [
                   { label: 'Mark Addressed', icon: <CheckCircle2 className="w-4 h-4" />, onClick: () => handleAction(() => actions.markAddressed(request)) },
                   { label: 'Dismiss', icon: <XCircle className="w-4 h-4" />, onClick: () => handleAction(() => actions.dismiss(request)), danger: true }
-                ]}
-                align="right"
-              />
-            )}
+                ] : [])
+              ]}
+              align="right"
+            />
           </div>
         </div>
       </div>

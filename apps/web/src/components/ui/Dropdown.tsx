@@ -56,7 +56,11 @@ export const Dropdown: React.FC<DropdownProps> = ({
     }
   }, [align]);
 
-  const handleToggle = () => {
+  const handleToggle = (e?: React.MouseEvent | React.TouchEvent) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
     if (!isOpen) {
       updateMenuPosition();
     }
@@ -76,25 +80,29 @@ export const Dropdown: React.FC<DropdownProps> = ({
   };
 
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
+    const handleClickOutside = (event: MouseEvent | TouchEvent) => {
+      const target = event.target as Node;
       if (
         triggerRef.current &&
-        !triggerRef.current.contains(event.target as Node) &&
+        !triggerRef.current.contains(target) &&
         menuRef.current &&
-        !menuRef.current.contains(event.target as Node)
+        !menuRef.current.contains(target)
       ) {
         handleClose();
       }
     };
 
     if (isOpen) {
+      // Support both mouse and touch events
       document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener('touchstart', handleClickOutside);
       window.addEventListener('scroll', handleClose, true);
       window.addEventListener('resize', handleClose);
     }
 
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('touchstart', handleClickOutside);
       window.removeEventListener('scroll', handleClose, true);
       window.removeEventListener('resize', handleClose);
     };
@@ -190,10 +198,42 @@ export const Dropdown: React.FC<DropdownProps> = ({
     </div>
   ) : null;
 
+  // Track if touch event was used to prevent double-firing
+  const touchHandledRef = useRef(false);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchHandledRef.current = true;
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (touchHandledRef.current) {
+      e.preventDefault();
+      handleToggle(e);
+      // Reset after a short delay to allow click event to be ignored
+      setTimeout(() => {
+        touchHandledRef.current = false;
+      }, 300);
+    }
+  };
+
+  const handleClick = (e: React.MouseEvent) => {
+    // Ignore click if it was triggered by a touch event
+    if (touchHandledRef.current) {
+      e.preventDefault();
+      return;
+    }
+    handleToggle(e);
+  };
+
   return (
     <>
       <div ref={triggerRef} className="inline-block">
-        <div onClick={handleToggle} className="cursor-pointer">
+        <div 
+          onClick={handleClick}
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}
+          className="cursor-pointer touch-manipulation"
+        >
           {trigger}
         </div>
       </div>
