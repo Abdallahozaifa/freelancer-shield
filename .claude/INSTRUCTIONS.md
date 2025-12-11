@@ -177,6 +177,130 @@ ANTHROPIC_API_KEY      # Required for visual-check.sh (Claude Vision)
 SCOPEGUARD_API_URL     # Optional: override API URL (default: https://scopeguard.fly.dev/api/v1)
 ```
 
+## Automated QA Testing
+
+### Quick QA Commands
+```bash
+./scripts/quick.sh smoke       # Quick health check (API + UI accessible)
+./scripts/quick.sh qa-api      # Run API endpoint tests
+./scripts/quick.sh qa-ui       # Run UI tests with screenshots
+./scripts/quick.sh qa          # Full QA suite (api + ui)
+./scripts/quick.sh qa-fix      # Auto-fix failures with Claude CLI
+./scripts/quick.sh qa-report   # Generate QA report
+./scripts/quick.sh e2e         # Run Playwright E2E tests
+```
+
+### QA Documentation
+- `.claude/features.md` - Complete feature list with API/UI test matrix
+- `.claude/test-accounts.md` - Test account setup and credentials
+- `tests/e2e/flows.spec.ts` - Playwright E2E test flows
+
+### QA Workflow
+1. After making changes: `./scripts/quick.sh smoke` (quick check)
+2. Before merging: `./scripts/quick.sh qa` (full suite)
+3. If tests fail: `./scripts/quick.sh qa-fix` (auto-fix loop)
+4. Review report: `./scripts/quick.sh qa-report`
+
+### Authentication for QA
+
+QA tests auto-authenticate using credentials from environment variables or cached tokens.
+
+**Option 1: Environment Variables**
+```bash
+export QA_EMAIL="qa@scopeguard.test"
+export QA_PASSWORD="your-password"
+```
+
+**Option 2: Manual Token**
+```bash
+source ./scripts/get-token.sh  # Authenticates and exports SCOPEGUARD_TOKEN
+```
+
+**How it works:**
+1. Scripts first check for `SCOPEGUARD_TOKEN` env var
+2. Then check cached token at `.claude/.token`
+3. If no token, auto-authenticate using `QA_EMAIL`/`QA_PASSWORD`
+4. Token is cached for reuse (auto-refreshed if expired)
+
+**Creating a test user:**
+```bash
+# Via Fly.io postgres
+fly postgres connect -a scopeguard-db -d scopeguard -c "
+INSERT INTO users (id, email, full_name, hashed_password, is_active, is_verified, created_at, updated_at)
+VALUES (gen_random_uuid(), 'qa@scopeguard.test', 'QA Test User',
+        '\$2b\$12\$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/X4.VTtYz0NJ0YQvKe',
+        true, true, NOW(), NOW());"
+```
+
+### QA Environment Variables
+```bash
+QA_EMAIL="qa@scopeguard.test"      # Test account email
+QA_PASSWORD="QATest123!"           # Test account password
+SCOPEGUARD_API="https://scopeguard.fly.dev/api/v1"
+SCOPEGUARD_URL="https://scopeguard.fly.dev"
+ANTHROPIC_API_KEY="..."            # For Claude Vision UI checks
+```
+
+### QA Output Files
+- `.claude/qa/api-results.json` - API test results
+- `.claude/qa/ui-results.json` - UI test results
+- `.claude/qa/screenshots/` - UI screenshots
+- `.claude/qa/qa-report-*.md` - Generated reports
+
+## Claude CLI Auto-Approve Mode
+
+This project is configured for auto-approve mode, allowing Claude CLI to run without permission prompts.
+
+### Configuration Files
+- `.claude/settings.local.json` - Project-level permission rules (auto-approve common tools)
+- `scripts/ai.sh` - Wrapper script with `--dangerously-skip-permissions` flag
+
+### Running Claude CLI Without Prompts
+
+**Option 1: Quick command (recommended)**
+```bash
+./scripts/quick.sh ai "Your prompt here"
+./scripts/quick.sh ai-task  # Run on current task
+```
+
+**Option 2: Direct wrapper**
+```bash
+./scripts/ai.sh "Fix all TypeScript errors"
+./scripts/ai.sh --print "Read .claude/task.md and implement the task"
+./scripts/ai.sh -c  # Continue previous conversation
+```
+
+**Option 3: Standard claude command**
+```bash
+claude --dangerously-skip-permissions "Your prompt"
+```
+
+### Auto-Approved Operations
+The `.claude/settings.local.json` file auto-approves:
+- File operations: Read, Write, Edit, Glob, Grep
+- Shell commands: git, npm, npx, node, python3, pytest
+- Project scripts: `./scripts/*`
+- Fly.io: fly deploy, logs, secrets, postgres, ssh
+- Build tools: tsc, playwright, alembic, uvicorn
+
+### Adding New Auto-Approve Rules
+Edit `.claude/settings.local.json`:
+```json
+{
+  "permissions": {
+    "allow": [
+      "Bash(your-command:*)",
+      "Read(*)",
+      "Write(*)"
+    ]
+  }
+}
+```
+
+### Security Warning
+Auto-approve mode gives Claude full control over file operations and shell commands.
+Only use in trusted projects. The first run of `ai.sh` shows a warning banner.
+
 ## Key Files Reference
 - `apps/web/src/App.tsx` - Routes configuration
 - `apps/web/src/stores/authStore.ts` - Auth state

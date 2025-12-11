@@ -59,6 +59,42 @@ class ProposalStatus(str, Enum):
     ACCEPTED = "accepted"
     DECLINED = "declined"
     EXPIRED = "expired"
-    
+
+    def __str__(self):
+        return self.value
+
+
+class InvoiceStatus(str, Enum):
+    """Status of an invoice."""
+    DRAFT = "draft"
+    SENT = "sent"
+    VIEWED = "viewed"
+    PAID = "paid"
+    OVERDUE = "overdue"
+    CANCELLED = "cancelled"
+
+    def __str__(self):
+        return self.value
+
+
+class FileCategory(str, Enum):
+    """Category of a portal file."""
+    CONTRACT = "contract"
+    DELIVERABLE = "deliverable"
+    INVOICE = "invoice"
+    ASSET = "asset"
+    REFERENCE = "reference"
+    OTHER = "other"
+
+    def __str__(self):
+        return self.value
+
+
+class MessageStatus(str, Enum):
+    """Status of a portal message."""
+    UNREAD = "unread"
+    READ = "read"
+    ARCHIVED = "archived"
+
     def __str__(self):
         return self.value

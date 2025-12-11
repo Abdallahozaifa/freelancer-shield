@@ -302,3 +302,197 @@ export interface VerifyResetTokenResponse {
   valid: boolean;
   email?: string;
 }
+
+// Portal types
+export type InvoiceStatus = 'draft' | 'sent' | 'viewed' | 'paid' | 'overdue' | 'cancelled';
+export type FileCategory = 'contract' | 'deliverable' | 'invoice' | 'asset' | 'reference' | 'other';
+export type MessageStatus = 'unread' | 'read' | 'archived';
+
+export interface PortalSettings {
+  id: string;
+  business_name: string | null;
+  logo_url: string | null;
+  primary_color: string;
+  accent_color: string;
+  portal_slug: string | null;
+  contact_email: string | null;
+  contact_phone: string | null;
+  welcome_message: string | null;
+  show_invoices: boolean;
+  show_files: boolean;
+  show_messages: boolean;
+  show_contracts: boolean;
+  portal_url: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface PortalSettingsCreate {
+  business_name?: string | null;
+  logo_url?: string | null;
+  primary_color?: string;
+  accent_color?: string;
+  portal_slug?: string | null;
+  contact_email?: string | null;
+  contact_phone?: string | null;
+  welcome_message?: string | null;
+  show_invoices?: boolean;
+  show_files?: boolean;
+  show_messages?: boolean;
+  show_contracts?: boolean;
+}
+
+export interface PortalSettingsUpdate extends PortalSettingsCreate {}
+
+export interface ClientPortalAccess {
+  id: string;
+  client_id: string;
+  client_name: string | null;
+  client_email: string | null;
+  is_active: boolean;
+  last_accessed: string | null;
+  portal_link: string | null;
+  created_at: string;
+}
+
+export interface PortalInvoice {
+  id: string;
+  client_id: string;
+  client_name?: string | null;
+  project_id: string | null;
+  project_name?: string | null;
+  invoice_number: string;
+  title: string;
+  description: string | null;
+  amount: number;
+  tax_amount: number;
+  total_amount: number;
+  status: InvoiceStatus;
+  issue_date: string;
+  due_date: string | null;
+  paid_date: string | null;
+  payment_url: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface PortalInvoiceCreate {
+  client_id: string;
+  project_id?: string | null;
+  invoice_number: string;
+  title: string;
+  description?: string | null;
+  amount: number;
+  tax_amount?: number;
+  due_date?: string | null;
+  payment_url?: string | null;
+}
+
+export interface PortalInvoiceUpdate {
+  title?: string;
+  description?: string | null;
+  amount?: number;
+  tax_amount?: number;
+  status?: InvoiceStatus;
+  due_date?: string | null;
+  payment_url?: string | null;
+}
+
+export interface PortalFile {
+  id: string;
+  client_id: string;
+  client_name?: string | null;
+  project_id: string | null;
+  project_name?: string | null;
+  name: string;
+  file_url: string;
+  file_size: number | null;
+  file_type: string | null;
+  category: FileCategory;
+  description: string | null;
+  is_visible: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface PortalFileCreate {
+  client_id: string;
+  project_id?: string | null;
+  name: string;
+  file_url: string;
+  file_size?: number | null;
+  file_type?: string | null;
+  category?: FileCategory;
+  description?: string | null;
+  is_visible?: boolean;
+}
+
+export interface PortalMessage {
+  id: string;
+  client_id: string;
+  client_name?: string | null;
+  project_id: string | null;
+  project_name?: string | null;
+  subject: string | null;
+  content: string;
+  is_from_client: boolean;
+  status: MessageStatus;
+  read_at: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface PortalMessageCreate {
+  client_id: string;
+  project_id?: string | null;
+  subject?: string | null;
+  content: string;
+}
+
+export interface PortalContract {
+  id: string;
+  client_id: string;
+  client_name?: string | null;
+  project_id: string | null;
+  project_name?: string | null;
+  title: string;
+  content: string;
+  file_url: string | null;
+  requires_signature: boolean;
+  signed_at: string | null;
+  is_signed: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface PortalContractCreate {
+  client_id: string;
+  project_id?: string | null;
+  title: string;
+  content: string;
+  file_url?: string | null;
+  requires_signature?: boolean;
+}
+
+export interface PortalDashboard {
+  client_name: string;
+  freelancer_name: string;
+  freelancer_business_name: string | null;
+  welcome_message: string | null;
+  logo_url: string | null;
+  primary_color: string;
+  accent_color: string;
+  show_invoices: boolean;
+  show_files: boolean;
+  show_messages: boolean;
+  show_contracts: boolean;
+  active_projects_count: number;
+  pending_invoices_count: number;
+  pending_invoices_total: number;
+  unread_messages_count: number;
+  unsigned_contracts_count: number;
+  files_count: number;
+  recent_invoices: PortalInvoice[];
+  recent_messages: PortalMessage[];
+  recent_files: PortalFile[];
+}

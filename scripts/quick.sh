@@ -33,6 +33,16 @@ case "$1" in
         claude "Read .claude/task.md and .claude/INSTRUCTIONS.md. Implement the task, run tests, fix errors."
         ;;
 
+    # Run Claude CLI with auto-approve (no permission prompts)
+    ai)
+        ./scripts/ai.sh "${@:2}"
+        ;;
+
+    # Run Claude CLI with auto-approve on current task
+    ai-task)
+        ./scripts/ai.sh "Read .claude/task.md and .claude/INSTRUCTIONS.md. Implement the task, run tests, fix errors."
+        ;;
+
     # Open in Cursor
     cursor|edit|e)
         cursor .
@@ -190,6 +200,42 @@ case "$1" in
         echo "   Edit .claude/task.md with your task details"
         ;;
 
+    # QA - Run full QA suite
+    qa)
+        ./scripts/qa.sh "${2:-all}" "${@:3}"
+        ;;
+
+    # QA - Run API tests only
+    qa-api)
+        ./scripts/qa-api.sh "${@:2}"
+        ;;
+
+    # QA - Run UI tests only
+    qa-ui)
+        ./scripts/qa-ui.sh "${@:2}"
+        ;;
+
+    # QA - Smoke test
+    smoke)
+        ./scripts/qa.sh smoke
+        ;;
+
+    # QA - Auto-fix failures
+    qa-fix)
+        ./scripts/qa-fix.sh "${@:2}"
+        ;;
+
+    # QA - Generate report
+    qa-report)
+        ./scripts/qa.sh report
+        ;;
+
+    # E2E - Run Playwright E2E tests
+    e2e)
+        echo "🎭 Running Playwright E2E tests..."
+        npx playwright test tests/e2e/flows.spec.ts "${@:2}"
+        ;;
+
     # Show help
     *)
         echo "Quick Commands for Three-Tool Workflow"
@@ -208,6 +254,8 @@ case "$1" in
         echo "  Development:"
         echo "    build, b       Full implementation pipeline (context → Cursor → CLI)"
         echo "    cli            Run Claude CLI on current task"
+        echo "    ai [prompt]    Run Claude CLI with auto-approve (no permission prompts)"
+        echo "    ai-task        Run Claude CLI with auto-approve on current task"
         echo "    cursor, e      Open project in Cursor"
         echo "    test, t        Run build and lint checks"
         echo ""
@@ -226,6 +274,15 @@ case "$1" in
         echo "    api <method> <endpoint> [body]   Test API endpoint"
         echo "    verify, v [type] [url]           Run verification (ui/api/both)"
         echo "    visual <url> [check]             AI visual check with Claude Vision"
+        echo ""
+        echo "  QA Testing:"
+        echo "    qa [command]     Run QA suite (all/api/ui/smoke/report/fix)"
+        echo "    qa-api           Run API tests only"
+        echo "    qa-ui            Run UI tests only"
+        echo "    smoke            Quick smoke test (critical paths only)"
+        echo "    qa-fix           Auto-fix failures with Claude CLI"
+        echo "    qa-report        Generate QA report from last run"
+        echo "    e2e              Run Playwright E2E tests"
         echo ""
         echo "Examples:"
         echo "  ./scripts/quick.sh screenshot 'https://scopeguard.fly.dev/login' mobile"

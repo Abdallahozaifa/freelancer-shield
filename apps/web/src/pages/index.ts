@@ -6,3 +6,6 @@ export { ClientsPage, ClientDetailPage } from './clients';
 
 // Dashboard pages
 export { DashboardPage } from './dashboard';
+
+// Portal pages
+export { PortalPage } from './portal';

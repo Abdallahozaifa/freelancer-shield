@@ -13,6 +13,8 @@ from app.api.v1.endpoints import scope_items
 from app.api.v1.endpoints import client_requests
 from app.api.v1.endpoints import proposals
 from app.api.v1.endpoints import billing
+from app.api.v1.endpoints import portal
+from app.api.v1.endpoints import client_portal
 from app.api.v1.endpoints.dashboard import router as dashboard_router
 
 
@@ -30,3 +32,5 @@ api_router.include_router(client_requests.router, prefix="/projects", tags=["req
 api_router.include_router(proposals.router, prefix="/projects", tags=["proposals"])
 api_router.include_router(dashboard_router, prefix="/dashboard", tags=["dashboard"])
 api_router.include_router(billing.router, prefix="/billing", tags=["billing"])
+api_router.include_router(portal.router, prefix="/portal", tags=["portal"])
+api_router.include_router(client_portal.router, prefix="/client-portal", tags=["client-portal"])

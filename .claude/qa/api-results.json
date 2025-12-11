@@ -1,0 +1,84 @@
+{
+  "tests": [
+    {
+      "name": "Health check",
+      "status": "pass",
+      "details": ""
+    },
+    {
+      "name": "Login - invalid credentials returns 401",
+      "status": "pass",
+      "details": ""
+    },
+    {
+      "name": "Login - missing fields returns 422",
+      "status": "pass",
+      "details": ""
+    },
+    {
+      "name": "Register - missing fields returns 422",
+      "status": "pass",
+      "details": ""
+    },
+    {
+      "name": "Forgot password - invalid email returns 422",
+      "status": "pass",
+      "details": ""
+    },
+    {
+      "name": "Get current user",
+      "status": "pass",
+      "details": ""
+    },
+    {
+      "name": "Dashboard summary",
+      "status": "pass",
+      "details": ""
+    },
+    {
+      "name": "Dashboard alerts",
+      "status": "pass",
+      "details": ""
+    },
+    {
+      "name": "Dashboard activity",
+      "status": "pass",
+      "details": ""
+    },
+    {
+      "name": "List clients",
+      "status": "pass",
+      "details": ""
+    },
+    {
+      "name": "List projects",
+      "status": "pass",
+      "details": ""
+    },
+    {
+      "name": "Get subscription",
+      "status": "pass",
+      "details": ""
+    },
+    {
+      "name": "Get usage limits",
+      "status": "pass",
+      "details": ""
+    },
+    {
+      "name": "Projects without auth returns 401/403",
+      "status": "pass",
+      "details": ""
+    },
+    {
+      "name": "Clients without auth returns 401/403",
+      "status": "pass",
+      "details": ""
+    },
+    {
+      "name": "Dashboard without auth returns 401/403",
+      "status": "pass",
+      "details": ""
+    }
+  ]
+}

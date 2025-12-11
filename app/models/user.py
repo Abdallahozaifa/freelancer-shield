@@ -74,7 +74,12 @@ class User(BaseModel):
         back_populates="user",
         uselist=False,
     )
-    
+    portal_settings: Mapped["PortalSettings | None"] = relationship(
+        "PortalSettings",
+        back_populates="user",
+        uselist=False,
+    )
+
     def __repr__(self) -> str:
         return f"<User {self.email}>"
 
@@ -83,3 +88,4 @@ class User(BaseModel):
 from app.models.client import Client
 from app.models.project import Project
 from app.models.subscription import Subscription
+from app.models.portal import PortalSettings

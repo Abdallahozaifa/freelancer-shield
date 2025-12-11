@@ -1,0 +1,44 @@
+{
+  "tests": [
+    {
+      "name": "Landing page (desktop)",
+      "status": "pass",
+      "details": "(screenshot only)"
+    },
+    {
+      "name": "Login page (desktop)",
+      "status": "pass",
+      "details": "(screenshot only)"
+    },
+    {
+      "name": "Register page (desktop)",
+      "status": "pass",
+      "details": "(screenshot only)"
+    },
+    {
+      "name": "Forgot password (desktop)",
+      "status": "pass",
+      "details": "(screenshot only)"
+    },
+    {
+      "name": "Dashboard (desktop)",
+      "status": "pass",
+      "details": "(screenshot only)"
+    },
+    {
+      "name": "Projects list (desktop)",
+      "status": "pass",
+      "details": "(screenshot only)"
+    },
+    {
+      "name": "Clients list (desktop)",
+      "status": "pass",
+      "details": "(screenshot only)"
+    },
+    {
+      "name": "Billing page (desktop)",
+      "status": "pass",
+      "details": "(screenshot only)"
+    }
+  ]
+}

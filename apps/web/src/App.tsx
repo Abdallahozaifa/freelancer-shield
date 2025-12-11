@@ -4,7 +4,7 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { useAuthStore } from './stores/authStore';
 import { AuthInitializer } from './components/AuthInitializer';
 import { Loading, ToastContainer } from './components/ui';
-import { LoginPage, RegisterPage, ProfilePage, ClientsPage, ClientDetailPage, DashboardPage, ForgotPasswordPage, ResetPasswordPage } from './pages';
+import { LoginPage, RegisterPage, ProfilePage, ClientsPage, ClientDetailPage, DashboardPage, ForgotPasswordPage, ResetPasswordPage, PortalPage } from './pages';
 import { ProjectsPage, ProjectDetailPage, ProjectNewPage, ProjectEditPage } from './pages/projects';
 import { RequestsPage, RequestEditPage } from './pages/projects/requests';
 import { ScopeItemsPage, ScopeItemEditPage } from './pages/projects/scope';
@@ -137,6 +137,7 @@ export default function App() {
                 <Route path="/scope-items" element={<ScopeItemsPage />} />
                 <Route path="/requests" element={<RequestsPage />} />
                 <Route path="/proposals" element={<ProposalsPage />} />
+                <Route path="/portal" element={<PortalPage />} />
                 <Route path="/settings" element={<Navigate to="/settings/billing" replace />} />
                 <Route path="/settings/billing" element={<BillingPage />} />
               </Route>

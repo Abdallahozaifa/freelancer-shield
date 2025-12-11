@@ -57,7 +57,13 @@ class Client(BaseModel):
         back_populates="client",
         cascade="all, delete-orphan",
     )
-    
+    portal_access: Mapped["ClientPortalAccess | None"] = relationship(
+        "ClientPortalAccess",
+        back_populates="client",
+        uselist=False,
+        cascade="all, delete-orphan",
+    )
+
     def __repr__(self) -> str:
         return f"<Client {self.name}>"
 
@@ -65,3 +71,4 @@ class Client(BaseModel):
 # Import here to avoid circular imports
 from app.models.user import User
 from app.models.project import Project
+from app.models.portal import ClientPortalAccess

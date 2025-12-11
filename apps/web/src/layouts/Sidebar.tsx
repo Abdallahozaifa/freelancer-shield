@@ -10,6 +10,7 @@ import {
   CreditCard,
   Crown,
   Zap,
+  Globe,
 } from 'lucide-react';
 import { useProStatus } from '../hooks/useProStatus';
 
@@ -35,6 +36,7 @@ const navItems: NavItemOrDivider[] = [
   { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
   { icon: Users, label: 'Clients', path: '/clients' },
   { icon: FolderKanban, label: 'Projects', path: '/projects' },
+  { icon: Globe, label: 'Client Portal', path: '/portal' },
   { icon: BarChart3, label: 'Reports', path: '/reports', comingSoon: true },
   { divider: true },
   { icon: CreditCard, label: 'Billing', path: '/settings/billing' },
