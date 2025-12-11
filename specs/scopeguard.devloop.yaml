@@ -1,0 +1,139 @@
+name: ScopeGuard API & UI Tests
+
+roles:
+  guest: {}
+  # authenticated user role can be added later with credentials
+
+tests:
+  # ============================================
+  # PUBLIC ROUTES - Must be accessible without auth
+  # ============================================
+
+  # Client Portal - PUBLIC ACCESS (Bug fix: was missing frontend route)
+  - name: Client portal route is publicly accessible
+    as: guest
+    request:
+      method: GET
+      path: /portal/c/testtoken123
+    expect:
+      status: 200
+    description: >
+      Client portal must return 200 (serving SPA) - NOT redirect to login.
+      This test catches the bug where /portal/c/:token route was missing.
+
+  # Public Request Form - must be accessible without login
+  - name: Public request form route is accessible
+    as: guest
+    request:
+      method: GET
+      path: /request/testtoken123
+    expect:
+      status: 200
+    description: Public request form page must load without auth
+
+  # Landing page
+  - name: Landing page is accessible
+    as: guest
+    request:
+      method: GET
+      path: /
+    expect:
+      status: 200
+
+  # Legal pages
+  - name: Privacy page is accessible
+    as: guest
+    request:
+      method: GET
+      path: /privacy
+    expect:
+      status: 200
+
+  - name: Support page is accessible
+    as: guest
+    request:
+      method: GET
+      path: /support
+    expect:
+      status: 200
+
+  # Auth pages
+  - name: Login page is accessible
+    as: guest
+    request:
+      method: GET
+      path: /login
+    expect:
+      status: 200
+
+  - name: Register page is accessible
+    as: guest
+    request:
+      method: GET
+      path: /register
+    expect:
+      status: 200
+
+  - name: Forgot password page is accessible
+    as: guest
+    request:
+      method: GET
+      path: /forgot-password
+    expect:
+      status: 200
+
+  # ============================================
+  # PROTECTED ROUTES - Should redirect to login
+  # ============================================
+
+  # Note: These check that the routes exist (200) since the SPA
+  # handles auth client-side. The SPA will redirect to login.
+
+  - name: Dashboard route exists
+    as: guest
+    request:
+      method: GET
+      path: /dashboard
+    expect:
+      status: 200
+    description: Route exists, client-side auth will redirect
+
+  - name: Projects route exists
+    as: guest
+    request:
+      method: GET
+      path: /projects
+    expect:
+      status: 200
+
+  - name: Clients route exists
+    as: guest
+    request:
+      method: GET
+      path: /clients
+    expect:
+      status: 200
+
+  # ============================================
+  # API ENDPOINTS
+  # ============================================
+
+  # Health check (if exists)
+  - name: Health endpoint works
+    as: guest
+    request:
+      method: GET
+      path: /api/v1/health
+    expect:
+      status: 200
+    description: API health check
+
+  # Portal API - public access with token header
+  - name: Portal API requires token
+    as: guest
+    request:
+      method: GET
+      path: /api/v1/portal/c/dashboard
+    expect:
+      status: 401
+    description: Portal API without X-Portal-Token should return 401

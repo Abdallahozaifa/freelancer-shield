@@ -1,0 +1,48 @@
+name: Configuration Checks
+type: config
+
+tests:
+  # Production health check (uses 200 or 405 since HEAD may not be supported)
+  - name: Production API is reachable
+    check: url_resolves
+    url: https://scopeguard.fly.dev/api/v1/health
+    expect:
+      status: [200, 405]
+
+  # Hardcoded URL patterns - would catch the bug we fixed
+  - name: No hardcoded scopeguard-api URLs
+    check: no_pattern
+    in: apps/web/src/**/*.{ts,tsx}
+    pattern: scopeguard-api\.fly\.dev
+    exclude:
+      - '*.test.ts'
+      - '*.spec.ts'
+    message: Wrong API URL - API is at scopeguard.fly.dev, not scopeguard-api.fly.dev
+
+  - name: No hardcoded fly.dev URLs in frontend
+    check: no_pattern
+    in: apps/web/src/**/*.{ts,tsx}
+    pattern: https://[a-zA-Z0-9-]+\.fly\.dev
+    exclude:
+      - '*.test.ts'
+      - '*.spec.ts'
+      - '**/PublicRequestPage.tsx'
+      - '**/ClientPortalPage.tsx'
+    message: Use VITE_API_URL env var instead of hardcoded fly.dev URLs
+
+  # Client portal endpoint mismatch - catches /api/v1/portal/c/ (wrong) vs /api/v1/client-portal/ (correct)
+  - name: No wrong portal endpoint paths
+    check: no_pattern
+    in: apps/web/src/**/*.{ts,tsx}
+    pattern: /api/v1/portal/c/
+    exclude:
+      - '*.test.ts'
+      - '*.spec.ts'
+    message: Wrong portal endpoint - use /api/v1/client-portal/ not /api/v1/portal/c/
+
+  # Contract: Portal link generation must NOT return stored hash
+  - name: No returning stored access_token as portal_link
+    check: no_pattern
+    in: app/api/v1/endpoints/portal.py
+    pattern: portal_link.*access\.access_token
+    message: Never return stored access_token hash as portal_link - it will fail authentication

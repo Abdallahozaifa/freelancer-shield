@@ -55,12 +55,15 @@ async def get_portal_client(
             detail="Portal access token required",
         )
 
-    # Find access record
+    # Hash the incoming token to compare against stored hash
+    token_hash = ClientPortalAccess.hash_token(access_token)
+
+    # Find access record using hashed token
     query = (
         select(ClientPortalAccess)
         .options(selectinload(ClientPortalAccess.client))
         .where(
-            ClientPortalAccess.access_token == access_token,
+            ClientPortalAccess.access_token == token_hash,
             ClientPortalAccess.is_active == True,
         )
     )

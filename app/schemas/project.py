@@ -11,7 +11,7 @@ from app.models.enums import ProjectStatus
 
 class ProjectCreate(BaseModel):
     """Schema for creating a new project."""
-    
+
     client_id: str = Field(..., description="UUID of the client as string")
     name: str = Field(..., min_length=1, max_length=255)
     description: str | None = None
@@ -23,18 +23,19 @@ class ProjectCreate(BaseModel):
 
 class ProjectUpdate(BaseModel):
     """Schema for updating an existing project."""
-    
+
     name: str | None = Field(default=None, min_length=1, max_length=255)
     description: str | None = None
     status: ProjectStatus | None = None
     budget: Decimal | None = Field(default=None, ge=0)
     hourly_rate: Decimal | None = Field(default=None, ge=0)
     estimated_hours: Decimal | None = Field(default=None, ge=0)
+    public_request_enabled: bool | None = None
 
 
 class ProjectResponse(BaseModel):
     """Schema for project response."""
-    
+
     id: str
     client_id: str
     client_name: str  # Joined from client
@@ -50,6 +51,10 @@ class ProjectResponse(BaseModel):
     scope_item_count: int = 0
     completed_scope_count: int = 0
     out_of_scope_request_count: int = 0
+    # Public request form
+    public_request_token: str | None = None
+    public_request_enabled: bool = False
+    public_request_url: str | None = None
 
     class Config:
         from_attributes = True

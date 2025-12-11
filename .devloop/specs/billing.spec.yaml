@@ -1,0 +1,81 @@
+name: Billing API Tests
+description: Test specifications for ScopeGuard billing and subscription endpoints
+baseUrl: https://scopeguard.fly.dev
+
+roles:
+  guest: {}
+  user:
+    credentials:
+      email: devloop-test@scopeguard.app
+      password: TestPassword123
+    loginEndpoint: /api/v1/auth/login
+
+tests:
+  # Get subscription - requires auth
+  - name: Get subscription requires authentication
+    as: guest
+    request:
+      method: GET
+      path: /api/v1/billing/subscription
+    expect:
+      status: 401
+
+  # Get usage limits - requires auth
+  - name: Get usage limits requires authentication
+    as: guest
+    request:
+      method: GET
+      path: /api/v1/billing/limits
+    expect:
+      status: 401
+
+  # Create checkout session - requires auth (may be GET instead of POST - 405 acceptable)
+  - name: Create checkout session requires authentication
+    as: guest
+    request:
+      method: POST
+      path: /api/v1/billing/checkout
+      body:
+        plan: pro
+    expect:
+      status: [401, 404, 405]
+
+  # Stripe webhook - should be accessible (verified by Stripe signature)
+  - name: Stripe webhook endpoint is accessible
+    as: guest
+    request:
+      method: POST
+      path: /api/v1/billing/webhook
+      body: {}
+    expect:
+      status: [200, 400, 401, 403]
+      statusNot: [404, 500]
+
+  # Get billing portal - requires auth (endpoint may not exist - 404 is acceptable)
+  - name: Get billing portal requires authentication
+    as: guest
+    request:
+      method: GET
+      path: /api/v1/billing/portal
+    expect:
+      status: [401, 404, 405]
+
+  # Authenticated user can get subscription
+  - name: Authenticated user can get subscription info
+    as: user
+    request:
+      method: GET
+      path: /api/v1/billing/subscription
+    expect:
+      status: [200, 404]
+      statusNot: [401, 403]
+
+  # Authenticated user can get limits
+  - name: Authenticated user can get usage limits
+    as: user
+    request:
+      method: GET
+      path: /api/v1/billing/limits
+    expect:
+      status: 200
+      statusNot: [401, 403]

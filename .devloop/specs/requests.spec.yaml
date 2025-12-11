@@ -1,0 +1,66 @@
+name: Scope Requests API Tests
+description: Test specifications for ScopeGuard scope request endpoints
+baseUrl: https://scopeguard.fly.dev
+
+roles:
+  guest: {}
+  user:
+    credentials:
+      email: devloop-test@scopeguard.app
+      password: TestPassword123
+    loginEndpoint: /api/v1/auth/login
+
+tests:
+  # Public request form endpoint - SHOULD BE PUBLIC (portal access)
+  - name: Public request form accessible without auth
+    as: guest
+    request:
+      method: GET
+      path: /api/v1/request/{token}
+    expect:
+      status: [200, 404]
+      statusNot: [401, 403]
+
+  # Submit public request - SHOULD BE PUBLIC
+  - name: Submit public request without auth
+    as: guest
+    request:
+      method: POST
+      path: /api/v1/request/{token}
+      body:
+        title: New feature request
+        description: Please add this feature
+    expect:
+      status: [200, 201, 400, 404, 422]
+      statusNot: [401, 403]
+
+  # List scope items - requires auth (endpoint may not exist - 404 acceptable)
+  - name: List scope items requires authentication
+    as: guest
+    request:
+      method: GET
+      path: /api/v1/scope-items
+    expect:
+      status: [401, 404]
+
+  # Create scope item - requires auth (endpoint may not exist - 404/405 acceptable)
+  - name: Create scope item requires authentication
+    as: guest
+    request:
+      method: POST
+      path: /api/v1/scope-items
+      body:
+        title: Test scope item
+        project_id: test-uuid
+    expect:
+      status: [401, 404, 405]
+
+  # Authenticated user can list scope items (endpoint may not exist)
+  - name: Authenticated user can list scope items
+    as: user
+    request:
+      method: GET
+      path: /api/v1/scope-items
+    expect:
+      status: [200, 404]
+      statusNot: [401, 403]

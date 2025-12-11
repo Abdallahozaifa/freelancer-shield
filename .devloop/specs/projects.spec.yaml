@@ -1,0 +1,72 @@
+name: Projects API Tests
+description: Test specifications for ScopeGuard project management endpoints
+baseUrl: https://scopeguard.fly.dev
+
+roles:
+  guest: {}
+  user:
+    credentials:
+      email: devloop-test@scopeguard.app
+      password: TestPassword123
+    loginEndpoint: /api/v1/auth/login
+
+tests:
+  # List projects - requires auth
+  - name: List projects requires authentication
+    as: guest
+    request:
+      method: GET
+      path: /api/v1/projects
+    expect:
+      status: 401
+
+  # Create project - requires auth
+  - name: Create project requires authentication
+    as: guest
+    request:
+      method: POST
+      path: /api/v1/projects
+      body:
+        name: Test Project
+        description: A test project
+    expect:
+      status: 401
+
+  # Get single project - requires auth
+  - name: Get project by ID requires authentication
+    as: guest
+    request:
+      method: GET
+      path: /api/v1/projects/{id}
+    expect:
+      status: 401
+
+  # Update project - requires auth
+  - name: Update project requires authentication
+    as: guest
+    request:
+      method: PUT
+      path: /api/v1/projects/{id}
+      body:
+        name: Updated Project
+    expect:
+      status: [401, 405]
+
+  # Delete project - requires auth
+  - name: Delete project requires authentication
+    as: guest
+    request:
+      method: DELETE
+      path: /api/v1/projects/{id}
+    expect:
+      status: [401, 405]
+
+  # Authenticated user can list projects (may return paginated object)
+  - name: Authenticated user can list projects
+    as: user
+    request:
+      method: GET
+      path: /api/v1/projects
+    expect:
+      status: 200
+      statusNot: [401, 403]

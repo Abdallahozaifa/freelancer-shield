@@ -1,0 +1,6 @@
+{
+  "qa": {
+    "apiUrl": "https://scopeguard-api.fly.dev/api/v1",
+    "frontendUrl": "https://scopeguard.fly.dev"
+  }
+}

@@ -101,9 +101,17 @@ async def get_project_stats(project_id: UUID, user_id: UUID, db: AsyncSession) -
     }
 
 
-def project_to_response(project: Project, stats: dict | None = None) -> ProjectResponse:
+def project_to_response(project: Project, stats: dict | None = None, base_url: str | None = None) -> ProjectResponse:
     """Convert a Project model to ProjectResponse schema."""
     stats = stats or {}
+
+    # Build public request URL if token exists
+    public_request_url = None
+    if project.public_request_token and project.public_request_enabled:
+        # Use the frontend URL for the public request form
+        frontend_url = base_url or "https://scopeguard.fly.dev"
+        public_request_url = f"{frontend_url}/request/{project.public_request_token}"
+
     return ProjectResponse(
         id=str(project.id),
         client_id=str(project.client_id),
@@ -119,6 +127,9 @@ def project_to_response(project: Project, stats: dict | None = None) -> ProjectR
         scope_item_count=stats.get("scope_item_count", 0),
         completed_scope_count=stats.get("completed_scope_count", 0),
         out_of_scope_request_count=stats.get("out_of_scope_request_count", 0),
+        public_request_token=project.public_request_token,
+        public_request_enabled=project.public_request_enabled,
+        public_request_url=public_request_url,
     )
 
 
@@ -315,6 +326,83 @@ async def delete_project(
 ) -> None:
     """Delete a project."""
     project = await get_project_or_404(project_id, current_user, db)
-    
+
     await db.delete(project)
     await db.commit()
+
+
+@router.post("/{project_id}/enable-public-requests", response_model=ProjectResponse)
+async def enable_public_requests(
+    project_id: str,
+    db: Annotated[AsyncSession, Depends(get_db)],
+    current_user: Annotated[User, Depends(get_current_user)],
+) -> ProjectResponse:
+    """
+    Enable public client request form for a project.
+
+    Generates a unique token if not already present and enables the form.
+    Share the returned URL with clients so they can submit requests.
+    """
+    from app.models.project import generate_public_token
+
+    project = await get_project_or_404(project_id, current_user, db)
+
+    # Generate token if not present
+    if not project.public_request_token:
+        project.public_request_token = generate_public_token()
+
+    # Enable public requests
+    project.public_request_enabled = True
+
+    await db.commit()
+    await db.refresh(project)
+
+    stats = await get_project_stats(project.id, current_user.id, db)
+    return project_to_response(project, stats)
+
+
+@router.post("/{project_id}/disable-public-requests", response_model=ProjectResponse)
+async def disable_public_requests(
+    project_id: str,
+    db: Annotated[AsyncSession, Depends(get_db)],
+    current_user: Annotated[User, Depends(get_current_user)],
+) -> ProjectResponse:
+    """
+    Disable public client request form for a project.
+
+    The token is preserved so re-enabling will use the same URL.
+    """
+    project = await get_project_or_404(project_id, current_user, db)
+
+    project.public_request_enabled = False
+
+    await db.commit()
+    await db.refresh(project)
+
+    stats = await get_project_stats(project.id, current_user.id, db)
+    return project_to_response(project, stats)
+
+
+@router.post("/{project_id}/regenerate-public-token", response_model=ProjectResponse)
+async def regenerate_public_token(
+    project_id: str,
+    db: Annotated[AsyncSession, Depends(get_db)],
+    current_user: Annotated[User, Depends(get_current_user)],
+) -> ProjectResponse:
+    """
+    Regenerate the public request token for a project.
+
+    This invalidates any previously shared URLs.
+    """
+    from app.models.project import generate_public_token
+
+    project = await get_project_or_404(project_id, current_user, db)
+
+    # Generate new token
+    project.public_request_token = generate_public_token()
+
+    await db.commit()
+    await db.refresh(project)
+
+    stats = await get_project_stats(project.id, current_user.id, db)
+    return project_to_response(project, stats)

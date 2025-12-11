@@ -12,6 +12,7 @@ export interface User {
   full_name: string;
   business_name: string | null;
   is_active: boolean;
+  has_completed_onboarding: boolean;
   picture?: string | null;
   auth_provider?: string | null;
   created_at: string;

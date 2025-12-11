@@ -1,0 +1,2559 @@
+{
+  "projectRoot": "/Users/hozaifaabdalla/Desktop/freelancer-project-shield/freelancer-shield",
+  "framework": {
+    "type": "node",
+    "language": "javascript",
+    "testFramework": "jest"
+  },
+  "timestamp": "2025-12-11T19:51:44.324Z",
+  "frontend": {
+    "pages": [
+      {
+        "name": "SettingsPage",
+        "file": "apps/web/src/pages/settings/SettingsPage.tsx",
+        "route": "/settings/SettingsPage",
+        "type": "settings"
+      },
+      {
+        "name": "BillingPage",
+        "file": "apps/web/src/pages/settings/BillingPage.tsx",
+        "route": "/settings/BillingPage",
+        "type": "page"
+      },
+      {
+        "name": "PublicRequestPage",
+        "file": "apps/web/src/pages/public-request/PublicRequestPage.tsx",
+        "route": "/public-request/PublicRequestPage",
+        "type": "page"
+      },
+      {
+        "name": "PortalPage",
+        "file": "apps/web/src/pages/portal/PortalPage.tsx",
+        "route": "/portal/PortalPage",
+        "type": "page"
+      },
+      {
+        "name": "OnboardingPage",
+        "file": "apps/web/src/pages/onboarding/OnboardingPage.tsx",
+        "route": "/onboarding/OnboardingPage",
+        "type": "page"
+      },
+      {
+        "name": "SupportPage",
+        "file": "apps/web/src/pages/legal/SupportPage.tsx",
+        "route": "/legal/SupportPage",
+        "type": "page"
+      },
+      {
+        "name": "PrivacyPage",
+        "file": "apps/web/src/pages/legal/PrivacyPage.tsx",
+        "route": "/legal/PrivacyPage",
+        "type": "page"
+      },
+      {
+        "name": "LandingPage",
+        "file": "apps/web/src/pages/landing/LandingPage.tsx",
+        "route": "/landing/LandingPage",
+        "type": "page"
+      },
+      {
+        "name": "DashboardPage_copy",
+        "file": "apps/web/src/pages/dashboard/DashboardPage_copy.tsx",
+        "route": "/dashboard/DashboardPage_copy",
+        "type": "dashboard"
+      },
+      {
+        "name": "DashboardPage",
+        "file": "apps/web/src/pages/dashboard/DashboardPage.tsx",
+        "route": "/dashboard/DashboardPage",
+        "type": "dashboard"
+      },
+      {
+        "name": "DeleteClientModal",
+        "file": "apps/web/src/pages/clients/DeleteClientModal.tsx",
+        "route": "/clients/DeleteClientModal",
+        "type": "page"
+      },
+      {
+        "name": "ClientsPage",
+        "file": "apps/web/src/pages/clients/ClientsPage.tsx",
+        "route": "/clients/ClientsPage",
+        "type": "page"
+      },
+      {
+        "name": "ClientFormModal",
+        "file": "apps/web/src/pages/clients/ClientFormModal.tsx",
+        "route": "/clients/ClientFormModal",
+        "type": "form"
+      },
+      {
+        "name": "ClientDetailPage",
+        "file": "apps/web/src/pages/clients/ClientDetailPage.tsx",
+        "route": "/clients/ClientDetailPage",
+        "type": "detail"
+      },
+      {
+        "name": "ResetPasswordPage",
+        "file": "apps/web/src/pages/auth/ResetPasswordPage.tsx",
+        "route": "/auth/ResetPasswordPage",
+        "type": "page"
+      },
+      {
+        "name": "RegisterPage",
+        "file": "apps/web/src/pages/auth/RegisterPage.tsx",
+        "route": "/auth/RegisterPage",
+        "type": "auth"
+      },
+      {
+        "name": "ProfilePage",
+        "file": "apps/web/src/pages/auth/ProfilePage.tsx",
+        "route": "/auth/ProfilePage",
+        "type": "settings"
+      },
+      {
+        "name": "LoginPage",
+        "file": "apps/web/src/pages/auth/LoginPage.tsx",
+        "route": "/auth/LoginPage",
+        "type": "auth"
+      },
+      {
+        "name": "ForgotPasswordPage",
+        "file": "apps/web/src/pages/auth/ForgotPasswordPage.tsx",
+        "route": "/auth/ForgotPasswordPage",
+        "type": "page"
+      },
+      {
+        "name": "ProjectsPage",
+        "file": "apps/web/src/pages/projects/ProjectsPage.tsx",
+        "route": "/projects/ProjectsPage",
+        "type": "page"
+      },
+      {
+        "name": "ProjectStatusBadge",
+        "file": "apps/web/src/pages/projects/ProjectStatusBadge.tsx",
+        "route": "/projects/ProjectStatusBadge",
+        "type": "page"
+      },
+      {
+        "name": "ProjectNewPage",
+        "file": "apps/web/src/pages/projects/ProjectNewPage.tsx",
+        "route": "/projects/ProjectNewPage",
+        "type": "create"
+      },
+      {
+        "name": "ProjectHealthGauge",
+        "file": "apps/web/src/pages/projects/ProjectHealthGauge.tsx",
+        "route": "/projects/ProjectHealthGauge",
+        "type": "page"
+      },
+      {
+        "name": "ProjectFormModal",
+        "file": "apps/web/src/pages/projects/ProjectFormModal.tsx",
+        "route": "/projects/ProjectFormModal",
+        "type": "form"
+      },
+      {
+        "name": "ProjectEditPage",
+        "file": "apps/web/src/pages/projects/ProjectEditPage.tsx",
+        "route": "/projects/ProjectEditPage",
+        "type": "form"
+      },
+      {
+        "name": "ProjectDetailPage",
+        "file": "apps/web/src/pages/projects/ProjectDetailPage.tsx",
+        "route": "/projects/ProjectDetailPage",
+        "type": "detail"
+      },
+      {
+        "name": "ScopeTab",
+        "file": "apps/web/src/pages/projects/scope/ScopeTab.tsx",
+        "route": "/projects/scope/ScopeTab",
+        "type": "page"
+      },
+      {
+        "name": "ScopeProgressCard",
+        "file": "apps/web/src/pages/projects/scope/ScopeProgressCard.tsx",
+        "route": "/projects/scope/ScopeProgressCard",
+        "type": "page"
+      },
+      {
+        "name": "ScopeItemsPage",
+        "file": "apps/web/src/pages/projects/scope/ScopeItemsPage.tsx",
+        "route": "/projects/scope/ScopeItemsPage",
+        "type": "page"
+      },
+      {
+        "name": "ScopeItemForm",
+        "file": "apps/web/src/pages/projects/scope/ScopeItemForm.tsx",
+        "route": "/projects/scope/ScopeItemForm",
+        "type": "form"
+      },
+      {
+        "name": "ScopeItemEditPage",
+        "file": "apps/web/src/pages/projects/scope/ScopeItemEditPage.tsx",
+        "route": "/projects/scope/ScopeItemEditPage",
+        "type": "form"
+      },
+      {
+        "name": "ScopeItemCard",
+        "file": "apps/web/src/pages/projects/scope/ScopeItemCard.tsx",
+        "route": "/projects/scope/ScopeItemCard",
+        "type": "page"
+      },
+      {
+        "name": "ScopeDragDrop",
+        "file": "apps/web/src/pages/projects/scope/ScopeDragDrop.tsx",
+        "route": "/projects/scope/ScopeDragDrop",
+        "type": "page"
+      },
+      {
+        "name": "DeleteScopeItemModal",
+        "file": "apps/web/src/pages/projects/scope/DeleteScopeItemModal.tsx",
+        "route": "/projects/scope/DeleteScopeItemModal",
+        "type": "page"
+      },
+      {
+        "name": "SendProposalModal",
+        "file": "apps/web/src/pages/projects/proposals/SendProposalModal.tsx",
+        "route": "/projects/proposals/SendProposalModal",
+        "type": "page"
+      },
+      {
+        "name": "ProposalsTab",
+        "file": "apps/web/src/pages/projects/proposals/ProposalsTab.tsx",
+        "route": "/projects/proposals/ProposalsTab",
+        "type": "page"
+      },
+      {
+        "name": "ProposalsPage",
+        "file": "apps/web/src/pages/projects/proposals/ProposalsPage.tsx",
+        "route": "/projects/proposals/ProposalsPage",
+        "type": "page"
+      },
+      {
+        "name": "ProposalStatusBadge",
+        "file": "apps/web/src/pages/projects/proposals/ProposalStatusBadge.tsx",
+        "route": "/projects/proposals/ProposalStatusBadge",
+        "type": "page"
+      },
+      {
+        "name": "ProposalStats",
+        "file": "apps/web/src/pages/projects/proposals/ProposalStats.tsx",
+        "route": "/projects/proposals/ProposalStats",
+        "type": "page"
+      },
+      {
+        "name": "ProposalRow",
+        "file": "apps/web/src/pages/projects/proposals/ProposalRow.tsx",
+        "route": "/projects/proposals/ProposalRow",
+        "type": "page"
+      },
+      {
+        "name": "ProposalResponseModal",
+        "file": "apps/web/src/pages/projects/proposals/ProposalResponseModal.tsx",
+        "route": "/projects/proposals/ProposalResponseModal",
+        "type": "page"
+      },
+      {
+        "name": "ProposalFormModal",
+        "file": "apps/web/src/pages/projects/proposals/ProposalFormModal.tsx",
+        "route": "/projects/proposals/ProposalFormModal",
+        "type": "form"
+      },
+      {
+        "name": "ProposalEditPage",
+        "file": "apps/web/src/pages/projects/proposals/ProposalEditPage.tsx",
+        "route": "/projects/proposals/ProposalEditPage",
+        "type": "form"
+      },
+      {
+        "name": "ProposalCard",
+        "file": "apps/web/src/pages/projects/proposals/ProposalCard.tsx",
+        "route": "/projects/proposals/ProposalCard",
+        "type": "page"
+      },
+      {
+        "name": "ScopeCreepAlert",
+        "file": "apps/web/src/pages/projects/requests/ScopeCreepAlert.tsx",
+        "route": "/projects/requests/ScopeCreepAlert",
+        "type": "page"
+      },
+      {
+        "name": "RequestsTab",
+        "file": "apps/web/src/pages/projects/requests/RequestsTab.tsx",
+        "route": "/projects/requests/RequestsTab",
+        "type": "page"
+      },
+      {
+        "name": "RequestsPage",
+        "file": "apps/web/src/pages/projects/requests/RequestsPage.tsx",
+        "route": "/projects/requests/RequestsPage",
+        "type": "page"
+      },
+      {
+        "name": "RequestStats",
+        "file": "apps/web/src/pages/projects/requests/RequestStats.tsx",
+        "route": "/projects/requests/RequestStats",
+        "type": "page"
+      },
+      {
+        "name": "RequestFormModal",
+        "file": "apps/web/src/pages/projects/requests/RequestFormModal.tsx",
+        "route": "/projects/requests/RequestFormModal",
+        "type": "form"
+      },
+      {
+        "name": "RequestEditPage",
+        "file": "apps/web/src/pages/projects/requests/RequestEditPage.tsx",
+        "route": "/projects/requests/RequestEditPage",
+        "type": "form"
+      },
+      {
+        "name": "RequestEditModal",
+        "file": "apps/web/src/pages/projects/requests/RequestEditModal.tsx",
+        "route": "/projects/requests/RequestEditModal",
+        "type": "form"
+      },
+      {
+        "name": "RequestClassificationBadge",
+        "file": "apps/web/src/pages/projects/requests/RequestClassificationBadge.tsx",
+        "route": "/projects/requests/RequestClassificationBadge",
+        "type": "page"
+      },
+      {
+        "name": "RequestCard",
+        "file": "apps/web/src/pages/projects/requests/RequestCard.tsx",
+        "route": "/projects/requests/RequestCard",
+        "type": "page"
+      },
+      {
+        "name": "CreateProposalFromRequest",
+        "file": "apps/web/src/pages/projects/requests/CreateProposalFromRequest.tsx",
+        "route": "/projects/requests/CreateProposalFromRequest",
+        "type": "create"
+      },
+      {
+        "name": "AnalysisPanel",
+        "file": "apps/web/src/pages/projects/requests/AnalysisPanel.tsx",
+        "route": "/projects/requests/AnalysisPanel",
+        "type": "page"
+      }
+    ],
+    "components": [
+      {
+        "name": "Breadcrumb",
+        "file": "apps/web/src/components/Breadcrumb.tsx",
+        "type": "component"
+      },
+      {
+        "name": "AuthInitializer",
+        "file": "apps/web/src/components/AuthInitializer.tsx",
+        "type": "component"
+      },
+      {
+        "name": "UpgradePrompt",
+        "file": "apps/web/src/components/ui/UpgradePrompt.tsx",
+        "type": "component"
+      },
+      {
+        "name": "UpgradeModal",
+        "file": "apps/web/src/components/ui/UpgradeModal.tsx",
+        "type": "modal"
+      },
+      {
+        "name": "Toast",
+        "file": "apps/web/src/components/ui/Toast.tsx",
+        "type": "component"
+      },
+      {
+        "name": "Textarea",
+        "file": "apps/web/src/components/ui/Textarea.tsx",
+        "type": "component"
+      },
+      {
+        "name": "Tabs",
+        "file": "apps/web/src/components/ui/Tabs.tsx",
+        "type": "component"
+      },
+      {
+        "name": "Table",
+        "file": "apps/web/src/components/ui/Table.tsx",
+        "type": "table"
+      },
+      {
+        "name": "Spinner",
+        "file": "apps/web/src/components/ui/Spinner.tsx",
+        "type": "component"
+      },
+      {
+        "name": "Skeleton",
+        "file": "apps/web/src/components/ui/Skeleton.tsx",
+        "type": "component"
+      },
+      {
+        "name": "Select",
+        "file": "apps/web/src/components/ui/Select.tsx",
+        "type": "component"
+      },
+      {
+        "name": "ProgressBar",
+        "file": "apps/web/src/components/ui/ProgressBar.tsx",
+        "type": "component"
+      },
+      {
+        "name": "ProfilePage",
+        "file": "apps/web/src/components/ui/ProfilePage.tsx",
+        "type": "component"
+      },
+      {
+        "name": "ProBadge",
+        "file": "apps/web/src/components/ui/ProBadge.tsx",
+        "type": "component"
+      },
+      {
+        "name": "Modal",
+        "file": "apps/web/src/components/ui/Modal.tsx",
+        "type": "modal"
+      },
+      {
+        "name": "Loading",
+        "file": "apps/web/src/components/ui/Loading.tsx",
+        "type": "component"
+      },
+      {
+        "name": "Input",
+        "file": "apps/web/src/components/ui/Input.tsx",
+        "type": "input"
+      },
+      {
+        "name": "EmptyState",
+        "file": "apps/web/src/components/ui/EmptyState.tsx",
+        "type": "component"
+      },
+      {
+        "name": "Dropdown",
+        "file": "apps/web/src/components/ui/Dropdown.tsx",
+        "type": "component"
+      },
+      {
+        "name": "ConfirmDialog",
+        "file": "apps/web/src/components/ui/ConfirmDialog.tsx",
+        "type": "component"
+      },
+      {
+        "name": "Card",
+        "file": "apps/web/src/components/ui/Card.tsx",
+        "type": "card"
+      },
+      {
+        "name": "Button",
+        "file": "apps/web/src/components/ui/Button.tsx",
+        "type": "button"
+      },
+      {
+        "name": "Badge",
+        "file": "apps/web/src/components/ui/Badge.tsx",
+        "type": "component"
+      },
+      {
+        "name": "Avatar",
+        "file": "apps/web/src/components/ui/Avatar.tsx",
+        "type": "component"
+      },
+      {
+        "name": "Alert",
+        "file": "apps/web/src/components/ui/Alert.tsx",
+        "type": "component"
+      },
+      {
+        "name": "GoogleSignInButton",
+        "file": "apps/web/src/components/auth/GoogleSignInButton.tsx",
+        "type": "button"
+      },
+      {
+        "name": "CustomGoogleButton",
+        "file": "apps/web/src/components/auth/CustomGoogleButton.tsx",
+        "type": "button"
+      }
+    ],
+    "routes": [
+      {
+        "path": "/privacy",
+        "component": "PrivacyPage"
+      },
+      {
+        "path": "/support",
+        "component": "SupportPage"
+      },
+      {
+        "path": "/dashboard",
+        "component": "DashboardPage"
+      },
+      {
+        "path": "/profile",
+        "component": "ProfilePage"
+      },
+      {
+        "path": "/clients",
+        "component": "ClientsPage"
+      },
+      {
+        "path": "/clients/:id",
+        "component": "ClientDetailPage"
+      },
+      {
+        "path": "/projects",
+        "component": "ProjectsPage"
+      },
+      {
+        "path": "/projects/new",
+        "component": "ProjectNewPage"
+      },
+      {
+        "path": "/projects/:id",
+        "component": "ProjectDetailPage"
+      },
+      {
+        "path": "/projects/:id/edit",
+        "component": "ProjectEditPage"
+      },
+      {
+        "path": "/projects/:id/scope/new",
+        "component": "ScopeItemEditPage"
+      },
+      {
+        "path": "/projects/:id/scope/edit",
+        "component": "ScopeItemEditPage"
+      },
+      {
+        "path": "/projects/:id/requests/new",
+        "component": "RequestEditPage"
+      },
+      {
+        "path": "/projects/:id/requests/edit",
+        "component": "RequestEditPage"
+      },
+      {
+        "path": "/projects/:id/proposals/new",
+        "component": "ProposalEditPage"
+      },
+      {
+        "path": "/projects/:id/proposals/edit",
+        "component": "ProposalEditPage"
+      },
+      {
+        "path": "/scope-items",
+        "component": "ScopeItemsPage"
+      },
+      {
+        "path": "/requests",
+        "component": "RequestsPage"
+      },
+      {
+        "path": "/proposals",
+        "component": "ProposalsPage"
+      },
+      {
+        "path": "/portal",
+        "component": "PortalPage"
+      },
+      {
+        "path": "/settings",
+        "component": "Navigate"
+      },
+      {
+        "path": "/settings/billing",
+        "component": "BillingPage"
+      },
+      {
+        "path": "/request/:token",
+        "component": "PublicRequestPage"
+      },
+      {
+        "path": "*",
+        "component": "Navigate"
+      }
+    ]
+  },
+  "backend": {
+    "endpoints": [
+      {
+        "method": "GET",
+        "path": "/profile",
+        "file": "v1/endpoints/users.py"
+      },
+      {
+        "method": "PATCH",
+        "path": "/profile",
+        "file": "v1/endpoints/users.py"
+      },
+      {
+        "method": "PATCH",
+        "path": "/complete-onboarding",
+        "file": "v1/endpoints/users.py"
+      },
+      {
+        "method": "GET",
+        "path": "/{project_id}/scope",
+        "file": "v1/endpoints/scope_items.py"
+      },
+      {
+        "method": "POST",
+        "path": "/{project_id}/scope",
+        "file": "v1/endpoints/scope_items.py"
+      },
+      {
+        "method": "GET",
+        "path": "/{project_id}/scope/progress",
+        "file": "v1/endpoints/scope_items.py"
+      },
+      {
+        "method": "PATCH",
+        "path": "/{project_id}/scope/{item_id}",
+        "file": "v1/endpoints/scope_items.py"
+      },
+      {
+        "method": "DELETE",
+        "path": "/{project_id}/scope/{item_id}",
+        "file": "v1/endpoints/scope_items.py"
+      },
+      {
+        "method": "POST",
+        "path": "/{project_id}/scope/reorder",
+        "file": "v1/endpoints/scope_items.py"
+      },
+      {
+        "method": "POST",
+        "path": "/analyze",
+        "file": "v1/endpoints/scope_analyzer.py"
+      },
+      {
+        "method": "POST",
+        "path": "/analyze/{request_id}",
+        "file": "v1/endpoints/scope_analyzer.py"
+      },
+      {
+        "method": "POST",
+        "path": "/analyze-project/{project_id}",
+        "file": "v1/endpoints/scope_analyzer.py"
+      },
+      {
+        "method": "GET",
+        "path": "/requests/{request_id}",
+        "file": "v1/endpoints/scope_analyzer.py"
+      },
+      {
+        "method": "GET",
+        "path": "/{token}",
+        "file": "v1/endpoints/public_requests.py"
+      },
+      {
+        "method": "POST",
+        "path": "/{token}",
+        "file": "v1/endpoints/public_requests.py"
+      },
+      {
+        "method": "GET",
+        "path": "/{project_id}/proposals",
+        "file": "v1/endpoints/proposals.py"
+      },
+      {
+        "method": "POST",
+        "path": "/{project_id}/proposals",
+        "file": "v1/endpoints/proposals.py"
+      },
+      {
+        "method": "POST",
+        "path": "/{project_id}/requests/{request_id}/create-proposal",
+        "file": "v1/endpoints/proposals.py"
+      },
+      {
+        "method": "GET",
+        "path": "/{project_id}/proposals/stats",
+        "file": "v1/endpoints/proposals.py"
+      },
+      {
+        "method": "GET",
+        "path": "/{project_id}/proposals/{proposal_id}",
+        "file": "v1/endpoints/proposals.py"
+      },
+      {
+        "method": "PATCH",
+        "path": "/{project_id}/proposals/{proposal_id}",
+        "file": "v1/endpoints/proposals.py"
+      },
+      {
+        "method": "POST",
+        "path": "/{project_id}/proposals/{proposal_id}/send",
+        "file": "v1/endpoints/proposals.py"
+      },
+      {
+        "method": "POST",
+        "path": "/{project_id}/proposals/{proposal_id}/accept",
+        "file": "v1/endpoints/proposals.py"
+      },
+      {
+        "method": "POST",
+        "path": "/{project_id}/proposals/{proposal_id}/decline",
+        "file": "v1/endpoints/proposals.py"
+      },
+      {
+        "method": "DELETE",
+        "path": "/{project_id}/proposals/{proposal_id}",
+        "file": "v1/endpoints/proposals.py"
+      },
+      {
+        "method": "GET",
+        "path": "/{project_id}",
+        "file": "v1/endpoints/projects.py"
+      },
+      {
+        "method": "GET",
+        "path": "/{project_id}/detail",
+        "file": "v1/endpoints/projects.py"
+      },
+      {
+        "method": "PATCH",
+        "path": "/{project_id}",
+        "file": "v1/endpoints/projects.py"
+      },
+      {
+        "method": "DELETE",
+        "path": "/{project_id}",
+        "file": "v1/endpoints/projects.py"
+      },
+      {
+        "method": "POST",
+        "path": "/{project_id}/enable-public-requests",
+        "file": "v1/endpoints/projects.py"
+      },
+      {
+        "method": "POST",
+        "path": "/{project_id}/disable-public-requests",
+        "file": "v1/endpoints/projects.py"
+      },
+      {
+        "method": "POST",
+        "path": "/{project_id}/regenerate-public-token",
+        "file": "v1/endpoints/projects.py"
+      },
+      {
+        "method": "GET",
+        "path": "/settings",
+        "file": "v1/endpoints/portal.py"
+      },
+      {
+        "method": "PUT",
+        "path": "/settings",
+        "file": "v1/endpoints/portal.py"
+      },
+      {
+        "method": "GET",
+        "path": "/clients",
+        "file": "v1/endpoints/portal.py"
+      },
+      {
+        "method": "POST",
+        "path": "/clients/{client_id}/invite",
+        "file": "v1/endpoints/portal.py"
+      },
+      {
+        "method": "DELETE",
+        "path": "/clients/{client_id}/access",
+        "file": "v1/endpoints/portal.py"
+      },
+      {
+        "method": "GET",
+        "path": "/invoices",
+        "file": "v1/endpoints/portal.py"
+      },
+      {
+        "method": "POST",
+        "path": "/invoices",
+        "file": "v1/endpoints/portal.py"
+      },
+      {
+        "method": "GET",
+        "path": "/invoices/{invoice_id}",
+        "file": "v1/endpoints/portal.py"
+      },
+      {
+        "method": "PUT",
+        "path": "/invoices/{invoice_id}",
+        "file": "v1/endpoints/portal.py"
+      },
+      {
+        "method": "DELETE",
+        "path": "/invoices/{invoice_id}",
+        "file": "v1/endpoints/portal.py"
+      },
+      {
+        "method": "GET",
+        "path": "/files",
+        "file": "v1/endpoints/portal.py"
+      },
+      {
+        "method": "POST",
+        "path": "/files",
+        "file": "v1/endpoints/portal.py"
+      },
+      {
+        "method": "DELETE",
+        "path": "/files/{file_id}",
+        "file": "v1/endpoints/portal.py"
+      },
+      {
+        "method": "GET",
+        "path": "/messages",
+        "file": "v1/endpoints/portal.py"
+      },
+      {
+        "method": "POST",
+        "path": "/messages",
+        "file": "v1/endpoints/portal.py"
+      },
+      {
+        "method": "PUT",
+        "path": "/messages/{message_id}/read",
+        "file": "v1/endpoints/portal.py"
+      },
+      {
+        "method": "GET",
+        "path": "/contracts",
+        "file": "v1/endpoints/portal.py"
+      },
+      {
+        "method": "POST",
+        "path": "/contracts",
+        "file": "v1/endpoints/portal.py"
+      },
+      {
+        "method": "DELETE",
+        "path": "/contracts/{contract_id}",
+        "file": "v1/endpoints/portal.py"
+      },
+      {
+        "method": "GET",
+        "path": "/summary",
+        "file": "v1/endpoints/dashboard.py"
+      },
+      {
+        "method": "GET",
+        "path": "/alerts",
+        "file": "v1/endpoints/dashboard.py"
+      },
+      {
+        "method": "GET",
+        "path": "/activity",
+        "file": "v1/endpoints/dashboard.py"
+      },
+      {
+        "method": "GET",
+        "path": "/projects/{project_id}/health",
+        "file": "v1/endpoints/dashboard.py"
+      },
+      {
+        "method": "GET",
+        "path": "/{client_id}",
+        "file": "v1/endpoints/clients.py"
+      },
+      {
+        "method": "PUT",
+        "path": "/{client_id}",
+        "file": "v1/endpoints/clients.py"
+      },
+      {
+        "method": "DELETE",
+        "path": "/{client_id}",
+        "file": "v1/endpoints/clients.py"
+      },
+      {
+        "method": "GET",
+        "path": "/{project_id}/requests",
+        "file": "v1/endpoints/client_requests.py"
+      },
+      {
+        "method": "POST",
+        "path": "/{project_id}/requests",
+        "file": "v1/endpoints/client_requests.py"
+      },
+      {
+        "method": "GET",
+        "path": "/{project_id}/requests/{request_id}",
+        "file": "v1/endpoints/client_requests.py"
+      },
+      {
+        "method": "PATCH",
+        "path": "/{project_id}/requests/{request_id}",
+        "file": "v1/endpoints/client_requests.py"
+      },
+      {
+        "method": "DELETE",
+        "path": "/{project_id}/requests/{request_id}",
+        "file": "v1/endpoints/client_requests.py"
+      },
+      {
+        "method": "POST",
+        "path": "/{project_id}/requests/{request_id}/classify",
+        "file": "v1/endpoints/client_requests.py"
+      },
+      {
+        "method": "POST",
+        "path": "/auth/verify",
+        "file": "v1/endpoints/client_portal.py"
+      },
+      {
+        "method": "GET",
+        "path": "/dashboard",
+        "file": "v1/endpoints/client_portal.py"
+      },
+      {
+        "method": "GET",
+        "path": "/projects",
+        "file": "v1/endpoints/client_portal.py"
+      },
+      {
+        "method": "GET",
+        "path": "/invoices",
+        "file": "v1/endpoints/client_portal.py"
+      },
+      {
+        "method": "POST",
+        "path": "/invoices/{invoice_id}/view",
+        "file": "v1/endpoints/client_portal.py"
+      },
+      {
+        "method": "GET",
+        "path": "/files",
+        "file": "v1/endpoints/client_portal.py"
+      },
+      {
+        "method": "GET",
+        "path": "/messages",
+        "file": "v1/endpoints/client_portal.py"
+      },
+      {
+        "method": "POST",
+        "path": "/messages",
+        "file": "v1/endpoints/client_portal.py"
+      },
+      {
+        "method": "PUT",
+        "path": "/messages/{message_id}/read",
+        "file": "v1/endpoints/client_portal.py"
+      },
+      {
+        "method": "GET",
+        "path": "/contracts",
+        "file": "v1/endpoints/client_portal.py"
+      },
+      {
+        "method": "POST",
+        "path": "/contracts/{contract_id}/sign",
+        "file": "v1/endpoints/client_portal.py"
+      },
+      {
+        "method": "GET",
+        "path": "/subscription",
+        "file": "v1/endpoints/billing.py"
+      },
+      {
+        "method": "GET",
+        "path": "/limits",
+        "file": "v1/endpoints/billing.py"
+      },
+      {
+        "method": "POST",
+        "path": "/create-checkout-session",
+        "file": "v1/endpoints/billing.py"
+      },
+      {
+        "method": "POST",
+        "path": "/create-portal-session",
+        "file": "v1/endpoints/billing.py"
+      },
+      {
+        "method": "POST",
+        "path": "/cancel",
+        "file": "v1/endpoints/billing.py"
+      },
+      {
+        "method": "POST",
+        "path": "/reactivate",
+        "file": "v1/endpoints/billing.py"
+      },
+      {
+        "method": "POST",
+        "path": "/webhook",
+        "file": "v1/endpoints/billing.py"
+      },
+      {
+        "method": "POST",
+        "path": "/register",
+        "file": "v1/endpoints/auth.py"
+      },
+      {
+        "method": "POST",
+        "path": "/login",
+        "file": "v1/endpoints/auth.py"
+      },
+      {
+        "method": "POST",
+        "path": "/google",
+        "file": "v1/endpoints/auth.py"
+      },
+      {
+        "method": "POST",
+        "path": "/google/token",
+        "file": "v1/endpoints/auth.py"
+      },
+      {
+        "method": "GET",
+        "path": "/me",
+        "file": "v1/endpoints/auth.py"
+      },
+      {
+        "method": "POST",
+        "path": "/forgot-password",
+        "file": "v1/endpoints/auth.py"
+      },
+      {
+        "method": "POST",
+        "path": "/reset-password",
+        "file": "v1/endpoints/auth.py"
+      },
+      {
+        "method": "POST",
+        "path": "/verify-reset-token",
+        "file": "v1/endpoints/auth.py"
+      }
+    ],
+    "models": [
+      {
+        "name": "User",
+        "file": "app/models/user.py"
+      },
+      {
+        "name": "Subscription",
+        "file": "app/models/subscription.py"
+      },
+      {
+        "name": "ScopeItem",
+        "file": "app/models/scope_item.py"
+      },
+      {
+        "name": "Proposal",
+        "file": "app/models/proposal.py"
+      },
+      {
+        "name": "Project",
+        "file": "app/models/project.py"
+      },
+      {
+        "name": "Portal",
+        "file": "app/models/portal.py"
+      },
+      {
+        "name": "Enums",
+        "file": "app/models/enums.py"
+      },
+      {
+        "name": "ClientRequest",
+        "file": "app/models/client_request.py"
+      },
+      {
+        "name": "Client",
+        "file": "app/models/client.py"
+      },
+      {
+        "name": "Base",
+        "file": "app/models/base.py"
+      }
+    ]
+  },
+  "features": [
+    {
+      "name": "{clientId}",
+      "frontend": null,
+      "backend": "GET /{client_id}, PUT /{client_id}, DELETE /{client_id}",
+      "status": "partial",
+      "pages": [],
+      "endpoints": [
+        {
+          "method": "GET",
+          "path": "/{client_id}",
+          "file": "v1/endpoints/clients.py"
+        },
+        {
+          "method": "PUT",
+          "path": "/{client_id}",
+          "file": "v1/endpoints/clients.py"
+        },
+        {
+          "method": "DELETE",
+          "path": "/{client_id}",
+          "file": "v1/endpoints/clients.py"
+        }
+      ]
+    },
+    {
+      "name": "{projectId}",
+      "frontend": null,
+      "backend": "GET /{project_id}/scope, POST /{project_id}/scope, GET /{project_id}/scope/progress, PATCH /{project_id}/scope/{item_id}, DELETE /{project_id}/scope/{item_id}, POST /{project_id}/scope/reorder, GET /{project_id}/proposals, POST /{project_id}/proposals, POST /{project_id}/requests/{request_id}/create-proposal, GET /{project_id}/proposals/stats, GET /{project_id}/proposals/{proposal_id}, PATCH /{project_id}/proposals/{proposal_id}, POST /{project_id}/proposals/{proposal_id}/send, POST /{project_id}/proposals/{proposal_id}/accept, POST /{project_id}/proposals/{proposal_id}/decline, DELETE /{project_id}/proposals/{proposal_id}, GET /{project_id}, GET /{project_id}/detail, PATCH /{project_id}, DELETE /{project_id}, POST /{project_id}/enable-public-requests, POST /{project_id}/disable-public-requests, POST /{project_id}/regenerate-public-token, GET /{project_id}/requests, POST /{project_id}/requests, GET /{project_id}/requests/{request_id}, PATCH /{project_id}/requests/{request_id}, DELETE /{project_id}/requests/{request_id}, POST /{project_id}/requests/{request_id}/classify",
+      "status": "partial",
+      "pages": [],
+      "endpoints": [
+        {
+          "method": "GET",
+          "path": "/{project_id}/scope",
+          "file": "v1/endpoints/scope_items.py"
+        },
+        {
+          "method": "POST",
+          "path": "/{project_id}/scope",
+          "file": "v1/endpoints/scope_items.py"
+        },
+        {
+          "method": "GET",
+          "path": "/{project_id}/scope/progress",
+          "file": "v1/endpoints/scope_items.py"
+        },
+        {
+          "method": "PATCH",
+          "path": "/{project_id}/scope/{item_id}",
+          "file": "v1/endpoints/scope_items.py"
+        },
+        {
+          "method": "DELETE",
+          "path": "/{project_id}/scope/{item_id}",
+          "file": "v1/endpoints/scope_items.py"
+        },
+        {
+          "method": "POST",
+          "path": "/{project_id}/scope/reorder",
+          "file": "v1/endpoints/scope_items.py"
+        },
+        {
+          "method": "GET",
+          "path": "/{project_id}/proposals",
+          "file": "v1/endpoints/proposals.py"
+        },
+        {
+          "method": "POST",
+          "path": "/{project_id}/proposals",
+          "file": "v1/endpoints/proposals.py"
+        },
+        {
+          "method": "POST",
+          "path": "/{project_id}/requests/{request_id}/create-proposal",
+          "file": "v1/endpoints/proposals.py"
+        },
+        {
+          "method": "GET",
+          "path": "/{project_id}/proposals/stats",
+          "file": "v1/endpoints/proposals.py"
+        },
+        {
+          "method": "GET",
+          "path": "/{project_id}/proposals/{proposal_id}",
+          "file": "v1/endpoints/proposals.py"
+        },
+        {
+          "method": "PATCH",
+          "path": "/{project_id}/proposals/{proposal_id}",
+          "file": "v1/endpoints/proposals.py"
+        },
+        {
+          "method": "POST",
+          "path": "/{project_id}/proposals/{proposal_id}/send",
+          "file": "v1/endpoints/proposals.py"
+        },
+        {
+          "method": "POST",
+          "path": "/{project_id}/proposals/{proposal_id}/accept",
+          "file": "v1/endpoints/proposals.py"
+        },
+        {
+          "method": "POST",
+          "path": "/{project_id}/proposals/{proposal_id}/decline",
+          "file": "v1/endpoints/proposals.py"
+        },
+        {
+          "method": "DELETE",
+          "path": "/{project_id}/proposals/{proposal_id}",
+          "file": "v1/endpoints/proposals.py"
+        },
+        {
+          "method": "GET",
+          "path": "/{project_id}",
+          "file": "v1/endpoints/projects.py"
+        },
+        {
+          "method": "GET",
+          "path": "/{project_id}/detail",
+          "file": "v1/endpoints/projects.py"
+        },
+        {
+          "method": "PATCH",
+          "path": "/{project_id}",
+          "file": "v1/endpoints/projects.py"
+        },
+        {
+          "method": "DELETE",
+          "path": "/{project_id}",
+          "file": "v1/endpoints/projects.py"
+        },
+        {
+          "method": "POST",
+          "path": "/{project_id}/enable-public-requests",
+          "file": "v1/endpoints/projects.py"
+        },
+        {
+          "method": "POST",
+          "path": "/{project_id}/disable-public-requests",
+          "file": "v1/endpoints/projects.py"
+        },
+        {
+          "method": "POST",
+          "path": "/{project_id}/regenerate-public-token",
+          "file": "v1/endpoints/projects.py"
+        },
+        {
+          "method": "GET",
+          "path": "/{project_id}/requests",
+          "file": "v1/endpoints/client_requests.py"
+        },
+        {
+          "method": "POST",
+          "path": "/{project_id}/requests",
+          "file": "v1/endpoints/client_requests.py"
+        },
+        {
+          "method": "GET",
+          "path": "/{project_id}/requests/{request_id}",
+          "file": "v1/endpoints/client_requests.py"
+        },
+        {
+          "method": "PATCH",
+          "path": "/{project_id}/requests/{request_id}",
+          "file": "v1/endpoints/client_requests.py"
+        },
+        {
+          "method": "DELETE",
+          "path": "/{project_id}/requests/{request_id}",
+          "file": "v1/endpoints/client_requests.py"
+        },
+        {
+          "method": "POST",
+          "path": "/{project_id}/requests/{request_id}/classify",
+          "file": "v1/endpoints/client_requests.py"
+        }
+      ]
+    },
+    {
+      "name": "{token}",
+      "frontend": null,
+      "backend": "GET /{token}, POST /{token}",
+      "status": "partial",
+      "pages": [],
+      "endpoints": [
+        {
+          "method": "GET",
+          "path": "/{token}",
+          "file": "v1/endpoints/public_requests.py"
+        },
+        {
+          "method": "POST",
+          "path": "/{token}",
+          "file": "v1/endpoints/public_requests.py"
+        }
+      ]
+    },
+    {
+      "name": "Activity",
+      "frontend": null,
+      "backend": "GET /activity",
+      "status": "partial",
+      "pages": [],
+      "endpoints": [
+        {
+          "method": "GET",
+          "path": "/activity",
+          "file": "v1/endpoints/dashboard.py"
+        }
+      ]
+    },
+    {
+      "name": "Alerts",
+      "frontend": null,
+      "backend": "GET /alerts",
+      "status": "partial",
+      "pages": [],
+      "endpoints": [
+        {
+          "method": "GET",
+          "path": "/alerts",
+          "file": "v1/endpoints/dashboard.py"
+        }
+      ]
+    },
+    {
+      "name": "AnalysisPanel",
+      "frontend": "apps/web/src/pages/projects/requests/AnalysisPanel.tsx",
+      "backend": null,
+      "status": "partial",
+      "pages": [
+        {
+          "name": "AnalysisPanel",
+          "file": "apps/web/src/pages/projects/requests/AnalysisPanel.tsx",
+          "route": "/projects/requests/AnalysisPanel",
+          "type": "page"
+        }
+      ],
+      "endpoints": []
+    },
+    {
+      "name": "Analyze",
+      "frontend": null,
+      "backend": "POST /analyze, POST /analyze/{request_id}",
+      "status": "partial",
+      "pages": [],
+      "endpoints": [
+        {
+          "method": "POST",
+          "path": "/analyze",
+          "file": "v1/endpoints/scope_analyzer.py"
+        },
+        {
+          "method": "POST",
+          "path": "/analyze/{request_id}",
+          "file": "v1/endpoints/scope_analyzer.py"
+        }
+      ]
+    },
+    {
+      "name": "AnalyzeProject",
+      "frontend": null,
+      "backend": "POST /analyze-project/{project_id}",
+      "status": "partial",
+      "pages": [],
+      "endpoints": [
+        {
+          "method": "POST",
+          "path": "/analyze-project/{project_id}",
+          "file": "v1/endpoints/scope_analyzer.py"
+        }
+      ]
+    },
+    {
+      "name": "Auth",
+      "frontend": null,
+      "backend": "POST /auth/verify",
+      "status": "partial",
+      "pages": [],
+      "endpoints": [
+        {
+          "method": "POST",
+          "path": "/auth/verify",
+          "file": "v1/endpoints/client_portal.py"
+        }
+      ]
+    },
+    {
+      "name": "Billing",
+      "frontend": "apps/web/src/pages/settings/BillingPage.tsx",
+      "backend": null,
+      "status": "partial",
+      "pages": [
+        {
+          "name": "BillingPage",
+          "file": "apps/web/src/pages/settings/BillingPage.tsx",
+          "route": "/settings/BillingPage",
+          "type": "page"
+        }
+      ],
+      "endpoints": []
+    },
+    {
+      "name": "Cancel",
+      "frontend": null,
+      "backend": "POST /cancel",
+      "status": "partial",
+      "pages": [],
+      "endpoints": [
+        {
+          "method": "POST",
+          "path": "/cancel",
+          "file": "v1/endpoints/billing.py"
+        }
+      ]
+    },
+    {
+      "name": "Client",
+      "frontend": "apps/web/src/pages/clients/ClientDetailPage.tsx",
+      "backend": null,
+      "status": "partial",
+      "pages": [
+        {
+          "name": "ClientDetailPage",
+          "file": "apps/web/src/pages/clients/ClientDetailPage.tsx",
+          "route": "/clients/ClientDetailPage",
+          "type": "detail"
+        }
+      ],
+      "endpoints": []
+    },
+    {
+      "name": "ClientFormModal",
+      "frontend": "apps/web/src/pages/clients/ClientFormModal.tsx",
+      "backend": null,
+      "status": "partial",
+      "pages": [
+        {
+          "name": "ClientFormModal",
+          "file": "apps/web/src/pages/clients/ClientFormModal.tsx",
+          "route": "/clients/ClientFormModal",
+          "type": "form"
+        }
+      ],
+      "endpoints": []
+    },
+    {
+      "name": "Clients",
+      "frontend": "apps/web/src/pages/clients/ClientsPage.tsx",
+      "backend": "GET /clients, POST /clients/{client_id}/invite, DELETE /clients/{client_id}/access",
+      "status": "complete",
+      "pages": [
+        {
+          "name": "ClientsPage",
+          "file": "apps/web/src/pages/clients/ClientsPage.tsx",
+          "route": "/clients/ClientsPage",
+          "type": "page"
+        }
+      ],
+      "endpoints": [
+        {
+          "method": "GET",
+          "path": "/clients",
+          "file": "v1/endpoints/portal.py"
+        },
+        {
+          "method": "POST",
+          "path": "/clients/{client_id}/invite",
+          "file": "v1/endpoints/portal.py"
+        },
+        {
+          "method": "DELETE",
+          "path": "/clients/{client_id}/access",
+          "file": "v1/endpoints/portal.py"
+        }
+      ]
+    },
+    {
+      "name": "CompleteOnboarding",
+      "frontend": null,
+      "backend": "PATCH /complete-onboarding",
+      "status": "partial",
+      "pages": [],
+      "endpoints": [
+        {
+          "method": "PATCH",
+          "path": "/complete-onboarding",
+          "file": "v1/endpoints/users.py"
+        }
+      ]
+    },
+    {
+      "name": "Contracts",
+      "frontend": null,
+      "backend": "GET /contracts, POST /contracts, DELETE /contracts/{contract_id}, GET /contracts, POST /contracts/{contract_id}/sign",
+      "status": "partial",
+      "pages": [],
+      "endpoints": [
+        {
+          "method": "GET",
+          "path": "/contracts",
+          "file": "v1/endpoints/portal.py"
+        },
+        {
+          "method": "POST",
+          "path": "/contracts",
+          "file": "v1/endpoints/portal.py"
+        },
+        {
+          "method": "DELETE",
+          "path": "/contracts/{contract_id}",
+          "file": "v1/endpoints/portal.py"
+        },
+        {
+          "method": "GET",
+          "path": "/contracts",
+          "file": "v1/endpoints/client_portal.py"
+        },
+        {
+          "method": "POST",
+          "path": "/contracts/{contract_id}/sign",
+          "file": "v1/endpoints/client_portal.py"
+        }
+      ]
+    },
+    {
+      "name": "CreateCheckoutSession",
+      "frontend": null,
+      "backend": "POST /create-checkout-session",
+      "status": "partial",
+      "pages": [],
+      "endpoints": [
+        {
+          "method": "POST",
+          "path": "/create-checkout-session",
+          "file": "v1/endpoints/billing.py"
+        }
+      ]
+    },
+    {
+      "name": "CreatePortalSession",
+      "frontend": null,
+      "backend": "POST /create-portal-session",
+      "status": "partial",
+      "pages": [],
+      "endpoints": [
+        {
+          "method": "POST",
+          "path": "/create-portal-session",
+          "file": "v1/endpoints/billing.py"
+        }
+      ]
+    },
+    {
+      "name": "CreateProposalFromRequest",
+      "frontend": "apps/web/src/pages/projects/requests/CreateProposalFromRequest.tsx",
+      "backend": null,
+      "status": "partial",
+      "pages": [
+        {
+          "name": "CreateProposalFromRequest",
+          "file": "apps/web/src/pages/projects/requests/CreateProposalFromRequest.tsx",
+          "route": "/projects/requests/CreateProposalFromRequest",
+          "type": "create"
+        }
+      ],
+      "endpoints": []
+    },
+    {
+      "name": "Dashboard",
+      "frontend": "apps/web/src/pages/dashboard/DashboardPage.tsx",
+      "backend": "GET /dashboard",
+      "status": "complete",
+      "pages": [
+        {
+          "name": "DashboardPage",
+          "file": "apps/web/src/pages/dashboard/DashboardPage.tsx",
+          "route": "/dashboard/DashboardPage",
+          "type": "dashboard"
+        }
+      ],
+      "endpoints": [
+        {
+          "method": "GET",
+          "path": "/dashboard",
+          "file": "v1/endpoints/client_portal.py"
+        }
+      ]
+    },
+    {
+      "name": "DashboardPage_copy",
+      "frontend": "apps/web/src/pages/dashboard/DashboardPage_copy.tsx",
+      "backend": null,
+      "status": "partial",
+      "pages": [
+        {
+          "name": "DashboardPage_copy",
+          "file": "apps/web/src/pages/dashboard/DashboardPage_copy.tsx",
+          "route": "/dashboard/DashboardPage_copy",
+          "type": "dashboard"
+        }
+      ],
+      "endpoints": []
+    },
+    {
+      "name": "DeleteClientModal",
+      "frontend": "apps/web/src/pages/clients/DeleteClientModal.tsx",
+      "backend": null,
+      "status": "partial",
+      "pages": [
+        {
+          "name": "DeleteClientModal",
+          "file": "apps/web/src/pages/clients/DeleteClientModal.tsx",
+          "route": "/clients/DeleteClientModal",
+          "type": "page"
+        }
+      ],
+      "endpoints": []
+    },
+    {
+      "name": "DeleteScopeItemModal",
+      "frontend": "apps/web/src/pages/projects/scope/DeleteScopeItemModal.tsx",
+      "backend": null,
+      "status": "partial",
+      "pages": [
+        {
+          "name": "DeleteScopeItemModal",
+          "file": "apps/web/src/pages/projects/scope/DeleteScopeItemModal.tsx",
+          "route": "/projects/scope/DeleteScopeItemModal",
+          "type": "page"
+        }
+      ],
+      "endpoints": []
+    },
+    {
+      "name": "Files",
+      "frontend": null,
+      "backend": "GET /files, POST /files, DELETE /files/{file_id}, GET /files",
+      "status": "partial",
+      "pages": [],
+      "endpoints": [
+        {
+          "method": "GET",
+          "path": "/files",
+          "file": "v1/endpoints/portal.py"
+        },
+        {
+          "method": "POST",
+          "path": "/files",
+          "file": "v1/endpoints/portal.py"
+        },
+        {
+          "method": "DELETE",
+          "path": "/files/{file_id}",
+          "file": "v1/endpoints/portal.py"
+        },
+        {
+          "method": "GET",
+          "path": "/files",
+          "file": "v1/endpoints/client_portal.py"
+        }
+      ]
+    },
+    {
+      "name": "ForgotPassword",
+      "frontend": "apps/web/src/pages/auth/ForgotPasswordPage.tsx",
+      "backend": "POST /forgot-password",
+      "status": "complete",
+      "pages": [
+        {
+          "name": "ForgotPasswordPage",
+          "file": "apps/web/src/pages/auth/ForgotPasswordPage.tsx",
+          "route": "/auth/ForgotPasswordPage",
+          "type": "page"
+        }
+      ],
+      "endpoints": [
+        {
+          "method": "POST",
+          "path": "/forgot-password",
+          "file": "v1/endpoints/auth.py"
+        }
+      ]
+    },
+    {
+      "name": "Google",
+      "frontend": null,
+      "backend": "POST /google, POST /google/token",
+      "status": "partial",
+      "pages": [],
+      "endpoints": [
+        {
+          "method": "POST",
+          "path": "/google",
+          "file": "v1/endpoints/auth.py"
+        },
+        {
+          "method": "POST",
+          "path": "/google/token",
+          "file": "v1/endpoints/auth.py"
+        }
+      ]
+    },
+    {
+      "name": "Invoices",
+      "frontend": null,
+      "backend": "GET /invoices, POST /invoices, GET /invoices/{invoice_id}, PUT /invoices/{invoice_id}, DELETE /invoices/{invoice_id}, GET /invoices, POST /invoices/{invoice_id}/view",
+      "status": "partial",
+      "pages": [],
+      "endpoints": [
+        {
+          "method": "GET",
+          "path": "/invoices",
+          "file": "v1/endpoints/portal.py"
+        },
+        {
+          "method": "POST",
+          "path": "/invoices",
+          "file": "v1/endpoints/portal.py"
+        },
+        {
+          "method": "GET",
+          "path": "/invoices/{invoice_id}",
+          "file": "v1/endpoints/portal.py"
+        },
+        {
+          "method": "PUT",
+          "path": "/invoices/{invoice_id}",
+          "file": "v1/endpoints/portal.py"
+        },
+        {
+          "method": "DELETE",
+          "path": "/invoices/{invoice_id}",
+          "file": "v1/endpoints/portal.py"
+        },
+        {
+          "method": "GET",
+          "path": "/invoices",
+          "file": "v1/endpoints/client_portal.py"
+        },
+        {
+          "method": "POST",
+          "path": "/invoices/{invoice_id}/view",
+          "file": "v1/endpoints/client_portal.py"
+        }
+      ]
+    },
+    {
+      "name": "Landing",
+      "frontend": "apps/web/src/pages/landing/LandingPage.tsx",
+      "backend": null,
+      "status": "partial",
+      "pages": [
+        {
+          "name": "LandingPage",
+          "file": "apps/web/src/pages/landing/LandingPage.tsx",
+          "route": "/landing/LandingPage",
+          "type": "page"
+        }
+      ],
+      "endpoints": []
+    },
+    {
+      "name": "Limits",
+      "frontend": null,
+      "backend": "GET /limits",
+      "status": "partial",
+      "pages": [],
+      "endpoints": [
+        {
+          "method": "GET",
+          "path": "/limits",
+          "file": "v1/endpoints/billing.py"
+        }
+      ]
+    },
+    {
+      "name": "Login",
+      "frontend": "apps/web/src/pages/auth/LoginPage.tsx",
+      "backend": "POST /login",
+      "status": "complete",
+      "pages": [
+        {
+          "name": "LoginPage",
+          "file": "apps/web/src/pages/auth/LoginPage.tsx",
+          "route": "/auth/LoginPage",
+          "type": "auth"
+        }
+      ],
+      "endpoints": [
+        {
+          "method": "POST",
+          "path": "/login",
+          "file": "v1/endpoints/auth.py"
+        }
+      ]
+    },
+    {
+      "name": "Me",
+      "frontend": null,
+      "backend": "GET /me",
+      "status": "partial",
+      "pages": [],
+      "endpoints": [
+        {
+          "method": "GET",
+          "path": "/me",
+          "file": "v1/endpoints/auth.py"
+        }
+      ]
+    },
+    {
+      "name": "Messages",
+      "frontend": null,
+      "backend": "GET /messages, POST /messages, PUT /messages/{message_id}/read, GET /messages, POST /messages, PUT /messages/{message_id}/read",
+      "status": "partial",
+      "pages": [],
+      "endpoints": [
+        {
+          "method": "GET",
+          "path": "/messages",
+          "file": "v1/endpoints/portal.py"
+        },
+        {
+          "method": "POST",
+          "path": "/messages",
+          "file": "v1/endpoints/portal.py"
+        },
+        {
+          "method": "PUT",
+          "path": "/messages/{message_id}/read",
+          "file": "v1/endpoints/portal.py"
+        },
+        {
+          "method": "GET",
+          "path": "/messages",
+          "file": "v1/endpoints/client_portal.py"
+        },
+        {
+          "method": "POST",
+          "path": "/messages",
+          "file": "v1/endpoints/client_portal.py"
+        },
+        {
+          "method": "PUT",
+          "path": "/messages/{message_id}/read",
+          "file": "v1/endpoints/client_portal.py"
+        }
+      ]
+    },
+    {
+      "name": "Onboarding",
+      "frontend": "apps/web/src/pages/onboarding/OnboardingPage.tsx",
+      "backend": null,
+      "status": "partial",
+      "pages": [
+        {
+          "name": "OnboardingPage",
+          "file": "apps/web/src/pages/onboarding/OnboardingPage.tsx",
+          "route": "/onboarding/OnboardingPage",
+          "type": "page"
+        }
+      ],
+      "endpoints": []
+    },
+    {
+      "name": "Portal",
+      "frontend": "apps/web/src/pages/portal/PortalPage.tsx",
+      "backend": null,
+      "status": "partial",
+      "pages": [
+        {
+          "name": "PortalPage",
+          "file": "apps/web/src/pages/portal/PortalPage.tsx",
+          "route": "/portal/PortalPage",
+          "type": "page"
+        }
+      ],
+      "endpoints": []
+    },
+    {
+      "name": "Privacy",
+      "frontend": "apps/web/src/pages/legal/PrivacyPage.tsx",
+      "backend": null,
+      "status": "partial",
+      "pages": [
+        {
+          "name": "PrivacyPage",
+          "file": "apps/web/src/pages/legal/PrivacyPage.tsx",
+          "route": "/legal/PrivacyPage",
+          "type": "page"
+        }
+      ],
+      "endpoints": []
+    },
+    {
+      "name": "Profile",
+      "frontend": "apps/web/src/pages/auth/ProfilePage.tsx",
+      "backend": "GET /profile, PATCH /profile",
+      "status": "complete",
+      "pages": [
+        {
+          "name": "ProfilePage",
+          "file": "apps/web/src/pages/auth/ProfilePage.tsx",
+          "route": "/auth/ProfilePage",
+          "type": "settings"
+        }
+      ],
+      "endpoints": [
+        {
+          "method": "GET",
+          "path": "/profile",
+          "file": "v1/endpoints/users.py"
+        },
+        {
+          "method": "PATCH",
+          "path": "/profile",
+          "file": "v1/endpoints/users.py"
+        }
+      ]
+    },
+    {
+      "name": "Project",
+      "frontend": "apps/web/src/pages/projects/ProjectNewPage.tsx, apps/web/src/pages/projects/ProjectEditPage.tsx, apps/web/src/pages/projects/ProjectDetailPage.tsx",
+      "backend": null,
+      "status": "partial",
+      "pages": [
+        {
+          "name": "ProjectNewPage",
+          "file": "apps/web/src/pages/projects/ProjectNewPage.tsx",
+          "route": "/projects/ProjectNewPage",
+          "type": "create"
+        },
+        {
+          "name": "ProjectEditPage",
+          "file": "apps/web/src/pages/projects/ProjectEditPage.tsx",
+          "route": "/projects/ProjectEditPage",
+          "type": "form"
+        },
+        {
+          "name": "ProjectDetailPage",
+          "file": "apps/web/src/pages/projects/ProjectDetailPage.tsx",
+          "route": "/projects/ProjectDetailPage",
+          "type": "detail"
+        }
+      ],
+      "endpoints": []
+    },
+    {
+      "name": "ProjectFormModal",
+      "frontend": "apps/web/src/pages/projects/ProjectFormModal.tsx",
+      "backend": null,
+      "status": "partial",
+      "pages": [
+        {
+          "name": "ProjectFormModal",
+          "file": "apps/web/src/pages/projects/ProjectFormModal.tsx",
+          "route": "/projects/ProjectFormModal",
+          "type": "form"
+        }
+      ],
+      "endpoints": []
+    },
+    {
+      "name": "ProjectHealthGauge",
+      "frontend": "apps/web/src/pages/projects/ProjectHealthGauge.tsx",
+      "backend": null,
+      "status": "partial",
+      "pages": [
+        {
+          "name": "ProjectHealthGauge",
+          "file": "apps/web/src/pages/projects/ProjectHealthGauge.tsx",
+          "route": "/projects/ProjectHealthGauge",
+          "type": "page"
+        }
+      ],
+      "endpoints": []
+    },
+    {
+      "name": "Projects",
+      "frontend": "apps/web/src/pages/projects/ProjectsPage.tsx",
+      "backend": "GET /projects/{project_id}/health, GET /projects",
+      "status": "complete",
+      "pages": [
+        {
+          "name": "ProjectsPage",
+          "file": "apps/web/src/pages/projects/ProjectsPage.tsx",
+          "route": "/projects/ProjectsPage",
+          "type": "page"
+        }
+      ],
+      "endpoints": [
+        {
+          "method": "GET",
+          "path": "/projects/{project_id}/health",
+          "file": "v1/endpoints/dashboard.py"
+        },
+        {
+          "method": "GET",
+          "path": "/projects",
+          "file": "v1/endpoints/client_portal.py"
+        }
+      ]
+    },
+    {
+      "name": "ProjectStatusBadge",
+      "frontend": "apps/web/src/pages/projects/ProjectStatusBadge.tsx",
+      "backend": null,
+      "status": "partial",
+      "pages": [
+        {
+          "name": "ProjectStatusBadge",
+          "file": "apps/web/src/pages/projects/ProjectStatusBadge.tsx",
+          "route": "/projects/ProjectStatusBadge",
+          "type": "page"
+        }
+      ],
+      "endpoints": []
+    },
+    {
+      "name": "Proposal",
+      "frontend": "apps/web/src/pages/projects/proposals/ProposalEditPage.tsx",
+      "backend": null,
+      "status": "partial",
+      "pages": [
+        {
+          "name": "ProposalEditPage",
+          "file": "apps/web/src/pages/projects/proposals/ProposalEditPage.tsx",
+          "route": "/projects/proposals/ProposalEditPage",
+          "type": "form"
+        }
+      ],
+      "endpoints": []
+    },
+    {
+      "name": "ProposalCard",
+      "frontend": "apps/web/src/pages/projects/proposals/ProposalCard.tsx",
+      "backend": null,
+      "status": "partial",
+      "pages": [
+        {
+          "name": "ProposalCard",
+          "file": "apps/web/src/pages/projects/proposals/ProposalCard.tsx",
+          "route": "/projects/proposals/ProposalCard",
+          "type": "page"
+        }
+      ],
+      "endpoints": []
+    },
+    {
+      "name": "ProposalFormModal",
+      "frontend": "apps/web/src/pages/projects/proposals/ProposalFormModal.tsx",
+      "backend": null,
+      "status": "partial",
+      "pages": [
+        {
+          "name": "ProposalFormModal",
+          "file": "apps/web/src/pages/projects/proposals/ProposalFormModal.tsx",
+          "route": "/projects/proposals/ProposalFormModal",
+          "type": "form"
+        }
+      ],
+      "endpoints": []
+    },
+    {
+      "name": "ProposalResponseModal",
+      "frontend": "apps/web/src/pages/projects/proposals/ProposalResponseModal.tsx",
+      "backend": null,
+      "status": "partial",
+      "pages": [
+        {
+          "name": "ProposalResponseModal",
+          "file": "apps/web/src/pages/projects/proposals/ProposalResponseModal.tsx",
+          "route": "/projects/proposals/ProposalResponseModal",
+          "type": "page"
+        }
+      ],
+      "endpoints": []
+    },
+    {
+      "name": "ProposalRow",
+      "frontend": "apps/web/src/pages/projects/proposals/ProposalRow.tsx",
+      "backend": null,
+      "status": "partial",
+      "pages": [
+        {
+          "name": "ProposalRow",
+          "file": "apps/web/src/pages/projects/proposals/ProposalRow.tsx",
+          "route": "/projects/proposals/ProposalRow",
+          "type": "page"
+        }
+      ],
+      "endpoints": []
+    },
+    {
+      "name": "Proposals",
+      "frontend": "apps/web/src/pages/projects/proposals/ProposalsPage.tsx",
+      "backend": null,
+      "status": "partial",
+      "pages": [
+        {
+          "name": "ProposalsPage",
+          "file": "apps/web/src/pages/projects/proposals/ProposalsPage.tsx",
+          "route": "/projects/proposals/ProposalsPage",
+          "type": "page"
+        }
+      ],
+      "endpoints": []
+    },
+    {
+      "name": "ProposalsTab",
+      "frontend": "apps/web/src/pages/projects/proposals/ProposalsTab.tsx",
+      "backend": null,
+      "status": "partial",
+      "pages": [
+        {
+          "name": "ProposalsTab",
+          "file": "apps/web/src/pages/projects/proposals/ProposalsTab.tsx",
+          "route": "/projects/proposals/ProposalsTab",
+          "type": "page"
+        }
+      ],
+      "endpoints": []
+    },
+    {
+      "name": "ProposalStats",
+      "frontend": "apps/web/src/pages/projects/proposals/ProposalStats.tsx",
+      "backend": null,
+      "status": "partial",
+      "pages": [
+        {
+          "name": "ProposalStats",
+          "file": "apps/web/src/pages/projects/proposals/ProposalStats.tsx",
+          "route": "/projects/proposals/ProposalStats",
+          "type": "page"
+        }
+      ],
+      "endpoints": []
+    },
+    {
+      "name": "ProposalStatusBadge",
+      "frontend": "apps/web/src/pages/projects/proposals/ProposalStatusBadge.tsx",
+      "backend": null,
+      "status": "partial",
+      "pages": [
+        {
+          "name": "ProposalStatusBadge",
+          "file": "apps/web/src/pages/projects/proposals/ProposalStatusBadge.tsx",
+          "route": "/projects/proposals/ProposalStatusBadge",
+          "type": "page"
+        }
+      ],
+      "endpoints": []
+    },
+    {
+      "name": "PublicRequest",
+      "frontend": "apps/web/src/pages/public-request/PublicRequestPage.tsx",
+      "backend": null,
+      "status": "partial",
+      "pages": [
+        {
+          "name": "PublicRequestPage",
+          "file": "apps/web/src/pages/public-request/PublicRequestPage.tsx",
+          "route": "/public-request/PublicRequestPage",
+          "type": "page"
+        }
+      ],
+      "endpoints": []
+    },
+    {
+      "name": "Reactivate",
+      "frontend": null,
+      "backend": "POST /reactivate",
+      "status": "partial",
+      "pages": [],
+      "endpoints": [
+        {
+          "method": "POST",
+          "path": "/reactivate",
+          "file": "v1/endpoints/billing.py"
+        }
+      ]
+    },
+    {
+      "name": "Register",
+      "frontend": "apps/web/src/pages/auth/RegisterPage.tsx",
+      "backend": "POST /register",
+      "status": "complete",
+      "pages": [
+        {
+          "name": "RegisterPage",
+          "file": "apps/web/src/pages/auth/RegisterPage.tsx",
+          "route": "/auth/RegisterPage",
+          "type": "auth"
+        }
+      ],
+      "endpoints": [
+        {
+          "method": "POST",
+          "path": "/register",
+          "file": "v1/endpoints/auth.py"
+        }
+      ]
+    },
+    {
+      "name": "Request",
+      "frontend": "apps/web/src/pages/projects/requests/RequestEditPage.tsx",
+      "backend": null,
+      "status": "partial",
+      "pages": [
+        {
+          "name": "RequestEditPage",
+          "file": "apps/web/src/pages/projects/requests/RequestEditPage.tsx",
+          "route": "/projects/requests/RequestEditPage",
+          "type": "form"
+        }
+      ],
+      "endpoints": []
+    },
+    {
+      "name": "RequestCard",
+      "frontend": "apps/web/src/pages/projects/requests/RequestCard.tsx",
+      "backend": null,
+      "status": "partial",
+      "pages": [
+        {
+          "name": "RequestCard",
+          "file": "apps/web/src/pages/projects/requests/RequestCard.tsx",
+          "route": "/projects/requests/RequestCard",
+          "type": "page"
+        }
+      ],
+      "endpoints": []
+    },
+    {
+      "name": "RequestClassificationBadge",
+      "frontend": "apps/web/src/pages/projects/requests/RequestClassificationBadge.tsx",
+      "backend": null,
+      "status": "partial",
+      "pages": [
+        {
+          "name": "RequestClassificationBadge",
+          "file": "apps/web/src/pages/projects/requests/RequestClassificationBadge.tsx",
+          "route": "/projects/requests/RequestClassificationBadge",
+          "type": "page"
+        }
+      ],
+      "endpoints": []
+    },
+    {
+      "name": "RequestEditModal",
+      "frontend": "apps/web/src/pages/projects/requests/RequestEditModal.tsx",
+      "backend": null,
+      "status": "partial",
+      "pages": [
+        {
+          "name": "RequestEditModal",
+          "file": "apps/web/src/pages/projects/requests/RequestEditModal.tsx",
+          "route": "/projects/requests/RequestEditModal",
+          "type": "form"
+        }
+      ],
+      "endpoints": []
+    },
+    {
+      "name": "RequestFormModal",
+      "frontend": "apps/web/src/pages/projects/requests/RequestFormModal.tsx",
+      "backend": null,
+      "status": "partial",
+      "pages": [
+        {
+          "name": "RequestFormModal",
+          "file": "apps/web/src/pages/projects/requests/RequestFormModal.tsx",
+          "route": "/projects/requests/RequestFormModal",
+          "type": "form"
+        }
+      ],
+      "endpoints": []
+    },
+    {
+      "name": "Requests",
+      "frontend": "apps/web/src/pages/projects/requests/RequestsPage.tsx",
+      "backend": "GET /requests/{request_id}",
+      "status": "complete",
+      "pages": [
+        {
+          "name": "RequestsPage",
+          "file": "apps/web/src/pages/projects/requests/RequestsPage.tsx",
+          "route": "/projects/requests/RequestsPage",
+          "type": "page"
+        }
+      ],
+      "endpoints": [
+        {
+          "method": "GET",
+          "path": "/requests/{request_id}",
+          "file": "v1/endpoints/scope_analyzer.py"
+        }
+      ]
+    },
+    {
+      "name": "RequestsTab",
+      "frontend": "apps/web/src/pages/projects/requests/RequestsTab.tsx",
+      "backend": null,
+      "status": "partial",
+      "pages": [
+        {
+          "name": "RequestsTab",
+          "file": "apps/web/src/pages/projects/requests/RequestsTab.tsx",
+          "route": "/projects/requests/RequestsTab",
+          "type": "page"
+        }
+      ],
+      "endpoints": []
+    },
+    {
+      "name": "RequestStats",
+      "frontend": "apps/web/src/pages/projects/requests/RequestStats.tsx",
+      "backend": null,
+      "status": "partial",
+      "pages": [
+        {
+          "name": "RequestStats",
+          "file": "apps/web/src/pages/projects/requests/RequestStats.tsx",
+          "route": "/projects/requests/RequestStats",
+          "type": "page"
+        }
+      ],
+      "endpoints": []
+    },
+    {
+      "name": "ResetPassword",
+      "frontend": "apps/web/src/pages/auth/ResetPasswordPage.tsx",
+      "backend": "POST /reset-password",
+      "status": "complete",
+      "pages": [
+        {
+          "name": "ResetPasswordPage",
+          "file": "apps/web/src/pages/auth/ResetPasswordPage.tsx",
+          "route": "/auth/ResetPasswordPage",
+          "type": "page"
+        }
+      ],
+      "endpoints": [
+        {
+          "method": "POST",
+          "path": "/reset-password",
+          "file": "v1/endpoints/auth.py"
+        }
+      ]
+    },
+    {
+      "name": "ScopeCreepAlert",
+      "frontend": "apps/web/src/pages/projects/requests/ScopeCreepAlert.tsx",
+      "backend": null,
+      "status": "partial",
+      "pages": [
+        {
+          "name": "ScopeCreepAlert",
+          "file": "apps/web/src/pages/projects/requests/ScopeCreepAlert.tsx",
+          "route": "/projects/requests/ScopeCreepAlert",
+          "type": "page"
+        }
+      ],
+      "endpoints": []
+    },
+    {
+      "name": "ScopeDragDrop",
+      "frontend": "apps/web/src/pages/projects/scope/ScopeDragDrop.tsx",
+      "backend": null,
+      "status": "partial",
+      "pages": [
+        {
+          "name": "ScopeDragDrop",
+          "file": "apps/web/src/pages/projects/scope/ScopeDragDrop.tsx",
+          "route": "/projects/scope/ScopeDragDrop",
+          "type": "page"
+        }
+      ],
+      "endpoints": []
+    },
+    {
+      "name": "ScopeItem",
+      "frontend": "apps/web/src/pages/projects/scope/ScopeItemEditPage.tsx",
+      "backend": null,
+      "status": "partial",
+      "pages": [
+        {
+          "name": "ScopeItemEditPage",
+          "file": "apps/web/src/pages/projects/scope/ScopeItemEditPage.tsx",
+          "route": "/projects/scope/ScopeItemEditPage",
+          "type": "form"
+        }
+      ],
+      "endpoints": []
+    },
+    {
+      "name": "ScopeItemCard",
+      "frontend": "apps/web/src/pages/projects/scope/ScopeItemCard.tsx",
+      "backend": null,
+      "status": "partial",
+      "pages": [
+        {
+          "name": "ScopeItemCard",
+          "file": "apps/web/src/pages/projects/scope/ScopeItemCard.tsx",
+          "route": "/projects/scope/ScopeItemCard",
+          "type": "page"
+        }
+      ],
+      "endpoints": []
+    },
+    {
+      "name": "ScopeItemForm",
+      "frontend": "apps/web/src/pages/projects/scope/ScopeItemForm.tsx",
+      "backend": null,
+      "status": "partial",
+      "pages": [
+        {
+          "name": "ScopeItemForm",
+          "file": "apps/web/src/pages/projects/scope/ScopeItemForm.tsx",
+          "route": "/projects/scope/ScopeItemForm",
+          "type": "form"
+        }
+      ],
+      "endpoints": []
+    },
+    {
+      "name": "ScopeItems",
+      "frontend": "apps/web/src/pages/projects/scope/ScopeItemsPage.tsx",
+      "backend": null,
+      "status": "partial",
+      "pages": [
+        {
+          "name": "ScopeItemsPage",
+          "file": "apps/web/src/pages/projects/scope/ScopeItemsPage.tsx",
+          "route": "/projects/scope/ScopeItemsPage",
+          "type": "page"
+        }
+      ],
+      "endpoints": []
+    },
+    {
+      "name": "ScopeProgressCard",
+      "frontend": "apps/web/src/pages/projects/scope/ScopeProgressCard.tsx",
+      "backend": null,
+      "status": "partial",
+      "pages": [
+        {
+          "name": "ScopeProgressCard",
+          "file": "apps/web/src/pages/projects/scope/ScopeProgressCard.tsx",
+          "route": "/projects/scope/ScopeProgressCard",
+          "type": "page"
+        }
+      ],
+      "endpoints": []
+    },
+    {
+      "name": "ScopeTab",
+      "frontend": "apps/web/src/pages/projects/scope/ScopeTab.tsx",
+      "backend": null,
+      "status": "partial",
+      "pages": [
+        {
+          "name": "ScopeTab",
+          "file": "apps/web/src/pages/projects/scope/ScopeTab.tsx",
+          "route": "/projects/scope/ScopeTab",
+          "type": "page"
+        }
+      ],
+      "endpoints": []
+    },
+    {
+      "name": "SendProposalModal",
+      "frontend": "apps/web/src/pages/projects/proposals/SendProposalModal.tsx",
+      "backend": null,
+      "status": "partial",
+      "pages": [
+        {
+          "name": "SendProposalModal",
+          "file": "apps/web/src/pages/projects/proposals/SendProposalModal.tsx",
+          "route": "/projects/proposals/SendProposalModal",
+          "type": "page"
+        }
+      ],
+      "endpoints": []
+    },
+    {
+      "name": "Settings",
+      "frontend": "apps/web/src/pages/settings/SettingsPage.tsx",
+      "backend": "GET /settings, PUT /settings",
+      "status": "complete",
+      "pages": [
+        {
+          "name": "SettingsPage",
+          "file": "apps/web/src/pages/settings/SettingsPage.tsx",
+          "route": "/settings/SettingsPage",
+          "type": "settings"
+        }
+      ],
+      "endpoints": [
+        {
+          "method": "GET",
+          "path": "/settings",
+          "file": "v1/endpoints/portal.py"
+        },
+        {
+          "method": "PUT",
+          "path": "/settings",
+          "file": "v1/endpoints/portal.py"
+        }
+      ]
+    },
+    {
+      "name": "Subscription",
+      "frontend": null,
+      "backend": "GET /subscription",
+      "status": "partial",
+      "pages": [],
+      "endpoints": [
+        {
+          "method": "GET",
+          "path": "/subscription",
+          "file": "v1/endpoints/billing.py"
+        }
+      ]
+    },
+    {
+      "name": "Summary",
+      "frontend": null,
+      "backend": "GET /summary",
+      "status": "partial",
+      "pages": [],
+      "endpoints": [
+        {
+          "method": "GET",
+          "path": "/summary",
+          "file": "v1/endpoints/dashboard.py"
+        }
+      ]
+    },
+    {
+      "name": "Support",
+      "frontend": "apps/web/src/pages/legal/SupportPage.tsx",
+      "backend": null,
+      "status": "partial",
+      "pages": [
+        {
+          "name": "SupportPage",
+          "file": "apps/web/src/pages/legal/SupportPage.tsx",
+          "route": "/legal/SupportPage",
+          "type": "page"
+        }
+      ],
+      "endpoints": []
+    },
+    {
+      "name": "VerifyResetToken",
+      "frontend": null,
+      "backend": "POST /verify-reset-token",
+      "status": "partial",
+      "pages": [],
+      "endpoints": [
+        {
+          "method": "POST",
+          "path": "/verify-reset-token",
+          "file": "v1/endpoints/auth.py"
+        }
+      ]
+    },
+    {
+      "name": "Webhook",
+      "frontend": null,
+      "backend": "POST /webhook",
+      "status": "partial",
+      "pages": [],
+      "endpoints": [
+        {
+          "method": "POST",
+          "path": "/webhook",
+          "file": "v1/endpoints/billing.py"
+        }
+      ]
+    }
+  ]
+}

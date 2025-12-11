@@ -4,7 +4,7 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { useAuthStore } from './stores/authStore';
 import { AuthInitializer } from './components/AuthInitializer';
 import { Loading, ToastContainer } from './components/ui';
-import { LoginPage, RegisterPage, ProfilePage, ClientsPage, ClientDetailPage, DashboardPage, ForgotPasswordPage, ResetPasswordPage, PortalPage } from './pages';
+import { LoginPage, RegisterPage, ProfilePage, ClientsPage, ClientDetailPage, DashboardPage, ForgotPasswordPage, ResetPasswordPage, PortalPage, OnboardingPage } from './pages';
 import { ProjectsPage, ProjectDetailPage, ProjectNewPage, ProjectEditPage } from './pages/projects';
 import { RequestsPage, RequestEditPage } from './pages/projects/requests';
 import { ScopeItemsPage, ScopeItemEditPage } from './pages/projects/scope';
@@ -12,6 +12,8 @@ import { ProposalsPage, ProposalEditPage } from './pages/projects/proposals';
 import { LandingPage } from './pages/landing';
 import { BillingPage } from './pages/settings';
 import { PrivacyPage, SupportPage } from './pages/legal';
+import { PublicRequestPage } from './pages/public-request';
+import { ClientPortalPage } from './pages/client-portal';
 import { AppLayout } from './layouts';
 
 // Create query client
@@ -26,8 +28,8 @@ const queryClient = new QueryClient({
 });
 
 // Protected route wrapper
-function ProtectedRoute({ children }: { children?: React.ReactNode }) {
-  const { isAuthenticated, isLoading } = useAuthStore();
+function ProtectedRoute({ children, skipOnboardingCheck = false }: { children?: React.ReactNode; skipOnboardingCheck?: boolean }) {
+  const { isAuthenticated, isLoading, user } = useAuthStore();
 
   if (isLoading) {
     return (
@@ -39,6 +41,11 @@ function ProtectedRoute({ children }: { children?: React.ReactNode }) {
 
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
+  }
+
+  // Redirect to onboarding if user hasn't completed it
+  if (!skipOnboardingCheck && user && !user.has_completed_onboarding) {
+    return <Navigate to="/onboarding" replace />;
   }
 
   return children ? <>{children}</> : <Outlet />;
@@ -117,6 +124,16 @@ export default function App() {
             <Route path="/privacy" element={<PrivacyPage />} />
             <Route path="/support" element={<SupportPage />} />
 
+            {/* Onboarding - protected but doesn't check onboarding status */}
+            <Route
+              path="/onboarding"
+              element={
+                <ProtectedRoute skipOnboardingCheck>
+                  <OnboardingPage />
+                </ProtectedRoute>
+              }
+            />
+
             {/* Protected routes with AppLayout */}
             <Route element={<ProtectedRoute />}>
               <Route element={<AppLayout />}>
@@ -142,6 +159,12 @@ export default function App() {
                 <Route path="/settings/billing" element={<BillingPage />} />
               </Route>
             </Route>
+
+            {/* Public request form - accessible to everyone, no auth */}
+            <Route path="/request/:token" element={<PublicRequestPage />} />
+
+            {/* Client Portal - PUBLIC, accessible to everyone with valid token */}
+            <Route path="/portal/c/:token" element={<ClientPortalPage />} />
 
             {/* Catch all - redirect to landing */}
             <Route path="*" element={<Navigate to="/" replace />} />

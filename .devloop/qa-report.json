@@ -1,0 +1,4103 @@
+{
+  "timestamp": "2025-12-11T05:51:23.565Z",
+  "baseUrl": "https://scopeguard.fly.dev",
+  "apiUrl": "https://scopeguard.fly.dev/api/v1",
+  "framework": {
+    "frontend": "react-vite",
+    "backend": "fastapi",
+    "database": "postgresql",
+    "language": {
+      "frontend": "typescript",
+      "backend": "python"
+    },
+    "packageManager": "npm",
+    "monorepo": false
+  },
+  "credentials": null,
+  "authenticated": false,
+  "total": 106,
+  "passed": 48,
+  "failed": 22,
+  "skipped": 36,
+  "phases": [
+    {
+      "name": "Authentication",
+      "tests": [
+        {
+          "name": "Login",
+          "type": "auth",
+          "method": "POST",
+          "path": "/login",
+          "body": {
+            "email": "test_1765432249190@devloop-test.com"
+          },
+          "expect": {
+            "status": 200,
+            "hasToken": true
+          },
+          "saveAs": "auth",
+          "passed": false,
+          "error": "Expected 200, got 405",
+          "statusCode": 405,
+          "responseTime": 92,
+          "savedData": {
+            "detail": "Method Not Allowed"
+          },
+          "failedSteps": [],
+          "data": {
+            "detail": "Method Not Allowed"
+          }
+        },
+        {
+          "name": "Register",
+          "type": "auth",
+          "method": "POST",
+          "path": "/register",
+          "body": {
+            "email": "test_1765432249190@devloop-test.com",
+            "name": "Test User"
+          },
+          "expect": {
+            "status": [
+              200,
+              201
+            ]
+          },
+          "passed": false,
+          "error": "Expected 200 or 201, got 405",
+          "statusCode": 405,
+          "responseTime": 74,
+          "savedData": null,
+          "failedSteps": [],
+          "data": {
+            "detail": "Method Not Allowed"
+          }
+        }
+      ],
+      "passed": 0,
+      "failed": 2
+    },
+    {
+      "name": "Public API Tests",
+      "tests": [
+        {
+          "name": "POST /{project_id}/scope",
+          "type": "api",
+          "method": "POST",
+          "path": "/{project_id}/scope",
+          "auth": false,
+          "expect": {
+            "status": 200
+          },
+          "pathParams": {
+            "project_id": "95bbf35d-3fdb-446e-9f75-c7bf640a33e6"
+          },
+          "body": {
+            "_schemaRef": "ScopeItemCreate"
+          },
+          "passed": false,
+          "error": "Expected 200, got 405",
+          "statusCode": 405,
+          "responseTime": 73,
+          "savedData": null,
+          "failedSteps": [],
+          "data": {
+            "detail": "Method Not Allowed"
+          }
+        },
+        {
+          "name": "GET /{project_id}/scope/progress",
+          "type": "api",
+          "method": "GET",
+          "path": "/{project_id}/scope/progress",
+          "auth": false,
+          "expect": {
+            "status": 200
+          },
+          "pathParams": {
+            "project_id": "b432a4d5-d47f-4e76-89b5-5def7ee8ed99"
+          },
+          "passed": true,
+          "error": null,
+          "statusCode": 200,
+          "responseTime": 71,
+          "savedData": null,
+          "failedSteps": [],
+          "data": {
+            "detail": "Not found"
+          }
+        },
+        {
+          "name": "POST /scope-analyzer/analyze/{request_id}",
+          "type": "api",
+          "method": "POST",
+          "path": "/scope-analyzer/analyze/{request_id}",
+          "auth": false,
+          "expect": {
+            "status": 200
+          },
+          "pathParams": {
+            "request_id": "8bdc536b-8cb9-45af-9a81-ba56b93c5308"
+          },
+          "body": {
+            "name": "Test analyze",
+            "description": "Test analyze from DevLoop"
+          },
+          "passed": false,
+          "error": "Expected 200, got 405",
+          "statusCode": 405,
+          "responseTime": 74,
+          "savedData": null,
+          "failedSteps": [],
+          "data": {
+            "detail": "Method Not Allowed"
+          }
+        },
+        {
+          "name": "POST /scope-analyzer/analyze-project/{project_id}",
+          "type": "api",
+          "method": "POST",
+          "path": "/scope-analyzer/analyze-project/{project_id}",
+          "auth": false,
+          "expect": {
+            "status": 200
+          },
+          "pathParams": {
+            "project_id": "350930ca-f112-41f2-bf9d-7b04c0c591fa"
+          },
+          "body": {
+            "name": "Test analyze-project",
+            "description": "Test analyze-project from DevLoop"
+          },
+          "passed": false,
+          "error": "Expected 200, got 405",
+          "statusCode": 405,
+          "responseTime": 73,
+          "savedData": null,
+          "failedSteps": [],
+          "data": {
+            "detail": "Method Not Allowed"
+          }
+        },
+        {
+          "name": "POST /{project_id}/proposals",
+          "type": "api",
+          "method": "POST",
+          "path": "/{project_id}/proposals",
+          "auth": false,
+          "expect": {
+            "status": 200
+          },
+          "pathParams": {
+            "project_id": "20ff488e-5cce-4943-be45-7283281b4243"
+          },
+          "body": {
+            "_schemaRef": "ProposalCreate"
+          },
+          "passed": false,
+          "error": "Expected 200, got 405",
+          "statusCode": 405,
+          "responseTime": 75,
+          "savedData": null,
+          "failedSteps": [],
+          "data": {
+            "detail": "Method Not Allowed"
+          }
+        },
+        {
+          "name": "GET /{project_id}/proposals/stats",
+          "type": "api",
+          "method": "GET",
+          "path": "/{project_id}/proposals/stats",
+          "auth": false,
+          "expect": {
+            "status": 200
+          },
+          "pathParams": {
+            "project_id": "b67ff84d-0e5c-4c44-83da-8004359ffad1"
+          },
+          "passed": true,
+          "error": null,
+          "statusCode": 200,
+          "responseTime": 77,
+          "savedData": null,
+          "failedSteps": [],
+          "data": {
+            "detail": "Not found"
+          }
+        },
+        {
+          "name": "GET /{project_id}/proposals/{proposal_id}",
+          "type": "api",
+          "method": "GET",
+          "path": "/{project_id}/proposals/{proposal_id}",
+          "auth": false,
+          "expect": {
+            "status": 200
+          },
+          "pathParams": {
+            "project_id": "5a26594f-1b3c-44cc-a626-4dd363aba9c9",
+            "proposal_id": "a0a78ead-d733-4822-8eaf-8bf9c89d0b53"
+          },
+          "passed": true,
+          "error": null,
+          "statusCode": 200,
+          "responseTime": 75,
+          "savedData": null,
+          "failedSteps": [],
+          "data": {
+            "detail": "Not found"
+          }
+        },
+        {
+          "name": "POST /{project_id}/proposals/{proposal_id}/send",
+          "type": "api",
+          "method": "POST",
+          "path": "/{project_id}/proposals/{proposal_id}/send",
+          "auth": false,
+          "expect": {
+            "status": 200
+          },
+          "pathParams": {
+            "project_id": "5ab31962-7337-49a7-b989-48711d6a3527",
+            "proposal_id": "e4aea67e-def5-4b24-801b-c68abf586e66"
+          },
+          "body": {
+            "name": "Test send",
+            "description": "Test send from DevLoop"
+          },
+          "passed": false,
+          "error": "Expected 200, got 405",
+          "statusCode": 405,
+          "responseTime": 74,
+          "savedData": null,
+          "failedSteps": [],
+          "data": {
+            "detail": "Method Not Allowed"
+          }
+        },
+        {
+          "name": "POST /{project_id}/proposals/{proposal_id}/accept",
+          "type": "api",
+          "method": "POST",
+          "path": "/{project_id}/proposals/{proposal_id}/accept",
+          "auth": false,
+          "expect": {
+            "status": 200
+          },
+          "pathParams": {
+            "project_id": "c19cff30-f225-4431-add5-097b330bf3e1",
+            "proposal_id": "7117d7f8-c85f-4a30-801a-08a1342200ac"
+          },
+          "body": {
+            "name": "Test accept",
+            "description": "Test accept from DevLoop"
+          },
+          "passed": false,
+          "error": "Expected 200, got 405",
+          "statusCode": 405,
+          "responseTime": 76,
+          "savedData": null,
+          "failedSteps": [],
+          "data": {
+            "detail": "Method Not Allowed"
+          }
+        },
+        {
+          "name": "POST /{project_id}/proposals/{proposal_id}/decline",
+          "type": "api",
+          "method": "POST",
+          "path": "/{project_id}/proposals/{proposal_id}/decline",
+          "auth": false,
+          "expect": {
+            "status": 200
+          },
+          "pathParams": {
+            "project_id": "2c97ad7f-47ca-4f8c-b2fc-5aca5bdb3fbf",
+            "proposal_id": "42f863ca-a968-48b2-b36c-7c531bf50d57"
+          },
+          "body": {
+            "name": "Test decline",
+            "description": "Test decline from DevLoop"
+          },
+          "passed": false,
+          "error": "Expected 200, got 405",
+          "statusCode": 405,
+          "responseTime": 75,
+          "savedData": null,
+          "failedSteps": [],
+          "data": {
+            "detail": "Method Not Allowed"
+          }
+        },
+        {
+          "name": "POST /{project_id}/requests/{request_id}/create-proposal",
+          "type": "api",
+          "method": "POST",
+          "path": "/{project_id}/requests/{request_id}/create-proposal",
+          "auth": false,
+          "expect": {
+            "status": 200
+          },
+          "pathParams": {
+            "project_id": "7a496e9c-86c8-425a-abe7-486f59c35a1f",
+            "request_id": "ab35c868-a7f0-4a87-8825-426141c211be"
+          },
+          "body": {
+            "_schemaRef": "ProposalFromRequest"
+          },
+          "passed": false,
+          "error": "Expected 200, got 405",
+          "statusCode": 405,
+          "responseTime": 73,
+          "savedData": null,
+          "failedSteps": [],
+          "data": {
+            "detail": "Method Not Allowed"
+          }
+        },
+        {
+          "name": "POST /{project_id}/requests",
+          "type": "api",
+          "method": "POST",
+          "path": "/{project_id}/requests",
+          "auth": false,
+          "expect": {
+            "status": 200
+          },
+          "pathParams": {
+            "project_id": "b71a8d62-2867-43b1-8763-bec467f9044d"
+          },
+          "body": {
+            "_schemaRef": "ClientRequestCreate"
+          },
+          "passed": false,
+          "error": "Expected 200, got 405",
+          "statusCode": 405,
+          "responseTime": 75,
+          "savedData": null,
+          "failedSteps": [],
+          "data": {
+            "detail": "Method Not Allowed"
+          }
+        },
+        {
+          "name": "GET /{project_id}/requests/{request_id}",
+          "type": "api",
+          "method": "GET",
+          "path": "/{project_id}/requests/{request_id}",
+          "auth": false,
+          "expect": {
+            "status": 200
+          },
+          "pathParams": {
+            "project_id": "a55ced98-f313-4494-8703-0c6943e4e39c",
+            "request_id": "ad102fdb-afee-4ba1-bfd8-fabb708f08c6"
+          },
+          "passed": true,
+          "error": null,
+          "statusCode": 200,
+          "responseTime": 75,
+          "savedData": null,
+          "failedSteps": [],
+          "data": {
+            "detail": "Not found"
+          }
+        },
+        {
+          "name": "PUT /settings",
+          "type": "api",
+          "method": "PUT",
+          "path": "/settings",
+          "auth": false,
+          "expect": {
+            "status": 200
+          },
+          "body": {
+            "_schemaRef": "PortalSettingsUpdate"
+          },
+          "passed": false,
+          "error": "Expected 200, got 405",
+          "statusCode": 405,
+          "responseTime": 72,
+          "savedData": null,
+          "failedSteps": [],
+          "data": {
+            "detail": "Method Not Allowed"
+          }
+        },
+        {
+          "name": "POST /clients/{client_id}/invite",
+          "type": "api",
+          "method": "POST",
+          "path": "/clients/{client_id}/invite",
+          "auth": false,
+          "expect": {
+            "status": 200
+          },
+          "pathParams": {
+            "client_id": "d5e4f53f-b108-484d-88ed-abea0a6f1b88"
+          },
+          "body": {
+            "name": "Test invite",
+            "description": "Test invite from DevLoop"
+          },
+          "passed": false,
+          "error": "Expected 200, got 405",
+          "statusCode": 405,
+          "responseTime": 76,
+          "savedData": null,
+          "failedSteps": [],
+          "data": {
+            "detail": "Method Not Allowed"
+          }
+        },
+        {
+          "name": "GET /invoices",
+          "type": "api",
+          "method": "GET",
+          "path": "/invoices",
+          "auth": false,
+          "expect": {
+            "status": 200
+          },
+          "passed": true,
+          "error": null,
+          "statusCode": 200,
+          "responseTime": 73,
+          "savedData": null,
+          "failedSteps": [],
+          "data": {
+            "detail": "Not found"
+          }
+        },
+        {
+          "name": "POST /invoices/{invoice_id}/view",
+          "type": "api",
+          "method": "POST",
+          "path": "/invoices/{invoice_id}/view",
+          "auth": false,
+          "expect": {
+            "status": 200
+          },
+          "pathParams": {
+            "invoice_id": "48ab2fcb-ab0d-4598-a65c-0824c7c02767"
+          },
+          "body": {
+            "name": "Test view",
+            "description": "Test view from DevLoop"
+          },
+          "passed": false,
+          "error": "Expected 200, got 405",
+          "statusCode": 405,
+          "responseTime": 72,
+          "savedData": null,
+          "failedSteps": [],
+          "data": {
+            "detail": "Method Not Allowed"
+          }
+        },
+        {
+          "name": "GET /files",
+          "type": "api",
+          "method": "GET",
+          "path": "/files",
+          "auth": false,
+          "expect": {
+            "status": 200
+          },
+          "passed": true,
+          "error": null,
+          "statusCode": 200,
+          "responseTime": 76,
+          "savedData": null,
+          "failedSteps": [],
+          "data": {
+            "detail": "Not found"
+          }
+        },
+        {
+          "name": "GET /messages",
+          "type": "api",
+          "method": "GET",
+          "path": "/messages",
+          "auth": false,
+          "expect": {
+            "status": 200
+          },
+          "passed": true,
+          "error": null,
+          "statusCode": 200,
+          "responseTime": 72,
+          "savedData": null,
+          "failedSteps": [],
+          "data": {
+            "detail": "Not found"
+          }
+        },
+        {
+          "name": "POST /messages",
+          "type": "api",
+          "method": "POST",
+          "path": "/messages",
+          "auth": false,
+          "expect": {
+            "status": 200
+          },
+          "body": {
+            "_schemaRef": "PortalMessageClientCreate"
+          },
+          "passed": false,
+          "error": "Expected 200, got 405",
+          "statusCode": 405,
+          "responseTime": 73,
+          "savedData": null,
+          "failedSteps": [],
+          "data": {
+            "detail": "Method Not Allowed"
+          }
+        },
+        {
+          "name": "PUT /messages/{message_id}/read",
+          "type": "api",
+          "method": "PUT",
+          "path": "/messages/{message_id}/read",
+          "auth": false,
+          "expect": {
+            "status": 200
+          },
+          "pathParams": {
+            "message_id": "57f6bb6d-a35f-43be-a49f-e6dae6ae835c"
+          },
+          "body": {
+            "name": "Test read",
+            "description": "Test read from DevLoop"
+          },
+          "passed": false,
+          "error": "Expected 200, got 405",
+          "statusCode": 405,
+          "responseTime": 75,
+          "savedData": null,
+          "failedSteps": [],
+          "data": {
+            "detail": "Method Not Allowed"
+          }
+        },
+        {
+          "name": "GET /contracts",
+          "type": "api",
+          "method": "GET",
+          "path": "/contracts",
+          "auth": false,
+          "expect": {
+            "status": 200
+          },
+          "passed": true,
+          "error": null,
+          "statusCode": 200,
+          "responseTime": 73,
+          "savedData": null,
+          "failedSteps": [],
+          "data": {
+            "detail": "Not found"
+          }
+        },
+        {
+          "name": "POST /contracts/{contract_id}/sign",
+          "type": "api",
+          "method": "POST",
+          "path": "/contracts/{contract_id}/sign",
+          "auth": false,
+          "expect": {
+            "status": 200
+          },
+          "pathParams": {
+            "contract_id": "20be5956-5269-4417-9d95-5971a042995f"
+          },
+          "body": {
+            "_schemaRef": "ContractSignRequest"
+          },
+          "passed": false,
+          "error": "Expected 200, got 405",
+          "statusCode": 405,
+          "responseTime": 72,
+          "savedData": null,
+          "failedSteps": [],
+          "data": {
+            "detail": "Method Not Allowed"
+          }
+        },
+        {
+          "name": "POST /google/token",
+          "type": "api",
+          "method": "POST",
+          "path": "/google/token",
+          "auth": false,
+          "expect": {
+            "status": 200
+          },
+          "body": {
+            "_schemaRef": "GoogleAccessTokenRequest"
+          },
+          "passed": false,
+          "error": "Expected 200, got 405",
+          "statusCode": 405,
+          "responseTime": 72,
+          "savedData": null,
+          "failedSteps": [],
+          "data": {
+            "detail": "Method Not Allowed"
+          }
+        },
+        {
+          "name": "GET /{project_id}",
+          "type": "api",
+          "method": "GET",
+          "path": "/{project_id}",
+          "auth": false,
+          "expect": {
+            "status": 200
+          },
+          "pathParams": {
+            "project_id": "309c0c1f-3992-4b5e-9629-92c3bc5d9edb"
+          },
+          "passed": true,
+          "error": null,
+          "statusCode": 200,
+          "responseTime": 73,
+          "savedData": null,
+          "failedSteps": [],
+          "data": {
+            "detail": "Not found"
+          }
+        },
+        {
+          "name": "DELETE /{project_id}",
+          "type": "api",
+          "method": "DELETE",
+          "path": "/{project_id}",
+          "auth": false,
+          "expect": {
+            "status": [
+              200,
+              204
+            ]
+          },
+          "pathParams": {
+            "project_id": "6335be94-459e-4f82-92c5-eef185fd9be0"
+          },
+          "passed": false,
+          "error": "Expected 200 or 204, got 405",
+          "statusCode": 405,
+          "responseTime": 72,
+          "savedData": null,
+          "failedSteps": [],
+          "data": {
+            "detail": "Method Not Allowed"
+          }
+        },
+        {
+          "name": "GET /{client_id}",
+          "type": "api",
+          "method": "GET",
+          "path": "/{client_id}",
+          "auth": false,
+          "expect": {
+            "status": 200
+          },
+          "pathParams": {
+            "client_id": "cd5b55e7-d35d-48be-8302-ac6039f23ee7"
+          },
+          "passed": true,
+          "error": null,
+          "statusCode": 200,
+          "responseTime": 75,
+          "savedData": null,
+          "failedSteps": [],
+          "data": {
+            "detail": "Not found"
+          }
+        },
+        {
+          "name": "PUT /{client_id}",
+          "type": "api",
+          "method": "PUT",
+          "path": "/{client_id}",
+          "auth": false,
+          "expect": {
+            "status": 200
+          },
+          "pathParams": {
+            "client_id": "d2210a1e-3525-4eaa-ba33-387450edd4db"
+          },
+          "body": {
+            "_schemaRef": "ClientUpdate"
+          },
+          "passed": false,
+          "error": "Expected 200, got 405",
+          "statusCode": 405,
+          "responseTime": 72,
+          "savedData": null,
+          "failedSteps": [],
+          "data": {
+            "detail": "Method Not Allowed"
+          }
+        },
+        {
+          "name": "DELETE /{client_id}",
+          "type": "api",
+          "method": "DELETE",
+          "path": "/{client_id}",
+          "auth": false,
+          "expect": {
+            "status": [
+              200,
+              204
+            ]
+          },
+          "pathParams": {
+            "client_id": "c98680e8-dbb1-4bd4-be68-83cc1c67e81a"
+          },
+          "passed": false,
+          "error": "Expected 200 or 204, got 405",
+          "statusCode": 405,
+          "responseTime": 74,
+          "savedData": null,
+          "failedSteps": [],
+          "data": {
+            "detail": "Method Not Allowed"
+          }
+        }
+      ],
+      "passed": 10,
+      "failed": 19
+    },
+    {
+      "name": "Protected API Tests",
+      "tests": [
+        {
+          "name": "PATCH /profile",
+          "type": "api",
+          "method": "PATCH",
+          "path": "/profile",
+          "auth": true,
+          "expect": {
+            "status": 200
+          },
+          "body": {
+            "_schemaRef": "UserUpdate"
+          },
+          "skipped": true,
+          "reason": "No authentication token"
+        },
+        {
+          "name": "POST /{project_id}/scope/reorder",
+          "type": "api",
+          "method": "POST",
+          "path": "/{project_id}/scope/reorder",
+          "auth": true,
+          "expect": {
+            "status": 200
+          },
+          "pathParams": {
+            "project_id": "2ac8f2a7-c64d-4150-9b28-540f3b2df736"
+          },
+          "body": {
+            "name": "Test reorder",
+            "description": "Test reorder from DevLoop"
+          },
+          "skipped": true,
+          "reason": "No authentication token"
+        },
+        {
+          "name": "POST /{project_id}/requests/{request_id}/classify",
+          "type": "api",
+          "method": "POST",
+          "path": "/{project_id}/requests/{request_id}/classify",
+          "auth": true,
+          "expect": {
+            "status": 200
+          },
+          "pathParams": {
+            "project_id": "a3fe3a84-eea4-4a3f-8aa4-3aa5b79e1d4b",
+            "request_id": "b4823331-5eef-4222-8813-02941d5ca3ca"
+          },
+          "body": {
+            "name": "Test classify",
+            "description": "Test classify from DevLoop"
+          },
+          "skipped": true,
+          "reason": "No authentication token"
+        },
+        {
+          "name": "PATCH /{project_id}",
+          "type": "api",
+          "method": "PATCH",
+          "path": "/{project_id}",
+          "auth": true,
+          "expect": {
+            "status": 200
+          },
+          "pathParams": {
+            "project_id": "794de3f0-beba-4ae0-9a9c-4f2391f88a16"
+          },
+          "body": {
+            "_schemaRef": "ProjectUpdate"
+          },
+          "skipped": true,
+          "reason": "No authentication token"
+        },
+        {
+          "name": "GET /me",
+          "type": "api",
+          "method": "GET",
+          "path": "/me",
+          "auth": true,
+          "expect": {
+            "status": 200
+          },
+          "skipped": true,
+          "reason": "No authentication token"
+        }
+      ],
+      "passed": 0,
+      "failed": 0
+    },
+    {
+      "name": "CRUD Flows",
+      "tests": [
+        {
+          "name": "Profile CRUD Flow",
+          "type": "crud_flow",
+          "entity": "Profile",
+          "requiresAuth": true,
+          "steps": [
+            {
+              "name": "List Profiles",
+              "method": "GET",
+              "path": "/profile",
+              "auth": true,
+              "expect": {
+                "status": 200,
+                "isArray": true
+              }
+            }
+          ],
+          "skipped": true,
+          "reason": "No authentication token"
+        },
+        {
+          "name": "Scope CRUD Flow",
+          "type": "crud_flow",
+          "entity": "Scope",
+          "requiresAuth": true,
+          "steps": [
+            {
+              "name": "Get Scope by ID",
+              "method": "GET",
+              "path": "/{project_id}/scope",
+              "pathParams": {
+                "scope_id": "{{scope.id}}"
+              },
+              "auth": false,
+              "dependsOn": null,
+              "expect": {
+                "status": 200,
+                "matchesCreated": true
+              }
+            },
+            {
+              "name": "Update Scope",
+              "method": "PATCH",
+              "path": "/{project_id}/scope/{item_id}",
+              "pathParams": {
+                "scope_id": "{{scope.id}}"
+              },
+              "auth": false,
+              "body": {
+                "name": "Updated Scope",
+                "description": "Updated Scope by DevLoop"
+              },
+              "dependsOn": null,
+              "expect": {
+                "status": 200
+              }
+            },
+            {
+              "name": "Delete Scope",
+              "method": "DELETE",
+              "path": "/{project_id}/scope/{item_id}",
+              "pathParams": {
+                "scope_id": "{{scope.id}}"
+              },
+              "auth": false,
+              "dependsOn": null,
+              "expect": {
+                "status": [
+                  200,
+                  204
+                ]
+              }
+            },
+            {
+              "name": "Verify Scope deleted",
+              "method": "GET",
+              "path": "/{project_id}/scope",
+              "pathParams": {
+                "scope_id": "{{scope.id}}"
+              },
+              "auth": false,
+              "dependsOn": "Delete Scope",
+              "expect": {
+                "status": 404
+              }
+            }
+          ],
+          "skipped": true,
+          "reason": "No authentication token"
+        },
+        {
+          "name": "Scope-analyzer CRUD Flow",
+          "type": "crud_flow",
+          "entity": "Scope-analyzer",
+          "requiresAuth": false,
+          "steps": [
+            {
+              "name": "Create Scope-analyzer",
+              "method": "POST",
+              "path": "/scope-analyzer/analyze",
+              "auth": false,
+              "body": {
+                "name": "Test Scope-analyzer",
+                "description": "Test Scope-analyzer created by DevLoop"
+              },
+              "expect": {
+                "status": [
+                  200,
+                  201
+                ],
+                "hasId": true
+              },
+              "saveAs": "scope-analyzer"
+            },
+            {
+              "name": "Get Scope-analyzer by ID",
+              "method": "GET",
+              "path": "/scope-analyzer/requests/{request_id}",
+              "pathParams": {
+                "scope-analyzer_id": "{{scope-analyzer.id}}"
+              },
+              "auth": false,
+              "dependsOn": "Create Scope-analyzer",
+              "expect": {
+                "status": 200,
+                "matchesCreated": true
+              }
+            }
+          ],
+          "skipped": true,
+          "reason": "No authentication token"
+        },
+        {
+          "name": "Proposal CRUD Flow",
+          "type": "crud_flow",
+          "entity": "Proposal",
+          "requiresAuth": false,
+          "steps": [
+            {
+              "name": "Get Proposal by ID",
+              "method": "GET",
+              "path": "/{project_id}/proposals",
+              "pathParams": {
+                "proposal_id": "{{proposal.id}}"
+              },
+              "auth": false,
+              "dependsOn": null,
+              "expect": {
+                "status": 200,
+                "matchesCreated": true
+              }
+            },
+            {
+              "name": "Update Proposal",
+              "method": "PATCH",
+              "path": "/{project_id}/proposals/{proposal_id}",
+              "pathParams": {
+                "proposal_id": "{{proposal.id}}"
+              },
+              "auth": false,
+              "body": {
+                "name": "Updated Proposal",
+                "description": "Updated Proposal by DevLoop"
+              },
+              "dependsOn": null,
+              "expect": {
+                "status": 200
+              }
+            },
+            {
+              "name": "Delete Proposal",
+              "method": "DELETE",
+              "path": "/{project_id}/proposals/{proposal_id}",
+              "pathParams": {
+                "proposal_id": "{{proposal.id}}"
+              },
+              "auth": false,
+              "dependsOn": null,
+              "expect": {
+                "status": [
+                  200,
+                  204
+                ]
+              }
+            },
+            {
+              "name": "Verify Proposal deleted",
+              "method": "GET",
+              "path": "/{project_id}/proposals",
+              "pathParams": {
+                "proposal_id": "{{proposal.id}}"
+              },
+              "auth": false,
+              "dependsOn": "Delete Proposal",
+              "expect": {
+                "status": 404
+              }
+            }
+          ],
+          "skipped": true,
+          "reason": "No authentication token"
+        },
+        {
+          "name": "Request CRUD Flow",
+          "type": "crud_flow",
+          "entity": "Request",
+          "requiresAuth": true,
+          "steps": [
+            {
+              "name": "Get Request by ID",
+              "method": "GET",
+              "path": "/{project_id}/requests",
+              "pathParams": {
+                "request_id": "{{request.id}}"
+              },
+              "auth": false,
+              "dependsOn": null,
+              "expect": {
+                "status": 200,
+                "matchesCreated": true
+              }
+            },
+            {
+              "name": "Update Request",
+              "method": "PATCH",
+              "path": "/{project_id}/requests/{request_id}",
+              "pathParams": {
+                "request_id": "{{request.id}}"
+              },
+              "auth": true,
+              "body": {
+                "name": "Updated Request",
+                "description": "Updated Request by DevLoop"
+              },
+              "dependsOn": null,
+              "expect": {
+                "status": 200
+              }
+            },
+            {
+              "name": "Delete Request",
+              "method": "DELETE",
+              "path": "/{project_id}/requests/{request_id}",
+              "pathParams": {
+                "request_id": "{{request.id}}"
+              },
+              "auth": false,
+              "dependsOn": null,
+              "expect": {
+                "status": [
+                  200,
+                  204
+                ]
+              }
+            },
+            {
+              "name": "Verify Request deleted",
+              "method": "GET",
+              "path": "/{project_id}/requests",
+              "pathParams": {
+                "request_id": "{{request.id}}"
+              },
+              "auth": false,
+              "dependsOn": "Delete Request",
+              "expect": {
+                "status": 404
+              }
+            }
+          ],
+          "skipped": true,
+          "reason": "No authentication token"
+        },
+        {
+          "name": "Detail CRUD Flow",
+          "type": "crud_flow",
+          "entity": "Detail",
+          "requiresAuth": true,
+          "steps": [
+            {
+              "name": "Get Detail by ID",
+              "method": "GET",
+              "path": "/{project_id}/detail",
+              "pathParams": {
+                "detail_id": "{{detail.id}}"
+              },
+              "auth": true,
+              "dependsOn": null,
+              "expect": {
+                "status": 200,
+                "matchesCreated": true
+              }
+            }
+          ],
+          "skipped": true,
+          "reason": "No authentication token"
+        },
+        {
+          "name": "Setting CRUD Flow",
+          "type": "crud_flow",
+          "entity": "Setting",
+          "requiresAuth": false,
+          "steps": [
+            {
+              "name": "List Settings",
+              "method": "GET",
+              "path": "/settings",
+              "auth": false,
+              "expect": {
+                "status": 200,
+                "isArray": true
+              }
+            }
+          ],
+          "skipped": true,
+          "reason": "No authentication token"
+        },
+        {
+          "name": "Client CRUD Flow",
+          "type": "crud_flow",
+          "entity": "Client",
+          "requiresAuth": false,
+          "steps": [
+            {
+              "name": "List Clients",
+              "method": "GET",
+              "path": "/clients",
+              "auth": false,
+              "expect": {
+                "status": 200,
+                "isArray": true
+              }
+            },
+            {
+              "name": "Delete Client",
+              "method": "DELETE",
+              "path": "/clients/{client_id}/access",
+              "pathParams": {
+                "client_id": "{{client.id}}"
+              },
+              "auth": false,
+              "dependsOn": null,
+              "expect": {
+                "status": [
+                  200,
+                  204
+                ]
+              }
+            }
+          ],
+          "skipped": true,
+          "reason": "No authentication token"
+        },
+        {
+          "name": "Invoice CRUD Flow",
+          "type": "crud_flow",
+          "entity": "Invoice",
+          "requiresAuth": false,
+          "steps": [
+            {
+              "name": "Create Invoice",
+              "method": "POST",
+              "path": "/invoices",
+              "auth": false,
+              "body": {
+                "name": "Test Invoice",
+                "description": "Test Invoice created by DevLoop"
+              },
+              "expect": {
+                "status": [
+                  200,
+                  201
+                ],
+                "hasId": true
+              },
+              "saveAs": "invoice"
+            },
+            {
+              "name": "List Invoices",
+              "method": "GET",
+              "path": "/invoices",
+              "auth": false,
+              "expect": {
+                "status": 200,
+                "isArray": true
+              }
+            },
+            {
+              "name": "Get Invoice by ID",
+              "method": "GET",
+              "path": "/invoices/{invoice_id}",
+              "pathParams": {
+                "invoice_id": "{{invoice.id}}"
+              },
+              "auth": false,
+              "dependsOn": "Create Invoice",
+              "expect": {
+                "status": 200,
+                "matchesCreated": true
+              }
+            },
+            {
+              "name": "Update Invoice",
+              "method": "PUT",
+              "path": "/invoices/{invoice_id}",
+              "pathParams": {
+                "invoice_id": "{{invoice.id}}"
+              },
+              "auth": false,
+              "body": {
+                "name": "Updated Invoice",
+                "description": "Updated Invoice by DevLoop"
+              },
+              "dependsOn": "Create Invoice",
+              "expect": {
+                "status": 200
+              }
+            },
+            {
+              "name": "Delete Invoice",
+              "method": "DELETE",
+              "path": "/invoices/{invoice_id}",
+              "pathParams": {
+                "invoice_id": "{{invoice.id}}"
+              },
+              "auth": false,
+              "dependsOn": "Create Invoice",
+              "expect": {
+                "status": [
+                  200,
+                  204
+                ]
+              }
+            },
+            {
+              "name": "Verify Invoice deleted",
+              "method": "GET",
+              "path": "/invoices/{invoice_id}",
+              "pathParams": {
+                "invoice_id": "{{invoice.id}}"
+              },
+              "auth": false,
+              "dependsOn": "Delete Invoice",
+              "expect": {
+                "status": 404
+              }
+            }
+          ],
+          "skipped": true,
+          "reason": "No authentication token"
+        },
+        {
+          "name": "File CRUD Flow",
+          "type": "crud_flow",
+          "entity": "File",
+          "requiresAuth": false,
+          "steps": [
+            {
+              "name": "Create File",
+              "method": "POST",
+              "path": "/files",
+              "auth": false,
+              "body": {
+                "name": "Test File",
+                "description": "Test File created by DevLoop"
+              },
+              "expect": {
+                "status": [
+                  200,
+                  201
+                ],
+                "hasId": true
+              },
+              "saveAs": "file"
+            },
+            {
+              "name": "List Files",
+              "method": "GET",
+              "path": "/files",
+              "auth": false,
+              "expect": {
+                "status": 200,
+                "isArray": true
+              }
+            },
+            {
+              "name": "Delete File",
+              "method": "DELETE",
+              "path": "/files/{file_id}",
+              "pathParams": {
+                "file_id": "{{file.id}}"
+              },
+              "auth": false,
+              "dependsOn": "Create File",
+              "expect": {
+                "status": [
+                  200,
+                  204
+                ]
+              }
+            }
+          ],
+          "skipped": true,
+          "reason": "No authentication token"
+        },
+        {
+          "name": "Message CRUD Flow",
+          "type": "crud_flow",
+          "entity": "Message",
+          "requiresAuth": false,
+          "steps": [
+            {
+              "name": "Create Message",
+              "method": "POST",
+              "path": "/messages",
+              "auth": false,
+              "body": {
+                "name": "Test Message",
+                "description": "Test Message created by DevLoop"
+              },
+              "expect": {
+                "status": [
+                  200,
+                  201
+                ],
+                "hasId": true
+              },
+              "saveAs": "message"
+            },
+            {
+              "name": "List Messages",
+              "method": "GET",
+              "path": "/messages",
+              "auth": false,
+              "expect": {
+                "status": 200,
+                "isArray": true
+              }
+            },
+            {
+              "name": "Update Message",
+              "method": "PUT",
+              "path": "/messages/{message_id}/read",
+              "pathParams": {
+                "message_id": "{{message.id}}"
+              },
+              "auth": false,
+              "body": {
+                "name": "Updated Message",
+                "description": "Updated Message by DevLoop"
+              },
+              "dependsOn": "Create Message",
+              "expect": {
+                "status": 200
+              }
+            }
+          ],
+          "skipped": true,
+          "reason": "No authentication token"
+        },
+        {
+          "name": "Contract CRUD Flow",
+          "type": "crud_flow",
+          "entity": "Contract",
+          "requiresAuth": false,
+          "steps": [
+            {
+              "name": "Create Contract",
+              "method": "POST",
+              "path": "/contracts",
+              "auth": false,
+              "body": {
+                "name": "Test Contract",
+                "description": "Test Contract created by DevLoop"
+              },
+              "expect": {
+                "status": [
+                  200,
+                  201
+                ],
+                "hasId": true
+              },
+              "saveAs": "contract"
+            },
+            {
+              "name": "List Contracts",
+              "method": "GET",
+              "path": "/contracts",
+              "auth": false,
+              "expect": {
+                "status": 200,
+                "isArray": true
+              }
+            },
+            {
+              "name": "Delete Contract",
+              "method": "DELETE",
+              "path": "/contracts/{contract_id}",
+              "pathParams": {
+                "contract_id": "{{contract.id}}"
+              },
+              "auth": false,
+              "dependsOn": "Create Contract",
+              "expect": {
+                "status": [
+                  200,
+                  204
+                ]
+              }
+            }
+          ],
+          "skipped": true,
+          "reason": "No authentication token"
+        },
+        {
+          "name": "Summary CRUD Flow",
+          "type": "crud_flow",
+          "entity": "Summary",
+          "requiresAuth": false,
+          "steps": [
+            {
+              "name": "List Summarys",
+              "method": "GET",
+              "path": "/summary",
+              "auth": false,
+              "expect": {
+                "status": 200,
+                "isArray": true
+              }
+            }
+          ],
+          "skipped": true,
+          "reason": "No authentication token"
+        },
+        {
+          "name": "Alert CRUD Flow",
+          "type": "crud_flow",
+          "entity": "Alert",
+          "requiresAuth": true,
+          "steps": [
+            {
+              "name": "List Alerts",
+              "method": "GET",
+              "path": "/alerts",
+              "auth": true,
+              "expect": {
+                "status": 200,
+                "isArray": true
+              }
+            }
+          ],
+          "skipped": true,
+          "reason": "No authentication token"
+        },
+        {
+          "name": "Activity CRUD Flow",
+          "type": "crud_flow",
+          "entity": "Activity",
+          "requiresAuth": true,
+          "steps": [
+            {
+              "name": "List Activitys",
+              "method": "GET",
+              "path": "/activity",
+              "auth": true,
+              "expect": {
+                "status": 200,
+                "isArray": true
+              }
+            }
+          ],
+          "skipped": true,
+          "reason": "No authentication token"
+        },
+        {
+          "name": "Project CRUD Flow",
+          "type": "crud_flow",
+          "entity": "Project",
+          "requiresAuth": true,
+          "steps": [
+            {
+              "name": "List Projects",
+              "method": "GET",
+              "path": "/projects",
+              "auth": false,
+              "expect": {
+                "status": 200,
+                "isArray": true
+              }
+            },
+            {
+              "name": "Get Project by ID",
+              "method": "GET",
+              "path": "/projects/{project_id}/health",
+              "pathParams": {
+                "project_id": "{{project.id}}"
+              },
+              "auth": true,
+              "dependsOn": null,
+              "expect": {
+                "status": 200,
+                "matchesCreated": true
+              }
+            }
+          ],
+          "skipped": true,
+          "reason": "No authentication token"
+        },
+        {
+          "name": "Auth CRUD Flow",
+          "type": "crud_flow",
+          "entity": "Auth",
+          "requiresAuth": false,
+          "steps": [
+            {
+              "name": "Create Auth",
+              "method": "POST",
+              "path": "/auth/verify",
+              "auth": false,
+              "body": {
+                "name": "Test Auth",
+                "description": "Test Auth created by DevLoop"
+              },
+              "expect": {
+                "status": [
+                  200,
+                  201
+                ],
+                "hasId": true
+              },
+              "saveAs": "auth"
+            }
+          ],
+          "skipped": true,
+          "reason": "No authentication token"
+        },
+        {
+          "name": "Dashboard CRUD Flow",
+          "type": "crud_flow",
+          "entity": "Dashboard",
+          "requiresAuth": false,
+          "steps": [
+            {
+              "name": "List Dashboards",
+              "method": "GET",
+              "path": "/dashboard",
+              "auth": false,
+              "expect": {
+                "status": 200,
+                "isArray": true
+              }
+            }
+          ],
+          "skipped": true,
+          "reason": "No authentication token"
+        },
+        {
+          "name": "Subscription CRUD Flow",
+          "type": "crud_flow",
+          "entity": "Subscription",
+          "requiresAuth": false,
+          "steps": [
+            {
+              "name": "List Subscriptions",
+              "method": "GET",
+              "path": "/subscription",
+              "auth": false,
+              "expect": {
+                "status": 200,
+                "isArray": true
+              }
+            }
+          ],
+          "skipped": true,
+          "reason": "No authentication token"
+        },
+        {
+          "name": "Limit CRUD Flow",
+          "type": "crud_flow",
+          "entity": "Limit",
+          "requiresAuth": false,
+          "steps": [
+            {
+              "name": "List Limits",
+              "method": "GET",
+              "path": "/limits",
+              "auth": false,
+              "expect": {
+                "status": 200,
+                "isArray": true
+              }
+            }
+          ],
+          "skipped": true,
+          "reason": "No authentication token"
+        },
+        {
+          "name": "Create-checkout-session CRUD Flow",
+          "type": "crud_flow",
+          "entity": "Create-checkout-session",
+          "requiresAuth": false,
+          "steps": [
+            {
+              "name": "Create Create-checkout-session",
+              "method": "POST",
+              "path": "/create-checkout-session",
+              "auth": false,
+              "body": {
+                "name": "Test Create-checkout-session",
+                "description": "Test Create-checkout-session created by DevLoop"
+              },
+              "expect": {
+                "status": [
+                  200,
+                  201
+                ],
+                "hasId": true
+              },
+              "saveAs": "create-checkout-session"
+            }
+          ],
+          "skipped": true,
+          "reason": "No authentication token"
+        },
+        {
+          "name": "Create-portal-session CRUD Flow",
+          "type": "crud_flow",
+          "entity": "Create-portal-session",
+          "requiresAuth": false,
+          "steps": [
+            {
+              "name": "Create Create-portal-session",
+              "method": "POST",
+              "path": "/create-portal-session",
+              "auth": false,
+              "body": {
+                "name": "Test Create-portal-session",
+                "description": "Test Create-portal-session created by DevLoop"
+              },
+              "expect": {
+                "status": [
+                  200,
+                  201
+                ],
+                "hasId": true
+              },
+              "saveAs": "create-portal-session"
+            }
+          ],
+          "skipped": true,
+          "reason": "No authentication token"
+        },
+        {
+          "name": "Cancel CRUD Flow",
+          "type": "crud_flow",
+          "entity": "Cancel",
+          "requiresAuth": false,
+          "steps": [
+            {
+              "name": "Create Cancel",
+              "method": "POST",
+              "path": "/cancel",
+              "auth": false,
+              "body": {
+                "name": "Test Cancel",
+                "description": "Test Cancel created by DevLoop"
+              },
+              "expect": {
+                "status": [
+                  200,
+                  201
+                ],
+                "hasId": true
+              },
+              "saveAs": "cancel"
+            }
+          ],
+          "skipped": true,
+          "reason": "No authentication token"
+        },
+        {
+          "name": "Reactivate CRUD Flow",
+          "type": "crud_flow",
+          "entity": "Reactivate",
+          "requiresAuth": true,
+          "steps": [
+            {
+              "name": "Create Reactivate",
+              "method": "POST",
+              "path": "/reactivate",
+              "auth": true,
+              "body": {
+                "name": "Test Reactivate",
+                "description": "Test Reactivate created by DevLoop"
+              },
+              "expect": {
+                "status": [
+                  200,
+                  201
+                ],
+                "hasId": true
+              },
+              "saveAs": "reactivate"
+            }
+          ],
+          "skipped": true,
+          "reason": "No authentication token"
+        },
+        {
+          "name": "Webhook CRUD Flow",
+          "type": "crud_flow",
+          "entity": "Webhook",
+          "requiresAuth": true,
+          "steps": [
+            {
+              "name": "Create Webhook",
+              "method": "POST",
+              "path": "/webhook",
+              "auth": true,
+              "body": {
+                "name": "Test Webhook",
+                "description": "Test Webhook created by DevLoop"
+              },
+              "expect": {
+                "status": [
+                  200,
+                  201
+                ],
+                "hasId": true
+              },
+              "saveAs": "webhook"
+            }
+          ],
+          "skipped": true,
+          "reason": "No authentication token"
+        },
+        {
+          "name": "Register CRUD Flow",
+          "type": "crud_flow",
+          "entity": "Register",
+          "requiresAuth": false,
+          "steps": [
+            {
+              "name": "Create Register",
+              "method": "POST",
+              "path": "/register",
+              "auth": false,
+              "body": {
+                "name": "Test Register",
+                "description": "Test Register created by DevLoop"
+              },
+              "expect": {
+                "status": [
+                  200,
+                  201
+                ],
+                "hasId": true
+              },
+              "saveAs": "register"
+            }
+          ],
+          "skipped": true,
+          "reason": "No authentication token"
+        },
+        {
+          "name": "Login CRUD Flow",
+          "type": "crud_flow",
+          "entity": "Login",
+          "requiresAuth": false,
+          "steps": [
+            {
+              "name": "Create Login",
+              "method": "POST",
+              "path": "/login",
+              "auth": false,
+              "body": {
+                "name": "Test Login",
+                "description": "Test Login created by DevLoop"
+              },
+              "expect": {
+                "status": [
+                  200,
+                  201
+                ],
+                "hasId": true
+              },
+              "saveAs": "login"
+            }
+          ],
+          "skipped": true,
+          "reason": "No authentication token"
+        },
+        {
+          "name": "Google CRUD Flow",
+          "type": "crud_flow",
+          "entity": "Google",
+          "requiresAuth": false,
+          "steps": [
+            {
+              "name": "Create Google",
+              "method": "POST",
+              "path": "/google",
+              "auth": false,
+              "body": {
+                "name": "Test Google",
+                "description": "Test Google created by DevLoop"
+              },
+              "expect": {
+                "status": [
+                  200,
+                  201
+                ],
+                "hasId": true
+              },
+              "saveAs": "google"
+            }
+          ],
+          "skipped": true,
+          "reason": "No authentication token"
+        },
+        {
+          "name": "Forgot-password CRUD Flow",
+          "type": "crud_flow",
+          "entity": "Forgot-password",
+          "requiresAuth": true,
+          "steps": [
+            {
+              "name": "Create Forgot-password",
+              "method": "POST",
+              "path": "/forgot-password",
+              "auth": true,
+              "body": {
+                "name": "Test Forgot-password",
+                "description": "Test Forgot-password created by DevLoop"
+              },
+              "expect": {
+                "status": [
+                  200,
+                  201
+                ],
+                "hasId": true
+              },
+              "saveAs": "forgot-password"
+            }
+          ],
+          "skipped": true,
+          "reason": "No authentication token"
+        },
+        {
+          "name": "Reset-password CRUD Flow",
+          "type": "crud_flow",
+          "entity": "Reset-password",
+          "requiresAuth": false,
+          "steps": [
+            {
+              "name": "Create Reset-password",
+              "method": "POST",
+              "path": "/reset-password",
+              "auth": false,
+              "body": {
+                "name": "Test Reset-password",
+                "description": "Test Reset-password created by DevLoop"
+              },
+              "expect": {
+                "status": [
+                  200,
+                  201
+                ],
+                "hasId": true
+              },
+              "saveAs": "reset-password"
+            }
+          ],
+          "skipped": true,
+          "reason": "No authentication token"
+        },
+        {
+          "name": "Verify-reset-token CRUD Flow",
+          "type": "crud_flow",
+          "entity": "Verify-reset-token",
+          "requiresAuth": false,
+          "steps": [
+            {
+              "name": "Create Verify-reset-token",
+              "method": "POST",
+              "path": "/verify-reset-token",
+              "auth": false,
+              "body": {
+                "name": "Test Verify-reset-token",
+                "description": "Test Verify-reset-token created by DevLoop"
+              },
+              "expect": {
+                "status": [
+                  200,
+                  201
+                ],
+                "hasId": true
+              },
+              "saveAs": "verify-reset-token"
+            }
+          ],
+          "skipped": true,
+          "reason": "No authentication token"
+        }
+      ],
+      "passed": 0,
+      "failed": 0
+    },
+    {
+      "name": "Public UI Tests",
+      "tests": [
+        {
+          "name": "Page Load: /privacy",
+          "type": "ui",
+          "route": "/privacy",
+          "file": "apps/web/src/App.tsx",
+          "auth": false,
+          "steps": [
+            {
+              "action": "navigate",
+              "url": "/privacy"
+            },
+            {
+              "action": "waitForLoad"
+            },
+            {
+              "action": "checkNoErrors"
+            },
+            {
+              "action": "checkVisible",
+              "selectors": [
+                "body",
+                "main, [role=\"main\"], #main, .main-content",
+                "header, nav, [role=\"navigation\"]"
+              ]
+            }
+          ],
+          "expect": {
+            "noConsoleErrors": true,
+            "loadTime": 3000
+          },
+          "passed": true,
+          "error": null,
+          "statusCode": 200,
+          "responseTime": 73,
+          "savedData": null,
+          "failedSteps": []
+        },
+        {
+          "name": "Page Load: /support",
+          "type": "ui",
+          "route": "/support",
+          "file": "apps/web/src/App.tsx",
+          "auth": false,
+          "steps": [
+            {
+              "action": "navigate",
+              "url": "/support"
+            },
+            {
+              "action": "waitForLoad"
+            },
+            {
+              "action": "checkNoErrors"
+            },
+            {
+              "action": "checkVisible",
+              "selectors": [
+                "body",
+                "main, [role=\"main\"], #main, .main-content",
+                "header, nav, [role=\"navigation\"]"
+              ]
+            }
+          ],
+          "expect": {
+            "noConsoleErrors": true,
+            "loadTime": 3000
+          },
+          "passed": true,
+          "error": null,
+          "statusCode": 200,
+          "responseTime": 72,
+          "savedData": null,
+          "failedSteps": []
+        },
+        {
+          "name": "Page Load: /dashboard",
+          "type": "ui",
+          "route": "/dashboard",
+          "file": "apps/web/src/App.tsx",
+          "auth": false,
+          "steps": [
+            {
+              "action": "navigate",
+              "url": "/dashboard"
+            },
+            {
+              "action": "waitForLoad"
+            },
+            {
+              "action": "checkNoErrors"
+            },
+            {
+              "action": "checkVisible",
+              "selectors": [
+                "body",
+                "main, [role=\"main\"], #main, .main-content",
+                "header, nav, [role=\"navigation\"]"
+              ]
+            }
+          ],
+          "expect": {
+            "noConsoleErrors": true,
+            "loadTime": 3000
+          },
+          "passed": true,
+          "error": null,
+          "statusCode": 200,
+          "responseTime": 73,
+          "savedData": null,
+          "failedSteps": []
+        },
+        {
+          "name": "Page Load: /profile",
+          "type": "ui",
+          "route": "/profile",
+          "file": "apps/web/src/App.tsx",
+          "auth": false,
+          "steps": [
+            {
+              "action": "navigate",
+              "url": "/profile"
+            },
+            {
+              "action": "waitForLoad"
+            },
+            {
+              "action": "checkNoErrors"
+            },
+            {
+              "action": "checkVisible",
+              "selectors": [
+                "body",
+                "main, [role=\"main\"], #main, .main-content",
+                "header, nav, [role=\"navigation\"]"
+              ]
+            }
+          ],
+          "expect": {
+            "noConsoleErrors": true,
+            "loadTime": 3000
+          },
+          "passed": true,
+          "error": null,
+          "statusCode": 200,
+          "responseTime": 75,
+          "savedData": null,
+          "failedSteps": []
+        },
+        {
+          "name": "Page Load: /clients",
+          "type": "ui",
+          "route": "/clients",
+          "file": "apps/web/src/App.tsx",
+          "auth": false,
+          "steps": [
+            {
+              "action": "navigate",
+              "url": "/clients"
+            },
+            {
+              "action": "waitForLoad"
+            },
+            {
+              "action": "checkNoErrors"
+            },
+            {
+              "action": "checkVisible",
+              "selectors": [
+                "body",
+                "main, [role=\"main\"], #main, .main-content",
+                "header, nav, [role=\"navigation\"]"
+              ]
+            }
+          ],
+          "expect": {
+            "noConsoleErrors": true,
+            "loadTime": 3000
+          },
+          "passed": true,
+          "error": null,
+          "statusCode": 200,
+          "responseTime": 72,
+          "savedData": null,
+          "failedSteps": []
+        },
+        {
+          "name": "Page Load: /clients/:id",
+          "type": "ui",
+          "route": "/clients/:id",
+          "file": "apps/web/src/App.tsx",
+          "auth": false,
+          "steps": [
+            {
+              "action": "navigate",
+              "url": "/clients/:id"
+            },
+            {
+              "action": "waitForLoad"
+            },
+            {
+              "action": "checkNoErrors"
+            },
+            {
+              "action": "checkVisible",
+              "selectors": [
+                "body",
+                "main, [role=\"main\"], #main, .main-content",
+                "header, nav, [role=\"navigation\"]"
+              ]
+            }
+          ],
+          "expect": {
+            "noConsoleErrors": true,
+            "loadTime": 3000
+          },
+          "passed": true,
+          "error": null,
+          "statusCode": 200,
+          "responseTime": 75,
+          "savedData": null,
+          "failedSteps": []
+        },
+        {
+          "name": "Page Load: /projects",
+          "type": "ui",
+          "route": "/projects",
+          "file": "apps/web/src/App.tsx",
+          "auth": false,
+          "steps": [
+            {
+              "action": "navigate",
+              "url": "/projects"
+            },
+            {
+              "action": "waitForLoad"
+            },
+            {
+              "action": "checkNoErrors"
+            },
+            {
+              "action": "checkVisible",
+              "selectors": [
+                "body",
+                "main, [role=\"main\"], #main, .main-content",
+                "header, nav, [role=\"navigation\"]"
+              ]
+            }
+          ],
+          "expect": {
+            "noConsoleErrors": true,
+            "loadTime": 3000
+          },
+          "passed": true,
+          "error": null,
+          "statusCode": 200,
+          "responseTime": 70,
+          "savedData": null,
+          "failedSteps": []
+        },
+        {
+          "name": "Page Load: /projects/new",
+          "type": "ui",
+          "route": "/projects/new",
+          "file": "apps/web/src/App.tsx",
+          "auth": false,
+          "steps": [
+            {
+              "action": "navigate",
+              "url": "/projects/new"
+            },
+            {
+              "action": "waitForLoad"
+            },
+            {
+              "action": "checkNoErrors"
+            },
+            {
+              "action": "checkVisible",
+              "selectors": [
+                "body",
+                "main, [role=\"main\"], #main, .main-content",
+                "header, nav, [role=\"navigation\"]"
+              ]
+            }
+          ],
+          "expect": {
+            "noConsoleErrors": true,
+            "loadTime": 3000
+          },
+          "passed": true,
+          "error": null,
+          "statusCode": 200,
+          "responseTime": 75,
+          "savedData": null,
+          "failedSteps": []
+        },
+        {
+          "name": "Page Load: /projects/:id",
+          "type": "ui",
+          "route": "/projects/:id",
+          "file": "apps/web/src/App.tsx",
+          "auth": false,
+          "steps": [
+            {
+              "action": "navigate",
+              "url": "/projects/:id"
+            },
+            {
+              "action": "waitForLoad"
+            },
+            {
+              "action": "checkNoErrors"
+            },
+            {
+              "action": "checkVisible",
+              "selectors": [
+                "body",
+                "main, [role=\"main\"], #main, .main-content",
+                "header, nav, [role=\"navigation\"]"
+              ]
+            }
+          ],
+          "expect": {
+            "noConsoleErrors": true,
+            "loadTime": 3000
+          },
+          "passed": true,
+          "error": null,
+          "statusCode": 200,
+          "responseTime": 72,
+          "savedData": null,
+          "failedSteps": []
+        },
+        {
+          "name": "Page Load: /projects/:id/edit",
+          "type": "ui",
+          "route": "/projects/:id/edit",
+          "file": "apps/web/src/App.tsx",
+          "auth": false,
+          "steps": [
+            {
+              "action": "navigate",
+              "url": "/projects/:id/edit"
+            },
+            {
+              "action": "waitForLoad"
+            },
+            {
+              "action": "checkNoErrors"
+            },
+            {
+              "action": "checkVisible",
+              "selectors": [
+                "body",
+                "main, [role=\"main\"], #main, .main-content",
+                "header, nav, [role=\"navigation\"]"
+              ]
+            }
+          ],
+          "expect": {
+            "noConsoleErrors": true,
+            "loadTime": 3000
+          },
+          "passed": true,
+          "error": null,
+          "statusCode": 200,
+          "responseTime": 74,
+          "savedData": null,
+          "failedSteps": []
+        },
+        {
+          "name": "Page Load: /projects/:id/scope/new",
+          "type": "ui",
+          "route": "/projects/:id/scope/new",
+          "file": "apps/web/src/App.tsx",
+          "auth": false,
+          "steps": [
+            {
+              "action": "navigate",
+              "url": "/projects/:id/scope/new"
+            },
+            {
+              "action": "waitForLoad"
+            },
+            {
+              "action": "checkNoErrors"
+            },
+            {
+              "action": "checkVisible",
+              "selectors": [
+                "body",
+                "main, [role=\"main\"], #main, .main-content",
+                "header, nav, [role=\"navigation\"]"
+              ]
+            }
+          ],
+          "expect": {
+            "noConsoleErrors": true,
+            "loadTime": 3000
+          },
+          "passed": true,
+          "error": null,
+          "statusCode": 200,
+          "responseTime": 72,
+          "savedData": null,
+          "failedSteps": []
+        },
+        {
+          "name": "Page Load: /projects/:id/scope/edit",
+          "type": "ui",
+          "route": "/projects/:id/scope/edit",
+          "file": "apps/web/src/App.tsx",
+          "auth": false,
+          "steps": [
+            {
+              "action": "navigate",
+              "url": "/projects/:id/scope/edit"
+            },
+            {
+              "action": "waitForLoad"
+            },
+            {
+              "action": "checkNoErrors"
+            },
+            {
+              "action": "checkVisible",
+              "selectors": [
+                "body",
+                "main, [role=\"main\"], #main, .main-content",
+                "header, nav, [role=\"navigation\"]"
+              ]
+            }
+          ],
+          "expect": {
+            "noConsoleErrors": true,
+            "loadTime": 3000
+          },
+          "passed": true,
+          "error": null,
+          "statusCode": 200,
+          "responseTime": 71,
+          "savedData": null,
+          "failedSteps": []
+        },
+        {
+          "name": "Page Load: /projects/:id/requests/new",
+          "type": "ui",
+          "route": "/projects/:id/requests/new",
+          "file": "apps/web/src/App.tsx",
+          "auth": false,
+          "steps": [
+            {
+              "action": "navigate",
+              "url": "/projects/:id/requests/new"
+            },
+            {
+              "action": "waitForLoad"
+            },
+            {
+              "action": "checkNoErrors"
+            },
+            {
+              "action": "checkVisible",
+              "selectors": [
+                "body",
+                "main, [role=\"main\"], #main, .main-content",
+                "header, nav, [role=\"navigation\"]"
+              ]
+            }
+          ],
+          "expect": {
+            "noConsoleErrors": true,
+            "loadTime": 3000
+          },
+          "passed": true,
+          "error": null,
+          "statusCode": 200,
+          "responseTime": 72,
+          "savedData": null,
+          "failedSteps": []
+        },
+        {
+          "name": "Page Load: /projects/:id/requests/edit",
+          "type": "ui",
+          "route": "/projects/:id/requests/edit",
+          "file": "apps/web/src/App.tsx",
+          "auth": false,
+          "steps": [
+            {
+              "action": "navigate",
+              "url": "/projects/:id/requests/edit"
+            },
+            {
+              "action": "waitForLoad"
+            },
+            {
+              "action": "checkNoErrors"
+            },
+            {
+              "action": "checkVisible",
+              "selectors": [
+                "body",
+                "main, [role=\"main\"], #main, .main-content",
+                "header, nav, [role=\"navigation\"]"
+              ]
+            }
+          ],
+          "expect": {
+            "noConsoleErrors": true,
+            "loadTime": 3000
+          },
+          "passed": true,
+          "error": null,
+          "statusCode": 200,
+          "responseTime": 76,
+          "savedData": null,
+          "failedSteps": []
+        },
+        {
+          "name": "Page Load: /projects/:id/proposals/new",
+          "type": "ui",
+          "route": "/projects/:id/proposals/new",
+          "file": "apps/web/src/App.tsx",
+          "auth": false,
+          "steps": [
+            {
+              "action": "navigate",
+              "url": "/projects/:id/proposals/new"
+            },
+            {
+              "action": "waitForLoad"
+            },
+            {
+              "action": "checkNoErrors"
+            },
+            {
+              "action": "checkVisible",
+              "selectors": [
+                "body",
+                "main, [role=\"main\"], #main, .main-content",
+                "header, nav, [role=\"navigation\"]"
+              ]
+            }
+          ],
+          "expect": {
+            "noConsoleErrors": true,
+            "loadTime": 3000
+          },
+          "passed": true,
+          "error": null,
+          "statusCode": 200,
+          "responseTime": 73,
+          "savedData": null,
+          "failedSteps": []
+        },
+        {
+          "name": "Page Load: /projects/:id/proposals/edit",
+          "type": "ui",
+          "route": "/projects/:id/proposals/edit",
+          "file": "apps/web/src/App.tsx",
+          "auth": false,
+          "steps": [
+            {
+              "action": "navigate",
+              "url": "/projects/:id/proposals/edit"
+            },
+            {
+              "action": "waitForLoad"
+            },
+            {
+              "action": "checkNoErrors"
+            },
+            {
+              "action": "checkVisible",
+              "selectors": [
+                "body",
+                "main, [role=\"main\"], #main, .main-content",
+                "header, nav, [role=\"navigation\"]"
+              ]
+            }
+          ],
+          "expect": {
+            "noConsoleErrors": true,
+            "loadTime": 3000
+          },
+          "passed": true,
+          "error": null,
+          "statusCode": 200,
+          "responseTime": 75,
+          "savedData": null,
+          "failedSteps": []
+        },
+        {
+          "name": "Page Load: /scope-items",
+          "type": "ui",
+          "route": "/scope-items",
+          "file": "apps/web/src/App.tsx",
+          "auth": false,
+          "steps": [
+            {
+              "action": "navigate",
+              "url": "/scope-items"
+            },
+            {
+              "action": "waitForLoad"
+            },
+            {
+              "action": "checkNoErrors"
+            },
+            {
+              "action": "checkVisible",
+              "selectors": [
+                "body",
+                "main, [role=\"main\"], #main, .main-content",
+                "header, nav, [role=\"navigation\"]"
+              ]
+            }
+          ],
+          "expect": {
+            "noConsoleErrors": true,
+            "loadTime": 3000
+          },
+          "passed": true,
+          "error": null,
+          "statusCode": 200,
+          "responseTime": 71,
+          "savedData": null,
+          "failedSteps": []
+        },
+        {
+          "name": "Page Load: /requests",
+          "type": "ui",
+          "route": "/requests",
+          "file": "apps/web/src/App.tsx",
+          "auth": false,
+          "steps": [
+            {
+              "action": "navigate",
+              "url": "/requests"
+            },
+            {
+              "action": "waitForLoad"
+            },
+            {
+              "action": "checkNoErrors"
+            },
+            {
+              "action": "checkVisible",
+              "selectors": [
+                "body",
+                "main, [role=\"main\"], #main, .main-content",
+                "header, nav, [role=\"navigation\"]"
+              ]
+            }
+          ],
+          "expect": {
+            "noConsoleErrors": true,
+            "loadTime": 3000
+          },
+          "passed": true,
+          "error": null,
+          "statusCode": 200,
+          "responseTime": 75,
+          "savedData": null,
+          "failedSteps": []
+        },
+        {
+          "name": "Page Load: /proposals",
+          "type": "ui",
+          "route": "/proposals",
+          "file": "apps/web/src/App.tsx",
+          "auth": false,
+          "steps": [
+            {
+              "action": "navigate",
+              "url": "/proposals"
+            },
+            {
+              "action": "waitForLoad"
+            },
+            {
+              "action": "checkNoErrors"
+            },
+            {
+              "action": "checkVisible",
+              "selectors": [
+                "body",
+                "main, [role=\"main\"], #main, .main-content",
+                "header, nav, [role=\"navigation\"]"
+              ]
+            }
+          ],
+          "expect": {
+            "noConsoleErrors": true,
+            "loadTime": 3000
+          },
+          "passed": true,
+          "error": null,
+          "statusCode": 200,
+          "responseTime": 74,
+          "savedData": null,
+          "failedSteps": []
+        },
+        {
+          "name": "Page Load: /portal",
+          "type": "ui",
+          "route": "/portal",
+          "file": "apps/web/src/App.tsx",
+          "auth": false,
+          "steps": [
+            {
+              "action": "navigate",
+              "url": "/portal"
+            },
+            {
+              "action": "waitForLoad"
+            },
+            {
+              "action": "checkNoErrors"
+            },
+            {
+              "action": "checkVisible",
+              "selectors": [
+                "body",
+                "main, [role=\"main\"], #main, .main-content",
+                "header, nav, [role=\"navigation\"]"
+              ]
+            }
+          ],
+          "expect": {
+            "noConsoleErrors": true,
+            "loadTime": 3000
+          },
+          "passed": true,
+          "error": null,
+          "statusCode": 200,
+          "responseTime": 72,
+          "savedData": null,
+          "failedSteps": []
+        },
+        {
+          "name": "Page Load: /settings",
+          "type": "ui",
+          "route": "/settings",
+          "file": "apps/web/src/App.tsx",
+          "auth": false,
+          "steps": [
+            {
+              "action": "navigate",
+              "url": "/settings"
+            },
+            {
+              "action": "waitForLoad"
+            },
+            {
+              "action": "checkNoErrors"
+            },
+            {
+              "action": "checkVisible",
+              "selectors": [
+                "body",
+                "main, [role=\"main\"], #main, .main-content",
+                "header, nav, [role=\"navigation\"]"
+              ]
+            }
+          ],
+          "expect": {
+            "noConsoleErrors": true,
+            "loadTime": 3000
+          },
+          "passed": true,
+          "error": null,
+          "statusCode": 200,
+          "responseTime": 74,
+          "savedData": null,
+          "failedSteps": []
+        },
+        {
+          "name": "Page Load: /settings/billing",
+          "type": "ui",
+          "route": "/settings/billing",
+          "file": "apps/web/src/App.tsx",
+          "auth": false,
+          "steps": [
+            {
+              "action": "navigate",
+              "url": "/settings/billing"
+            },
+            {
+              "action": "waitForLoad"
+            },
+            {
+              "action": "checkNoErrors"
+            },
+            {
+              "action": "checkVisible",
+              "selectors": [
+                "body",
+                "main, [role=\"main\"], #main, .main-content",
+                "header, nav, [role=\"navigation\"]"
+              ]
+            }
+          ],
+          "expect": {
+            "noConsoleErrors": true,
+            "loadTime": 3000
+          },
+          "passed": true,
+          "error": null,
+          "statusCode": 200,
+          "responseTime": 72,
+          "savedData": null,
+          "failedSteps": []
+        },
+        {
+          "name": "Page Load: *",
+          "type": "ui",
+          "route": "*",
+          "file": "apps/web/src/App.tsx",
+          "auth": false,
+          "steps": [
+            {
+              "action": "navigate",
+              "url": "*"
+            },
+            {
+              "action": "waitForLoad"
+            },
+            {
+              "action": "checkNoErrors"
+            },
+            {
+              "action": "checkVisible",
+              "selectors": [
+                "body",
+                "main, [role=\"main\"], #main, .main-content",
+                "header, nav, [role=\"navigation\"]"
+              ]
+            }
+          ],
+          "expect": {
+            "noConsoleErrors": true,
+            "loadTime": 3000
+          },
+          "passed": false,
+          "error": "fetch failed",
+          "statusCode": null,
+          "responseTime": null,
+          "savedData": null,
+          "failedSteps": []
+        },
+        {
+          "name": "Navigation: clients section",
+          "type": "ui_navigation",
+          "section": "clients",
+          "steps": [
+            {
+              "name": "Navigate to /clients",
+              "action": "navigate",
+              "url": "/clients"
+            },
+            {
+              "action": "waitForLoad"
+            },
+            {
+              "name": "Navigate to /clients/:id",
+              "action": "navigate",
+              "url": "/clients/:id"
+            },
+            {
+              "action": "waitForLoad"
+            }
+          ],
+          "expect": {
+            "noConsoleErrors": true
+          },
+          "passed": true,
+          "error": null,
+          "statusCode": 200,
+          "responseTime": 86,
+          "savedData": null,
+          "failedSteps": []
+        },
+        {
+          "name": "Navigation: projects section",
+          "type": "ui_navigation",
+          "section": "projects",
+          "steps": [
+            {
+              "name": "Navigate to /projects",
+              "action": "navigate",
+              "url": "/projects"
+            },
+            {
+              "action": "waitForLoad"
+            },
+            {
+              "name": "Navigate to /projects/new",
+              "action": "navigate",
+              "url": "/projects/new"
+            },
+            {
+              "action": "waitForLoad"
+            },
+            {
+              "name": "Navigate to /projects/:id",
+              "action": "navigate",
+              "url": "/projects/:id"
+            },
+            {
+              "action": "waitForLoad"
+            },
+            {
+              "name": "Navigate to /projects/:id/edit",
+              "action": "navigate",
+              "url": "/projects/:id/edit"
+            },
+            {
+              "action": "waitForLoad"
+            },
+            {
+              "name": "Navigate to /projects/:id/scope/new",
+              "action": "navigate",
+              "url": "/projects/:id/scope/new"
+            },
+            {
+              "action": "waitForLoad"
+            }
+          ],
+          "expect": {
+            "noConsoleErrors": true
+          },
+          "passed": true,
+          "error": null,
+          "statusCode": 200,
+          "responseTime": 74,
+          "savedData": null,
+          "failedSteps": []
+        },
+        {
+          "name": "Navigation: settings section",
+          "type": "ui_navigation",
+          "section": "settings",
+          "steps": [
+            {
+              "name": "Navigate to /settings",
+              "action": "navigate",
+              "url": "/settings"
+            },
+            {
+              "action": "waitForLoad"
+            },
+            {
+              "name": "Navigate to /settings/billing",
+              "action": "navigate",
+              "url": "/settings/billing"
+            },
+            {
+              "action": "waitForLoad"
+            }
+          ],
+          "expect": {
+            "noConsoleErrors": true
+          },
+          "passed": true,
+          "error": null,
+          "statusCode": 200,
+          "responseTime": 74,
+          "savedData": null,
+          "failedSteps": []
+        },
+        {
+          "name": "Form: /profile",
+          "type": "ui_form",
+          "route": "/profile",
+          "steps": [
+            {
+              "action": "navigate",
+              "url": "/profile"
+            },
+            {
+              "action": "waitForLoad"
+            },
+            {
+              "action": "fillForm",
+              "strategy": "auto"
+            },
+            {
+              "action": "submitForm"
+            },
+            {
+              "action": "waitForNavigation",
+              "timeout": 5000
+            }
+          ],
+          "expect": {
+            "noConsoleErrors": true,
+            "formSubmitted": true
+          },
+          "passed": true,
+          "error": null,
+          "statusCode": 200,
+          "responseTime": 70,
+          "savedData": null,
+          "failedSteps": []
+        },
+        {
+          "name": "Form: /projects/new",
+          "type": "ui_form",
+          "route": "/projects/new",
+          "steps": [
+            {
+              "action": "navigate",
+              "url": "/projects/new"
+            },
+            {
+              "action": "waitForLoad"
+            },
+            {
+              "action": "fillForm",
+              "strategy": "auto"
+            },
+            {
+              "action": "submitForm"
+            },
+            {
+              "action": "waitForNavigation",
+              "timeout": 5000
+            }
+          ],
+          "expect": {
+            "noConsoleErrors": true,
+            "formSubmitted": true
+          },
+          "passed": true,
+          "error": null,
+          "statusCode": 200,
+          "responseTime": 73,
+          "savedData": null,
+          "failedSteps": []
+        },
+        {
+          "name": "Form: /projects/:id/edit",
+          "type": "ui_form",
+          "route": "/projects/:id/edit",
+          "steps": [
+            {
+              "action": "navigate",
+              "url": "/projects/:id/edit"
+            },
+            {
+              "action": "waitForLoad"
+            },
+            {
+              "action": "fillForm",
+              "strategy": "auto"
+            },
+            {
+              "action": "submitForm"
+            },
+            {
+              "action": "waitForNavigation",
+              "timeout": 5000
+            }
+          ],
+          "expect": {
+            "noConsoleErrors": true,
+            "formSubmitted": true
+          },
+          "passed": true,
+          "error": null,
+          "statusCode": 200,
+          "responseTime": 76,
+          "savedData": null,
+          "failedSteps": []
+        },
+        {
+          "name": "Form: /projects/:id/scope/new",
+          "type": "ui_form",
+          "route": "/projects/:id/scope/new",
+          "steps": [
+            {
+              "action": "navigate",
+              "url": "/projects/:id/scope/new"
+            },
+            {
+              "action": "waitForLoad"
+            },
+            {
+              "action": "fillForm",
+              "strategy": "auto"
+            },
+            {
+              "action": "submitForm"
+            },
+            {
+              "action": "waitForNavigation",
+              "timeout": 5000
+            }
+          ],
+          "expect": {
+            "noConsoleErrors": true,
+            "formSubmitted": true
+          },
+          "passed": true,
+          "error": null,
+          "statusCode": 200,
+          "responseTime": 73,
+          "savedData": null,
+          "failedSteps": []
+        },
+        {
+          "name": "Form: /projects/:id/scope/edit",
+          "type": "ui_form",
+          "route": "/projects/:id/scope/edit",
+          "steps": [
+            {
+              "action": "navigate",
+              "url": "/projects/:id/scope/edit"
+            },
+            {
+              "action": "waitForLoad"
+            },
+            {
+              "action": "fillForm",
+              "strategy": "auto"
+            },
+            {
+              "action": "submitForm"
+            },
+            {
+              "action": "waitForNavigation",
+              "timeout": 5000
+            }
+          ],
+          "expect": {
+            "noConsoleErrors": true,
+            "formSubmitted": true
+          },
+          "passed": true,
+          "error": null,
+          "statusCode": 200,
+          "responseTime": 72,
+          "savedData": null,
+          "failedSteps": []
+        },
+        {
+          "name": "Form: /projects/:id/requests/new",
+          "type": "ui_form",
+          "route": "/projects/:id/requests/new",
+          "steps": [
+            {
+              "action": "navigate",
+              "url": "/projects/:id/requests/new"
+            },
+            {
+              "action": "waitForLoad"
+            },
+            {
+              "action": "fillForm",
+              "strategy": "auto"
+            },
+            {
+              "action": "submitForm"
+            },
+            {
+              "action": "waitForNavigation",
+              "timeout": 5000
+            }
+          ],
+          "expect": {
+            "noConsoleErrors": true,
+            "formSubmitted": true
+          },
+          "passed": true,
+          "error": null,
+          "statusCode": 200,
+          "responseTime": 73,
+          "savedData": null,
+          "failedSteps": []
+        },
+        {
+          "name": "Form: /projects/:id/requests/edit",
+          "type": "ui_form",
+          "route": "/projects/:id/requests/edit",
+          "steps": [
+            {
+              "action": "navigate",
+              "url": "/projects/:id/requests/edit"
+            },
+            {
+              "action": "waitForLoad"
+            },
+            {
+              "action": "fillForm",
+              "strategy": "auto"
+            },
+            {
+              "action": "submitForm"
+            },
+            {
+              "action": "waitForNavigation",
+              "timeout": 5000
+            }
+          ],
+          "expect": {
+            "noConsoleErrors": true,
+            "formSubmitted": true
+          },
+          "passed": true,
+          "error": null,
+          "statusCode": 200,
+          "responseTime": 74,
+          "savedData": null,
+          "failedSteps": []
+        },
+        {
+          "name": "Form: /projects/:id/proposals/new",
+          "type": "ui_form",
+          "route": "/projects/:id/proposals/new",
+          "steps": [
+            {
+              "action": "navigate",
+              "url": "/projects/:id/proposals/new"
+            },
+            {
+              "action": "waitForLoad"
+            },
+            {
+              "action": "fillForm",
+              "strategy": "auto"
+            },
+            {
+              "action": "submitForm"
+            },
+            {
+              "action": "waitForNavigation",
+              "timeout": 5000
+            }
+          ],
+          "expect": {
+            "noConsoleErrors": true,
+            "formSubmitted": true
+          },
+          "passed": true,
+          "error": null,
+          "statusCode": 200,
+          "responseTime": 72,
+          "savedData": null,
+          "failedSteps": []
+        },
+        {
+          "name": "Form: /projects/:id/proposals/edit",
+          "type": "ui_form",
+          "route": "/projects/:id/proposals/edit",
+          "steps": [
+            {
+              "action": "navigate",
+              "url": "/projects/:id/proposals/edit"
+            },
+            {
+              "action": "waitForLoad"
+            },
+            {
+              "action": "fillForm",
+              "strategy": "auto"
+            },
+            {
+              "action": "submitForm"
+            },
+            {
+              "action": "waitForNavigation",
+              "timeout": 5000
+            }
+          ],
+          "expect": {
+            "noConsoleErrors": true,
+            "formSubmitted": true
+          },
+          "passed": true,
+          "error": null,
+          "statusCode": 200,
+          "responseTime": 71,
+          "savedData": null,
+          "failedSteps": []
+        },
+        {
+          "name": "Form: /settings",
+          "type": "ui_form",
+          "route": "/settings",
+          "steps": [
+            {
+              "action": "navigate",
+              "url": "/settings"
+            },
+            {
+              "action": "waitForLoad"
+            },
+            {
+              "action": "fillForm",
+              "strategy": "auto"
+            },
+            {
+              "action": "submitForm"
+            },
+            {
+              "action": "waitForNavigation",
+              "timeout": 5000
+            }
+          ],
+          "expect": {
+            "noConsoleErrors": true,
+            "formSubmitted": true
+          },
+          "passed": true,
+          "error": null,
+          "statusCode": 200,
+          "responseTime": 75,
+          "savedData": null,
+          "failedSteps": []
+        },
+        {
+          "name": "Form: /settings/billing",
+          "type": "ui_form",
+          "route": "/settings/billing",
+          "steps": [
+            {
+              "action": "navigate",
+              "url": "/settings/billing"
+            },
+            {
+              "action": "waitForLoad"
+            },
+            {
+              "action": "fillForm",
+              "strategy": "auto"
+            },
+            {
+              "action": "submitForm"
+            },
+            {
+              "action": "waitForNavigation",
+              "timeout": 5000
+            }
+          ],
+          "expect": {
+            "noConsoleErrors": true,
+            "formSubmitted": true
+          },
+          "passed": true,
+          "error": null,
+          "statusCode": 200,
+          "responseTime": 75,
+          "savedData": null,
+          "failedSteps": []
+        },
+        {
+          "name": "Login Form Validation",
+          "type": "ui_form",
+          "route": "/login",
+          "steps": [
+            {
+              "action": "navigate",
+              "url": "/login"
+            },
+            {
+              "action": "waitForLoad"
+            },
+            {
+              "name": "Test empty submission",
+              "action": "click",
+              "selector": "button[type=\"submit\"]"
+            },
+            {
+              "action": "checkVisible",
+              "selectors": [
+                ".error, .validation-error, [role=\"alert\"]"
+              ]
+            },
+            {
+              "name": "Test invalid email",
+              "action": "fill",
+              "fields": [
+                {
+                  "selector": "input[type=\"email\"]",
+                  "value": "invalid-email"
+                },
+                {
+                  "selector": "input[type=\"password\"]",
+                  "value": "password123"
+                }
+              ]
+            },
+            {
+              "action": "click",
+              "selector": "button[type=\"submit\"]"
+            },
+            {
+              "action": "checkVisible",
+              "selectors": [
+                ".error, .validation-error, [role=\"alert\"]"
+              ]
+            },
+            {
+              "name": "Test valid credentials",
+              "action": "clear"
+            },
+            {
+              "action": "fill",
+              "fields": [
+                {
+                  "selector": "input[type=\"email\"], input[name=\"email\"], input[id=\"email\"]",
+                  "value": "test@devloop-test.com",
+                  "field": "email"
+                }
+              ]
+            },
+            {
+              "action": "click",
+              "selector": "button[type=\"submit\"]"
+            },
+            {
+              "action": "waitForNavigation"
+            }
+          ],
+          "expect": {
+            "noConsoleErrors": true
+          },
+          "passed": true,
+          "error": null,
+          "statusCode": 200,
+          "responseTime": 75,
+          "savedData": null,
+          "failedSteps": []
+        },
+        {
+          "name": "Registration Form",
+          "type": "ui_form",
+          "route": "/register",
+          "steps": [
+            {
+              "action": "navigate",
+              "url": "/register"
+            },
+            {
+              "action": "waitForLoad"
+            },
+            {
+              "action": "fill",
+              "fields": [
+                {
+                  "selector": "input[type=\"email\"], input[name=\"email\"], input[id=\"email\"]",
+                  "value": "test@devloop-test.com",
+                  "field": "email"
+                },
+                {
+                  "selector": "input[name=\"name\"], input[name=\"fullName\"]",
+                  "value": "Test User"
+                }
+              ]
+            },
+            {
+              "action": "click",
+              "selector": "button[type=\"submit\"]"
+            },
+            {
+              "action": "waitForNavigation",
+              "timeout": 5000
+            }
+          ],
+          "expect": {
+            "noConsoleErrors": true,
+            "formSubmitted": true
+          },
+          "passed": true,
+          "error": null,
+          "statusCode": 200,
+          "responseTime": 73,
+          "savedData": null,
+          "failedSteps": []
+        }
+      ],
+      "passed": 38,
+      "failed": 1
+    }
+  ],
+  "context": {
+    "auth": {
+      "detail": "Method Not Allowed"
+    }
+  },
+  "failures": [
+    {
+      "test": {
+        "name": "Login",
+        "type": "auth",
+        "method": "POST",
+        "path": "/login",
+        "body": {
+          "email": "test_1765432249190@devloop-test.com"
+        },
+        "expect": {
+          "status": 200,
+          "hasToken": true
+        },
+        "saveAs": "auth",
+        "passed": false,
+        "error": "Expected 200, got 405",
+        "statusCode": 405,
+        "responseTime": 92,
+        "savedData": {
+          "detail": "Method Not Allowed"
+        },
+        "failedSteps": [],
+        "data": {
+          "detail": "Method Not Allowed"
+        }
+      },
+      "phase": "Authentication"
+    },
+    {
+      "test": {
+        "name": "Register",
+        "type": "auth",
+        "method": "POST",
+        "path": "/register",
+        "body": {
+          "email": "test_1765432249190@devloop-test.com",
+          "name": "Test User"
+        },
+        "expect": {
+          "status": [
+            200,
+            201
+          ]
+        },
+        "passed": false,
+        "error": "Expected 200 or 201, got 405",
+        "statusCode": 405,
+        "responseTime": 74,
+        "savedData": null,
+        "failedSteps": [],
+        "data": {
+          "detail": "Method Not Allowed"
+        }
+      },
+      "phase": "Authentication"
+    },
+    {
+      "test": {
+        "name": "POST /{project_id}/scope",
+        "type": "api",
+        "method": "POST",
+        "path": "/{project_id}/scope",
+        "auth": false,
+        "expect": {
+          "status": 200
+        },
+        "pathParams": {
+          "project_id": "95bbf35d-3fdb-446e-9f75-c7bf640a33e6"
+        },
+        "body": {
+          "_schemaRef": "ScopeItemCreate"
+        },
+        "passed": false,
+        "error": "Expected 200, got 405",
+        "statusCode": 405,
+        "responseTime": 73,
+        "savedData": null,
+        "failedSteps": [],
+        "data": {
+          "detail": "Method Not Allowed"
+        }
+      },
+      "phase": "Public API Tests"
+    },
+    {
+      "test": {
+        "name": "POST /scope-analyzer/analyze/{request_id}",
+        "type": "api",
+        "method": "POST",
+        "path": "/scope-analyzer/analyze/{request_id}",
+        "auth": false,
+        "expect": {
+          "status": 200
+        },
+        "pathParams": {
+          "request_id": "8bdc536b-8cb9-45af-9a81-ba56b93c5308"
+        },
+        "body": {
+          "name": "Test analyze",
+          "description": "Test analyze from DevLoop"
+        },
+        "passed": false,
+        "error": "Expected 200, got 405",
+        "statusCode": 405,
+        "responseTime": 74,
+        "savedData": null,
+        "failedSteps": [],
+        "data": {
+          "detail": "Method Not Allowed"
+        }
+      },
+      "phase": "Public API Tests"
+    },
+    {
+      "test": {
+        "name": "POST /scope-analyzer/analyze-project/{project_id}",
+        "type": "api",
+        "method": "POST",
+        "path": "/scope-analyzer/analyze-project/{project_id}",
+        "auth": false,
+        "expect": {
+          "status": 200
+        },
+        "pathParams": {
+          "project_id": "350930ca-f112-41f2-bf9d-7b04c0c591fa"
+        },
+        "body": {
+          "name": "Test analyze-project",
+          "description": "Test analyze-project from DevLoop"
+        },
+        "passed": false,
+        "error": "Expected 200, got 405",
+        "statusCode": 405,
+        "responseTime": 73,
+        "savedData": null,
+        "failedSteps": [],
+        "data": {
+          "detail": "Method Not Allowed"
+        }
+      },
+      "phase": "Public API Tests"
+    },
+    {
+      "test": {
+        "name": "POST /{project_id}/proposals",
+        "type": "api",
+        "method": "POST",
+        "path": "/{project_id}/proposals",
+        "auth": false,
+        "expect": {
+          "status": 200
+        },
+        "pathParams": {
+          "project_id": "20ff488e-5cce-4943-be45-7283281b4243"
+        },
+        "body": {
+          "_schemaRef": "ProposalCreate"
+        },
+        "passed": false,
+        "error": "Expected 200, got 405",
+        "statusCode": 405,
+        "responseTime": 75,
+        "savedData": null,
+        "failedSteps": [],
+        "data": {
+          "detail": "Method Not Allowed"
+        }
+      },
+      "phase": "Public API Tests"
+    },
+    {
+      "test": {
+        "name": "POST /{project_id}/proposals/{proposal_id}/send",
+        "type": "api",
+        "method": "POST",
+        "path": "/{project_id}/proposals/{proposal_id}/send",
+        "auth": false,
+        "expect": {
+          "status": 200
+        },
+        "pathParams": {
+          "project_id": "5ab31962-7337-49a7-b989-48711d6a3527",
+          "proposal_id": "e4aea67e-def5-4b24-801b-c68abf586e66"
+        },
+        "body": {
+          "name": "Test send",
+          "description": "Test send from DevLoop"
+        },
+        "passed": false,
+        "error": "Expected 200, got 405",
+        "statusCode": 405,
+        "responseTime": 74,
+        "savedData": null,
+        "failedSteps": [],
+        "data": {
+          "detail": "Method Not Allowed"
+        }
+      },
+      "phase": "Public API Tests"
+    },
+    {
+      "test": {
+        "name": "POST /{project_id}/proposals/{proposal_id}/accept",
+        "type": "api",
+        "method": "POST",
+        "path": "/{project_id}/proposals/{proposal_id}/accept",
+        "auth": false,
+        "expect": {
+          "status": 200
+        },
+        "pathParams": {
+          "project_id": "c19cff30-f225-4431-add5-097b330bf3e1",
+          "proposal_id": "7117d7f8-c85f-4a30-801a-08a1342200ac"
+        },
+        "body": {
+          "name": "Test accept",
+          "description": "Test accept from DevLoop"
+        },
+        "passed": false,
+        "error": "Expected 200, got 405",
+        "statusCode": 405,
+        "responseTime": 76,
+        "savedData": null,
+        "failedSteps": [],
+        "data": {
+          "detail": "Method Not Allowed"
+        }
+      },
+      "phase": "Public API Tests"
+    },
+    {
+      "test": {
+        "name": "POST /{project_id}/proposals/{proposal_id}/decline",
+        "type": "api",
+        "method": "POST",
+        "path": "/{project_id}/proposals/{proposal_id}/decline",
+        "auth": false,
+        "expect": {
+          "status": 200
+        },
+        "pathParams": {
+          "project_id": "2c97ad7f-47ca-4f8c-b2fc-5aca5bdb3fbf",
+          "proposal_id": "42f863ca-a968-48b2-b36c-7c531bf50d57"
+        },
+        "body": {
+          "name": "Test decline",
+          "description": "Test decline from DevLoop"
+        },
+        "passed": false,
+        "error": "Expected 200, got 405",
+        "statusCode": 405,
+        "responseTime": 75,
+        "savedData": null,
+        "failedSteps": [],
+        "data": {
+          "detail": "Method Not Allowed"
+        }
+      },
+      "phase": "Public API Tests"
+    },
+    {
+      "test": {
+        "name": "POST /{project_id}/requests/{request_id}/create-proposal",
+        "type": "api",
+        "method": "POST",
+        "path": "/{project_id}/requests/{request_id}/create-proposal",
+        "auth": false,
+        "expect": {
+          "status": 200
+        },
+        "pathParams": {
+          "project_id": "7a496e9c-86c8-425a-abe7-486f59c35a1f",
+          "request_id": "ab35c868-a7f0-4a87-8825-426141c211be"
+        },
+        "body": {
+          "_schemaRef": "ProposalFromRequest"
+        },
+        "passed": false,
+        "error": "Expected 200, got 405",
+        "statusCode": 405,
+        "responseTime": 73,
+        "savedData": null,
+        "failedSteps": [],
+        "data": {
+          "detail": "Method Not Allowed"
+        }
+      },
+      "phase": "Public API Tests"
+    },
+    {
+      "test": {
+        "name": "POST /{project_id}/requests",
+        "type": "api",
+        "method": "POST",
+        "path": "/{project_id}/requests",
+        "auth": false,
+        "expect": {
+          "status": 200
+        },
+        "pathParams": {
+          "project_id": "b71a8d62-2867-43b1-8763-bec467f9044d"
+        },
+        "body": {
+          "_schemaRef": "ClientRequestCreate"
+        },
+        "passed": false,
+        "error": "Expected 200, got 405",
+        "statusCode": 405,
+        "responseTime": 75,
+        "savedData": null,
+        "failedSteps": [],
+        "data": {
+          "detail": "Method Not Allowed"
+        }
+      },
+      "phase": "Public API Tests"
+    },
+    {
+      "test": {
+        "name": "PUT /settings",
+        "type": "api",
+        "method": "PUT",
+        "path": "/settings",
+        "auth": false,
+        "expect": {
+          "status": 200
+        },
+        "body": {
+          "_schemaRef": "PortalSettingsUpdate"
+        },
+        "passed": false,
+        "error": "Expected 200, got 405",
+        "statusCode": 405,
+        "responseTime": 72,
+        "savedData": null,
+        "failedSteps": [],
+        "data": {
+          "detail": "Method Not Allowed"
+        }
+      },
+      "phase": "Public API Tests"
+    },
+    {
+      "test": {
+        "name": "POST /clients/{client_id}/invite",
+        "type": "api",
+        "method": "POST",
+        "path": "/clients/{client_id}/invite",
+        "auth": false,
+        "expect": {
+          "status": 200
+        },
+        "pathParams": {
+          "client_id": "d5e4f53f-b108-484d-88ed-abea0a6f1b88"
+        },
+        "body": {
+          "name": "Test invite",
+          "description": "Test invite from DevLoop"
+        },
+        "passed": false,
+        "error": "Expected 200, got 405",
+        "statusCode": 405,
+        "responseTime": 76,
+        "savedData": null,
+        "failedSteps": [],
+        "data": {
+          "detail": "Method Not Allowed"
+        }
+      },
+      "phase": "Public API Tests"
+    },
+    {
+      "test": {
+        "name": "POST /invoices/{invoice_id}/view",
+        "type": "api",
+        "method": "POST",
+        "path": "/invoices/{invoice_id}/view",
+        "auth": false,
+        "expect": {
+          "status": 200
+        },
+        "pathParams": {
+          "invoice_id": "48ab2fcb-ab0d-4598-a65c-0824c7c02767"
+        },
+        "body": {
+          "name": "Test view",
+          "description": "Test view from DevLoop"
+        },
+        "passed": false,
+        "error": "Expected 200, got 405",
+        "statusCode": 405,
+        "responseTime": 72,
+        "savedData": null,
+        "failedSteps": [],
+        "data": {
+          "detail": "Method Not Allowed"
+        }
+      },
+      "phase": "Public API Tests"
+    },
+    {
+      "test": {
+        "name": "POST /messages",
+        "type": "api",
+        "method": "POST",
+        "path": "/messages",
+        "auth": false,
+        "expect": {
+          "status": 200
+        },
+        "body": {
+          "_schemaRef": "PortalMessageClientCreate"
+        },
+        "passed": false,
+        "error": "Expected 200, got 405",
+        "statusCode": 405,
+        "responseTime": 73,
+        "savedData": null,
+        "failedSteps": [],
+        "data": {
+          "detail": "Method Not Allowed"
+        }
+      },
+      "phase": "Public API Tests"
+    },
+    {
+      "test": {
+        "name": "PUT /messages/{message_id}/read",
+        "type": "api",
+        "method": "PUT",
+        "path": "/messages/{message_id}/read",
+        "auth": false,
+        "expect": {
+          "status": 200
+        },
+        "pathParams": {
+          "message_id": "57f6bb6d-a35f-43be-a49f-e6dae6ae835c"
+        },
+        "body": {
+          "name": "Test read",
+          "description": "Test read from DevLoop"
+        },
+        "passed": false,
+        "error": "Expected 200, got 405",
+        "statusCode": 405,
+        "responseTime": 75,
+        "savedData": null,
+        "failedSteps": [],
+        "data": {
+          "detail": "Method Not Allowed"
+        }
+      },
+      "phase": "Public API Tests"
+    },
+    {
+      "test": {
+        "name": "POST /contracts/{contract_id}/sign",
+        "type": "api",
+        "method": "POST",
+        "path": "/contracts/{contract_id}/sign",
+        "auth": false,
+        "expect": {
+          "status": 200
+        },
+        "pathParams": {
+          "contract_id": "20be5956-5269-4417-9d95-5971a042995f"
+        },
+        "body": {
+          "_schemaRef": "ContractSignRequest"
+        },
+        "passed": false,
+        "error": "Expected 200, got 405",
+        "statusCode": 405,
+        "responseTime": 72,
+        "savedData": null,
+        "failedSteps": [],
+        "data": {
+          "detail": "Method Not Allowed"
+        }
+      },
+      "phase": "Public API Tests"
+    },
+    {
+      "test": {
+        "name": "POST /google/token",
+        "type": "api",
+        "method": "POST",
+        "path": "/google/token",
+        "auth": false,
+        "expect": {
+          "status": 200
+        },
+        "body": {
+          "_schemaRef": "GoogleAccessTokenRequest"
+        },
+        "passed": false,
+        "error": "Expected 200, got 405",
+        "statusCode": 405,
+        "responseTime": 72,
+        "savedData": null,
+        "failedSteps": [],
+        "data": {
+          "detail": "Method Not Allowed"
+        }
+      },
+      "phase": "Public API Tests"
+    },
+    {
+      "test": {
+        "name": "DELETE /{project_id}",
+        "type": "api",
+        "method": "DELETE",
+        "path": "/{project_id}",
+        "auth": false,
+        "expect": {
+          "status": [
+            200,
+            204
+          ]
+        },
+        "pathParams": {
+          "project_id": "6335be94-459e-4f82-92c5-eef185fd9be0"
+        },
+        "passed": false,
+        "error": "Expected 200 or 204, got 405",
+        "statusCode": 405,
+        "responseTime": 72,
+        "savedData": null,
+        "failedSteps": [],
+        "data": {
+          "detail": "Method Not Allowed"
+        }
+      },
+      "phase": "Public API Tests"
+    },
+    {
+      "test": {
+        "name": "PUT /{client_id}",
+        "type": "api",
+        "method": "PUT",
+        "path": "/{client_id}",
+        "auth": false,
+        "expect": {
+          "status": 200
+        },
+        "pathParams": {
+          "client_id": "d2210a1e-3525-4eaa-ba33-387450edd4db"
+        },
+        "body": {
+          "_schemaRef": "ClientUpdate"
+        },
+        "passed": false,
+        "error": "Expected 200, got 405",
+        "statusCode": 405,
+        "responseTime": 72,
+        "savedData": null,
+        "failedSteps": [],
+        "data": {
+          "detail": "Method Not Allowed"
+        }
+      },
+      "phase": "Public API Tests"
+    },
+    {
+      "test": {
+        "name": "DELETE /{client_id}",
+        "type": "api",
+        "method": "DELETE",
+        "path": "/{client_id}",
+        "auth": false,
+        "expect": {
+          "status": [
+            200,
+            204
+          ]
+        },
+        "pathParams": {
+          "client_id": "c98680e8-dbb1-4bd4-be68-83cc1c67e81a"
+        },
+        "passed": false,
+        "error": "Expected 200 or 204, got 405",
+        "statusCode": 405,
+        "responseTime": 74,
+        "savedData": null,
+        "failedSteps": [],
+        "data": {
+          "detail": "Method Not Allowed"
+        }
+      },
+      "phase": "Public API Tests"
+    },
+    {
+      "test": {
+        "name": "Page Load: *",
+        "type": "ui",
+        "route": "*",
+        "file": "apps/web/src/App.tsx",
+        "auth": false,
+        "steps": [
+          {
+            "action": "navigate",
+            "url": "*"
+          },
+          {
+            "action": "waitForLoad"
+          },
+          {
+            "action": "checkNoErrors"
+          },
+          {
+            "action": "checkVisible",
+            "selectors": [
+              "body",
+              "main, [role=\"main\"], #main, .main-content",
+              "header, nav, [role=\"navigation\"]"
+            ]
+          }
+        ],
+        "expect": {
+          "noConsoleErrors": true,
+          "loadTime": 3000
+        },
+        "passed": false,
+        "error": "fetch failed",
+        "statusCode": null,
+        "responseTime": null,
+        "savedData": null,
+        "failedSteps": []
+      },
+      "phase": "Public UI Tests"
+    }
+  ]
+}

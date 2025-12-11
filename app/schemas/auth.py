@@ -33,15 +33,16 @@ class Token(BaseModel):
 
 class UserResponse(BaseModel):
     """Schema for user response (without password)."""
-    
+
     id: UUID
     email: str
     full_name: str
     business_name: str | None
     is_active: bool
+    has_completed_onboarding: bool = False
     picture: Optional[str] = None
     auth_provider: Optional[str] = None
-    
+
     class Config:
         from_attributes = True
 

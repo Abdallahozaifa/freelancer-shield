@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { Link2, Copy, Check, Users, FileText, MessageSquare, FileSignature, Settings, Eye, EyeOff } from 'lucide-react';
+import { Link2, Copy, Check, Users, FileText, MessageSquare, FileSignature, Settings, Eye, EyeOff, RefreshCw } from 'lucide-react';
 import { Button, Card, useToast } from '../../components/ui';
 import {
   usePortalSettings,
@@ -310,8 +310,15 @@ function ClientAccessTab() {
 
   const handleInvite = async (clientId: string) => {
     try {
-      await inviteClient.mutateAsync(clientId);
-      toast.success('Client portal access created');
+      const result = await inviteClient.mutateAsync(clientId);
+      // The API returns the portal_link with raw token - copy it immediately
+      if (result.portal_link) {
+        const fullUrl = `${window.location.origin}${result.portal_link}`;
+        await navigator.clipboard.writeText(fullUrl);
+        toast.success('Portal link generated and copied to clipboard!');
+      } else {
+        toast.success('Client portal access created');
+      }
     } catch {
       toast.error('Failed to create portal access');
     }
@@ -363,7 +370,7 @@ function ClientAccessTab() {
               )}
             </div>
             <div className="flex flex-wrap items-center gap-2">
-              {client.is_active && client.portal_link ? (
+              {client.is_active ? (
                 <>
                   <span className="flex items-center gap-1 text-sm text-green-600">
                     <Eye className="w-4 h-4" />
@@ -372,14 +379,16 @@ function ClientAccessTab() {
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => handleCopyLink(client.portal_link!, client.client_id)}
+                    onClick={() => handleInvite(client.client_id)}
+                    disabled={inviteClient.isPending}
+                    title="Generate a new portal link and copy to clipboard"
                   >
-                    {copiedId === client.client_id ? (
-                      <Check className="w-4 h-4" />
+                    {inviteClient.isPending ? (
+                      <RefreshCw className="w-4 h-4 animate-spin" />
                     ) : (
                       <Copy className="w-4 h-4" />
                     )}
-                    <span className="ml-1 hidden sm:inline">Copy Link</span>
+                    <span className="ml-1 hidden sm:inline">Get Link</span>
                   </Button>
                   <Button
                     variant="outline"

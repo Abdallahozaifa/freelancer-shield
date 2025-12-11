@@ -1,0 +1,2043 @@
+{
+  "meta": {
+    "discoveredAt": "2025-12-11T19:51:43.653Z",
+    "projectRoot": "/Users/hozaifaabdalla/Desktop/freelancer-project-shield/freelancer-shield",
+    "version": "1.0.0"
+  },
+  "framework": {
+    "frontend": "react-vite",
+    "backend": "fastapi",
+    "database": "postgresql",
+    "language": {
+      "frontend": "typescript",
+      "backend": "python"
+    },
+    "packageManager": "npm",
+    "monorepo": false
+  },
+  "auth": {
+    "type": "jwt",
+    "methods": [
+      "jwt",
+      "jwt",
+      "session"
+    ],
+    "loginEndpoint": "POST /login",
+    "registerEndpoint": "POST /register",
+    "logoutEndpoint": null,
+    "refreshEndpoint": null,
+    "tokenHeader": "Authorization: Bearer {token}",
+    "tokenLocation": "header",
+    "credentialFields": [
+      "email"
+    ],
+    "oauthProviders": [
+      "google"
+    ],
+    "passwordReset": null
+  },
+  "api": {
+    "endpoints": [
+      {
+        "method": "GET",
+        "path": "/profile",
+        "file": "app/api/v1/endpoints/users.py",
+        "auth": true,
+        "operationId": "get_profile",
+        "summary": null,
+        "parameters": [],
+        "requestBody": null,
+        "returns": "UserProfile"
+      },
+      {
+        "method": "PATCH",
+        "path": "/profile",
+        "file": "app/api/v1/endpoints/users.py",
+        "auth": true,
+        "operationId": "update_profile",
+        "summary": null,
+        "parameters": [],
+        "requestBody": {
+          "schema": {
+            "$ref": "UserUpdate"
+          }
+        },
+        "returns": null
+      },
+      {
+        "method": "PATCH",
+        "path": "/complete-onboarding",
+        "file": "app/api/v1/endpoints/users.py",
+        "auth": true,
+        "operationId": "complete_onboarding",
+        "summary": null,
+        "parameters": [],
+        "requestBody": null,
+        "returns": null
+      },
+      {
+        "method": "GET",
+        "path": "/{project_id}/scope",
+        "file": "app/api/v1/endpoints/scope_items.py",
+        "auth": false,
+        "operationId": "list_scope_items",
+        "summary": null,
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "type": "uuid"
+          }
+        ],
+        "requestBody": null,
+        "returns": null
+      },
+      {
+        "method": "POST",
+        "path": "/{project_id}/scope",
+        "file": "app/api/v1/endpoints/scope_items.py",
+        "auth": false,
+        "operationId": "create_scope_item",
+        "summary": null,
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "type": "uuid"
+          }
+        ],
+        "requestBody": {
+          "schema": {
+            "$ref": "ScopeItemCreate"
+          }
+        },
+        "returns": null
+      },
+      {
+        "method": "GET",
+        "path": "/{project_id}/scope/progress",
+        "file": "app/api/v1/endpoints/scope_items.py",
+        "auth": false,
+        "operationId": "get_scope_progress",
+        "summary": null,
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "type": "uuid"
+          }
+        ],
+        "requestBody": null,
+        "returns": null
+      },
+      {
+        "method": "PATCH",
+        "path": "/{project_id}/scope/{item_id}",
+        "file": "app/api/v1/endpoints/scope_items.py",
+        "auth": false,
+        "operationId": "update_scope_item",
+        "summary": null,
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "type": "uuid"
+          },
+          {
+            "name": "item_id",
+            "in": "path",
+            "required": true,
+            "type": "uuid"
+          }
+        ],
+        "requestBody": {
+          "schema": {
+            "$ref": "ScopeItemUpdate"
+          }
+        },
+        "returns": null
+      },
+      {
+        "method": "DELETE",
+        "path": "/{project_id}/scope/{item_id}",
+        "file": "app/api/v1/endpoints/scope_items.py",
+        "auth": false,
+        "operationId": "delete_scope_item",
+        "summary": null,
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "type": "uuid"
+          },
+          {
+            "name": "item_id",
+            "in": "path",
+            "required": true,
+            "type": "uuid"
+          }
+        ],
+        "requestBody": null,
+        "returns": null
+      },
+      {
+        "method": "POST",
+        "path": "/{project_id}/scope/reorder",
+        "file": "app/api/v1/endpoints/scope_items.py",
+        "auth": true,
+        "operationId": "reorder_scope_items",
+        "summary": null,
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "type": "uuid"
+          }
+        ],
+        "requestBody": null,
+        "returns": null
+      },
+      {
+        "method": "POST",
+        "path": "/scope-analyzer/analyze",
+        "file": "app/api/v1/endpoints/scope_analyzer.py",
+        "auth": false,
+        "operationId": "create_and_analyze_request",
+        "summary": null,
+        "parameters": [],
+        "requestBody": {
+          "schema": {
+            "$ref": "AnalyzeRequestCreate"
+          }
+        },
+        "returns": null
+      },
+      {
+        "method": "POST",
+        "path": "/scope-analyzer/analyze/{request_id}",
+        "file": "app/api/v1/endpoints/scope_analyzer.py",
+        "auth": false,
+        "operationId": "analyze_existing_request",
+        "summary": null,
+        "parameters": [
+          {
+            "name": "request_id",
+            "in": "path",
+            "required": true,
+            "type": "uuid"
+          }
+        ],
+        "requestBody": null,
+        "returns": null
+      },
+      {
+        "method": "POST",
+        "path": "/scope-analyzer/analyze-project/{project_id}",
+        "file": "app/api/v1/endpoints/scope_analyzer.py",
+        "auth": false,
+        "operationId": "analyze_project_requests",
+        "summary": null,
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "type": "uuid"
+          }
+        ],
+        "requestBody": null,
+        "returns": null
+      },
+      {
+        "method": "GET",
+        "path": "/scope-analyzer/requests/{request_id}",
+        "file": "app/api/v1/endpoints/scope_analyzer.py",
+        "auth": false,
+        "operationId": "get_client_request",
+        "summary": null,
+        "parameters": [
+          {
+            "name": "request_id",
+            "in": "path",
+            "required": true,
+            "type": "uuid"
+          }
+        ],
+        "requestBody": null,
+        "returns": null
+      },
+      {
+        "method": "GET",
+        "path": "/{token}",
+        "file": "app/api/v1/endpoints/public_requests.py",
+        "auth": false,
+        "operationId": "get_public_project_info",
+        "summary": null,
+        "parameters": [
+          {
+            "name": "token",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "requestBody": null,
+        "returns": null
+      },
+      {
+        "method": "POST",
+        "path": "/{token}",
+        "file": "app/api/v1/endpoints/public_requests.py",
+        "auth": false,
+        "operationId": "submit_public_request",
+        "summary": null,
+        "parameters": [
+          {
+            "name": "token",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "requestBody": {
+          "schema": {
+            "$ref": "PublicRequestCreate"
+          }
+        },
+        "returns": null
+      },
+      {
+        "method": "GET",
+        "path": "/{project_id}/proposals",
+        "file": "app/api/v1/endpoints/proposals.py",
+        "auth": false,
+        "operationId": "list_proposals",
+        "summary": null,
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "type": "uuid"
+          }
+        ],
+        "requestBody": null,
+        "returns": null
+      },
+      {
+        "method": "POST",
+        "path": "/{project_id}/proposals",
+        "file": "app/api/v1/endpoints/proposals.py",
+        "auth": false,
+        "operationId": "create_proposal",
+        "summary": null,
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "type": "uuid"
+          }
+        ],
+        "requestBody": {
+          "schema": {
+            "$ref": "ProposalCreate"
+          }
+        },
+        "returns": null
+      },
+      {
+        "method": "POST",
+        "path": "/{project_id}/requests/{request_id}/create-proposal",
+        "file": "app/api/v1/endpoints/proposals.py",
+        "auth": false,
+        "operationId": "create_proposal_from_request",
+        "summary": null,
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "type": "uuid"
+          },
+          {
+            "name": "request_id",
+            "in": "path",
+            "required": true,
+            "type": "uuid"
+          }
+        ],
+        "requestBody": {
+          "schema": {
+            "$ref": "ProposalFromRequest"
+          }
+        },
+        "returns": null
+      },
+      {
+        "method": "GET",
+        "path": "/{project_id}/proposals/stats",
+        "file": "app/api/v1/endpoints/proposals.py",
+        "auth": false,
+        "operationId": "get_proposal_stats",
+        "summary": null,
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "type": "uuid"
+          }
+        ],
+        "requestBody": null,
+        "returns": null
+      },
+      {
+        "method": "GET",
+        "path": "/{project_id}/proposals/{proposal_id}",
+        "file": "app/api/v1/endpoints/proposals.py",
+        "auth": false,
+        "operationId": "get_proposal",
+        "summary": null,
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "type": "uuid"
+          },
+          {
+            "name": "proposal_id",
+            "in": "path",
+            "required": true,
+            "type": "uuid"
+          }
+        ],
+        "requestBody": null,
+        "returns": null
+      },
+      {
+        "method": "PATCH",
+        "path": "/{project_id}/proposals/{proposal_id}",
+        "file": "app/api/v1/endpoints/proposals.py",
+        "auth": false,
+        "operationId": "update_proposal",
+        "summary": null,
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "type": "uuid"
+          },
+          {
+            "name": "proposal_id",
+            "in": "path",
+            "required": true,
+            "type": "uuid"
+          }
+        ],
+        "requestBody": {
+          "schema": {
+            "$ref": "ProposalUpdate"
+          }
+        },
+        "returns": null
+      },
+      {
+        "method": "POST",
+        "path": "/{project_id}/proposals/{proposal_id}/send",
+        "file": "app/api/v1/endpoints/proposals.py",
+        "auth": false,
+        "operationId": "send_proposal",
+        "summary": null,
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "type": "uuid"
+          },
+          {
+            "name": "proposal_id",
+            "in": "path",
+            "required": true,
+            "type": "uuid"
+          }
+        ],
+        "requestBody": null,
+        "returns": null
+      },
+      {
+        "method": "POST",
+        "path": "/{project_id}/proposals/{proposal_id}/accept",
+        "file": "app/api/v1/endpoints/proposals.py",
+        "auth": false,
+        "operationId": "accept_proposal",
+        "summary": null,
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "type": "uuid"
+          },
+          {
+            "name": "proposal_id",
+            "in": "path",
+            "required": true,
+            "type": "uuid"
+          }
+        ],
+        "requestBody": null,
+        "returns": null
+      },
+      {
+        "method": "POST",
+        "path": "/{project_id}/proposals/{proposal_id}/decline",
+        "file": "app/api/v1/endpoints/proposals.py",
+        "auth": false,
+        "operationId": "decline_proposal",
+        "summary": null,
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "type": "uuid"
+          },
+          {
+            "name": "proposal_id",
+            "in": "path",
+            "required": true,
+            "type": "uuid"
+          }
+        ],
+        "requestBody": null,
+        "returns": null
+      },
+      {
+        "method": "DELETE",
+        "path": "/{project_id}/proposals/{proposal_id}",
+        "file": "app/api/v1/endpoints/proposals.py",
+        "auth": false,
+        "operationId": "delete_proposal",
+        "summary": null,
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "type": "uuid"
+          },
+          {
+            "name": "proposal_id",
+            "in": "path",
+            "required": true,
+            "type": "uuid"
+          }
+        ],
+        "requestBody": null,
+        "returns": null
+      },
+      {
+        "method": "GET",
+        "path": "/{project_id}",
+        "file": "app/api/v1/endpoints/projects.py",
+        "auth": false,
+        "operationId": "get_project",
+        "summary": null,
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "type": "uuid"
+          }
+        ],
+        "requestBody": null,
+        "returns": null
+      },
+      {
+        "method": "GET",
+        "path": "/{project_id}/detail",
+        "file": "app/api/v1/endpoints/projects.py",
+        "auth": true,
+        "operationId": "get_project_detail",
+        "summary": null,
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "type": "uuid"
+          }
+        ],
+        "requestBody": null,
+        "returns": null
+      },
+      {
+        "method": "PATCH",
+        "path": "/{project_id}",
+        "file": "app/api/v1/endpoints/projects.py",
+        "auth": true,
+        "operationId": "update_project",
+        "summary": null,
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "type": "uuid"
+          }
+        ],
+        "requestBody": {
+          "schema": {
+            "$ref": "ProjectUpdate"
+          }
+        },
+        "returns": null
+      },
+      {
+        "method": "DELETE",
+        "path": "/{project_id}",
+        "file": "app/api/v1/endpoints/projects.py",
+        "auth": false,
+        "operationId": "delete_project",
+        "summary": null,
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "type": "uuid"
+          }
+        ],
+        "requestBody": null,
+        "returns": null
+      },
+      {
+        "method": "POST",
+        "path": "/{project_id}/enable-public-requests",
+        "file": "app/api/v1/endpoints/projects.py",
+        "auth": true,
+        "operationId": "enable_public_requests",
+        "summary": null,
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "type": "uuid"
+          }
+        ],
+        "requestBody": null,
+        "returns": null
+      },
+      {
+        "method": "POST",
+        "path": "/{project_id}/disable-public-requests",
+        "file": "app/api/v1/endpoints/projects.py",
+        "auth": false,
+        "operationId": "disable_public_requests",
+        "summary": null,
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "type": "uuid"
+          }
+        ],
+        "requestBody": null,
+        "returns": null
+      },
+      {
+        "method": "POST",
+        "path": "/{project_id}/regenerate-public-token",
+        "file": "app/api/v1/endpoints/projects.py",
+        "auth": true,
+        "operationId": "regenerate_public_token",
+        "summary": null,
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "type": "uuid"
+          }
+        ],
+        "requestBody": null,
+        "returns": null
+      },
+      {
+        "method": "GET",
+        "path": "/settings",
+        "file": "app/api/v1/endpoints/portal.py",
+        "auth": false,
+        "operationId": "get_portal_settings",
+        "summary": null,
+        "parameters": [],
+        "requestBody": null,
+        "returns": "PortalInvoiceResponse"
+      },
+      {
+        "method": "PUT",
+        "path": "/settings",
+        "file": "app/api/v1/endpoints/portal.py",
+        "auth": false,
+        "operationId": "update_portal_settings",
+        "summary": null,
+        "parameters": [],
+        "requestBody": {
+          "schema": {
+            "$ref": "PortalSettingsUpdate"
+          }
+        },
+        "returns": "PortalInvoiceResponse"
+      },
+      {
+        "method": "GET",
+        "path": "/clients",
+        "file": "app/api/v1/endpoints/portal.py",
+        "auth": false,
+        "operationId": "list_portal_clients",
+        "summary": null,
+        "parameters": [],
+        "requestBody": null,
+        "returns": "PortalInvoiceResponse"
+      },
+      {
+        "method": "POST",
+        "path": "/clients/{client_id}/invite",
+        "file": "app/api/v1/endpoints/portal.py",
+        "auth": false,
+        "operationId": "invite_client_to_portal",
+        "summary": null,
+        "parameters": [
+          {
+            "name": "client_id",
+            "in": "path",
+            "required": true,
+            "type": "uuid"
+          }
+        ],
+        "requestBody": null,
+        "returns": "PortalInvoiceResponse"
+      },
+      {
+        "method": "DELETE",
+        "path": "/clients/{client_id}/access",
+        "file": "app/api/v1/endpoints/portal.py",
+        "auth": false,
+        "operationId": "revoke_client_portal_access",
+        "summary": null,
+        "parameters": [
+          {
+            "name": "client_id",
+            "in": "path",
+            "required": true,
+            "type": "uuid"
+          }
+        ],
+        "requestBody": null,
+        "returns": "PortalInvoiceResponse"
+      },
+      {
+        "method": "GET",
+        "path": "/invoices",
+        "file": "app/api/v1/endpoints/portal.py",
+        "auth": false,
+        "operationId": "list_invoices",
+        "summary": null,
+        "parameters": [],
+        "requestBody": null,
+        "returns": "PortalFileResponse"
+      },
+      {
+        "method": "POST",
+        "path": "/invoices",
+        "file": "app/api/v1/endpoints/portal.py",
+        "auth": false,
+        "operationId": "create_invoice",
+        "summary": null,
+        "parameters": [],
+        "requestBody": {
+          "schema": {
+            "$ref": "PortalInvoiceCreate"
+          }
+        },
+        "returns": "PortalFileResponse"
+      },
+      {
+        "method": "GET",
+        "path": "/invoices/{invoice_id}",
+        "file": "app/api/v1/endpoints/portal.py",
+        "auth": false,
+        "operationId": "get_invoice",
+        "summary": null,
+        "parameters": [
+          {
+            "name": "invoice_id",
+            "in": "path",
+            "required": true,
+            "type": "uuid"
+          }
+        ],
+        "requestBody": null,
+        "returns": "PortalFileResponse"
+      },
+      {
+        "method": "PUT",
+        "path": "/invoices/{invoice_id}",
+        "file": "app/api/v1/endpoints/portal.py",
+        "auth": false,
+        "operationId": "update_invoice",
+        "summary": null,
+        "parameters": [
+          {
+            "name": "invoice_id",
+            "in": "path",
+            "required": true,
+            "type": "uuid"
+          }
+        ],
+        "requestBody": {
+          "schema": {
+            "$ref": "PortalInvoiceUpdate"
+          }
+        },
+        "returns": "PortalFileResponse"
+      },
+      {
+        "method": "DELETE",
+        "path": "/invoices/{invoice_id}",
+        "file": "app/api/v1/endpoints/portal.py",
+        "auth": false,
+        "operationId": "delete_invoice",
+        "summary": null,
+        "parameters": [
+          {
+            "name": "invoice_id",
+            "in": "path",
+            "required": true,
+            "type": "uuid"
+          }
+        ],
+        "requestBody": null,
+        "returns": "PortalFileResponse"
+      },
+      {
+        "method": "GET",
+        "path": "/files",
+        "file": "app/api/v1/endpoints/portal.py",
+        "auth": false,
+        "operationId": "list_files",
+        "summary": null,
+        "parameters": [],
+        "requestBody": null,
+        "returns": "PortalMessageResponse"
+      },
+      {
+        "method": "POST",
+        "path": "/files",
+        "file": "app/api/v1/endpoints/portal.py",
+        "auth": false,
+        "operationId": "create_file",
+        "summary": null,
+        "parameters": [],
+        "requestBody": {
+          "schema": {
+            "$ref": "PortalFileCreate"
+          }
+        },
+        "returns": "PortalMessageResponse"
+      },
+      {
+        "method": "DELETE",
+        "path": "/files/{file_id}",
+        "file": "app/api/v1/endpoints/portal.py",
+        "auth": false,
+        "operationId": "delete_file",
+        "summary": null,
+        "parameters": [
+          {
+            "name": "file_id",
+            "in": "path",
+            "required": true,
+            "type": "uuid"
+          }
+        ],
+        "requestBody": null,
+        "returns": "PortalMessageResponse"
+      },
+      {
+        "method": "GET",
+        "path": "/messages",
+        "file": "app/api/v1/endpoints/portal.py",
+        "auth": false,
+        "operationId": "list_messages",
+        "summary": null,
+        "parameters": [],
+        "requestBody": null,
+        "returns": "PortalContractResponse"
+      },
+      {
+        "method": "POST",
+        "path": "/messages",
+        "file": "app/api/v1/endpoints/portal.py",
+        "auth": false,
+        "operationId": "send_message",
+        "summary": null,
+        "parameters": [],
+        "requestBody": {
+          "schema": {
+            "$ref": "PortalMessageCreate"
+          }
+        },
+        "returns": "PortalContractResponse"
+      },
+      {
+        "method": "PUT",
+        "path": "/messages/{message_id}/read",
+        "file": "app/api/v1/endpoints/portal.py",
+        "auth": false,
+        "operationId": "mark_message_read",
+        "summary": null,
+        "parameters": [
+          {
+            "name": "message_id",
+            "in": "path",
+            "required": true,
+            "type": "uuid"
+          }
+        ],
+        "requestBody": null,
+        "returns": "PortalContractResponse"
+      },
+      {
+        "method": "GET",
+        "path": "/contracts",
+        "file": "app/api/v1/endpoints/portal.py",
+        "auth": false,
+        "operationId": "list_contracts",
+        "summary": null,
+        "parameters": [],
+        "requestBody": null,
+        "returns": null
+      },
+      {
+        "method": "POST",
+        "path": "/contracts",
+        "file": "app/api/v1/endpoints/portal.py",
+        "auth": false,
+        "operationId": "create_contract",
+        "summary": null,
+        "parameters": [],
+        "requestBody": {
+          "schema": {
+            "$ref": "PortalContractCreate"
+          }
+        },
+        "returns": null
+      },
+      {
+        "method": "DELETE",
+        "path": "/contracts/{contract_id}",
+        "file": "app/api/v1/endpoints/portal.py",
+        "auth": false,
+        "operationId": "delete_contract",
+        "summary": null,
+        "parameters": [
+          {
+            "name": "contract_id",
+            "in": "path",
+            "required": true,
+            "type": "uuid"
+          }
+        ],
+        "requestBody": null,
+        "returns": null
+      },
+      {
+        "method": "GET",
+        "path": "/summary",
+        "file": "app/api/v1/endpoints/dashboard.py",
+        "auth": false,
+        "operationId": "get_summary",
+        "summary": null,
+        "parameters": [],
+        "requestBody": null,
+        "returns": null
+      },
+      {
+        "method": "GET",
+        "path": "/alerts",
+        "file": "app/api/v1/endpoints/dashboard.py",
+        "auth": true,
+        "operationId": "get_alerts_endpoint",
+        "summary": null,
+        "parameters": [],
+        "requestBody": null,
+        "returns": null
+      },
+      {
+        "method": "GET",
+        "path": "/activity",
+        "file": "app/api/v1/endpoints/dashboard.py",
+        "auth": true,
+        "operationId": "get_activity",
+        "summary": null,
+        "parameters": [],
+        "requestBody": null,
+        "returns": null
+      },
+      {
+        "method": "GET",
+        "path": "/projects/{project_id}/health",
+        "file": "app/api/v1/endpoints/dashboard.py",
+        "auth": true,
+        "operationId": "get_project_health",
+        "summary": null,
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "type": "uuid"
+          }
+        ],
+        "requestBody": null,
+        "returns": null
+      },
+      {
+        "method": "GET",
+        "path": "/{client_id}",
+        "file": "app/api/v1/endpoints/clients.py",
+        "auth": false,
+        "operationId": "get_client",
+        "summary": null,
+        "parameters": [
+          {
+            "name": "client_id",
+            "in": "path",
+            "required": true,
+            "type": "uuid"
+          }
+        ],
+        "requestBody": null,
+        "returns": null
+      },
+      {
+        "method": "PUT",
+        "path": "/{client_id}",
+        "file": "app/api/v1/endpoints/clients.py",
+        "auth": false,
+        "operationId": "update_client",
+        "summary": null,
+        "parameters": [
+          {
+            "name": "client_id",
+            "in": "path",
+            "required": true,
+            "type": "uuid"
+          }
+        ],
+        "requestBody": {
+          "schema": {
+            "$ref": "ClientUpdate"
+          }
+        },
+        "returns": null
+      },
+      {
+        "method": "DELETE",
+        "path": "/{client_id}",
+        "file": "app/api/v1/endpoints/clients.py",
+        "auth": false,
+        "operationId": "delete_client",
+        "summary": null,
+        "parameters": [
+          {
+            "name": "client_id",
+            "in": "path",
+            "required": true,
+            "type": "uuid"
+          }
+        ],
+        "requestBody": null,
+        "returns": null
+      },
+      {
+        "method": "GET",
+        "path": "/{project_id}/requests",
+        "file": "app/api/v1/endpoints/client_requests.py",
+        "auth": false,
+        "operationId": "list_client_requests",
+        "summary": null,
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "type": "uuid"
+          }
+        ],
+        "requestBody": null,
+        "returns": null
+      },
+      {
+        "method": "POST",
+        "path": "/{project_id}/requests",
+        "file": "app/api/v1/endpoints/client_requests.py",
+        "auth": false,
+        "operationId": "create_client_request_endpoint",
+        "summary": null,
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "type": "uuid"
+          }
+        ],
+        "requestBody": {
+          "schema": {
+            "$ref": "ClientRequestCreate"
+          }
+        },
+        "returns": null
+      },
+      {
+        "method": "GET",
+        "path": "/{project_id}/requests/{request_id}",
+        "file": "app/api/v1/endpoints/client_requests.py",
+        "auth": false,
+        "operationId": "get_client_request_endpoint",
+        "summary": null,
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "type": "uuid"
+          },
+          {
+            "name": "request_id",
+            "in": "path",
+            "required": true,
+            "type": "uuid"
+          }
+        ],
+        "requestBody": null,
+        "returns": null
+      },
+      {
+        "method": "PATCH",
+        "path": "/{project_id}/requests/{request_id}",
+        "file": "app/api/v1/endpoints/client_requests.py",
+        "auth": true,
+        "operationId": "update_client_request_endpoint",
+        "summary": null,
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "type": "uuid"
+          },
+          {
+            "name": "request_id",
+            "in": "path",
+            "required": true,
+            "type": "uuid"
+          }
+        ],
+        "requestBody": {
+          "schema": {
+            "$ref": "ClientRequestUpdate"
+          }
+        },
+        "returns": null
+      },
+      {
+        "method": "DELETE",
+        "path": "/{project_id}/requests/{request_id}",
+        "file": "app/api/v1/endpoints/client_requests.py",
+        "auth": false,
+        "operationId": "delete_client_request_endpoint",
+        "summary": null,
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "type": "uuid"
+          },
+          {
+            "name": "request_id",
+            "in": "path",
+            "required": true,
+            "type": "uuid"
+          }
+        ],
+        "requestBody": null,
+        "returns": null
+      },
+      {
+        "method": "POST",
+        "path": "/{project_id}/requests/{request_id}/classify",
+        "file": "app/api/v1/endpoints/client_requests.py",
+        "auth": true,
+        "operationId": "classify_request_endpoint",
+        "summary": null,
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "type": "uuid"
+          },
+          {
+            "name": "request_id",
+            "in": "path",
+            "required": true,
+            "type": "uuid"
+          }
+        ],
+        "requestBody": null,
+        "returns": null
+      },
+      {
+        "method": "POST",
+        "path": "/auth/verify",
+        "file": "app/api/v1/endpoints/client_portal.py",
+        "auth": false,
+        "operationId": "verify_portal_token",
+        "summary": null,
+        "parameters": [],
+        "requestBody": null,
+        "returns": null
+      },
+      {
+        "method": "GET",
+        "path": "/dashboard",
+        "file": "app/api/v1/endpoints/client_portal.py",
+        "auth": false,
+        "operationId": "get_portal_dashboard",
+        "summary": null,
+        "parameters": [],
+        "requestBody": null,
+        "returns": null
+      },
+      {
+        "method": "GET",
+        "path": "/projects",
+        "file": "app/api/v1/endpoints/client_portal.py",
+        "auth": false,
+        "operationId": "list_client_projects",
+        "summary": null,
+        "parameters": [],
+        "requestBody": null,
+        "returns": null
+      },
+      {
+        "method": "GET",
+        "path": "/invoices",
+        "file": "app/api/v1/endpoints/client_portal.py",
+        "auth": false,
+        "operationId": "list_client_invoices",
+        "summary": null,
+        "parameters": [],
+        "requestBody": null,
+        "returns": null
+      },
+      {
+        "method": "POST",
+        "path": "/invoices/{invoice_id}/view",
+        "file": "app/api/v1/endpoints/client_portal.py",
+        "auth": false,
+        "operationId": "mark_invoice_viewed",
+        "summary": null,
+        "parameters": [
+          {
+            "name": "invoice_id",
+            "in": "path",
+            "required": true,
+            "type": "uuid"
+          }
+        ],
+        "requestBody": null,
+        "returns": null
+      },
+      {
+        "method": "GET",
+        "path": "/files",
+        "file": "app/api/v1/endpoints/client_portal.py",
+        "auth": false,
+        "operationId": "list_client_files",
+        "summary": null,
+        "parameters": [],
+        "requestBody": null,
+        "returns": null
+      },
+      {
+        "method": "GET",
+        "path": "/messages",
+        "file": "app/api/v1/endpoints/client_portal.py",
+        "auth": false,
+        "operationId": "list_client_messages",
+        "summary": null,
+        "parameters": [],
+        "requestBody": null,
+        "returns": null
+      },
+      {
+        "method": "POST",
+        "path": "/messages",
+        "file": "app/api/v1/endpoints/client_portal.py",
+        "auth": false,
+        "operationId": "send_client_message",
+        "summary": null,
+        "parameters": [],
+        "requestBody": {
+          "schema": {
+            "$ref": "PortalMessageClientCreate"
+          }
+        },
+        "returns": null
+      },
+      {
+        "method": "PUT",
+        "path": "/messages/{message_id}/read",
+        "file": "app/api/v1/endpoints/client_portal.py",
+        "auth": false,
+        "operationId": "mark_client_message_read",
+        "summary": null,
+        "parameters": [
+          {
+            "name": "message_id",
+            "in": "path",
+            "required": true,
+            "type": "uuid"
+          }
+        ],
+        "requestBody": null,
+        "returns": null
+      },
+      {
+        "method": "GET",
+        "path": "/contracts",
+        "file": "app/api/v1/endpoints/client_portal.py",
+        "auth": false,
+        "operationId": "list_client_contracts",
+        "summary": null,
+        "parameters": [],
+        "requestBody": null,
+        "returns": null
+      },
+      {
+        "method": "POST",
+        "path": "/contracts/{contract_id}/sign",
+        "file": "app/api/v1/endpoints/client_portal.py",
+        "auth": false,
+        "operationId": "sign_contract",
+        "summary": null,
+        "parameters": [
+          {
+            "name": "contract_id",
+            "in": "path",
+            "required": true,
+            "type": "uuid"
+          }
+        ],
+        "requestBody": {
+          "schema": {
+            "$ref": "ContractSignRequest"
+          }
+        },
+        "returns": null
+      },
+      {
+        "method": "GET",
+        "path": "/subscription",
+        "file": "app/api/v1/endpoints/billing.py",
+        "auth": false,
+        "operationId": "get_subscription",
+        "summary": null,
+        "parameters": [],
+        "requestBody": null,
+        "returns": null
+      },
+      {
+        "method": "GET",
+        "path": "/limits",
+        "file": "app/api/v1/endpoints/billing.py",
+        "auth": false,
+        "operationId": "get_plan_limits",
+        "summary": null,
+        "parameters": [],
+        "requestBody": null,
+        "returns": null
+      },
+      {
+        "method": "POST",
+        "path": "/create-checkout-session",
+        "file": "app/api/v1/endpoints/billing.py",
+        "auth": false,
+        "operationId": "create_checkout_session",
+        "summary": null,
+        "parameters": [],
+        "requestBody": {
+          "schema": {
+            "$ref": "CreateCheckoutRequest"
+          }
+        },
+        "returns": null
+      },
+      {
+        "method": "POST",
+        "path": "/create-portal-session",
+        "file": "app/api/v1/endpoints/billing.py",
+        "auth": false,
+        "operationId": "create_portal_session",
+        "summary": null,
+        "parameters": [],
+        "requestBody": {
+          "schema": {
+            "$ref": "CreatePortalRequest"
+          }
+        },
+        "returns": null
+      },
+      {
+        "method": "POST",
+        "path": "/cancel",
+        "file": "app/api/v1/endpoints/billing.py",
+        "auth": false,
+        "operationId": "cancel_subscription",
+        "summary": null,
+        "parameters": [],
+        "requestBody": null,
+        "returns": null
+      },
+      {
+        "method": "POST",
+        "path": "/reactivate",
+        "file": "app/api/v1/endpoints/billing.py",
+        "auth": true,
+        "operationId": "reactivate_subscription",
+        "summary": null,
+        "parameters": [],
+        "requestBody": null,
+        "returns": null
+      },
+      {
+        "method": "POST",
+        "path": "/webhook",
+        "file": "app/api/v1/endpoints/billing.py",
+        "auth": true,
+        "operationId": "stripe_webhook",
+        "summary": null,
+        "parameters": [],
+        "requestBody": null,
+        "returns": null
+      },
+      {
+        "method": "POST",
+        "path": "/register",
+        "file": "app/api/v1/endpoints/auth.py",
+        "auth": false,
+        "operationId": "register",
+        "summary": null,
+        "parameters": [],
+        "requestBody": null,
+        "returns": "User"
+      },
+      {
+        "method": "POST",
+        "path": "/login",
+        "file": "app/api/v1/endpoints/auth.py",
+        "auth": false,
+        "operationId": "login",
+        "summary": null,
+        "parameters": [],
+        "requestBody": null,
+        "returns": "User"
+      },
+      {
+        "method": "POST",
+        "path": "/google",
+        "file": "app/api/v1/endpoints/auth.py",
+        "auth": false,
+        "operationId": "google_auth",
+        "summary": null,
+        "parameters": [],
+        "requestBody": {
+          "schema": {
+            "$ref": "GoogleAuthRequest"
+          }
+        },
+        "returns": "User"
+      },
+      {
+        "method": "POST",
+        "path": "/google/token",
+        "file": "app/api/v1/endpoints/auth.py",
+        "auth": false,
+        "operationId": "google_auth_with_access_token",
+        "summary": null,
+        "parameters": [],
+        "requestBody": {
+          "schema": {
+            "$ref": "GoogleAccessTokenRequest"
+          }
+        },
+        "returns": "User"
+      },
+      {
+        "method": "GET",
+        "path": "/me",
+        "file": "app/api/v1/endpoints/auth.py",
+        "auth": true,
+        "operationId": "get_current_user_info",
+        "summary": null,
+        "parameters": [],
+        "requestBody": null,
+        "returns": "User"
+      },
+      {
+        "method": "POST",
+        "path": "/forgot-password",
+        "file": "app/api/v1/endpoints/auth.py",
+        "auth": true,
+        "operationId": "forgot_password",
+        "summary": null,
+        "parameters": [],
+        "requestBody": {
+          "schema": {
+            "$ref": "ForgotPasswordRequest"
+          }
+        },
+        "returns": null
+      },
+      {
+        "method": "POST",
+        "path": "/reset-password",
+        "file": "app/api/v1/endpoints/auth.py",
+        "auth": false,
+        "operationId": "reset_password",
+        "summary": null,
+        "parameters": [],
+        "requestBody": {
+          "schema": {
+            "$ref": "ResetPasswordRequest"
+          }
+        },
+        "returns": null
+      },
+      {
+        "method": "POST",
+        "path": "/verify-reset-token",
+        "file": "app/api/v1/endpoints/auth.py",
+        "auth": false,
+        "operationId": "verify_reset_token",
+        "summary": null,
+        "parameters": [],
+        "requestBody": {
+          "schema": {
+            "$ref": "VerifyResetTokenRequest"
+          }
+        },
+        "returns": null
+      }
+    ],
+    "schemas": {},
+    "basePath": "/api/v1"
+  },
+  "models": {
+    "entities": [
+      {
+        "name": "PortalSettings",
+        "tableName": "portal_settings",
+        "file": "app/models/portal.py",
+        "fields": [],
+        "primaryKey": null
+      },
+      {
+        "name": "ClientPortalAccess",
+        "tableName": "client_portal_access",
+        "file": "app/models/portal.py",
+        "fields": [],
+        "primaryKey": null
+      },
+      {
+        "name": "PortalInvoice",
+        "tableName": "portal_invoices",
+        "file": "app/models/portal.py",
+        "fields": [],
+        "primaryKey": null
+      },
+      {
+        "name": "PortalFile",
+        "tableName": "portal_files",
+        "file": "app/models/portal.py",
+        "fields": [],
+        "primaryKey": null
+      },
+      {
+        "name": "PortalMessage",
+        "tableName": "portal_messages",
+        "file": "app/models/portal.py",
+        "fields": [],
+        "primaryKey": null
+      },
+      {
+        "name": "BaseModel",
+        "tableName": "basemodels",
+        "file": "app/models/base.py",
+        "fields": [],
+        "primaryKey": null
+      }
+    ],
+    "relationships": [],
+    "enums": [
+      {
+        "name": "ProjectStatus",
+        "values": [
+          {
+            "name": "ACTIVE",
+            "value": "active"
+          },
+          {
+            "name": "COMPLETED",
+            "value": "completed"
+          },
+          {
+            "name": "ON_HOLD",
+            "value": "on_hold"
+          },
+          {
+            "name": "CANCELLED",
+            "value": "cancelled"
+          }
+        ]
+      },
+      {
+        "name": "RequestSource",
+        "values": [
+          {
+            "name": "EMAIL",
+            "value": "email"
+          },
+          {
+            "name": "CHAT",
+            "value": "chat"
+          },
+          {
+            "name": "CALL",
+            "value": "call"
+          },
+          {
+            "name": "MEETING",
+            "value": "meeting"
+          },
+          {
+            "name": "OTHER",
+            "value": "other"
+          }
+        ]
+      },
+      {
+        "name": "ScopeClassification",
+        "values": [
+          {
+            "name": "IN_SCOPE",
+            "value": "in_scope"
+          },
+          {
+            "name": "OUT_OF_SCOPE",
+            "value": "out_of_scope"
+          },
+          {
+            "name": "CLARIFICATION_NEEDED",
+            "value": "clarification_needed"
+          },
+          {
+            "name": "REVISION",
+            "value": "revision"
+          },
+          {
+            "name": "PENDING",
+            "value": "pending"
+          }
+        ]
+      },
+      {
+        "name": "RequestStatus",
+        "values": [
+          {
+            "name": "NEW",
+            "value": "new"
+          }
+        ]
+      },
+      {
+        "name": "ProposalStatus",
+        "values": [
+          {
+            "name": "DRAFT",
+            "value": "draft"
+          },
+          {
+            "name": "SENT",
+            "value": "sent"
+          },
+          {
+            "name": "ACCEPTED",
+            "value": "accepted"
+          },
+          {
+            "name": "DECLINED",
+            "value": "declined"
+          },
+          {
+            "name": "EXPIRED",
+            "value": "expired"
+          }
+        ]
+      },
+      {
+        "name": "InvoiceStatus",
+        "values": [
+          {
+            "name": "DRAFT",
+            "value": "draft"
+          },
+          {
+            "name": "SENT",
+            "value": "sent"
+          },
+          {
+            "name": "VIEWED",
+            "value": "viewed"
+          },
+          {
+            "name": "PAID",
+            "value": "paid"
+          },
+          {
+            "name": "OVERDUE",
+            "value": "overdue"
+          },
+          {
+            "name": "CANCELLED",
+            "value": "cancelled"
+          }
+        ]
+      },
+      {
+        "name": "FileCategory",
+        "values": [
+          {
+            "name": "CONTRACT",
+            "value": "contract"
+          },
+          {
+            "name": "DELIVERABLE",
+            "value": "deliverable"
+          },
+          {
+            "name": "INVOICE",
+            "value": "invoice"
+          },
+          {
+            "name": "ASSET",
+            "value": "asset"
+          },
+          {
+            "name": "REFERENCE",
+            "value": "reference"
+          },
+          {
+            "name": "OTHER",
+            "value": "other"
+          }
+        ]
+      }
+    ]
+  },
+  "ui": {
+    "routes": [
+      {
+        "path": "/privacy",
+        "component": "PrivacyPage",
+        "file": "apps/web/src/App.tsx",
+        "type": "page",
+        "dynamic": false
+      },
+      {
+        "path": "/support",
+        "component": "SupportPage",
+        "file": "apps/web/src/App.tsx",
+        "type": "page",
+        "dynamic": false
+      },
+      {
+        "path": "/dashboard",
+        "component": "DashboardPage",
+        "file": "apps/web/src/App.tsx",
+        "type": "page",
+        "dynamic": false
+      },
+      {
+        "path": "/profile",
+        "component": "ProfilePage",
+        "file": "apps/web/src/App.tsx",
+        "type": "page",
+        "dynamic": false
+      },
+      {
+        "path": "/clients",
+        "component": "ClientsPage",
+        "file": "apps/web/src/App.tsx",
+        "type": "page",
+        "dynamic": false
+      },
+      {
+        "path": "/clients/:id",
+        "component": "ClientDetailPage",
+        "file": "apps/web/src/App.tsx",
+        "type": "page",
+        "dynamic": true,
+        "params": [
+          {
+            "name": "id",
+            "type": "uuid"
+          }
+        ]
+      },
+      {
+        "path": "/projects",
+        "component": "ProjectsPage",
+        "file": "apps/web/src/App.tsx",
+        "type": "page",
+        "dynamic": false
+      },
+      {
+        "path": "/projects/new",
+        "component": "ProjectNewPage",
+        "file": "apps/web/src/App.tsx",
+        "type": "page",
+        "dynamic": false
+      },
+      {
+        "path": "/projects/:id",
+        "component": "ProjectDetailPage",
+        "file": "apps/web/src/App.tsx",
+        "type": "page",
+        "dynamic": true,
+        "params": [
+          {
+            "name": "id",
+            "type": "uuid"
+          }
+        ]
+      },
+      {
+        "path": "/projects/:id/edit",
+        "component": "ProjectEditPage",
+        "file": "apps/web/src/App.tsx",
+        "type": "page",
+        "dynamic": true,
+        "params": [
+          {
+            "name": "id",
+            "type": "uuid"
+          }
+        ]
+      },
+      {
+        "path": "/projects/:id/scope/new",
+        "component": "ScopeItemEditPage",
+        "file": "apps/web/src/App.tsx",
+        "type": "page",
+        "dynamic": true,
+        "params": [
+          {
+            "name": "id",
+            "type": "uuid"
+          }
+        ]
+      },
+      {
+        "path": "/projects/:id/scope/edit",
+        "component": "ScopeItemEditPage",
+        "file": "apps/web/src/App.tsx",
+        "type": "page",
+        "dynamic": true,
+        "params": [
+          {
+            "name": "id",
+            "type": "uuid"
+          }
+        ]
+      },
+      {
+        "path": "/projects/:id/requests/new",
+        "component": "RequestEditPage",
+        "file": "apps/web/src/App.tsx",
+        "type": "page",
+        "dynamic": true,
+        "params": [
+          {
+            "name": "id",
+            "type": "uuid"
+          }
+        ]
+      },
+      {
+        "path": "/projects/:id/requests/edit",
+        "component": "RequestEditPage",
+        "file": "apps/web/src/App.tsx",
+        "type": "page",
+        "dynamic": true,
+        "params": [
+          {
+            "name": "id",
+            "type": "uuid"
+          }
+        ]
+      },
+      {
+        "path": "/projects/:id/proposals/new",
+        "component": "ProposalEditPage",
+        "file": "apps/web/src/App.tsx",
+        "type": "page",
+        "dynamic": true,
+        "params": [
+          {
+            "name": "id",
+            "type": "uuid"
+          }
+        ]
+      },
+      {
+        "path": "/projects/:id/proposals/edit",
+        "component": "ProposalEditPage",
+        "file": "apps/web/src/App.tsx",
+        "type": "page",
+        "dynamic": true,
+        "params": [
+          {
+            "name": "id",
+            "type": "uuid"
+          }
+        ]
+      },
+      {
+        "path": "/scope-items",
+        "component": "ScopeItemsPage",
+        "file": "apps/web/src/App.tsx",
+        "type": "page",
+        "dynamic": false
+      },
+      {
+        "path": "/requests",
+        "component": "RequestsPage",
+        "file": "apps/web/src/App.tsx",
+        "type": "page",
+        "dynamic": false
+      },
+      {
+        "path": "/proposals",
+        "component": "ProposalsPage",
+        "file": "apps/web/src/App.tsx",
+        "type": "page",
+        "dynamic": false
+      },
+      {
+        "path": "/portal",
+        "component": "PortalPage",
+        "file": "apps/web/src/App.tsx",
+        "type": "page",
+        "dynamic": false
+      },
+      {
+        "path": "/settings",
+        "component": "Navigate",
+        "file": "apps/web/src/App.tsx",
+        "type": "page",
+        "dynamic": false
+      },
+      {
+        "path": "/settings/billing",
+        "component": "BillingPage",
+        "file": "apps/web/src/App.tsx",
+        "type": "page",
+        "dynamic": false
+      },
+      {
+        "path": "/request/:token",
+        "component": "PublicRequestPage",
+        "file": "apps/web/src/App.tsx",
+        "type": "page",
+        "dynamic": true,
+        "params": [
+          {
+            "name": "token",
+            "type": "string"
+          }
+        ]
+      },
+      {
+        "path": "*",
+        "component": "Navigate",
+        "file": "apps/web/src/App.tsx",
+        "type": "page",
+        "dynamic": false
+      }
+    ],
+    "layouts": [],
+    "guards": [
+      {
+        "file": "apps/web/src/App.tsx",
+        "type": "route-wrapper"
+      }
+    ]
+  },
+  "summary": {
+    "framework": {
+      "frontend": "react-vite",
+      "backend": "fastapi",
+      "database": "postgresql"
+    },
+    "auth": {
+      "type": "jwt",
+      "hasLogin": true,
+      "hasRegister": true,
+      "oauthProviders": 1
+    },
+    "api": {
+      "endpoints": 90,
+      "schemas": 0,
+      "basePath": "/api/v1"
+    },
+    "models": {
+      "entities": 6,
+      "relationships": 0,
+      "enums": 7
+    },
+    "ui": {
+      "routes": 24,
+      "layouts": 0,
+      "protectedRoutes": 0
+    }
+  }
+}

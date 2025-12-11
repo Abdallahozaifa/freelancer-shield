@@ -11,7 +11,7 @@ from pathlib import Path
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, JSONResponse
 
 from app.api.v1.router import api_router
 from app.core.config import settings
@@ -110,21 +110,21 @@ if static_dir.exists():
     # Catch-all route for React Router (must be LAST)
     @app.get("/{full_path:path}")
     async def serve_react_app(full_path: str):
-        # Don't intercept API routes, docs, or health check
-        if (full_path.startswith("api/") or 
-            full_path.startswith("docs") or 
+        # Don't intercept API routes, docs, or health check - return proper 404
+        if (full_path.startswith("api/") or
+            full_path.startswith("docs") or
             full_path.startswith("redoc") or
             full_path.startswith("openapi") or
             full_path == "health"):
-            return {"detail": "Not found"}
-        
+            return JSONResponse(status_code=404, content={"detail": "Not found"})
+
         # Check if it's a real file in static dir
         file_path = static_dir / full_path
         if file_path.exists() and file_path.is_file():
             return FileResponse(file_path)
-        
+
         # Serve index.html for all other routes (React Router handles them)
         index_path = static_dir / "index.html"
         if index_path.exists():
             return FileResponse(index_path)
-        return {"detail": "Not found"}
+        return JSONResponse(status_code=404, content={"detail": "Not found"})

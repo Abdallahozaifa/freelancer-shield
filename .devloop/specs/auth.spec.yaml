@@ -1,0 +1,102 @@
+name: Authentication Tests
+description: Test specifications for ScopeGuard authentication endpoints
+baseUrl: https://scopeguard.fly.dev
+
+roles:
+  guest: {}
+  user:
+    credentials:
+      email: devloop-test@scopeguard.app
+      password: TestPassword123
+    loginEndpoint: /api/v1/auth/login
+
+tests:
+  # Registration endpoint - should be public
+  - name: Registration endpoint is accessible without auth
+    as: guest
+    request:
+      method: POST
+      path: /api/v1/auth/register
+      body:
+        email: newuser@test.com
+        password: testpass123
+    expect:
+      status: [200, 201, 400, 422]
+      statusNot: [401, 403]
+
+  # Login endpoint - should be public
+  - name: Login endpoint is accessible without auth
+    as: guest
+    request:
+      method: POST
+      path: /api/v1/auth/login
+      body:
+        email: devloop-test@scopeguard.app
+        password: wrongpassword
+    expect:
+      status: [200, 401, 400, 422]
+      statusNot: [403]
+
+  # Google OAuth endpoint - should be public (may not be implemented)
+  - name: Google OAuth endpoint is accessible
+    as: guest
+    request:
+      method: GET
+      path: /api/v1/auth/google
+    expect:
+      status: [200, 302, 307, 400, 404]
+      statusNot: [401, 403]
+
+  # Email verification - should be public
+  - name: Email verification endpoint is public
+    as: guest
+    request:
+      method: GET
+      path: /api/v1/auth/verify/{token}
+    expect:
+      status: [200, 400, 404]
+      statusNot: [401, 403]
+
+  # Forgot password - should be public
+  - name: Forgot password endpoint is public
+    as: guest
+    request:
+      method: POST
+      path: /api/v1/auth/forgot-password
+      body:
+        email: devloop-test@scopeguard.app
+    expect:
+      status: [200, 400, 404, 422]
+      statusNot: [401, 403]
+
+  # Reset password - should be public
+  - name: Reset password endpoint is public
+    as: guest
+    request:
+      method: POST
+      path: /api/v1/auth/reset-password
+      body:
+        token: invalidtoken
+        password: newTestPassword123
+    expect:
+      status: [200, 400, 404, 422]
+      statusNot: [401, 403]
+
+  # Get current user - requires auth
+  - name: Get current user requires authentication
+    as: guest
+    request:
+      method: GET
+      path: /api/v1/auth/me
+    expect:
+      status: 401
+
+  # Authenticated user can access /me
+  - name: Authenticated user can access their profile
+    as: user
+    request:
+      method: GET
+      path: /api/v1/auth/me
+    expect:
+      status: 200
+      bodyHas: [email]

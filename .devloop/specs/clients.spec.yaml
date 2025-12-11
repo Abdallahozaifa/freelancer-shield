@@ -1,0 +1,72 @@
+name: Clients API Tests
+description: Test specifications for ScopeGuard client management endpoints
+baseUrl: https://scopeguard.fly.dev
+
+roles:
+  guest: {}
+  user:
+    credentials:
+      email: devloop-test@scopeguard.app
+      password: TestPassword123
+    loginEndpoint: /api/v1/auth/login
+
+tests:
+  # List clients - requires auth
+  - name: List clients requires authentication
+    as: guest
+    request:
+      method: GET
+      path: /api/v1/clients
+    expect:
+      status: 401
+
+  # Create client - requires auth
+  - name: Create client requires authentication
+    as: guest
+    request:
+      method: POST
+      path: /api/v1/clients
+      body:
+        name: Test Client
+        email: client@example.com
+    expect:
+      status: 401
+
+  # Get single client - requires auth
+  - name: Get client by ID requires authentication
+    as: guest
+    request:
+      method: GET
+      path: /api/v1/clients/{id}
+    expect:
+      status: 401
+
+  # Update client - requires auth
+  - name: Update client requires authentication
+    as: guest
+    request:
+      method: PUT
+      path: /api/v1/clients/{id}
+      body:
+        name: Updated Client
+    expect:
+      status: [401, 405]
+
+  # Delete client - requires auth
+  - name: Delete client requires authentication
+    as: guest
+    request:
+      method: DELETE
+      path: /api/v1/clients/{id}
+    expect:
+      status: [401, 405]
+
+  # Authenticated user can list clients (may return paginated object)
+  - name: Authenticated user can list clients
+    as: user
+    request:
+      method: GET
+      path: /api/v1/clients
+    expect:
+      status: 200
+      statusNot: [401, 403]

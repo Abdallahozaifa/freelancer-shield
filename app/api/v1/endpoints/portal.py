@@ -188,7 +188,7 @@ async def list_portal_clients(
                 client_email=client.email,
                 is_active=access.is_active if access else False,
                 last_accessed=access.last_accessed if access else None,
-                portal_link=f"/portal/c/{access.access_token}" if access and access.is_active else None,
+                portal_link=None,  # Don't return link from list - users must regenerate to get a valid link (we only store hash)
                 created_at=access.created_at if access else client.created_at,
             )
         )
@@ -232,15 +232,19 @@ async def invite_client_to_portal(
     access_result = await db.execute(access_query)
     access = access_result.scalar_one_or_none()
 
+    # Generate raw token - we'll return this to user but store only the hash
+    raw_token = ClientPortalAccess.generate_access_token()
+    token_hash = ClientPortalAccess.hash_token(raw_token)
+
     if access:
-        # Regenerate token
-        access.access_token = ClientPortalAccess.generate_access_token()
+        # Regenerate token - store hash only
+        access.access_token = token_hash
         access.is_active = True
     else:
-        # Create new access
+        # Create new access - store hash only
         access = ClientPortalAccess(
             client_id=client_uuid,
-            access_token=ClientPortalAccess.generate_access_token(),
+            access_token=token_hash,
             is_active=True,
         )
         db.add(access)
@@ -255,7 +259,7 @@ async def invite_client_to_portal(
         client_email=client.email,
         is_active=access.is_active,
         last_accessed=access.last_accessed,
-        portal_link=f"/portal/c/{access.access_token}",
+        portal_link=f"/portal/c/{raw_token}",  # Return raw token to user
         created_at=access.created_at,
     )
 

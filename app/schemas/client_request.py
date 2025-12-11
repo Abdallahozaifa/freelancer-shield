@@ -75,3 +75,25 @@ class ClientRequestListResponse(BaseModel):
     total: int
     skip: int
     limit: int
+
+
+class PublicRequestCreate(BaseModel):
+    """Schema for public client request submission (no auth required)."""
+    title: str = Field(min_length=1, max_length=255)
+    description: str = Field(min_length=1)
+    client_name: Optional[str] = Field(default=None, max_length=255)
+    client_email: Optional[str] = Field(default=None, max_length=255)
+
+
+class PublicRequestResponse(BaseModel):
+    """Response for public request submission."""
+    success: bool
+    message: str
+    request_id: Optional[UUID] = None
+
+
+class PublicProjectInfo(BaseModel):
+    """Public info about a project for the request form."""
+    project_name: str
+    client_name: str
+    freelancer_name: str

@@ -1,0 +1,39 @@
+name: Client Portal API
+type: api
+
+# These tests verify portal endpoint security without requiring test data in DB.
+# Tests that require valid tokens in the DB have been moved to api.spec.yaml
+# with appropriate expectations.
+#
+# Token Hashing Contract (for reference):
+# - Frontend sends raw token in X-Portal-Token header
+# - Backend hashes it with SHA-256 and compares to stored hash
+
+tests:
+  # Test portal without token returns 401 (expected)
+  - name: Portal without token returns 401
+    method: GET
+    path: /api/v1/client-portal/dashboard
+    expect:
+      status: 401
+
+  # Test portal with bad token returns 401
+  - name: Portal with invalid token returns 401
+    method: GET
+    path: /api/v1/client-portal/dashboard
+    headers:
+      X-Portal-Token: definitely-not-a-valid-token
+    expect:
+      status: 401
+      bodyNot:
+        - client_name
+        - freelancer_name
+
+  # Test that portal projects endpoint exists and rejects invalid tokens
+  - name: Portal projects rejects invalid token
+    method: GET
+    path: /api/v1/client-portal/projects
+    headers:
+      X-Portal-Token: invalid-token-should-fail
+    expect:
+      status: 401

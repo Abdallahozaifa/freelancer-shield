@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.deps import CurrentUser, get_db
-from app.schemas.user import UserProfile, UserUpdate
+from app.schemas.user import UserProfile, UserUpdate, OnboardingComplete
 
 router = APIRouter()
 
@@ -25,6 +25,7 @@ async def get_profile(
         full_name=current_user.full_name,
         business_name=current_user.business_name,
         is_active=current_user.is_active,
+        has_completed_onboarding=current_user.has_completed_onboarding,
         created_at=current_user.created_at,
     )
 
@@ -62,5 +63,29 @@ async def update_profile(
         full_name=current_user.full_name,
         business_name=current_user.business_name,
         is_active=current_user.is_active,
+        has_completed_onboarding=current_user.has_completed_onboarding,
         created_at=current_user.created_at,
+    )
+
+
+@router.patch("/complete-onboarding", response_model=OnboardingComplete)
+async def complete_onboarding(
+    current_user: CurrentUser,
+    db: AsyncSession = Depends(get_db),
+) -> OnboardingComplete:
+    """
+    Mark the current user's onboarding as completed.
+
+    This endpoint is called when the user finishes the onboarding wizard.
+    Requires authentication.
+    """
+    current_user.has_completed_onboarding = True
+
+    db.add(current_user)
+    await db.commit()
+    await db.refresh(current_user)
+
+    return OnboardingComplete(
+        message="Onboarding completed successfully",
+        has_completed_onboarding=True,
     )

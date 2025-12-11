@@ -57,7 +57,13 @@ class User(BaseModel):
         default="email",
         nullable=False,
     )
-    
+
+    # Onboarding
+    has_completed_onboarding: Mapped[bool] = mapped_column(
+        default=False,
+        nullable=False,
+    )
+
     # Relationships
     clients: Mapped[list["Client"]] = relationship(
         "Client",

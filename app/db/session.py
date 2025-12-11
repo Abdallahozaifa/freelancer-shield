@@ -1,6 +1,12 @@
 """
 Database connection and session management.
 Uses SQLAlchemy 2.0 async patterns.
+
+For Fly.io PostgreSQL:
+- Uses NullPool to disable connection pooling
+- Fly's PostgreSQL proxy can close idle connections unexpectedly
+- NullPool creates a fresh connection per request, letting Fly handle pooling
+- This eliminates "connection was closed in the middle of operation" errors
 """
 
 from collections.abc import AsyncGenerator
@@ -12,6 +18,7 @@ from sqlalchemy.ext.asyncio import (
     create_async_engine,
 )
 from sqlalchemy.orm import DeclarativeBase
+from sqlalchemy.pool import NullPool
 
 from app.core.config import settings
 
@@ -21,13 +28,13 @@ if ".internal" in settings.db_url or ".flycast" in settings.db_url:
     # Disable SSL for internal Fly.io connections
     connect_args["ssl"] = False
 
-# Create async engine
+# Create async engine with NullPool for Fly.io PostgreSQL
+# NullPool: Creates fresh connection per request - Fly's proxy handles pooling
+# This prevents "connection was closed in the middle of operation" errors
 engine = create_async_engine(
     settings.db_url,
     echo=settings.database_echo,
-    pool_pre_ping=True,
-    pool_size=5,
-    max_overflow=10,
+    poolclass=NullPool,  # Disable pooling - Fly's proxy manages connections
     connect_args=connect_args,
 )
 

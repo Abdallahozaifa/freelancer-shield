@@ -20,7 +20,15 @@ class UserProfile(BaseModel):
     full_name: str
     business_name: str | None
     is_active: bool
+    has_completed_onboarding: bool
     created_at: datetime
 
     class Config:
         from_attributes = True
+
+
+class OnboardingComplete(BaseModel):
+    """Response after completing onboarding."""
+
+    message: str
+    has_completed_onboarding: bool

@@ -1,0 +1,68 @@
+name: Dashboard API Tests
+description: Test specifications for ScopeGuard dashboard endpoints
+baseUrl: https://scopeguard.fly.dev
+
+roles:
+  guest: {}
+  user:
+    credentials:
+      email: devloop-test@scopeguard.app
+      password: TestPassword123
+    loginEndpoint: /api/v1/auth/login
+
+tests:
+  # Dashboard summary - requires auth
+  - name: Dashboard summary requires authentication
+    as: guest
+    request:
+      method: GET
+      path: /api/v1/dashboard/summary
+    expect:
+      status: 401
+
+  # Dashboard alerts - requires auth
+  - name: Dashboard alerts requires authentication
+    as: guest
+    request:
+      method: GET
+      path: /api/v1/dashboard/alerts
+    expect:
+      status: 401
+
+  # Dashboard activity - requires auth
+  - name: Dashboard activity requires authentication
+    as: guest
+    request:
+      method: GET
+      path: /api/v1/dashboard/activity
+    expect:
+      status: 401
+
+  # Health endpoint - should be public
+  - name: Health endpoint is accessible
+    as: guest
+    request:
+      method: GET
+      path: /health
+    expect:
+      status: 200
+
+  # Authenticated user can access dashboard summary
+  - name: Authenticated user can access dashboard summary
+    as: user
+    request:
+      method: GET
+      path: /api/v1/dashboard/summary
+    expect:
+      status: 200
+      statusNot: [401, 403]
+
+  # Authenticated user can access alerts
+  - name: Authenticated user can access dashboard alerts
+    as: user
+    request:
+      method: GET
+      path: /api/v1/dashboard/alerts
+    expect:
+      status: 200
+      statusNot: [401, 403]

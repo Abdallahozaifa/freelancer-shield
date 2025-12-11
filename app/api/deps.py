@@ -17,21 +17,26 @@ from app.models.subscription import Subscription, PlanType, SubscriptionStatus
 from app.models.project import Project
 from app.models.client import Client
 
-security = HTTPBearer()
+# Use auto_error=False to return 401 instead of 403 for missing credentials
+security = HTTPBearer(auto_error=False)
 
 
 async def get_current_user(
-    credentials: Annotated[HTTPAuthorizationCredentials, Depends(security)],
+    credentials: Annotated[HTTPAuthorizationCredentials | None, Depends(security)],
     db: Annotated[AsyncSession, Depends(get_db)],
 ) -> User:
     """Get the current authenticated user from the JWT token."""
-    
+
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Could not validate credentials",
+        detail="Not authenticated",
         headers={"WWW-Authenticate": "Bearer"},
     )
-    
+
+    # Handle missing credentials (returns 401 instead of 403)
+    if credentials is None:
+        raise credentials_exception
+
     token = credentials.credentials
     payload = decode_access_token(token)
     

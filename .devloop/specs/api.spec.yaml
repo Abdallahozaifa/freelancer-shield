@@ -1,0 +1,110 @@
+name: API Tests
+description: Auto-generated API test specifications
+roles:
+  guest: {}
+  user:
+    credentials:
+      email: devloop-test@scopeguard.app
+      password: TestPassword123
+tests:
+  - name: Health endpoint is accessible
+    as: guest
+    request:
+      method: GET
+      path: /health
+    expect:
+      status: 200
+  - name: Unauthenticated request returns 401
+    as: guest
+    request:
+      method: GET
+      path: /api/v1/projects
+    expect:
+      status: 401
+  - name: guests can access /health
+    as: guest
+    request:
+      method: GET
+      path: /health
+    expect:
+      status: 200
+  - name: guests cannot access /api/v1/projects
+    as: guest
+    request:
+      method: GET
+      path: /api/v1/projects
+    expect:
+      status:
+        - 401
+        - 403
+  - name: clients can access /api/v1/portal/c/{token} without login
+    as: guest
+    request:
+      method: GET
+      path: /api/v1/portal/c/{token}
+    expect:
+      status:
+        - 200
+        - 404
+      statusNot:
+        - 401
+        - 403
+  - name: guests cannot access /api/v1/billing/subscription
+    as: guest
+    request:
+      method: GET
+      path: /api/v1/billing/subscription
+    expect:
+      status:
+        - 401
+        - 403
+
+  # Client Portal Authentication Tests
+  - name: client portal endpoint requires X-Portal-Token header
+    as: guest
+    request:
+      method: GET
+      path: /api/v1/client-portal/
+    expect:
+      status:
+        - 401
+        - 404
+        - 422
+      statusNot:
+        - 200
+        - 500
+
+  - name: client portal endpoint rejects invalid tokens
+    as: guest
+    request:
+      method: GET
+      path: /api/v1/client-portal/
+      headers:
+        X-Portal-Token: invalid-token-12345
+    expect:
+      status:
+        - 401
+        - 404
+      statusNot:
+        - 200
+        - 500
+
+  - name: portal invite endpoint requires authentication
+    as: guest
+    request:
+      method: POST
+      path: /api/v1/portal/clients/test-client-id/invite
+    expect:
+      status:
+        - 401
+        - 403
+
+  - name: portal settings endpoint requires authentication
+    as: guest
+    request:
+      method: GET
+      path: /api/v1/portal/settings
+    expect:
+      status:
+        - 401
+        - 403

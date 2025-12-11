@@ -71,8 +71,31 @@ class Settings(BaseSettings):
         return f"postgresql+asyncpg://{user}:{password}@{host}:5432/{db}"
     
     # Authentication
-    secret_key: str = "CHANGE-THIS-IN-PRODUCTION-use-openssl-rand-hex-32"
+    # SECRET_KEY must be set via environment variable in production
+    # Generate with: openssl rand -hex 32
+    secret_key: str = ""
     algorithm: str = "HS256"
+
+    @property
+    def jwt_secret_key(self) -> str:
+        """
+        Get JWT secret key with validation.
+        Raises ValueError in production if not set.
+        """
+        if not self.secret_key:
+            if self.environment == "production":
+                raise ValueError(
+                    "SECRET_KEY environment variable must be set in production. "
+                    "Generate one with: openssl rand -hex 32"
+                )
+            # Allow empty for development/testing with a warning
+            import warnings
+            warnings.warn(
+                "SECRET_KEY not set - using insecure default for development only",
+                UserWarning,
+            )
+            return "DEVELOPMENT-ONLY-INSECURE-KEY-DO-NOT-USE-IN-PRODUCTION"
+        return self.secret_key
     access_token_expire_days: int = 7
     bcrypt_rounds: int = 12
     password_reset_token_expire_minutes: int = 30

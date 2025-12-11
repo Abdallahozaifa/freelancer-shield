@@ -4,6 +4,7 @@ Client Portal models for branded client communication.
 
 import uuid
 import secrets
+import hashlib
 from datetime import datetime, timedelta
 
 from sqlalchemy import Boolean, ForeignKey, String, Text, DateTime, Numeric, func
@@ -127,7 +128,8 @@ class ClientPortalAccess(BaseModel):
         index=True,
     )
 
-    # Access token for portal login (hashed)
+    # Access token hash for portal login (SHA-256 hash of the actual token)
+    # The raw token is returned to the user once, we only store the hash
     access_token: Mapped[str] = mapped_column(
         String(64),
         nullable=False,
@@ -173,6 +175,16 @@ class ClientPortalAccess(BaseModel):
     def generate_magic_link_token(cls) -> str:
         """Generate a magic link token."""
         return secrets.token_urlsafe(32)
+
+    @staticmethod
+    def hash_token(token: str) -> str:
+        """
+        Hash a token using SHA-256 for secure storage.
+
+        This allows O(1) lookup via index while preventing token recovery
+        from database breaches.
+        """
+        return hashlib.sha256(token.encode('utf-8')).hexdigest()
 
     def __repr__(self) -> str:
         return f"<ClientPortalAccess {self.client_id}>"
